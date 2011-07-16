@@ -1,0 +1,54 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+  <script src="/media/js/markfield.js?v=1" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  markfield_init({
+    "elem": document.getElementById("map")
+  });
+{% endblock js_init %}
+
+{% block content %}
+  <section id="signup" style="margin: 0 0.5em; max-width: 700px; ">
+    <h3>Signup</h3>
+    <p>
+      Signing up allows you to keep up on the latest news and get in
+      touch with others in your area attending the event.  You might
+      even be able to catch a free ride.  By signing up you're also
+      helping us keep track of expected turnout.
+    </p>
+    <p>
+      <strong>WARNING:</strong> Because we're alpha testing, any data
+      you enter into this website will probably be destroyed and
+      you'll have to sign up again once it's in production.
+    </p>
+    <form action="." method="post">{% csrf_token %}
+      <table class="formtable">
+        <tbody>
+          {{ form.as_table }}
+          <tr>
+            <th>Location:</th>
+            <td>
+              <div style="width: 400px; height: 300px;" id="map"></div>
+              <span class="helptext">
+                Optional.  Click where you live on the map.  This
+                information will be displayed publicly so if you're
+                concerned about your privacy you can always click on a
+                random place in your general area.
+                <a href="#" onClick="markfield_clear(); return false">Click here</a>
+                to remove the marker.
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p><input type="submit" value="Register my Account!" /></p>
+    </form>
+  </section>
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block content %}
+  <section id="user-page">
+    <h3>{{ user.username }}</h3>
+    {% if user.userinfo.info %}
+      {{ user.userinfo.info|linebreaks }}
+    {% else %}
+      <p>No profile information filled out.</p>
+    {% endif %}
+  </section>
+{% endblock content %}

@@ -1,0 +1,45 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <style type="text/css">
+    #navbar .nav-news { background: #900; }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+  <div id="right">
+    <section id="mission">
+      <a href="http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html">
+        <img title="Propaganda" alt="#OCCUPYWALLSTREET Bull Poster"
+             src="/media/img/wallst-250.jpg" width="250" height="379" /></a>
+      <h3>Our Mission</h3>
+      <p>
+        On the 17th of September, we want to see 20,000 people
+        flood into lower Manhattan, set up tents, kitchens,
+        peaceful barricades and occupy Wall Street for a few
+        months. Once there, we shall incessantly repeat one simple
+        demand in a plurality of voices.
+      </p>
+      <p>
+        The time has come to deploy this emerging stratagem
+        against the greatest corrupter of our democracy: Wall
+        Street, the financial Gomorrah of America.  It's time for
+        <strong>DEMOCRACY NOT CORPORATOCRACY!</strong>
+      </p>
+    </section>
+  </div>
+  <div id="left">
+    {% for article in articles %}
+      <article id="article-{{ article.id }}" class="news-item">
+        <h3><a title="View Full Article" href="{{ article.get_absolute_url }}">
+            {{ article.title }}</a></h3>
+        <p class="news-info">
+          Published {{ article.published|date:"Y-m-d h:i:s" }}
+          by {{ article.author.username }}
+        </p>
+        {{ article.content|linebreaks }}
+      </article>
+    {% endfor %}
+  </div>
+{% endblock content %}

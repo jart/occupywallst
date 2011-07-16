@@ -1,0 +1,97 @@
+[
+  {
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+      "username": "OccupyWallSt",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2011-05-15 23:07:47",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$ad98c$ee58ea9539840e601ed436d8ee3b02c9242a3b33",
+      "email": "OccupyWallSt@occupywallst.org",
+      "date_joined": "2011-05-15 23:07:47"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "auth.user",
+    "fields": {
+      "username": "PhilaRadical",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2011-05-15 23:07:47",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$ad98c$ee58ea9539840e601ed436d8ee3b02c9242a3b33",
+      "email": "PhilaRadical@occupywallst.org",
+      "date_joined": "2011-05-15 23:07:47"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "occupywallst.userinfo",
+    "fields": {
+      "user": 1,
+      "position": "POINT(40.62188446279985 -74.41288677215573)",
+      "formatted_address": "501-05 Richmond St, Plainfield, NJ 07060, USA",
+      "info": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    }
+  },
+  {
+    "pk": 2,
+    "model": "occupywallst.userinfo",
+    "fields": {
+      "user": 2,
+      "position": "POINT(39.95144754602074 -75.23686138153073)",
+      "formatted_address": "611 S 57th St, Philadelphia, PA 19143, USA",
+      "info": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    }
+  },
+  {
+    "pk": 1,
+    "model": "occupywallst.article",
+    "fields": {
+      "author": 1,
+      "title": "News Article #1",
+      "slug": "news_article_1",
+      "published": "2011-06-14 16:20:00",
+      "content": "Cras urna justo, dignissim a pretium id, varius quis urna. Suspendisse placerat rutrum diam ut rhoncus. In non velit luctus diam tincidunt cursus sed nec nisi. Quisque ut diam metus, ut rutrum est. Aliquam eros purus, placerat sit amet venenatis quis, feugiat sit amet est. Vestibulum ut hendrerit neque. Donec vel dolor eros, non congue augue. Maecenas a lorem vel justo egestas congue. Nulla nisl mauris, mollis consequat tincidunt ac, auctor non nisi.",
+      "is_visible": true,
+      "is_deleted": false
+    }
+  },
+  {
+    "pk": 2,
+    "model": "occupywallst.article",
+    "fields": {
+      "author": 1,
+      "title": "News Article #2",
+      "slug": "news_article_2",
+      "published": "2011-06-14 16:30:00",
+      "content": "Cras metus elit, fermentum et placerat id, accumsan id orci. Nunc venenatis ullamcorper massa, ut sollicitudin justo volutpat et. Cras sapien purus, fringilla at gravida at, ornare id leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus viverra, mi ac semper rhoncus, enim ligula aliquam lacus, vitae tempus lacus dolor venenatis tortor. Cras sed leo libero, id facilisis lectus. Etiam pulvinar pharetra nisl et commodo. Aliquam luctus eleifend vestibulum. Quisque tortor purus, tempor eget tincidunt et, ultricies ut leo. Morbi lacinia bibendum lorem, at commodo augue hendrerit sed. Nunc sem lorem, sodales at mollis vel, laoreet eget nulla.",
+      "is_visible": true,
+      "is_deleted": false
+    }
+  },
+  {
+    "pk": 3,
+    "model": "occupywallst.article",
+    "fields": {
+      "author": 1,
+      "title": "News Article #3",
+      "slug": "news_article_3",
+      "published": "2011-06-14 16:30:00",
+      "content": "Suspendisse sollicitudin justo id est feugiat congue. Maecenas ultricies lorem pulvinar orci malesuada mattis. Proin molestie semper justo, a rutrum ligula lobortis at. Nullam ac neque risus, vel cursus nibh. Suspendisse tempor nulla nec nisl feugiat imperdiet. Vestibulum consectetur eros in lorem pellentesque sodales. Vestibulum eu tincidunt tellus. Aliquam erat volutpat. Cras sed orci velit. Pellentesque sodales sapien enim, in commodo felis.",
+      "is_visible": true,
+      "is_deleted": false
+    }
+  }
+]

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Occupy Wall Street{% endblock title %}</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <link rel="shortcut icon" href="/media/img/occupy-logo-16.png?v=2" />
+  {% block stylesheets %}
+    <link rel="stylesheet" href="/media/css/occupywallst.css?v=1" type="text/css" media="all" />
+    <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=1" type="text/css" media="print" />
+    <link rel="stylesheet" href="/media/jquery-ui/css/ui-lightness/jquery-ui-1.8.12.custom.css" type="text/css" media="all" />
+  {% endblock stylesheets %}
+</head>
+<body>
+  {% block body %}
+    {% block header %}
+      <header>
+        <div id="loginbox">
+          {% if user.is_authenticated %}
+            Welcome <a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+            &mdash; <a href="/logout/">logout</a>
+          {% else %}
+            Welcome!
+            <a href="/login/">login</a> |
+            <a href="/signup/">signup</a>
+          {% endif %}
+        </div>
+        <h1><span class="red">Occupy</span>WallStreet {Alpha}</h1>
+        <h2>Organizing September 17th, 2011</h2>
+      </header>
+    {% endblock header %}
+    {% block nav %}
+      <nav>
+        <div id="navbar">
+          <ul>
+            <li class="nav-news first"><a href="/">News</a></li>
+            <li class="nav-attendees"><a href="/attendees/">Attendee Map</a></li>
+            <li class="nav-rides"><a href="/rides/">Bus/Carpool</a></li>
+            <li class="nav-housing"><a href="/housing/">Housing</a></li>
+            <li class="nav-reddit"><a href="http://www.reddit.com/r/occupywallstreet/">Reddit</a></li>
+            <li class="nav-facebook"><a href="http://www.facebook.com/event.php?eid=144937025580428">Facebook</a></li>
+            <li class="nav-twitter"><a href="http://twitter.com/#!/search?q=%23OCCUPYWALLSTREET">Twitter</a></li>
+            <li class="nav-about"><a href="/about/">About</a></li>
+            <li class="last"><span>&nbsp;</span></li>
+          </ul>
+        </div>
+      </nav>
+    {% endblock nav %}
+    {% block content %}
+      <p>
+        No Content Available.
+      </p>
+    {% endblock content %}
+    {% block footer %}
+      <footer>
+        this website is <a href="http://github.com/occupywallst/occupywallst">open sauce</a><br />
+        brought to you by various angry radicals<br />
+        for info or to volunteer: <a href="mailto:info@occupywallst.org">Info@OccupyWallSt.org</a><br />
+        it wasn't our idea: <a href="http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html">AdBusters #OCCUPYWALLSTREET</a>
+      </footer>
+    {% endblock footer %}
+  {% endblock body %}
+  {% block scripts %}
+    <script src="/media/js/jquery-1.6.min.js" type="text/javascript"></script>
+    <script src="/media/js/csrf.js?v=2" type="text/javascript"></script>
+    <script src="/media/js/occupywallst.js?v=2" type="text/javascript"></script>
+  {% endblock scripts %}
+  <script type="text/javascript">
+    $(function() {
+      {% block js_init %}
+        occupywallst_init();
+      {% endblock js_init %}
+    });
+  </script>
+</body>
+</html>

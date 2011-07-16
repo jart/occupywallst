@@ -1,0 +1,23 @@
+.. -*-rst-*-
+
+==============
+ OccupyWallSt
+==============
+
+:name:        occupywallst
+:description: Occupy Wall Street!
+:copyright:   (c) 2011 Justine Tunney
+:license:     GNU AGPL v3 or later
+
+
+Installation
+============
+
+Run these commands in the occupywallst folder::
+
+    sudo ./install_depends.sh
+    sudo python setup.py develop
+    gunzip <occupywallst/data/init_spatialite-2.3.sql.gz \
+        | spatialite occupywallst.db
+    occupywallst-dev syncdb
+    occupywallst-dev runserver

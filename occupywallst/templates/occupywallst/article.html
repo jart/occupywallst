@@ -1,0 +1,36 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block content %}
+  <div id="right">
+    <section id="other-articles">
+      <h4>Recent Articles</h4>
+      {% for article in recent %}
+        <div class="item">
+          <div class="date">
+            {{ article.published|date:"Y-m-d" }}
+            by {{ article.author.username }}
+          </div>
+          <div class="title">
+            <a title="View Article" href="{{ article.get_absolute_url }}">
+              {{ article.title }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+  <div id="left">
+    <article id="article-{{ article.id }}" class="news-item">
+      <h3><a title="View Full Article" href="{{ article.get_absolute_url }}">
+          {{ article.title }}</a></h3>
+      <p class="news-info">
+        Published {{ article.published|date:"Y-m-d h:i:s" }}
+        by {{ article.author.username }}
+      </p>
+      {{ article.content|linebreaks }}
+    </article>
+    <section id="comments">
+      <h4>Comments</h4>
+      <p>Not yet implemented</p>
+    </section>
+  </div>
+{% endblock content %}

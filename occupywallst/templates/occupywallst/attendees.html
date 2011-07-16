@@ -1,0 +1,31 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <style type="text/css">
+    #navbar .nav-attendees { background: #900; }
+  </style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+  <script src="/media/js/attendees.js?v=1" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  attendees_init({
+    "elem": document.getElementById("map"),
+    "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
+    "zoom": 8
+  });
+{% endblock js_init %}
+
+{% block content %}
+  <section id="attendees">
+    <h3 style="margin-bottom: 0.5em; ">Who's Attending?</h3>
+    <div style="width: 100%; height: 500px; " id="map"></div>
+  </section>
+{% endblock content %}
