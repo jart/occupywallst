@@ -8,8 +8,7 @@ r"""
 """
 
 from django.conf import settings
-from django.conf.urls.defaults import *
-from django.views.decorators.http import require_POST
+from django.conf.urls.defaults import patterns, url, include
 
 from occupywallst import admin, api, utils
 

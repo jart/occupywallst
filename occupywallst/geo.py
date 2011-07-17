@@ -7,11 +7,9 @@ r"""
 
 """
 
-import sys
 import json
 import urllib
 import urllib2
-from decimal import Decimal
 from math import sqrt, cos, sin, atan2, pi
 
 
@@ -27,7 +25,7 @@ def directions(waypoints):
                              'sensor': 'false'}))
     response = json.loads(urllib2.urlopen(url).read())
     if response['status'] != "OK":
-        raise Exception(response['status'], address)
+        raise Exception(response['status'], waypoints)
     for route in response['routes']:
         route['overview_polyline']['points'] = \
             polydecode(route['overview_polyline']['points'])
@@ -38,12 +36,10 @@ def polydecode(encoded):
     """Decodes a polyline that was encoded using the Google Maps method.
 
     See http://code.google.com/apis/maps/documentation/polylinealgorithm.html
-    
+
     This is a straightforward Python port of Mark McClure's JavaScript
-    polyline decoder
-    (http://facstaff.unca.edu/mcmcclur/GoogleMaps/EncodePolyline/decode.js)
-    and Peter Chng's PHP polyline decode
-    (http://unitstep.net/blog/2008/08/02/decoding-google-maps-encoded-polylines-using-php/)
+    polyline decoder (http://moourl.com/8hucs) and Peter Chng's PHP
+    polyline decode (http://moourl.com/5hddu)
     """
     encoded_len = len(encoded)
     index = 0
@@ -76,9 +72,6 @@ def polydecode(encoded):
         lng += dlng
         array.append((lat * 1e-5, lng * 1e-5))
     return array
-
-
-# routes = occupywallst.geo.directions(['torresdale ave philadelphia pa', '4808 springfield ave #2 phila pa'])
 
 
 def geocode(address):
@@ -124,7 +117,6 @@ def haversine(lat1, lng1, lat2, lng2):
 
 if __name__ == '__main__':
     from pprint import pprint
-    from itertools import product
 
     places = [{'address': '666 market st. philadelphia, pa'},
               {'address': '666 broadway, nyc'},

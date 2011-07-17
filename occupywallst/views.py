@@ -11,9 +11,6 @@ from django.contrib import auth
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.contrib.gis.utils import GeoIP
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.http import Http404, HttpResponseRedirect
 
 from occupywallst.forms import SignupForm

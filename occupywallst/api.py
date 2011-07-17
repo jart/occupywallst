@@ -12,11 +12,9 @@ r"""
 
 """
 
-from django.contrib import auth
 from django.contrib.gis.geos import Polygon
-from django.contrib.auth import forms as authforms
 
-from occupywallst import utils, models as db
+from occupywallst import models as db
 
 
 def str_to_bbox(val):

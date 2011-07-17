@@ -7,7 +7,6 @@ r"""
 
 """
 
-import os
 from os.path import abspath, dirname, join
 project_root = dirname(abspath(__file__))
 

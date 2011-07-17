@@ -7,9 +7,9 @@ r"""
 
 """
 
-from django.contrib import admin, messages
+from django.contrib import admin
 from django.contrib.auth import models as authdb
-from django.contrib.gis.admin import OSMGeoAdmin, GeoModelAdmin
+from django.contrib.gis.admin import OSMGeoAdmin
 
 from occupywallst import models as db
 
