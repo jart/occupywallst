@@ -79,8 +79,6 @@ var attendees_init;
                     attendee.latlng = pos_to_latlng(attendee.position);
                 });
                 refresh();
-            } else {
-                alert(data["message"]);
             }
             is_fetching = false;
         }).error(function(resp) {
