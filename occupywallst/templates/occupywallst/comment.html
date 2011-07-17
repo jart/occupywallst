@@ -1,7 +1,7 @@
 <div class="comment" id="comment-{{ comment.id }}">
   <div class="arrows">
-    <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">&uarr;</a><br />
-    <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">&darr;</a>
+    <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">↥</a><br />
+    <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">↧</a>
   </div>
   <div class="info">
     <a href="{{ comment.user.get_absolute_url }}">

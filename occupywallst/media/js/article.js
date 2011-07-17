@@ -23,6 +23,7 @@ $.fn.numberAdd = function (delta) {
                     var com = data.results[0];
                     $("#comment-list").prepend($(com.html));
                     $("#comment-count").numberAdd(+1);
+                    $("#comment-post textarea").val("");
                 } else {
                     $("#comment-post span").text(data.message);
                 }

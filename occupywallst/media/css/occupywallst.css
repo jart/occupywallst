@@ -74,13 +74,13 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 #other-articles .item { margin-bottom: 0.5em; }
 #other-articles .date { font-size: x-small; color: #666; }
 
-.comment { margin: 1em 1em; font-family: sans-serif; }
-.comment p { font-family: serif; margin: 0.25em 0; }
+.comment { margin: 1em 1em; font-family: sans-serif; font-size: small; }
+.comment p { margin: 0.5em 0; }
 .comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
-.comment .info { color: #666; font-size: small; }
-.comment .links { font-size: x-small; }
+.comment .info { color: #666; }
+.comment .links { }
 .comment .content { }
-.comment .arrows a { color: #aaa; }
+.comment .arrows a { color: #aaa; font-weight: bold; }
 .comment .arrows a.upvoted { color: red; }
 .comment .arrows a.downvoted { color: blue; }
 #comment-post span { color: red; }
