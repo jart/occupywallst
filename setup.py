@@ -18,7 +18,7 @@ setup(
     name                 = 'occupywallst',
     version              = version,
     description          = "Occupy Wall Street",
-    long_description     = read('README'),
+    long_description     = read('README.rst'),
     author               = 'Justine Tunney',
     author_email         = 'jtunney@lobstertech.com',
     license              = 'GNU AGPL v3 or later',
