@@ -39,7 +39,8 @@
       {{ article.content|linebreaks }}
     </article>
     <section id="comments">
-      <h4>{{ article.comment_count }} Comments</h4>
+      <h4><span id="comment-count">{{ article.comment_count }}</span>
+          Comments</h4>
       <div id="comment-post">
         {% if user.is_authenticated %}
           <textarea rows="5" cols="50"></textarea><br />

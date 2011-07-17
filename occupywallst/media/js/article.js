@@ -1,6 +1,12 @@
 
 var article_init;
 
+$.fn.numberAdd = function (delta) {
+    this.each(function () {
+        $(this).text(parseInt($(this).text()) + delta);
+    });
+};
+
 (function() {
     "use strict";
 
@@ -16,6 +22,7 @@ var article_init;
                 if (data.status == "OK") {
                     var com = data.results[0];
                     $("#comment-list").prepend($(com.html));
+                    $("#comment-count").numberAdd(+1);
                 } else {
                     $("#comment-post span").text(data.message);
                 }
@@ -30,23 +37,18 @@ var article_init;
             var commentid = comment.attr("id").split("-")[1];
             $(".up", comment).click(function() {
                 if ($(".up", comment).hasClass("upvoted"))
-                    return;
+                    return false;
                 $.getJSON("/api/comment/up/", {
                     "commentid": commentid
                 }, function(data) {
                 });
                 if ($(".down", comment).hasClass("downvoted")) {
-                    $(".karma", comment).text(
-                        parseInt($(".karma", comment).text()) + 2);
-                    $(".ups", comment).text(
-                        parseInt($(".ups", comment).text()) + 1);
-                    $(".downs", comment).text(
-                        parseInt($(".downs", comment).text()) - 1);
+                    $(".karma", comment).numberAdd(+2);
+                    $(".ups", comment).numberAdd(+1);
+                    $(".downs", comment).numberAdd(-1);
                 } else {
-                    $(".karma", comment).text(
-                        parseInt($(".karma", comment).text()) + 1);
-                    $(".ups", comment).text(
-                        parseInt($(".ups", comment).text()) + 1);
+                    $(".karma", comment).numberAdd(+1);
+                    $(".ups", comment).numberAdd(+1);
                 }
                 $(".up", comment).addClass("upvoted");
                 $(".down", comment).removeClass("downvoted");
@@ -54,23 +56,18 @@ var article_init;
             });
             $(".down", comment).click(function() {
                 if ($(".up", comment).hasClass("downvoted"))
-                    return;
+                    return false;
                 $.getJSON("/api/comment/down/", {
                     "commentid": commentid
                 }, function(data) {
                 });
                 if ($(".up", comment).hasClass("upvoted")) {
-                    $(".karma", comment).text(
-                        parseInt($(".karma", comment).text()) - 2);
-                    $(".ups", comment).text(
-                        parseInt($(".ups", comment).text()) - 1);
-                    $(".downs", comment).text(
-                        parseInt($(".downs", comment).text()) + 1);
+                    $(".karma", comment).numberAdd(-2);
+                    $(".ups", comment).numberAdd(-1);
+                    $(".downs", comment).numberAdd(+1);
                 } else {
-                    $(".karma", comment).text(
-                        parseInt($(".karma", comment).text()) - 1);
-                    $(".downs", comment).text(
-                        parseInt($(".downs", comment).text()) + 1);
+                    $(".karma", comment).numberAdd(-1);
+                    $(".downs", comment).numberAdd(+1);
                 }
                 $(".up", comment).removeClass("upvoted");
                 $(".down", comment).addClass("downvoted");
