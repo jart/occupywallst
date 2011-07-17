@@ -5,11 +5,17 @@ r"""
 
     Database definition.
 
+    The most confusing thing here is that Google stores geographic
+    coordinates as (lat, lng) but for some reason GeoDjango stores
+    them as (lng, lat).  I've added some getters/setters to hopefully
+    make this less confusing.
+
 """
 
 from datetime import date, timedelta
 
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -46,6 +52,11 @@ class UserInfo(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
+
+    position_lat = property(lambda s: s.position.y)
+    position_lng = property(lambda s: s.position.x)
+    position_latlng = property(lambda s: (s.position.y, s.position.x),
+                               lambda s, v: s.setattr('position', Point(*v)))
 
 
 class Article(models.Model):
@@ -86,7 +97,7 @@ class Article(models.Model):
     @staticmethod
     def recalculate():
         for art in Article.objects.all():
-            art.comment_count = (self.comments
+            art.comment_count = (art.comments_set
                                  .filter(is_deleted=False,
                                          is_removed=False)
                                  .count())

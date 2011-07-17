@@ -8,7 +8,6 @@ r"""
 """
 
 from django import forms
-from django.contrib.gis.geos import Point
 from django.contrib.auth.forms import UserCreationForm
 
 from occupywallst import models as db
@@ -40,8 +39,8 @@ class SignupForm(UserCreationForm):
             initial = {'email': user.email,
                        'info': user.userinfo.info,
                        'need_ride': user.userinfo.need_ride,
-                       'position_lat': user.userinfo.position.x,
-                       'position_lng': user.userinfo.position.y,
+                       'position_lat': user.userinfo.position_lat,
+                       'position_lng': user.userinfo.position_lng,
                        'country': user.country,
                        'region': user.region,
                        'city': user.city,
@@ -68,8 +67,12 @@ class SignupForm(UserCreationForm):
         userinfo = db.UserInfo()
         userinfo.user = user
         userinfo.info = self.cleaned_data.get('info')
-        userinfo.position = Point(self.cleaned_data.get('position_lat'),
-                                  self.cleaned_data.get('position_lng'))
+        position_lat = self.cleaned_data.get('position_lat')
+        position_lng = self.cleaned_data.get('position_lng')
+        if position_lat is not None and position_lng is not None:
+            userinfo.position_latlng = position_lat, position_lng
+        else:
+            userinfo.position = None
         userinfo.formatted_address = self.cleaned_data.get('formatted_address')
         userinfo.country = self.cleaned_data.get('country')
         userinfo.region = self.cleaned_data.get('region')
