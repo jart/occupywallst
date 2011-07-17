@@ -96,12 +96,8 @@ class Article(models.Model):
 class Comment(models.Model):
     """Users can leave comments on articles reddit style
     """
-    article = models.ForeignKey(Article, editable=False,
-                                related_name="comments", help_text="""
+    article = models.ForeignKey(Article, editable=False, help_text="""
         The article to which this comment belongs.""")
-    # parent = models.ForeignKey(Comment, null=True, blank=True, editable=False,
-    #                            help_text="""
-    #     Is this responding to another person's comment?""")
     published = models.DateTimeField(help_text="""
         When was article was published?""")
     content = models.TextField(blank=True, help_text="""
