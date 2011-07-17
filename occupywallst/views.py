@@ -18,7 +18,9 @@ from occupywallst import models as db
 
 
 def index(request):
-    articles = db.Article.objects.order_by('-published')[:25]
+    articles = (db.Article.objects
+                .filter(is_visible=True)
+                .order_by('-published'))[:25]
     return render_to_response(
         'occupywallst/index.html', {'articles': articles},
         context_instance=RequestContext(request))
@@ -29,7 +31,9 @@ def article(request, slug):
         article = db.Article.objects.get(slug=slug)
     except db.Event.DoesNotExist:
         raise Http404()
-    recent = db.Article.objects.order_by('-published')[:5]
+    recent = (db.Article.objects
+              .filter(is_visible=True)
+              .order_by('-published'))[:5]
     return render_to_response(
         'occupywallst/article.html', {'article': article,
                                       'recent': recent},
