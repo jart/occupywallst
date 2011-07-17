@@ -1,5 +1,5 @@
 
-body { padding: 0 50px; }
+body { padding: 0 50px; min-width: 850px; }
 body p { text-align: justify; }
 header, nav, h1, h2, h3, h4 { margin-top: 0; font-family: sans-serif; }
 a { text-decoration: none; }
