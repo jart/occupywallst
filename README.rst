@@ -6,7 +6,7 @@
 
 :name:        occupywallst
 :description: Occupy Wall Street!
-:copyright:   (c) 2011 Justine Tunney
+:copyright:   © 2011 Justine Tunney
 :license:     GNU AGPL v3 or later
 
 
