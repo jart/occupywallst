@@ -38,7 +38,7 @@
           Published {{ article.published|date:"Y-m-d h:i:s" }}
           by {{ article.author.username }}
         </p>
-        {{ article.content|linebreaks }}
+        {{ article.content|safe }}
         <p>
           <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
             {{ article.comment_count }} Comments</a>

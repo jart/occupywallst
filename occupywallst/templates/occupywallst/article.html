@@ -36,7 +36,7 @@
         Published {{ article.published|date:"Y-m-d h:i:s" }}
         by {{ article.author.username }}
       </p>
-      {{ article.content|linebreaks }}
+      {{ article.content|safe }}
     </article>
     <section id="comments">
       <h4><span id="comment-count">{{ article.comment_count }}</span>
