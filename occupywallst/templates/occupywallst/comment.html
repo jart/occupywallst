@@ -1,0 +1,19 @@
+<div class="comment" id="comment-{{ comment.id }}">
+  <div class="arrows">
+    <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">&uarr;</a><br />
+    <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">&darr;</a>
+  </div>
+  <div class="info">
+    <a href="{{ comment.user.get_absolute_url }}">
+      {{ comment.user.username }}</a>
+    <span class="karma">{{ comment.karma }}</span> points
+    <span class="published">{{ comment.published|timesince }}</span> ago
+    (<span class="ups">{{ comment.ups }}</span>|<span class="downs">{{ comment.downs }}</span>)
+  </div>
+  <div class="content">
+    {{ comment.content|linebreaks }}
+  </div>
+  <div class="links">
+    <a href="{{ comment.get_absolute_url }}">permalink</a>
+  </div>
+</div>

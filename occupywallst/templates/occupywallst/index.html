@@ -39,6 +39,10 @@
           by {{ article.author.username }}
         </p>
         {{ article.content|linebreaks }}
+        <p>
+          <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
+            {{ article.comment_count }} Comments</a>
+        </p>
       </article>
     {% endfor %}
   </div>

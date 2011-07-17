@@ -46,10 +46,17 @@ def api_view(function):
     def _api_view(request):
         args = dict(request.REQUEST)
         args['request'] = request
+        args['user'] = request.user
         try:
-            res = {'status': 'OK',
-                   'message': 'success',
-                   'results': list(function(**args))}
+            data = list(function(**args))
+            if data:
+                res = {'status': 'OK',
+                       'message': 'success',
+                       'results': data}
+            else:
+                res = {'status': 'ZERO_RESULTS',
+                       'message': 'no data returned',
+                       'results': data}
         except APIException, exc:
             res = {'status': 'ERROR',
                    'message': str(exc),
@@ -59,8 +66,6 @@ def api_view(function):
             res = {'status': 'ERROR',
                    'message': str(exc),
                    'results': list(getattr(exc, 'results', None))}
-        if not res['results']:
-            res['status'] = 'ZERO_RESULTS'
         return _as_json(res)
     return _api_view
 

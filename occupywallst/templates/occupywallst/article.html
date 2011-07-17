@@ -1,5 +1,15 @@
 {% extends 'occupywallst/base.html' %}
 
+{% block scripts %}
+  {{ block.super }}
+  <script src="/media/js/article.js?v=1" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  article_init();
+{% endblock js_init %}
+
 {% block content %}
   <div id="right">
     <section id="other-articles">
@@ -19,7 +29,7 @@
     </section>
   </div>
   <div id="left">
-    <article id="article-{{ article.id }}" class="news-item">
+    <article id="{{ article.slug }}" class="news-item">
       <h3><a title="View Full Article" href="{{ article.get_absolute_url }}">
           {{ article.title }}</a></h3>
       <p class="news-info">
@@ -29,8 +39,22 @@
       {{ article.content|linebreaks }}
     </article>
     <section id="comments">
-      <h4>Comments</h4>
-      <p>Not yet implemented</p>
+      <h4>{{ article.comment_count }} Comments</h4>
+      <div id="comment-post">
+        {% if user.is_authenticated %}
+          <textarea rows="5" cols="50"></textarea><br />
+          <button>submit</button>
+          <img src="/media/img/ajax-loader.gif" width="16" height="16" />
+          <span></span>
+        {% else %}
+          <p>Must be <a href="/login/">logged in to comment.</a></p>
+        {% endif %}
+      </div>
+      <div id="comment-list">
+        {% for comment in comments %}
+          {% include "occupywallst/comment.html" %}
+        {% endfor %}
+      </div>
     </section>
   </div>
 {% endblock content %}

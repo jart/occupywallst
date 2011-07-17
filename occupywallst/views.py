@@ -34,8 +34,10 @@ def article(request, slug):
     recent = (db.Article.objects
               .filter(is_visible=True)
               .order_by('-published'))[:5]
+    comments = article.comments_as_user(request.user)
     return render_to_response(
         'occupywallst/article.html', {'article': article,
+                                      'comments': comments,
                                       'recent': recent},
         context_instance=RequestContext(request))
 

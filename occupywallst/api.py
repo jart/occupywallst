@@ -12,9 +12,12 @@ r"""
 
 """
 
+from datetime import datetime
+
 from django.contrib.gis.geos import Polygon
 
 from occupywallst import models as db
+from occupywallst.utils import APIException
 
 
 def str_to_bbox(val):
@@ -46,3 +49,98 @@ def user(username, **kwargs):
            'info': user.userinfo.info,
            'need_ride': user.userinfo.need_ride,
            'location': user.userinfo.position_latlng}
+
+
+def comment_new(user, article_slug, content, **kwargs):
+    """Leave a comment on an article
+
+    Also upvotes comment and increments article comment count.
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    content = content.strip()
+    if len(content) < 5:
+        raise APIException("comment too short")
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException('article not found')
+    lastcom = user.comment_set.order_by('-published')[:1]
+    if lastcom:
+        if (datetime.now() - lastcom[0].published).seconds < 60:
+            raise APIException("you're doing that too fast")
+    com = db.Comment.objects.create(article=article,
+                                    user=user,
+                                    content=content)
+    com.upvote(user)
+    article.comment_count += 1
+    article.save()
+    yield com.as_dict({'html': com.render(user)})
+
+
+def comment_edit(user, commentid, content, **kwargs):
+    """Edit a comment's content
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    content = content.strip()
+    if len(content) < 5:
+        raise APIException("comment too short")
+    try:
+        com = db.Comment.objects.get(id=commentid, is_removed=False,
+                                     is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException('comment not found')
+    if com.user != user:
+        raise APIException("you didn't post that comment")
+    com.content = content
+    yield com.as_dict()
+
+
+def comment_delete(user, commentid, **kwargs):
+    """Delete a comment
+
+    Also decrements article comment count.
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    content = content.strip()
+    try:
+        com = db.Comment.objects.get(id=commentid, is_removed=False,
+                                     is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException('comment not found')
+    if com.user != user:
+        raise APIException("you didn't post that comment")
+    com.article.comment_count -= 1
+    com.article.save()
+    com.delete()
+    yield None
+
+
+def comment_up(user, commentid, **kwargs):
+    """Increases comment karma by one
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    try:
+        com = db.Comment.objects.get(id=commentid, is_removed=False,
+                                     is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException('comment not found')
+    com.upvote(user)
+    yield com.as_dict()
+
+
+def comment_down(user, commentid, **kwargs):
+    """Increases comment karma by one
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    try:
+        com = db.Comment.objects.get(id=commentid, is_removed=False,
+                                     is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException('comment not found')
+    com.downvote(user)
+    yield com.as_dict()

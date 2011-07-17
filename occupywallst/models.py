@@ -20,6 +20,21 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
+def memoize(method):
+    """Memoize decorator for methods taking no arguments
+    """
+    @functools.wraps(method)
+    def _memoize(instance):
+        key = method.__name__ + '__memoize'
+        if not hasattr(instance, key):
+            res = method(instance)
+            setattr(instance, key, res)
+        else:
+            res = getattr(instance, key)
+        return res
+    return _memoize
+
+
 class UserInfo(models.Model):
     """Extra DB information to associate with a Django auth user
     """
@@ -68,7 +83,7 @@ class Article(models.Model):
         A one-line title to describe ride.""")
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.""")
-    published = models.DateTimeField(help_text="""
+    published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
     content = models.TextField(help_text="""
         The contents of the article.""")
@@ -103,13 +118,42 @@ class Article(models.Model):
                                  .count())
             art.save()
 
+    def comments_as_user(self, user):
+        """Return comments with respect to a user's votes
+
+        This fetches all comments for this article as well as all
+        votes cast by user on this article.  It then adds the
+        pseudo-fields ``upvoted`` and ``downvoted`` to each comment to
+        let us know how the user already voted.
+        """
+        comments = (Comment.objects
+                    .filter(article=self, is_deleted=False)
+                    .order_by('-karma', '-published'))[:]
+        if user.is_authenticated():
+            for c in comments:
+                c.upvoted = False
+                c.downvoted = False
+            comhash = dict([(c.id, c) for c in comments])
+            blah = (CommentVote.objects
+                    .filter(user=user, comment__article=self))
+            for vote in blah:
+                comid = vote.comment_id
+                if comid in comhash:
+                    if vote.vote == 1:
+                        comhash[comid].upvoted = True
+                    elif vote.vote == -1:
+                        comhash[comid].downvoted = True
+        return comments
+
 
 class Comment(models.Model):
     """Users can leave comments on articles reddit style
     """
     article = models.ForeignKey(Article, editable=False, help_text="""
         The article to which this comment belongs.""")
-    published = models.DateTimeField(help_text="""
+    user = models.ForeignKey(User, editable=False, help_text="""
+        Who posted this comment?""")
+    published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
     content = models.TextField(blank=True, help_text="""
         The contents of the message.""")
@@ -129,18 +173,21 @@ class Comment(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return "%s commented on %s" % (self.title, self.author.username)
+        return "%s's comment on %s" % (self.user.username, self.article.slug)
 
     def delete(self):
         self.is_deleted = True
         self.save()
 
     def get_absolute_url(self):
-        return "%s#comment%d" % (self.article.get_absolute_url(), self.id)
+        return "%s#comment-%d" % (self.article.get_absolute_url(), self.id)
 
     def upvote(self, user):
         assert user.is_authenticated()
-        vote, c = CommentVote.objects.get_or_create(comment=self, user=user)
+        try:
+            vote = CommentVote.objects.get(comment=self, user=user)
+        except CommentVote.DoesNotExist:
+            vote = CommentVote(comment=self, user=user)
         if vote.vote == 1:
             return vote
         elif vote.vote == -1:
@@ -154,7 +201,10 @@ class Comment(models.Model):
 
     def downvote(self, user):
         assert user.is_authenticated()
-        vote, c = CommentVote.objects.get_or_create(comment=self, user=user)
+        try:
+            vote = CommentVote.objects.get(comment=self, user=user)
+        except CommentVote.DoesNotExist:
+            vote = CommentVote(comment=self, user=user)
         if vote.vote == 1:
             self.ups -= 1
         elif vote.vote == -1:
@@ -173,6 +223,32 @@ class Comment(models.Model):
             ct.downs = CommentVote.objects.filter(comment=ct, vote=-1).count()
             ct.karma = ct.ups - ct.downs
             ct.save()
+
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'user': self.user.username,
+               'published': self.published,
+               'ups': self.ups,
+               'downs': self.downs,
+               'karma': self.karma}
+        res.update(moar)
+        return res
+
+    def render(self, user):
+        from django.template.loader import render_to_string
+        self.upvoted = False
+        self.downvoted = False
+        try:
+            vote = CommentVote.objects.get(comment=self, user=user)
+        except CommentVote.DoesNotExist:
+            vote = None
+        if vote:
+            if vote.vote == 1:
+                self.upvoted = True
+            elif vote.vote == -1:
+                self.downvoted = True
+        return render_to_string('occupywallst/comment.html',
+                                {'comment': self})
 
 
 class CommentVote(models.Model):
@@ -195,7 +271,7 @@ class CommentVote(models.Model):
         unique_together = ("comment", "user")
 
     def __unicode__(self):
-        return "%+d for %s by %s" % (self.vote, self.comment, self.user)
+        return "%s voted %+d: %s" % (self.user, self.vote, self.comment)
 
     @classmethod
     def fetch(cls, comment, user):
@@ -256,6 +332,8 @@ class Ride(models.Model):
 
     user = models.ForeignKey(User, editable=False, help_text="""
         User who is driving to event.""")
+    published = models.DateTimeField(auto_now_add=True, help_text="""
+        When was ride posted on the site?""")
     ridetype = models.CharField(max_length=32, choices=RIDETYPE_CHOICES,
                                 help_text="""
         What type of vehicle is being offered?""")
