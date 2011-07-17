@@ -176,6 +176,7 @@ class Comment(models.Model):
         return "%s's comment on %s" % (self.user.username, self.article.slug)
 
     def delete(self):
+        self.content = ""
         self.is_deleted = True
         self.save()
 
