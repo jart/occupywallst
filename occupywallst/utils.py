@@ -19,7 +19,9 @@ from django.http import HttpResponse
 
 
 class APIException(Exception):
-    def __init__(self, message, results=None):
+    """Causes API wrapper to return an error result.
+    """
+    def __init__(self, message, results=[]):
         self.message = message
         self.results = results
 
@@ -32,6 +34,13 @@ class APIException(Exception):
 
 def api_view(function):
     """Decorator that turns a function into a Django JSON API view
+
+    Your function must return a list of results which are expressed as
+    normal Python data structures.  If something bad happens you
+    should raise :py:class:`APIException`.
+
+    This function also catches general exceptions to ensure the client
+    always receives data in JSON format.
     """
     @wraps(function)
     def _api_view(request):
@@ -40,16 +49,18 @@ def api_view(function):
         try:
             res = {'status': 'OK',
                    'message': 'success',
-                   'results': function(**args)}
+                   'results': list(function(**args))}
         except APIException, exc:
             res = {'status': 'ERROR',
                    'message': str(exc),
-                   'results': getattr(exc, 'results', None)}
+                   'results': list(getattr(exc, 'results', None))}
         except Exception, exc:
             logging.exception('api request failed')
             res = {'status': 'ERROR',
                    'message': str(exc),
-                   'results': getattr(exc, 'results', None)}
+                   'results': list(getattr(exc, 'results', None))}
+        if not res['results']:
+            res['status'] = 'ZERO_RESULTS'
         return _as_json(res)
     return _api_view
 
