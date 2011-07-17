@@ -13,6 +13,8 @@
 Installation
 ============
 
+This project has been tested on Ubuntu 10.04 LTS and Ubuntu 10.10.
+
 Run these commands in the occupywallst folder::
 
     sudo ./install_depends.sh
