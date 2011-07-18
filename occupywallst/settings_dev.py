@@ -11,7 +11,11 @@ CACHES = {
     }
 }
 
-LOGGING['handlers']['console']['formatter'] = 'verbose'
+MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
+
 LOGGING['loggers']['django']['level'] = 'DEBUG'
 LOGGING['loggers']['django.request']['level'] = 'DEBUG'
 LOGGING['loggers']['occupywallst']['level'] = 'DEBUG'
+LOGGING['handlers']['console']['formatter'] = 'verbose'
+LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
+                                      'class': 'django.utils.log.NullHandler'}

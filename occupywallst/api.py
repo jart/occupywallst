@@ -14,6 +14,7 @@ r"""
 
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.gis.geos import Polygon
 
 from occupywallst import models as db
@@ -65,10 +66,11 @@ def comment_new(user, article_slug, content, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException('article not found')
-    lastcom = user.comment_set.order_by('-published')[:1]
-    if lastcom:
-        if (datetime.now() - lastcom[0].published).seconds < 60:
-            raise APIException("you're doing that too fast")
+    if not settings.DEBUG:
+        lastcom = user.comment_set.order_by('-published')[:1]
+        if lastcom:
+            if (datetime.now() - lastcom[0].published).seconds < 60:
+                raise APIException("you're doing that too fast")
     com = db.Comment.objects.create(article=article,
                                     user=user,
                                     content=content)
@@ -110,12 +112,13 @@ def comment_remove(user, commentid, action, **kwargs):
         raise APIException("comment not found")
     if action == 'remove':
         com.is_removed = True
+        com.article.comment_count -= 1
     elif action == 'unremove':
         com.is_removed = False
+        com.article.comment_count += 1
     else:
         raise APIException("invalid action")
     com.save()
-    com.article.comment_count -= 1
     com.article.save()
     yield None
 

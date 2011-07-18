@@ -256,7 +256,8 @@ class Comment(models.Model):
             elif vote.vote == -1:
                 self.downvoted = True
         return render_to_string('occupywallst/comment.html',
-                                {'comment': self})
+                                {'comment': self,
+                                 'user': user})
 
 
 class CommentVote(models.Model):

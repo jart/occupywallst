@@ -54,14 +54,6 @@ def api_view(function):
         args['user'] = request.user
         try:
             data = list(function(**args))
-            if data:
-                res = {'status': 'OK',
-                       'message': 'success',
-                       'results': data}
-            else:
-                res = {'status': 'ZERO_RESULTS',
-                       'message': 'no data returned',
-                       'results': data}
         except APIException, exc:
             res = {'status': 'ERROR',
                    'message': str(exc),
@@ -70,10 +62,18 @@ def api_view(function):
         except Exception, exc:
             logger.exception('api request failed')
             res = {'status': 'ERROR',
-                   'message': str(exc),
-                   'results': list(getattr(exc, 'results', None))}
+                   'message': 'system malfunction',
+                   'results': []}
             transaction.rollback()
         else:
+            if data:
+                res = {'status': 'OK',
+                       'message': 'success',
+                       'results': data}
+            else:
+                res = {'status': 'ZERO_RESULTS',
+                       'message': 'no data returned',
+                       'results': data}
             transaction.commit()
         return _as_json(res)
     return _api_view
