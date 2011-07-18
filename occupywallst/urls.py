@@ -18,7 +18,7 @@ adminsite = admin.AdminSite(name='occupyadmin')
 urlpatterns = patterns('',
     url(r'^$', 'occupywallst.views.index'),
     url(r'^rss/news/$', feeds.RSSNewsFeed()),
-    url(r'^rss/comments/$', feeds.RSSCommentsFeed()),
+    url(r'^rss/comments/$', feeds.RSSCommentFeed()),
     url(r'^article/(?P<slug>[-_\d\w]+)/', 'occupywallst.views.article'),
     url(r'^attendees/$', 'occupywallst.views.attendees'),
     url(r'^rides/$', 'occupywallst.views.rides'),
