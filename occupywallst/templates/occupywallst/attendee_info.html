@@ -1,12 +1,24 @@
-<div class="attendee-info" id="{{ user.username }}">
+<div class="bubble attendee-info" id="{{ user.username }}">
   <p class="links">
     <a href="{{ user.get_absolute_url }}">
       <strong>{{ user.username }}</strong></a>
     {% if user.userinfo.city and user.userinfo.region %}
-      ({{ user.userinfo.city }}, {{ user.userinfo.region }})
+      | {{ user.userinfo.city }}, {{ user.userinfo.region }}
+    {% endif %}
+    {% if user.userinfo.need_ride %}
+      | Needs Ride
+    {% endif %}
+    {% if user.userinfo.attendance == "yes" %}
+      | <span class="attendance yes">Attending</span>
+    {% endif %}
+    {% if user.userinfo.attendance == "no" %}
+      | <span class="attendance no">Not Attending</span>
+    {% endif %}
+    {% if user.userinfo.attendance == "maybe" %}
+      | <span class="attendance maybe">Maybe Attending</span>
     {% endif %}
   </p>
-  <div class="info">
+  <div class="profile">
     {{ user.userinfo.info|linebreaks }}
   </div>
 </div>

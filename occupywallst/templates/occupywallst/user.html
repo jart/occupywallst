@@ -1,12 +1,58 @@
 {% extends 'occupywallst/base.html' %}
 
+{% block scripts %}
+  {{ block.super }}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  var lat = {{ user.userinfo.position_lat }};
+  var lng = {{ user.userinfo.position_lng }};
+  var latlng = new google.maps.LatLng(lat, lng);
+  var map = new google.maps.Map($("#map").get(0), {
+    zoom: 10,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    streetViewControl: false,
+    panControl: false,
+    zoomControl: true,
+    mapTypeControl: false,
+    scaleControl: false
+  });
+  var mark = new google.maps.Marker({map: map, position: latlng});
+{% endblock js_init %}
+
 {% block content %}
-  <section id="user-page">
-    <h3>{{ user.username }}</h3>
-    {% if user.userinfo.info %}
-      {{ user.userinfo.info|linebreaks }}
-    {% else %}
-      <p>No profile information filled out.</p>
+  <table><tbody><tr><td id="left">
+    <section id="user-page">
+      <h1>{{ user.username }}</h1>
+      {% if user.userinfo.info %}
+        {{ user.userinfo.info|linebreaks }}
+      {% else %}
+        <p style="color:#333">No Profile Information</p>
+      {% endif %}
+    </section>
+  </td><td id="right">
+    <h2 style="margin-top:0">Information</h2>
+    <p>
+      {{ user.username }} is from
+      <strong>{{ user.userinfo.city }}, {{ user.userinfo.region }}</strong>
+       and
+    {% if user.userinfo.attendance == "yes" %}
+      <span class="attendance yes">will attend</span>
     {% endif %}
-  </section>
+    {% if user.userinfo.attendance == "no" %}
+      <span class="attendance no">can't make it</span> to
+    {% endif %}
+    {% if user.userinfo.attendance == "maybe" %}
+      <span class="attendance maybe">might be able to attend</span>
+    {% endif %}
+    the occupation.
+    {% if user.userinfo.need_ride %}
+      They also <strong>need a ride</strong>!
+    {% endif %}
+    <div id="map" style="width: 250px; height: 200px;"></div>
+  </td></tr></tbody></table>
 {% endblock content %}
