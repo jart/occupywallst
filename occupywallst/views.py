@@ -109,7 +109,11 @@ def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            form.save()
+            # this is so stupid!
+            user = auth.authenticate(username=form.cleaned_data['username'],
+                                     password=form.cleaned_data['password1'])
+            assert user
             auth.login(request, user)
             return HttpResponseRedirect(user.get_absolute_url())
     else:
