@@ -81,6 +81,10 @@ class UserInfo(models.Model):
     def __unicode__(self):
         return unicode(self.user)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('occupywallst.views.user_page', [self.user.username])
+
     position_lat = property(lambda s: s.position.y)
     position_lng = property(lambda s: s.position.x)
     position_latlng = property(lambda s: (s.position.y, s.position.x),
@@ -95,7 +99,8 @@ class Article(models.Model):
     title = models.CharField(max_length=255, help_text="""
         A one-line title to describe ride.""")
     slug = models.SlugField(unique=True, help_text="""
-        A label for this article to appear in the url.""")
+        A label for this article to appear in the url.  DO NOT change
+        this once the article has been published.""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
     content = models.TextField(help_text="""
@@ -103,8 +108,10 @@ class Article(models.Model):
     comment_count = models.IntegerField(default=0, editable=False,
                                         help_text="""
         Comment counter to optimize listing page.""")
-    is_visible = models.BooleanField(default=True, help_text="""
-        Should it show up on the main page listing?""")
+    is_visible = models.BooleanField(default=False, help_text="""
+        Should it show up on the main page listing and rss feeds?
+        Set this to true once you're done editing the article and
+        want it published.""")
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate should no longer be listed on site.""")

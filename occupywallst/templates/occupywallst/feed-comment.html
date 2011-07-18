@@ -1,0 +1,6 @@
+{# this generates the html for a comment an rss feed #}
+<div class="comment-feed">
+  <p>In reply to <a href="{{ obj.article.get_absolute_url }}">
+    {{ obj.article.title }}</a>:</p>
+  {{ obj.content|linebreaks }}
+</div>
