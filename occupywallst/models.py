@@ -125,6 +125,10 @@ class Article(models.Model):
         votes cast by user on this article.  It then adds the
         pseudo-fields ``upvoted`` and ``downvoted`` to each comment to
         let us know how the user already voted.
+
+        This also temporarily removes the ``is_removed`` flag if user
+        is the person who posted the comment.  We don't want trolls to
+        know if their comments are being removed.
         """
         comments = (Comment.objects
                     .filter(article=self, is_deleted=False)
@@ -143,6 +147,9 @@ class Article(models.Model):
                         comhash[comid].upvoted = True
                     elif vote.vote == -1:
                         comhash[comid].downvoted = True
+        for com in comments:
+            if com.is_removed and com.user == user:
+                com.is_removed = False
         return comments
 
 

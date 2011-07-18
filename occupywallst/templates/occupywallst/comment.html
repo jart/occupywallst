@@ -10,10 +10,16 @@
     <span class="published">{{ comment.published|timesince }}</span> ago
     (<span class="ups">{{ comment.ups }}</span>|<span class="downs">{{ comment.downs }}</span>)
   </div>
-  <div class="content">
+  <div class="content {% if comment.is_removed %}removed{% endif %}">
     {{ comment.content|linebreaks }}
   </div>
   <div class="links">
+    {% if comment.user == user %}
+      <a class="delete" href="#">delete</a>
+    {% endif %}
+    {% if user.is_staff %}
+      <a class="remove" href="#">{% if comment.is_removed %}un{% endif %}remove</a>
+    {% endif %}
     <a href="{{ comment.get_absolute_url }}">permalink</a>
   </div>
 </div>

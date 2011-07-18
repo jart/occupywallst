@@ -79,9 +79,11 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
 .comment .info { color: #666; }
 .comment .links { }
+.comment .links a { margin-right: 0.5em; font-family: sans-serif; }
 .comment .content { }
 .comment .arrows a { color: #aaa; font-weight: bold; }
 .comment .arrows a.upvoted { color: red; }
 .comment .arrows a.downvoted { color: blue; }
+.comment .removed { background: #fcc; }
 #comment-post span { color: red; }
 #comment-post img { display: none; }

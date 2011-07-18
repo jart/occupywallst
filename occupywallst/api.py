@@ -87,14 +87,37 @@ def comment_edit(user, commentid, content, **kwargs):
     if len(content) < 5:
         raise APIException("comment too short")
     try:
-        com = db.Comment.objects.get(id=commentid, is_removed=False,
-                                     is_deleted=False)
+        com = db.Comment.objects.get(id=commentid, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException('comment not found')
+        raise APIException("comment not found")
     if com.user != user:
         raise APIException("you didn't post that comment")
     com.content = content
+    com.save()
     yield com.as_dict()
+
+
+def comment_remove(user, commentid, action, **kwargs):
+    """Allows moderator to remove a comment
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    if not user.is_staff:
+        raise APIException("insufficient vespene gas")
+    try:
+        com = db.Comment.objects.get(id=commentid, is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException("comment not found")
+    if action == 'remove':
+        com.is_removed = True
+    elif action == 'unremove':
+        com.is_removed = False
+    else:
+        raise APIException("invalid action")
+    com.save()
+    com.article.comment_count -= 1
+    com.article.save()
+    yield None
 
 
 def comment_delete(user, commentid, **kwargs):
@@ -104,12 +127,10 @@ def comment_delete(user, commentid, **kwargs):
     """
     if not user.is_authenticated():
         raise APIException("you're not logged in")
-    content = content.strip()
     try:
-        com = db.Comment.objects.get(id=commentid, is_removed=False,
-                                     is_deleted=False)
+        com = db.Comment.objects.get(id=commentid, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException('comment not found')
+        raise APIException("comment not found")
     if com.user != user:
         raise APIException("you didn't post that comment")
     com.article.comment_count -= 1
@@ -118,29 +139,19 @@ def comment_delete(user, commentid, **kwargs):
     yield None
 
 
-def comment_up(user, commentid, **kwargs):
+def comment_vote(user, commentid, vote, **kwargs):
     """Increases comment karma by one
     """
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     try:
-        com = db.Comment.objects.get(id=commentid, is_removed=False,
-                                     is_deleted=False)
+        com = db.Comment.objects.get(id=commentid, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException('comment not found')
-    com.upvote(user)
-    yield com.as_dict()
-
-
-def comment_down(user, commentid, **kwargs):
-    """Increases comment karma by one
-    """
-    if not user.is_authenticated():
-        raise APIException("you're not logged in")
-    try:
-        com = db.Comment.objects.get(id=commentid, is_removed=False,
-                                     is_deleted=False)
-    except db.Comment.DoesNotExist:
-        raise APIException('comment not found')
-    com.downvote(user)
-    yield com.as_dict()
+        raise APIException("comment not found")
+    if vote == 1:
+        com.upvote(user)
+    elif vote == -1:
+        com.downvote(user)
+    else:
+        raise APIException("invalid vote")
+    yield None

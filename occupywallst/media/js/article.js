@@ -11,6 +11,7 @@ $.fn.numberAdd = function (delta) {
     "use strict";
 
     function init() {
+
         $("#comment-post button").click(function() {
             $("#comment-post img").show();
             $("#comment-post span").text("");
@@ -33,14 +34,17 @@ $.fn.numberAdd = function (delta) {
             });
             return false;
         });
+
         $(".comment").each(function(i) {
             var comment = $(this);
             var commentid = comment.attr("id").split("-")[1];
+
             $(".up", comment).click(function() {
                 if ($(".up", comment).hasClass("upvoted"))
                     return false;
-                $.getJSON("/api/comment/up/", {
-                    "commentid": commentid
+                $.getJSON("/api/comment/vote/", {
+                    "commentid": commentid,
+                    "vote": 1
                 }, function(data) {
                 });
                 if ($(".down", comment).hasClass("downvoted")) {
@@ -55,11 +59,13 @@ $.fn.numberAdd = function (delta) {
                 $(".down", comment).removeClass("downvoted");
                 return false;
             });
+
             $(".down", comment).click(function() {
                 if ($(".up", comment).hasClass("downvoted"))
                     return false;
-                $.getJSON("/api/comment/down/", {
-                    "commentid": commentid
+                $.getJSON("/api/comment/vote/", {
+                    "commentid": commentid,
+                    "vote": -1
                 }, function(data) {
                 });
                 if ($(".up", comment).hasClass("upvoted")) {
@@ -74,11 +80,48 @@ $.fn.numberAdd = function (delta) {
                 $(".down", comment).addClass("downvoted");
                 return false;
             });
+
+            $(".delete", comment).click(function() {
+                if (!confirm("Sure you want to delete this comment?"))
+                    return false;
+                $.getJSON("/api/comment/delete/", {
+                    "commentid": commentid
+                }, function(data) {
+                    if (data.status == "OK") {
+                        comment.remove();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+                return false;
+            });
+
+            $(".remove", comment).click(function() {
+                var action = $(".remove", comment).text();
+                $.getJSON("/api/comment/remove/", {
+                    "commentid": commentid,
+                    "action": action
+                }, function(data) {
+                    if (data.status == "OK") {
+                        if (action == "remove") {
+                            $(".content", comment).addClass("removed");
+                            $(".remove", comment).text("unremove");
+                        } else {
+                            $(".content", comment).removeClass("removed");
+                            $(".remove", comment).text("remove");
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                });
+                return false;
+            });
+
         });
+
     }
 
-    /* export stuff */
-
+    // export stuff
     article_init = init;
 
 })();

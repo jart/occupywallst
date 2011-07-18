@@ -48,12 +48,14 @@
           <img src="/media/img/ajax-loader.gif" width="16" height="16" />
           <span></span>
         {% else %}
-          <p>Must be <a href="/login/">logged in to comment.</a></p>
+          <p>Must be <a href="/login/">logged in</a> to comment.</p>
         {% endif %}
       </div>
       <div id="comment-list">
         {% for comment in comments %}
-          {% include "occupywallst/comment.html" %}
+          {% if not comment.is_removed or user.is_staff %}
+            {% include "occupywallst/comment.html" %}
+          {% endif %}
         {% endfor %}
       </div>
     </section>
