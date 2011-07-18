@@ -38,6 +38,12 @@ def memoize(method):
 class UserInfo(models.Model):
     """Extra DB information to associate with a Django auth user
     """
+    ATTENDANCE_CHOICES = (
+        ('yes', 'Yes'),
+        ('no', 'No'),
+        ('maybe', 'Maybe'),
+    )
+
     user = models.OneToOneField(User, editable=False, help_text="""
         Reference to Django auth user.""")
     info = models.TextField(blank=True, help_text="""
@@ -45,6 +51,13 @@ class UserInfo(models.Model):
     need_ride = models.BooleanField(default=True, help_text="""
         Do they currently need a ride?  If so, display their position
         on the need a ride map.""")
+    attendance = models.CharField(max_length=32, choices=ATTENDANCE_CHOICES,
+                                  help_text="""
+        Whether or not user is attending protest.""")
+    notify_message = models.BooleanField(default=True, help_text="""
+        Does user want an email when they get private messages?""")
+    notify_news = models.BooleanField(default=True, help_text="""
+        Does user want an email new articles are published?""")
 
     position = models.PointField(null=True, blank=True, help_text="""
         Aproximate coordinates of where they live to display on the

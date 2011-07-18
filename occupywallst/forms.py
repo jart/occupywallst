@@ -14,8 +14,21 @@ from occupywallst import models as db
 
 
 class SignupForm(UserCreationForm):
+    attendance = forms.ChoiceField(choices=db.UserInfo.ATTENDANCE_CHOICES,
+                                   required=True, help_text="""
+        Are you coming to the protest?""")
     email = forms.EmailField(required=False, help_text="""
         Optional.  This won't be shown on the website.""")
+    need_ride = forms.BooleanField(required=False, help_text="""
+        Optional.  Do you need a lift?  If so check this box to add yourself
+        to the map of people looking for a ride.""")
+    notify_message = forms.BooleanField(required=False, initial=True,
+                                        help_text="""
+        Do you want to receive an email notification when you receive a
+        private message?""")
+    notify_news = forms.BooleanField(required=False, initial=True,
+                                     help_text="""
+        Can we email you notifications about news relating to the protest?""")
     info = forms.CharField(required=False, widget=forms.Textarea,
                            help_text="""
         Optional.  Say whatever you want about yourself here for others
@@ -29,9 +42,6 @@ class SignupForm(UserCreationForm):
     city = forms.CharField(required=False, widget=forms.HiddenInput)
     address = forms.CharField(required=False, widget=forms.HiddenInput)
     zipcode = forms.CharField(required=False, widget=forms.HiddenInput)
-    need_ride = forms.BooleanField(required=False, help_text="""
-        Optional.  Check this to add yourself to the map of people looking
-        for a ride..""")
 
     def __init__(self, *args, **kwargs):
         user = kwargs.get('instance')
@@ -39,6 +49,9 @@ class SignupForm(UserCreationForm):
             initial = {'email': user.email,
                        'info': user.userinfo.info,
                        'need_ride': user.userinfo.need_ride,
+                       'attendance': user.userinfo.attendance,
+                       'notify_news': user.userinfo.notify_news,
+                       'notify_message': user.userinfo.notify_message,
                        'position_lat': user.userinfo.position_lat,
                        'position_lng': user.userinfo.position_lng,
                        'country': user.country,
@@ -67,6 +80,9 @@ class SignupForm(UserCreationForm):
         userinfo = db.UserInfo()
         userinfo.user = user
         userinfo.info = self.cleaned_data.get('info')
+        userinfo.attendance = self.cleaned_data.get('attendance')
+        userinfo.notify_message = self.cleaned_data.get('notify_message')
+        userinfo.notify_news = self.cleaned_data.get('notify_news')
         position_lat = self.cleaned_data.get('position_lat')
         position_lng = self.cleaned_data.get('position_lng')
         if position_lat is not None and position_lng is not None:
@@ -79,6 +95,7 @@ class SignupForm(UserCreationForm):
         userinfo.city = self.cleaned_data.get('city')
         userinfo.address = self.cleaned_data.get('address')
         userinfo.zipcode = self.cleaned_data.get('zipcode')
+        userinfo.need_ride = self.cleaned_data.get('need_ride')
         userinfo.save()
         user.email = self.cleaned_data.get('email')
         user.userinfo = userinfo
