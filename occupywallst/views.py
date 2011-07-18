@@ -29,7 +29,7 @@ def index(request):
 def article(request, slug):
     try:
         article = db.Article.objects.get(slug=slug)
-    except db.Event.DoesNotExist:
+    except db.Article.DoesNotExist:
         raise Http404()
     recent = (db.Article.objects
               .filter(is_visible=True)
