@@ -41,9 +41,6 @@ class RSSNewsFeed(Feed):
     def item_author_name(self, article):
         return article.author.username
 
-    def item_author_email(self, article):
-        return article.author.email
-
     def item_author_link(self, article):
         return article.author.userinfo.get_absolute_url()
 
