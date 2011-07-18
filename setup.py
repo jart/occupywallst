@@ -22,7 +22,7 @@ setup(
     author               = 'Justine Tunney',
     author_email         = 'jtunney@lobstertech.com',
     license              = 'GNU AGPL v3 or later',
-    install_requires     = ['Django>=1.3'],
+    install_requires     = ['Django>=1.3', 'pylibmc'],
     packages             = find_packages(),
     include_package_data = True,
     zip_safe             = False,

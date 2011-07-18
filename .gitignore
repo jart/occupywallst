@@ -1,4 +1,6 @@
 occupywallst.db
+django_cache
+occupywallst/settings_local.py
 
 core
 *.pyc

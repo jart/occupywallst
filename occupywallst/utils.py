@@ -15,7 +15,11 @@ import StringIO
 from functools import wraps
 from decimal import Decimal
 
+from django.db import transaction
 from django.http import HttpResponse
+
+
+logger = logging.getLogger(__name__)
 
 
 class APIException(Exception):
@@ -43,6 +47,7 @@ def api_view(function):
     always receives data in JSON format.
     """
     @wraps(function)
+    @transaction.commit_manually
     def _api_view(request):
         args = dict(request.REQUEST)
         args['request'] = request
@@ -61,11 +66,15 @@ def api_view(function):
             res = {'status': 'ERROR',
                    'message': str(exc),
                    'results': list(getattr(exc, 'results', None))}
+            transaction.rollback()
         except Exception, exc:
-            logging.exception('api request failed')
+            logger.exception('api request failed')
             res = {'status': 'ERROR',
                    'message': str(exc),
                    'results': list(getattr(exc, 'results', None))}
+            transaction.rollback()
+        else:
+            transaction.commit()
         return _as_json(res)
     return _api_view
 

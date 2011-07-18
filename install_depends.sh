@@ -26,7 +26,8 @@ echo
 
 doit apt-get install --assume-yes \
     build-essential \
-    python python-dev python-setuptools
+    python python-dev python-setuptools \
+    libmemcached-dev
 
 echo
 echo '----------------------------------------------------------------------'

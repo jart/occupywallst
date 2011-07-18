@@ -32,6 +32,66 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'LOCATION': [
+            '127.0.0.1:11211',
+        ]
+    }
+}
+
+BOLD = '\x1b[1m'
+GREEN = '\x1b[32m'
+RESET = '\x1b[0m'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': (GREEN + '%(asctime)s %(levelname)s %(name)s '
+                       '%(filename)s:%(lineno)d ' + RESET + '%(message)s'),
+        },
+        'simple': {
+            'format': GREEN + '%(levelname)s ' + RESET + '%(message)s',
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'level': 'WARNING',
+            'handlers': ['console', 'mail_admins'],
+            'propagate': False,
+        },
+        'occupywallst': {
+            'level': 'WARNING',
+            'handlers': ['console', 'mail_admins'],
+            'propagate': False,
+        },
+    },
+}
+
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = False
@@ -45,6 +105,7 @@ LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 # change me in production
 SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
@@ -66,6 +127,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -77,8 +139,12 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.comments',
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.gis',
 )
+
+try:
+    from occupywallst.settings_local import *
+except ImportError:
+    pass
