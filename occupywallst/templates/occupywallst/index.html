@@ -32,8 +32,8 @@
   <div id="left">
     {% for article in articles %}
       <article id="article-{{ article.id }}" class="news-item">
-        <h3><a title="View Full Article" href="{{ article.get_absolute_url }}">
-            {{ article.title }}</a></h3>
+        <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
+            {{ article.title }}</a></h1>
         <p class="news-info">
           Published {{ article.published|date:"Y-m-d h:i:s" }}
           by {{ article.author.username }}

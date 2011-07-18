@@ -30,8 +30,8 @@
   </div>
   <div id="left">
     <article id="{{ article.slug }}" class="news-item">
-      <h3><a title="View Full Article" href="{{ article.get_absolute_url }}">
-          {{ article.title }}</a></h3>
+      <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
+          {{ article.title }}</a></h1>
       <p class="news-info">
         Published {{ article.published|date:"Y-m-d h:i:s" }}
         by {{ article.author.username }}
@@ -39,8 +39,8 @@
       {{ article.content|safe }}
     </article>
     <section id="comments">
-      <h4><span id="comment-count">{{ article.comment_count }}</span>
-          Comments</h4>
+      <h2><span id="comment-count">{{ article.comment_count }}</span>
+          Comments</h2>
       <div id="comment-post">
         {% if user.is_authenticated %}
           <textarea rows="5" cols="50"></textarea><br />
