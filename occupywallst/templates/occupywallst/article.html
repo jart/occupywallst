@@ -11,29 +11,12 @@
 {% endblock js_init %}
 
 {% block content %}
-  <div id="right">
-    <section id="other-articles">
-      <h4>Recent Articles</h4>
-      {% for article in recent %}
-        <div class="item">
-          <div class="date">
-            {{ article.published|date:"Y-m-d" }}
-            by {{ article.author.username }}
-          </div>
-          <div class="title">
-            <a title="View Article" href="{{ article.get_absolute_url }}">
-              {{ article.title }}</a>
-          </div>
-        </div>
-      {% endfor %}
-    </section>
-  </div>
-  <div id="left">
-    <article id="{{ article.slug }}" class="news-item">
+  <table><tbody><tr><td id="left">
+    <article id="{{ article.slug }}">
       <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
           {{ article.title }}</a></h1>
-      <p class="news-info">
-        Published {{ article.published|date:"Y-m-d h:i:s" }}
+      <p class="info">
+        Published {{ article.published|date:"Y-m-d h:i:s T" }}
         by {{ article.author.username }}
       </p>
       {{ article.content|safe }}
@@ -59,5 +42,21 @@
         {% endfor %}
       </div>
     </section>
-  </div>
+  </td><td id="right">
+    <section id="recent-articles">
+      <h4>Recent Articles</h4>
+      {% for article in recent %}
+        <div class="item">
+          <div class="info">
+            {{ article.published|date:"Y-m-d" }}
+            by {{ article.author.username }}
+          </div>
+          <div class="title">
+            <a title="View Article" href="{{ article.get_absolute_url }}">
+              {{ article.title }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+  </td></tr></tbody></table>
 {% endblock content %}

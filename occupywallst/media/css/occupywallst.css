@@ -1,7 +1,7 @@
 
 body { padding: 0 50px; min-width: 850px; }
 body p { text-align: justify; }
-header, nav, h1, h2, h3, h4 { margin-top: 0; font-family: sans-serif; }
+header, nav, h1, h2, h3, h4 { font-family: sans-serif; }
 a { text-decoration: none; }
 img { border: none; }
 h1 { font-size: 1.7em; margin: 0 0; }
@@ -48,16 +48,17 @@ header h2 { margin: 0; font-size: 1.5em; }
     background: #900;
 }
 
-#right { float: right; width: 250px; font-family: sans-serif;
-         font-size: 0.9em; }
-#left { margin-right: 260px; padding: 0 0.5em; }
+#right { width: 250px; font-family: sans-serif; font-size: 0.9em; 
+         vertical-align: top; }
+#left { margin-right: 1em; padding: 0 0.5em; vertical-align: top; }
 
-.news-item h1 { margin-bottom: 0; font-size: 1.5em; }
-.news-item h1 a { color: black; }
-.news-item p, .news-item blockquote { font-size: 1.1em; line-height: 1.4em; }
-.news-item blockquote { color: #444; }
-.news-item p.news-info { color: #aaa; font-family: sans-serif;
-                         font-size: 0.9em; margin-top: 0; }
+article { clear: both; }
+article h1 { margin-bottom: 0; font-size: 1.5em; }
+article h1 a { color: black; }
+article p, article blockquote { font-size: 1.1em; line-height: 1.4em; }
+article blockquote { color: #444; }
+article p.info { color: #777; font-family: sans-serif; font-size: 0.9em;
+                 margin-top: 0; }
 
 footer { clear: both; }
 footer p { border-top: 1px solid #999; padding-top: 0.5em;
@@ -73,9 +74,9 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 
 #article-page { }
 
-#other-articles h4 { margin-top: 0; }
-#other-articles .item { margin-bottom: 0.5em; }
-#other-articles .date { font-size: x-small; color: #666; }
+#recent-articles h4 { margin-top: 0; }
+#recent-articles .item { margin-bottom: 0.5em; }
+#recent-articles .item .info { font-size: x-small; color: #777; }
 
 .comment { margin: 1em 1em; font-family: sans-serif; font-size: small; }
 .comment p { margin: 0.5em 0; }

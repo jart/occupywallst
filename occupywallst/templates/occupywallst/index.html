@@ -8,7 +8,23 @@
 {% endblock stylesheets %}
 
 {% block content %}
-  <div id="right">
+  <table><tbody><tr><td id="left">
+    {% for article in articles %}
+      <article id="article-{{ article.id }}">
+        <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
+            {{ article.title }}</a></h1>
+        <p class="info">
+          Published {{ article.published|date:"Y-m-d h:i:s T" }}
+          by {{ article.author.username }}
+        </p>
+        {{ article.content|safe }}
+        <p>
+          <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
+            {{ article.comment_count }} Comments</a>
+        </p>
+      </article>
+    {% endfor %}
+  </td><td id="right">
     <section id="mission">
       <a href="http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html">
         <img title="Propaganda" alt="#OCCUPYWALLSTREET Bull Poster"
@@ -28,22 +44,5 @@
         <strong>DEMOCRACY NOT CORPORATOCRACY!</strong>
       </p>
     </section>
-  </div>
-  <div id="left">
-    {% for article in articles %}
-      <article id="article-{{ article.id }}" class="news-item">
-        <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
-            {{ article.title }}</a></h1>
-        <p class="news-info">
-          Published {{ article.published|date:"Y-m-d h:i:s" }}
-          by {{ article.author.username }}
-        </p>
-        {{ article.content|safe }}
-        <p>
-          <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
-            {{ article.comment_count }} Comments</a>
-        </p>
-      </article>
-    {% endfor %}
-  </div>
+  </td></tr></tbody></table>
 {% endblock content %}
