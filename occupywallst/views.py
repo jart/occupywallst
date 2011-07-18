@@ -92,7 +92,7 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth.login(user)
+            auth.login(request, user)
             return HttpResponseRedirect(user.get_absolute_url())
     else:
         form = SignupForm()
