@@ -69,6 +69,7 @@ var attendees_init;
     }
 
     function fetch() {
+        $("#loader").show();
         is_fetching = true;
         $.getJSON("/api/attendees/", {
             "bounds": bounds_to_string(map.getBounds())
@@ -80,9 +81,11 @@ var attendees_init;
                 });
                 refresh();
             }
+            $("#loader").hide();
             is_fetching = false;
         }).error(function(resp) {
             $("html").html(resp.responseText);
+            $("#loader").hide();
             is_fetching = false;
         });
     }
