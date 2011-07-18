@@ -88,7 +88,8 @@ class UserInfo(models.Model):
     position_lat = property(lambda s: s.position.y)
     position_lng = property(lambda s: s.position.x)
     position_latlng = property(lambda s: (s.position.y, s.position.x),
-                               lambda s, v: setattr(s, 'position', Point(*v)))
+                               lambda s, v: setattr(s, 'position',
+                                               Point(*[v[1], v[0]])))
 
 
 class Article(models.Model):

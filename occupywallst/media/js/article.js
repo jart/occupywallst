@@ -11,7 +11,7 @@ $.fn.numberAdd = function (delta) {
     "use strict";
 
     function init() {
-        $("#comment-post button").click(function() {
+        $("#post button").click(function() {
             $("#comment-post img").show();
             $("#comment-post span").text("");
             $.getJSON("/api/comment/new/", {
