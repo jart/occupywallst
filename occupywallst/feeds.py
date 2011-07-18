@@ -29,7 +29,7 @@ class RSSNewsFeed(Feed):
     def items(self):
         return (db.Article.objects
                 .filter(is_deleted=False, is_visible=True,
-                        publishing__lt=datetime.now() - self.delay)
+                        published__lt=datetime.now() - self.delay)
                 .order_by('-published'))[:10]
 
     def item_title(self, article):
