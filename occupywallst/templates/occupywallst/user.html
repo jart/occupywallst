@@ -34,6 +34,20 @@
         <p style="color:#333">No Profile Information</p>
       {% endif %}
     </section>
+
+    <h2>Messages</h2>
+
+    <p id="post">
+      {% if user.is_authenticated %}
+        <textarea rows="5" cols="50"></textarea><br />
+        <button>send message</button>
+        <img src="/media/img/ajax-loader.gif" width="16" height="16" />
+        <span></span>
+      {% else %}
+        <p>Must be <a href="/login/">logged in</a> to send messages.</p>
+      {% endif %}
+    </p>
+
   </td><td id="right">
     <h2 style="margin-top:0">Information</h2>
     <p>

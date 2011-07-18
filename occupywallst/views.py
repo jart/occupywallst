@@ -7,6 +7,8 @@ r"""
 
 """
 
+import logging
+
 from django.contrib import auth
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
@@ -15,6 +17,9 @@ from django.http import Http404, HttpResponseRedirect
 
 from occupywallst.forms import SignupForm
 from occupywallst import models as db
+
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -72,6 +77,16 @@ def user_page(request, username):
         user = db.User.objects.get(username=username)
     except db.User.DoesNotExist:
         raise Http404()
+    try:
+        nearby_users = (db.UserInfo.objects
+                        .distance(user.userinfo.position)
+                        .order_by('distance'))[:10]
+    except ValueError, exc:
+        if 'SQLite does not support' in str(exc):
+            logger.warning(str(exc))
+            nearby_users = []
+        else:
+            raise
     return render_to_response(
         'occupywallst/user.html', {'user': user},
         context_instance=RequestContext(request))

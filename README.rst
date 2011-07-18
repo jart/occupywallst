@@ -23,3 +23,12 @@ Run these commands in the occupywallst folder::
         | spatialite occupywallst.db
     occupywallst-dev syncdb
     occupywallst-dev runserver
+
+To use with PostgreSQL::
+
+    sudo apt-get install \
+        postgresql-8.4-postgis postgresql-contrib python-psycopg2
+    sudo -u postgres -i createuser --superuser $USER
+    createdb occupywallst
+    createlang plpgsql occupywallst
+    psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
