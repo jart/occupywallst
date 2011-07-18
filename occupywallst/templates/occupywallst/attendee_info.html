@@ -1,0 +1,12 @@
+<div class="attendee-info" id="{{ user.username }}">
+  <p class="links">
+    <a href="{{ user.get_absolute_url }}">
+      <strong>{{ user.username }}</strong></a>
+    {% if user.userinfo.city and user.userinfo.region %}
+      ({{ user.userinfo.city }}, {{ user.userinfo.region }})
+    {% endif %}
+  </p>
+  <div class="info">
+    {{ user.userinfo.info|linebreaks }}
+  </div>
+</div>

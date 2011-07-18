@@ -149,28 +149,21 @@ var attendees_init;
             title: pin.attendee.username
         });
         google.maps.event.addListener(marker, "click", function() {
-            $.getJSON("/api/user/", {
+            $.getJSON("/api/attendee/info/", {
                 "username": pin.attendee.username
             }, function(data) {
                 if (pin.flag_remove)
                     return;
-                var details = "No Information Available";
-                console.log(data);
-                if (data.status == "OK" && data.results.length == 1) {
-                    var user = data.results[0];
-                    details  = "<p><b>" + user.username + "</b></p><br />";
-                    if (user.info)
-                        details += "<p>" + user.info + "</p>";
-                    details += "<p><a href=\"/users/" + user.username +
-                        "/\">More Info</a></p>";
+                if (data.status == "OK") {
+                    var res = data.results[0];
+                    if (balloon)
+                        balloon.close();
+                    balloon = new google.maps.InfoWindow({content: res.html});
+                    balloon.open(map, marker);
+                    pin.balloon = balloon;
+                } else {
+                    alert(data.status);
                 }
-                if (balloon)
-                    balloon.close();
-                balloon = new google.maps.InfoWindow({
-                    content: details
-                });
-                balloon.open(map, marker);
-                pin.balloon = balloon;
             }).error(function(resp) {
                 $("html").html(resp.responseText);
             });

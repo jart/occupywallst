@@ -255,23 +255,6 @@ class Comment(models.Model):
         res.update(moar)
         return res
 
-    def render(self, user):
-        from django.template.loader import render_to_string
-        self.upvoted = False
-        self.downvoted = False
-        try:
-            vote = CommentVote.objects.get(comment=self, user=user)
-        except CommentVote.DoesNotExist:
-            vote = None
-        if vote:
-            if vote.vote == 1:
-                self.upvoted = True
-            elif vote.vote == -1:
-                self.downvoted = True
-        return render_to_string('occupywallst/comment.html',
-                                {'comment': self,
-                                 'user': user})
-
 
 class CommentVote(models.Model):
     """Tracks up/downvotes of a comment

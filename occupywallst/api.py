@@ -16,6 +16,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
+from django.template.loader import render_to_string
 
 from occupywallst import models as db
 from occupywallst.utils import APIException
@@ -41,15 +42,35 @@ def attendees(bounds, **kwargs):
                'position': userinfo.position_latlng}
 
 
-def user(username, **kwargs):
+def attendee_info(username, **kwargs):
     """Get information about a user
     """
     user = db.User.objects.get(username=username)
+    html = render_to_string('occupywallst/attendee_info.html',
+                            {'user': user})
     yield {'id': user.id,
            'username': user.username,
            'info': user.userinfo.info,
            'need_ride': user.userinfo.need_ride,
-           'location': user.userinfo.position_latlng}
+           'location': user.userinfo.position_latlng,
+           'html': html}
+
+
+def _render_comment(comment, user):
+    comment.upvoted = False
+    comment.downvoted = False
+    try:
+        vote = CommentVote.objects.get(comment=comment, user=user)
+    except CommentVote.DoesNotExist:
+        vote = None
+    if vote:
+        if vote.vote == 1:
+            comment.upvoted = True
+        elif vote.vote == -1:
+            comment.downvoted = True
+    return render_to_string('occupywallst/comment.html',
+                            {'comment': comment,
+                             'user': user})
 
 
 def comment_new(user, article_slug, content, **kwargs):
@@ -77,7 +98,7 @@ def comment_new(user, article_slug, content, **kwargs):
     com.upvote(user)
     article.comment_count += 1
     article.save()
-    yield com.as_dict({'html': com.render(user)})
+    yield com.as_dict({'html': _render_comment(com, user)})
 
 
 def comment_edit(user, commentid, content, **kwargs):
