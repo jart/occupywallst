@@ -60,6 +60,7 @@ article p, article blockquote { font-size: 1.1em; line-height: 1.4em; }
 article blockquote { color: #333; }
 article p.info { color: #777; font-family: sans-serif; font-size: 0.9em;
                  margin-top: 0; }
+article p.info a { color: #777; }
 
 footer { clear: both; }
 footer p { border-top: 1px solid #999; padding-top: 0.5em;

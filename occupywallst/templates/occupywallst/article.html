@@ -18,7 +18,9 @@
           {{ article.title }}</a></h1>
       <p class="info">
         Published {{ article.published|date:"Y-m-d h:i:s T" }}
-        by {{ article.author.username }}
+        by <a title="View {{ article.author.username }}'s profile"
+              href="{{ article.author.get_absolute_url }}">
+          {{ article.author.username }}</a>
       </p>
       {{ article.content|safe }}
     </article>
