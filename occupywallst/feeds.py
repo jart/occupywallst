@@ -14,6 +14,7 @@ r"""
 import re
 from datetime import datetime, timedelta
 
+from django.utils.html import escape
 from django.contrib.syndication.views import Feed
 
 from occupywallst import models as db
@@ -59,7 +60,8 @@ class RSSCommentFeed(Feed):
                 .order_by('-published'))[:50]
 
     def item_title(self, comment):
-        return " ".join(re.split(r'\s+', comment.content)[:7])
+        safe = unicode(escape(comment.content))
+        return " ".join(re.split(r'\s+', safe)[:7])
 
     def item_pubdate(self, comment):
         return comment.published
