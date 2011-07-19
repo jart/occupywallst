@@ -142,15 +142,41 @@ var attendees_init;
         }
     }
 
+    function init_msgform(form, to_username) {
+        $(".save", form).click(function() {
+            $("img", form).show();
+            $("span", form).text("");
+            $.getJSON("/api/message/send/", {
+                "to_username": to_username,
+                "content": $("textarea", form).val()
+            }, function(data) {
+                $("img", form).hide();
+                if (data.status == "OK") {
+                    var res = data.results[0];
+                    var message = $(res.html);
+                    $("textarea", form).val("");
+                    $("span", form).text("Message Sent!");
+                } else {
+                    $("span", form).text(data.message);
+                }
+            }).error(function(e) {
+                $("img", form).hide();
+                $("span", form).text("oh snap");
+            });
+            return false;
+        });
+    }
+
     function new_marker(pin) {
+        var username = pin.attendee.username;
         var marker = new google.maps.Marker({
             map: map,
             position: pin.attendee.latlng,
-            title: pin.attendee.username
+            title: username
         });
         google.maps.event.addListener(marker, "click", function() {
             $.getJSON("/api/attendee/info/", {
-                "username": pin.attendee.username
+                "username": username
             }, function(data) {
                 if (pin.flag_remove)
                     return;
@@ -158,7 +184,11 @@ var attendees_init;
                     var res = data.results[0];
                     if (balloon)
                         balloon.close();
-                    balloon = new google.maps.InfoWindow({content: res.html});
+                    var content = $(res.html);
+                    init_msgform($(".postform", content), username);
+                    balloon = new google.maps.InfoWindow({
+                        content: content.get(0)
+                    });
                     balloon.open(map, marker);
                     pin.balloon = balloon;
                 } else {

@@ -36,6 +36,60 @@
     }
   },
   {
+    "pk": 3,
+    "model": "auth.user",
+    "fields": {
+      "username": "jart",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-07-18 22:50:00",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$f7bb0$c359a10016551f08879c93d02caa1e37ed1bc0a4",
+      "email": "",
+      "date_joined": "2011-07-18 22:50:00"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "auth.user",
+    "fields": {
+      "username": "notreal",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-07-18 22:53:21",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$0444d$0bc0f97eb99e45a40d434c4862a0dbe247fd7e1a",
+      "email": "",
+      "date_joined": "2011-07-18 22:53:21"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "auth.user",
+    "fields": {
+      "username": "Neb",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-07-18 22:55:31",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$75d32$65c9db5d21d0a1a826cf7d329f6f1a669838bcf1",
+      "email": "bf0189@gmail.com",
+      "date_joined": "2011-07-18 22:55:31"
+    }
+  },
+  {
     "pk": 1,
     "model": "occupywallst.userinfo",
     "fields": {
@@ -68,42 +122,74 @@
     }
   },
   {
+    "pk": 3,
+    "model": "occupywallst.userinfo",
+    "fields": {
+      "info": "i am the soul taker!!\r\n\r\nhahahhahaha",
+      "city": "Philadelphia",
+      "attendance": "yes",
+      "country": "US",
+      "region": "Pennsylvania",
+      "zipcode": "19103",
+      "need_ride": false,
+      "notify_news": true,
+      "user": 3,
+      "address": "24 S 20th St",
+      "position": "POINT (-75.1736899999999935 39.9525000000000006)",
+      "formatted_address": "24 S 20th St, Philadelphia, PA 19103, USA",
+      "notify_message": true
+    }
+  },
+  {
+    "pk": 4,
+    "model": "occupywallst.userinfo",
+    "fields": {
+      "info": "I'm not a real account, I only play one on the internet.",
+      "city": "Queens",
+      "attendance": "yes",
+      "country": "US",
+      "region": "New York",
+      "zipcode": "11354",
+      "need_ride": false,
+      "notify_news": true,
+      "user": 4,
+      "address": "29-26 155th St",
+      "position": "POINT (-73.8086389999999994 40.7707750000000004)",
+      "formatted_address": "29-26 155th St, Flushing, NY 11354, USA",
+      "notify_message": true
+    }
+  },
+  {
+    "pk": 5,
+    "model": "occupywallst.userinfo",
+    "fields": {
+      "info": "Eccentric twenty something year old with too much free time :)",
+      "city": "Palm Harbor",
+      "attendance": "yes",
+      "country": "US",
+      "region": "Florida",
+      "zipcode": "34683",
+      "need_ride": true,
+      "notify_news": true,
+      "user": 5,
+      "address": "1661 Laney Dr",
+      "position": "POINT (-82.7573459999999983 28.0590860000000006)",
+      "formatted_address": "1661 Laney Dr, Palm Harbor, FL 34683, USA",
+      "notify_message": true
+    }
+  },
+  {
     "pk": 1,
     "model": "occupywallst.article",
     "fields": {
+      "is_visible": true,
+      "is_deleted": false,
+      "title": "Who We Are",
       "author": 1,
-      "title": "News Article #1",
-      "slug": "news_article_1",
+      "content": "<p>On July 13,2011, \"Culture Jammers HQ\" at AdBusters issued a call to action:&nbsp;<a title=\"#OCCUPYWALLSTREET\" href=\"http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html\">Occupy&nbsp;Wall Street</a>! The goal stated is to gather 20,000 people to Wall Street, in New York, NY on September 17, 2011, beginning a popular occupation of that space for two months and more. &nbsp;Inspired by the popular assemblies of Egypt, Spain, Oaxaca and worldwide, those gathered will work to find a common voice in one clear, unified demand.</p>\r\n<h2>So why?</h2>\r\n<p>Why this operation? Why this city? What are our aims?</p>\r\n<p>I am an anarchist organizer, so I am not qualified to speak for anyone else. Speaking as an anarchist organizer, this is why I organize:</p>\r\n<p>I organize to organize.</p>\r\n<p>Confusing? Read this:</p>\r\n<blockquote>\"If you give me a fish, you have fed me for a day. If you teach me to fish, then you have fed me until the river is contaminated or the shoreline seized for development. But if you teach me how to organize, then whatever the challenge I can join together with my peers and we will fashion our own solution.\"</blockquote>\r\n<p>The ultimate goal of an organizer is to become superfluous to the group that has been organized. When the group no longer needs the organizer: the group has become empowered; the organizer's work is done. An organizer's goal is to empower our Sisters and Brothers to come together to form their own solutions. &nbsp;Our goal is to see 20,000 people in the streets of NYC on Sept 17. &nbsp;Our hope is that they will be 20,000 future organizers.</p>\r\n<p>This is why we've created OccupyWallSt.org. &nbsp;Technology has made it easier than ever before for the people to stay in close contact and assist one another in acheiving their collective goals. &nbsp;The service we offer our users&ndash;the true organizers&ndash;is nothing more than providing the tools they need to make this occupation happen. &nbsp;We may not be able to teach a person to fish, or do it on their behalf, but we can build a&nbsp;damn good fishing pole. &nbsp;But it isn't enough to simply make these tools freely available, they must also belong to the people. &nbsp;So we've taken the time to release our work as an <a href=\"https://github.com/jart/occupywallst/\">open source project</a>. &nbsp;This way&nbsp;others may use and build upon our work freely without any dependence on our leadership.</p>\r\n<p>The sovereign people of any nation have the power, the right, and the duty, of guiding the destiny of their nation. Most just do not realize this. An organizer brings the process of realization.</p>\r\n<p>Why occupy Wall Street? Because it belongs to us! Because we can!</p>",
+      "comment_count": 0,
       "published": "2011-06-14 16:20:00",
-      "content": "Cras urna justo, dignissim a pretium id, varius quis urna. Suspendisse placerat rutrum diam ut rhoncus. In non velit luctus diam tincidunt cursus sed nec nisi. Quisque ut diam metus, ut rutrum est. Aliquam eros purus, placerat sit amet venenatis quis, feugiat sit amet est. Vestibulum ut hendrerit neque. Donec vel dolor eros, non congue augue. Maecenas a lorem vel justo egestas congue. Nulla nisl mauris, mollis consequat tincidunt ac, auctor non nisi.",
-      "is_visible": true,
-      "is_deleted": false
-    }
-  },
-  {
-    "pk": 2,
-    "model": "occupywallst.article",
-    "fields": {
-      "author": 1,
-      "title": "News Article #2",
-      "slug": "news_article_2",
-      "published": "2011-06-14 16:30:00",
-      "content": "Cras metus elit, fermentum et placerat id, accumsan id orci. Nunc venenatis ullamcorper massa, ut sollicitudin justo volutpat et. Cras sapien purus, fringilla at gravida at, ornare id leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus viverra, mi ac semper rhoncus, enim ligula aliquam lacus, vitae tempus lacus dolor venenatis tortor. Cras sed leo libero, id facilisis lectus. Etiam pulvinar pharetra nisl et commodo. Aliquam luctus eleifend vestibulum. Quisque tortor purus, tempor eget tincidunt et, ultricies ut leo. Morbi lacinia bibendum lorem, at commodo augue hendrerit sed. Nunc sem lorem, sodales at mollis vel, laoreet eget nulla.",
-      "is_visible": true,
-      "is_deleted": false
-    }
-  },
-  {
-    "pk": 3,
-    "model": "occupywallst.article",
-    "fields": {
-      "author": 1,
-      "title": "News Article #3",
-      "slug": "news_article_3",
-      "published": "2011-06-14 16:30:00",
-      "content": "Suspendisse sollicitudin justo id est feugiat congue. Maecenas ultricies lorem pulvinar orci malesuada mattis. Proin molestie semper justo, a rutrum ligula lobortis at. Nullam ac neque risus, vel cursus nibh. Suspendisse tempor nulla nec nisl feugiat imperdiet. Vestibulum consectetur eros in lorem pellentesque sodales. Vestibulum eu tincidunt tellus. Aliquam erat volutpat. Cras sed orci velit. Pellentesque sodales sapien enim, in commodo felis.",
-      "is_visible": true,
-      "is_deleted": false
+      "slug": "who_we_are"
     }
   }
 ]

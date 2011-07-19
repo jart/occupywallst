@@ -1,8 +1,8 @@
 <div id="message-{{ message.id }}">
   <div class="{% cycle off,on %}">
     <p class="info">
-      From {{ message.from_user }}
-      {{ message.published|timesince }}
+      {{ message.from_user }} said
+      {{ message.published|timesince }} ago
     </p>
     <div class="content">
       {{ message.content|linebreaks }}

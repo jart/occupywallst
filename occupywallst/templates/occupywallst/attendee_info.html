@@ -1,4 +1,5 @@
 <div class="bubble attendee-info" id="{{ user.username }}">
+
   <p class="links">
     <a href="{{ user.get_absolute_url }}">
       <strong>{{ user.username }}</strong></a>
@@ -21,4 +22,12 @@
   <div class="profile">
     {{ user.userinfo.info|linebreaks }}
   </div>
+
+  <p class="postform">
+    <textarea rows="3" cols="40"></textarea><br />
+    <button class="save">send message</button>
+    <img src="/media/img/ajax-loader.gif" width="16" height="16" />
+    <span></span>
+  </p>
+
 </div>
