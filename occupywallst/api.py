@@ -108,8 +108,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     if not settings.DEBUG:
         lastcom = user.comment_set.order_by('-published')[:1]
         if lastcom:
-            if (datetime.now() - lastcom[0].published).seconds < 60:
-                raise APIException("you're doing that too fast")
+            if (datetime.now() - lastcom[0].published).seconds < 30:
+                raise APIException("hey slow down a little!")
     com = db.Comment.objects.create(article=article,
                                     user=user,
                                     content=content,
@@ -217,8 +217,8 @@ def message_send(user, to_username, content, **kwargs):
     if not settings.DEBUG:
         last = user.messages_sent.order_by('-published')[:1]
         if last:
-            if (datetime.now() - last[0].published).seconds < 60:
-                raise APIException("you're doing that too fast")
+            if (datetime.now() - last[0].published).seconds < 30:
+                raise APIException("hey slow down a little!")
     msg = db.Message.objects.create(from_user=user,
                                     to_user=to_user,
                                     content=content)
