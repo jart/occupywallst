@@ -31,6 +31,12 @@ To use with PostgreSQL::
     sudo -u postgres -i createuser --superuser $USER
     createdb occupywallst
     createlang plpgsql occupywallst
-    psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
-    psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    if [ -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql ]; then
+        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    else
+        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
+        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+    fi
     occupywallst-dev syncdb
+    occupywallst-dev runserver
