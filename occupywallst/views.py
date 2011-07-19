@@ -119,9 +119,8 @@ def user_page(request, username):
 def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(request.user.get_absolute_url())
-    else:
-        return authviews.login(
-            request, template_name="occupywallst/login.html")
+    return authviews.login(
+        request, template_name="occupywallst/login.html")
 
 
 def logout(request):
@@ -130,6 +129,8 @@ def logout(request):
 
 
 def signup(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(request.user.get_absolute_url())
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
