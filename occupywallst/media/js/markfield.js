@@ -100,7 +100,7 @@ var markfield_clear;
                       addr_part(addr, "route").long_name),
             city: (addr_part(addr, "locality").long_name ||
                    addr_part(addr, "sublocality").long_name),
-            region: addr_part(addr, "administrative_area_level_1").long_name,
+            region: addr_part(addr, "administrative_area_level_1").short_name,
             zipcode: addr_part(addr, "postal_code").long_name,
             country: addr_part(addr, "country").short_name
         }

@@ -32,10 +32,14 @@ def attendees(bounds, **kwargs):
     """
     if bounds:
         bbox = str_to_bbox(bounds)
-        qset = db.UserInfo.objects.filter(position__isnull=False,
-                                          position__within=bbox)
+        qset = (db.UserInfo.objects
+                .select_related("user")
+                .filter(position__isnull=False,
+                        position__within=bbox))
     else:
-        qset = db.UserInfo.objects.filter(position__isnull=False)
+        qset = (db.UserInfo.objects
+                .select_related("user")
+                .filter(position__isnull=False))
     for userinfo in qset[:100]:
         yield {'id': userinfo.user.id,
                'username': userinfo.user.username,
@@ -45,7 +49,9 @@ def attendees(bounds, **kwargs):
 def attendee_info(username, **kwargs):
     """Get information about a user
     """
-    user = db.User.objects.get(username=username)
+    user = (db.User.objects
+            .select_related("userinfo")
+            .get(username=username))
     html = render_to_string('occupywallst/attendee_info.html',
                             {'user': user})
     yield {'id': user.id,
@@ -206,6 +212,8 @@ def message_send(user, to_username, content, **kwargs):
         to_user = db.User.objects.get(username=to_username, is_active=True)
     except db.Article.DoesNotExist:
         raise APIException('user not found')
+    if user == to_user:
+        raise APIException("you can't message yourself")
     if not settings.DEBUG:
         last = user.messages_sent.order_by('-published')[:1]
         if last:

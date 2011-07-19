@@ -25,7 +25,8 @@ logger = logging.getLogger(__name__)
 
 def index(request):
     articles = (db.Article.objects
-                .filter(is_visible=True)
+                .select_related("author")
+                .filter(is_visible=True, is_deleted=False)
                 .order_by('-published'))[:25]
     return render_to_response(
         'occupywallst/index.html', {'articles': articles},
@@ -52,11 +53,14 @@ def _instate_hierarchy(comments):
 
 def article(request, slug):
     try:
-        article = db.Article.objects.get(slug=slug)
+        article = (db.Article.objects
+                   .select_related("author")
+                   .get(slug=slug, is_deleted=False))
     except db.Article.DoesNotExist:
         raise Http404()
     recent = (db.Article.objects
-              .filter(is_visible=True)
+              .select_related("author")
+              .filter(is_visible=True, is_deleted=False)
               .order_by('-published'))[:5]
     comments = article.comments_as_user(request.user)
     comments = _instate_hierarchy(comments)
@@ -94,21 +98,28 @@ def about(request):
 
 def user_page(request, username):
     try:
-        user = db.User.objects.get(username=username)
+        user = (db.User.objects
+                .select_related("userinfo")
+                .get(username=username))
     except db.User.DoesNotExist:
         raise Http404()
-    messages = (db.Message.objects
-                .select_related("from_user", "to_user")
-                .filter(Q(from_user=user, to_user=request.user) |
-                        Q(from_user=request.user, to_user=user))
-                .order_by('-published'))
-    for message in messages:
-        if message.to_user == request.user and message.is_read == False:
-            message.is_read = True
-            message.save()
     nearby_users = (db.UserInfo.objects
+                    .select_related("user")
                     .distance(user.userinfo.position)
                     .order_by('distance'))[1:10]
+    if request.user.is_authenticated():
+        messages = (db.Message.objects
+                    .select_related("from_user", "from_user__userinfo",
+                                    "to_user", "to_user__userinfo")
+                    .filter(Q(from_user=user, to_user=request.user) |
+                            Q(from_user=request.user, to_user=user))
+                    .order_by('-published'))
+        for message in messages:
+            if message.to_user == request.user and message.is_read == False:
+                message.is_read = True
+                message.save()
+    else:
+        messages = []
     return render_to_response(
         'occupywallst/user.html', {'obj': user,
                                    'messages': messages,

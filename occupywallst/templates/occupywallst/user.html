@@ -27,23 +27,23 @@
       {% endif %}
     </section>
 
-    <h2>Messages</h2>
+    <h2>Private Messages</h2>
 
-    <p class="postform">
-      {% if obj.is_authenticated %}
+    {% if user.is_authenticated %}
+      <p class="postform">
         <textarea rows="5" cols="50"></textarea><br />
         <button class="save">send message</button>
         <img src="/media/img/ajax-loader.gif" width="16" height="16" />
         <span></span>
-      {% else %}
-        <p>Must be <a href="/login/">logged in</a> to send messages.</p>
-      {% endif %}
+      </p>
       <div id="messages">
         {% for message in messages %}
           {% include "occupywallst/message.html" %}
         {% endfor %}
       </div>
-    </p>
+    {% else %}
+      <p>Must be <a href="/login/">logged in</a> to send messages.</p>
+    {% endif %}
 
   </td><td id="right">
 
