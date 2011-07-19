@@ -31,6 +31,24 @@ def index(request):
         context_instance=RequestContext(request))
 
 
+def _instate_hierarchy(comments):
+    """Rearranges list of comments into hierarchical structure
+
+    This adds the pseudo-field "replies" to each comment.
+    """
+    for com in comments:
+        com.replies = []
+    comhash = dict([(c.id, c) for c in comments])
+    res = []
+    for com in comments:
+        if com.parent_id is None:
+            res.append(com)
+        else:
+            if com.parent_id in comhash:
+                comhash[com.parent_id].replies.append(com)
+    return res
+
+
 def article(request, slug):
     try:
         article = db.Article.objects.get(slug=slug)
@@ -40,6 +58,7 @@ def article(request, slug):
               .filter(is_visible=True)
               .order_by('-published'))[:5]
     comments = article.comments_as_user(request.user)
+    comments = _instate_hierarchy(comments)
     return render_to_response(
         'occupywallst/article.html', {'article': article,
                                       'comments': comments,
@@ -77,18 +96,12 @@ def user_page(request, username):
         user = db.User.objects.get(username=username)
     except db.User.DoesNotExist:
         raise Http404()
-    try:
-        nearby_users = (db.UserInfo.objects
-                        .distance(user.userinfo.position)
-                        .order_by('distance'))[:10]
-    except ValueError, exc:
-        if 'SQLite does not support' in str(exc):
-            logger.warning(str(exc))
-            nearby_users = []
-        else:
-            raise
+    nearby_users = (db.UserInfo.objects
+                    .distance(user.userinfo.position)
+                    .order_by('distance'))[1:10]
     return render_to_response(
-        'occupywallst/user.html', {'user': user},
+        'occupywallst/user.html', {'user': user,
+                                   'nearby_users': nearby_users},
         context_instance=RequestContext(request))
 
 

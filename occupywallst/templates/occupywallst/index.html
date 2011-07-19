@@ -8,7 +8,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-  <table><tbody><tr><td id="left">
+  <table style="width:100%"><tbody><tr><td id="left">
     {% for article in articles %}
       <article id="article-{{ article.id }}">
         <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">

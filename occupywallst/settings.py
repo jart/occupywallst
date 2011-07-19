@@ -26,18 +26,15 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+    #     'NAME': 'occupywallst.db',
+    # },
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': 'occupywallst.db',
-    }
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'occupywallst',
+    },
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-#         'NAME': 'occupywallst',
-#     },
-# }
 
 CACHES = {
     'default': {

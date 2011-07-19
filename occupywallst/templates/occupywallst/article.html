@@ -1,4 +1,5 @@
 {% extends 'occupywallst/base.html' %}
+{% load comments %}
 
 {% block scripts %}
   {{ block.super }}
@@ -11,7 +12,7 @@
 {% endblock js_init %}
 
 {% block content %}
-  <table><tbody><tr><td id="left">
+  <table style="width:100%"><tbody><tr><td id="left">
     <article id="{{ article.slug }}">
       <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
           {{ article.title }}</a></h1>
@@ -21,26 +22,20 @@
       </p>
       {{ article.content|safe }}
     </article>
+    <h2><span id="comment-count">{{ article.comment_count }}</span>
+        Comments</h2>
+    <div class="postform">
+      {% if user.is_authenticated %}
+        <textarea rows="5" cols="50"></textarea><br />
+        <button class="save">submit</button>
+        <img src="/media/img/ajax-loader.gif" width="16" height="16" />
+        <span></span>
+      {% else %}
+        <p>Must be <a href="/login/">logged in</a> to comment.</p>
+      {% endif %}
+    </div>
     <section id="comments">
-      <h2><span id="comment-count">{{ article.comment_count }}</span>
-          Comments</h2>
-      <div id="post">
-        {% if user.is_authenticated %}
-          <textarea rows="5" cols="50"></textarea><br />
-          <button>submit</button>
-          <img src="/media/img/ajax-loader.gif" width="16" height="16" />
-          <span></span>
-        {% else %}
-          <p>Must be <a href="/login/">logged in</a> to comment.</p>
-        {% endif %}
-      </div>
-      <div id="comment-list">
-        {% for comment in comments %}
-          {% if not comment.is_removed or user.is_staff %}
-            {% include "occupywallst/comment.html" %}
-          {% endif %}
-        {% endfor %}
-      </div>
+      {% show_comments user comments %}
     </section>
   </td><td id="right">
     <section id="recent-articles">
@@ -59,4 +54,13 @@
       {% endfor %}
     </section>
   </td></tr></tbody></table>
+
+  <p style="display:none" class="replyform">
+    <textarea rows="5" cols="50"></textarea><br />
+    <button class="save">save</button>
+    <button class="cancel">cancel</button>
+    <img src="/media/img/ajax-loader.gif" width="16" height="16" />
+    <span></span>
+  </p>
+
 {% endblock content %}

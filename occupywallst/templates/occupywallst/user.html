@@ -25,9 +25,9 @@
 {% endblock js_init %}
 
 {% block content %}
-  <table><tbody><tr><td id="left">
-    <section id="user-page">
-      <h1>{{ user.username }}</h1>
+  <table style="width:100%"><tbody><tr><td id="left">
+    <h1>{{ user.username }}</h1>
+    <section id="user-profile">
       {% if user.userinfo.info %}
         {{ user.userinfo.info|linebreaks }}
       {% else %}
@@ -49,24 +49,40 @@
     </p>
 
   </td><td id="right">
+
     <h2 style="margin-top:0">Information</h2>
-    <p>
-      {{ user.username }} is from
-      <strong>{{ user.userinfo.city }}, {{ user.userinfo.region }}</strong>
-       and
-    {% if user.userinfo.attendance == "yes" %}
-      <span class="attendance yes">will attend</span>
-    {% endif %}
-    {% if user.userinfo.attendance == "no" %}
-      <span class="attendance no">can't make it</span> to
-    {% endif %}
-    {% if user.userinfo.attendance == "maybe" %}
-      <span class="attendance maybe">might be able to attend</span>
-    {% endif %}
-    the occupation.
-    {% if user.userinfo.need_ride %}
-      They also <strong>need a ride</strong>!
-    {% endif %}
-    <div id="map" style="width: 250px; height: 200px;"></div>
+    <section id="user-info">
+      <p>
+        {{ user.username }} is from
+        <strong>{{ user.userinfo.city }}, {{ user.userinfo.region }}</strong>
+         and
+      {% if user.userinfo.attendance == "yes" %}
+        <span class="attendance yes">will attend</span>
+      {% endif %}
+      {% if user.userinfo.attendance == "no" %}
+        <span class="attendance no">can't make it</span> to
+      {% endif %}
+      {% if user.userinfo.attendance == "maybe" %}
+        <span class="attendance maybe">might be able to attend</span>
+      {% endif %}
+      the occupation.
+      {% if user.userinfo.need_ride %}
+        They also <strong>need a ride</strong>!
+      {% endif %}
+      <div id="map" style="width: 250px; height: 200px;"></div>
+    </section>
+
+    <h2>Nearby Users</h2>
+    <section id="nearby-users">
+      <ul>
+        {% for user in nearby_users %}
+          <li>
+            <a href="{{ user.get_absolute_url }}">{{ user }}</a>
+            <span class="tinygray">{{ user.distance.mi|floatformat:0 }} miles</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
   </td></tr></tbody></table>
 {% endblock content %}

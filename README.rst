@@ -32,3 +32,5 @@ To use with PostgreSQL::
     createdb occupywallst
     createlang plpgsql occupywallst
     psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+    psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    occupywallst-dev syncdb

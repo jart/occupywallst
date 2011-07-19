@@ -75,6 +75,8 @@ def api_view(function):
                        'message': 'no data returned',
                        'results': data}
             transaction.commit()
+        logger.info("api %s returning %s: %s" %
+                    (request.path, res['status'], res['message']))
         return _as_json(res)
     return _api_view
 

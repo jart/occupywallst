@@ -183,6 +183,7 @@ class Comment(models.Model):
         Who posted this comment?""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
+    parent_id = models.IntegerField(null=True, blank=True)
     content = models.TextField(blank=True, help_text="""
         The contents of the message.""")
     ups = models.IntegerField(default=0, editable=False, help_text="""
@@ -197,6 +198,8 @@ class Comment(models.Model):
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate user deleted thier comment.""")
+
+    replies = ()
 
     objects = models.GeoManager()
 

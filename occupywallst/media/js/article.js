@@ -10,87 +10,147 @@ $.fn.numberAdd = function (delta) {
 (function() {
     "use strict";
 
+    var replyform;
+    var penguin = 50;
+
     function init() {
-        $("#post button").click(function() {
-            $("#comment-post img").show();
-            $("#comment-post span").text("");
-            $.getJSON("/api/comment/new/", {
-                "article_slug": $("article").attr("id"),
-                "content": $("#comment-post textarea").val()
-            }, function(data) {
-                $("#comment-post img").hide();
-                if (data.status == "OK") {
-                    var res = data.results[0];
-                    var comment = $(res.html);
-                    var commentid = res.id;
-                    init_comment(comment, commentid);
-                    $("#comment-list").prepend(comment);
-                    $("#comment-count").numberAdd(+1);
-                    $("#comment-post textarea").val("");
-                } else {
-                    $("#comment-post span").text(data.message);
-                }
-            }).error(function(e) {
-                $("#comment-post img").hide();
-                $("#comment-post span").text("oh snap");
-            });
-            return false;
-        });
+        replyform = $(".replyform");
+        init_postform($(".postform"));
         $(".comment").each(function(i) {
-            var comment = $(this);
-            var commentid = comment.attr("id").split("-")[1];
-            init_comment(comment, commentid);
+            init_comment($(this));
         });
     }
 
-    function init_comment(comment, commentid) {
-        $(".up", comment).click(function() {
-            if ($(".up", comment).hasClass("upvoted"))
-                return false;
-            $.getJSON("/api/comment/vote/", {
-                "commentid": commentid,
-                "vote": 1
+    function init_postform(form) {
+        $(".save", form).click(function() {
+            $("img", form).show();
+            $("span", form).text("");
+            $.getJSON("/api/comment/new/", {
+                "article_slug": $("article").attr("id"),
+                "parent_id": null,
+                "content": $("textarea", form).val()
             }, function(data) {
+                $("img", form).hide();
+                if (data.status == "OK") {
+                    var res = data.results[0];
+                    var comment = $(res.html);
+                    init_comment(comment);
+                    $("#comments").prepend(comment);
+                    $("#comment-count").numberAdd(+1);
+                    $("textarea", form).val("");
+                } else {
+                    $("span", form).text(data.message);
+                }
+            }).error(function(e) {
+                $("img", form).hide();
+                $("span", form).text("oh snap");
             });
-            if ($(".down", comment).hasClass("downvoted")) {
-                $(".karma", comment).numberAdd(+2);
-                $(".ups", comment).numberAdd(+1);
-                $(".downs", comment).numberAdd(-1);
-            } else {
-                $(".karma", comment).numberAdd(+1);
-                $(".ups", comment).numberAdd(+1);
-            }
-            $(".up", comment).addClass("upvoted");
-            $(".down", comment).removeClass("downvoted");
+            return false;
+        });
+    }
+
+    function init_replyform(form, container, parent_id) {
+        $(".cancel", form).click(function() {
+            form.slideUp(penguin, function() {
+                form.remove();
+            });
+            return false;
+        });
+        $(".save", form).click(function() {
+            $("img", form).show();
+            $("span", form).text("");
+            $.getJSON("/api/comment/new/", {
+                "article_slug": $("article").attr("id"),
+                "parent_id": parent_id,
+                "content": $("textarea", form).val()
+            }, function(data) {
+                $("img", form).hide();
+                if (data.status == "OK") {
+                    var res = data.results[0];
+                    var reply = $(res.html);
+                    init_comment(reply);
+                    reply.hide();
+                    container.prepend(reply);
+                    reply.slideDown(penguin);
+                    form.slideUp(penguin, function() {
+                        form.remove();
+                    });
+                    $("#comment-count").numberAdd(+1);
+                } else {
+                    $("span", form).text(data.message);
+                }
+            }).error(function(e) {
+                $("img", form).hide();
+                $("span", form).text("oh snap");
+            });
+            return false;
+        });
+    }
+
+    function init_comment(comment) {
+        var comment_id = comment.attr("id").split("-")[1];
+        var content = $("> .content", comment);
+        var replies = $("> .replies", comment);
+
+        $(".reply", content).click(function() {
+            if ($(".replyform", content).length)
+                return false;
+            var form = replyform.clone();
+            content.append(form);
+            form.slideDown(penguin, function() {
+                $("textarea", form).focus();
+            });
+            init_replyform(form, replies, comment_id);
             return false;
         });
 
-        $(".down", comment).click(function() {
-            if ($(".up", comment).hasClass("downvoted"))
+        $(".up", content).click(function() {
+            if ($(".up", content).hasClass("upvoted"))
                 return false;
             $.getJSON("/api/comment/vote/", {
-                "commentid": commentid,
-                "vote": -1
+                "comment_id": comment_id,
+                "vote": "up"
             }, function(data) {
             });
-            if ($(".up", comment).hasClass("upvoted")) {
-                $(".karma", comment).numberAdd(-2);
-                $(".ups", comment).numberAdd(-1);
-                $(".downs", comment).numberAdd(+1);
+            if ($(".down", content).hasClass("downvoted")) {
+                $(".karma", content).numberAdd(+2);
+                $(".ups", content).numberAdd(+1);
+                $(".downs", content).numberAdd(-1);
             } else {
-                $(".karma", comment).numberAdd(-1);
-                $(".downs", comment).numberAdd(+1);
+                $(".karma", content).numberAdd(+1);
+                $(".ups", content).numberAdd(+1);
             }
-            $(".up", comment).removeClass("upvoted");
-            $(".down", comment).addClass("downvoted");
+            $(".up", content).addClass("upvoted");
+            $(".down", content).removeClass("downvoted");
             return false;
         });
 
-        $(".delete", comment).click(function() {
+        $(".down", content).click(function() {
+            if ($(".up", content).hasClass("downvoted"))
+                return false;
+            $.getJSON("/api/comment/vote/", {
+                "comment_id": comment_id,
+                "vote": "down"
+            }, function(data) {
+            });
+            if ($(".up", content).hasClass("upvoted")) {
+                $(".karma", content).numberAdd(-2);
+                $(".ups", content).numberAdd(-1);
+                $(".downs", content).numberAdd(+1);
+            } else {
+                $(".karma", content).numberAdd(-1);
+                $(".downs", content).numberAdd(+1);
+            }
+            $(".up", content).removeClass("upvoted");
+            $(".down", content).addClass("downvoted");
+            return false;
+        });
+
+        $(".delete", content).click(function() {
             if (!confirm("Sure you want to delete this comment?"))
                 return false;
             $.getJSON("/api/comment/delete/", {
-                "commentid": commentid
+                "comment_id": comment_id
             }, function(data) {
                 if (data.status == "OK") {
                     comment.remove();
@@ -102,20 +162,20 @@ $.fn.numberAdd = function (delta) {
             return false;
         });
 
-        $(".remove", comment).click(function() {
-            var action = $(".remove", comment).text();
+        $(".remove", content).click(function() {
+            var action = $(".remove", content).text();
             $.getJSON("/api/comment/remove/", {
-                "commentid": commentid,
+                "comment_id": comment_id,
                 "action": action
             }, function(data) {
                 if (data.status == "OK") {
                     if (action == "remove") {
-                        $(".content", comment).addClass("removed");
-                        $(".remove", comment).text("unremove");
+                        $(".content", content).addClass("removed");
+                        $(".remove", content).text("unremove");
                         $("#comment-count").numberAdd(-1);
                     } else {
-                        $(".content", comment).removeClass("removed");
-                        $(".remove", comment).text("remove");
+                        $(".content", content).removeClass("removed");
+                        $(".remove", content).text("remove");
                         $("#comment-count").numberAdd(+1);
                     }
                 } else {

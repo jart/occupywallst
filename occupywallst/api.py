@@ -60,8 +60,8 @@ def _render_comment(comment, user):
     comment.upvoted = False
     comment.downvoted = False
     try:
-        vote = CommentVote.objects.get(comment=comment, user=user)
-    except CommentVote.DoesNotExist:
+        vote = db.CommentVote.objects.get(comment=comment, user=user)
+    except db.CommentVote.DoesNotExist:
         vote = None
     if vote:
         if vote.vote == 1:
@@ -73,8 +73,11 @@ def _render_comment(comment, user):
                              'user': user})
 
 
-def comment_new(user, article_slug, content, **kwargs):
+def comment_new(user, article_slug, parent_id, content, **kwargs):
     """Leave a comment on an article
+
+    If ``parent_id != "null"``, this will be a reply to an existing
+    comment.
 
     Also upvotes comment and increments article comment count.
     """
@@ -87,6 +90,15 @@ def comment_new(user, article_slug, content, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException('article not found')
+    if parent_id != "null":
+        try:
+            parent = db.Comment.objects.get(id=parent_id,
+                                            is_deleted=False,
+                                            article=article)
+        except db.Comment.DoesNotExist:
+            raise APIException("parent comment not found")
+    else:
+        parent_id = None
     if not settings.DEBUG:
         lastcom = user.comment_set.order_by('-published')[:1]
         if lastcom:
@@ -94,14 +106,15 @@ def comment_new(user, article_slug, content, **kwargs):
                 raise APIException("you're doing that too fast")
     com = db.Comment.objects.create(article=article,
                                     user=user,
-                                    content=content)
+                                    content=content,
+                                    parent_id=parent_id)
     com.upvote(user)
     article.comment_count += 1
     article.save()
     yield com.as_dict({'html': _render_comment(com, user)})
 
 
-def comment_edit(user, commentid, content, **kwargs):
+def comment_edit(user, comment_id, content, **kwargs):
     """Edit a comment's content
     """
     if not user.is_authenticated():
@@ -110,7 +123,7 @@ def comment_edit(user, commentid, content, **kwargs):
     if len(content) < 5:
         raise APIException("comment too short")
     try:
-        com = db.Comment.objects.get(id=commentid, is_deleted=False)
+        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
     if com.user != user:
@@ -120,7 +133,7 @@ def comment_edit(user, commentid, content, **kwargs):
     yield com.as_dict()
 
 
-def comment_remove(user, commentid, action, **kwargs):
+def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment
     """
     if not user.is_authenticated():
@@ -128,7 +141,7 @@ def comment_remove(user, commentid, action, **kwargs):
     if not user.is_staff:
         raise APIException("insufficient vespene gas")
     try:
-        com = db.Comment.objects.get(id=commentid, is_deleted=False)
+        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
     if action == 'remove':
@@ -144,7 +157,7 @@ def comment_remove(user, commentid, action, **kwargs):
     yield None
 
 
-def comment_delete(user, commentid, **kwargs):
+def comment_delete(user, comment_id, **kwargs):
     """Delete a comment
 
     Also decrements article comment count.
@@ -152,7 +165,7 @@ def comment_delete(user, commentid, **kwargs):
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     try:
-        com = db.Comment.objects.get(id=commentid, is_deleted=False)
+        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
     if com.user != user:
@@ -163,18 +176,18 @@ def comment_delete(user, commentid, **kwargs):
     yield None
 
 
-def comment_vote(user, commentid, vote, **kwargs):
+def comment_vote(user, comment_id, vote, **kwargs):
     """Increases comment karma by one
     """
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     try:
-        com = db.Comment.objects.get(id=commentid, is_deleted=False)
+        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if vote == 1:
+    if vote == "up":
         com.upvote(user)
-    elif vote == -1:
+    elif vote == "down":
         com.downvote(user)
     else:
         raise APIException("invalid vote")
