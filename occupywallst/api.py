@@ -3,7 +3,7 @@ r"""
     occupywallst.api
     ~~~~~~~~~~~~~~~~
 
-    Ajax data providers.
+    AJAX Remote Procedure Calls.
 
     They just return plain old python data and have nothing to do with
     the HTTP request/response logic.  To make these functions return
@@ -191,4 +191,45 @@ def comment_vote(user, comment_id, vote, **kwargs):
         com.downvote(user)
     else:
         raise APIException("invalid vote")
+    yield None
+
+
+def message_send(user, to_username, content, **kwargs):
+    """Send a private message.
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    content = content.strip()
+    if len(content) < 5:
+        raise APIException("message too short")
+    try:
+        to_user = db.User.objects.get(username=to_username, is_active=True)
+    except db.Article.DoesNotExist:
+        raise APIException('user not found')
+    if not settings.DEBUG:
+        last = user.messages_sent.order_by('-published')[:1]
+        if last:
+            if (datetime.now() - last[0].published).seconds < 60:
+                raise APIException("you're doing that too fast")
+    msg = db.Message.objects.create(from_user=user,
+                                    to_user=to_user,
+                                    content=content)
+    yield msg.as_dict({'html': render_to_string('occupywallst/message.html',
+                                                {'message': msg})})
+
+
+def message_delete(user, message_id, **kwargs):
+    """Delete a message
+
+    Both the sender and the receiver are able to delete messages.
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    try:
+        msg = db.Message.objects.get(id=message_id, is_deleted=False)
+    except db.Message.DoesNotExist:
+        raise APIException("message not found")
+    if user != msg.to_user and user != msg.from_user:
+        raise APIException("you didn't send or receive that message")
+    msg.delete()
     yield None

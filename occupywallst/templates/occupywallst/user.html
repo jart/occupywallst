@@ -4,32 +4,24 @@
   {{ block.super }}
   <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
   <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+  <script src="/media/js/userpage.js?v=1" type="text/javascript"></script>
 {% endblock scripts %}
 
 {% block js_init %}
   {{ block.super }}
-  var lat = {{ user.userinfo.position_lat }};
-  var lng = {{ user.userinfo.position_lng }};
-  var latlng = new google.maps.LatLng(lat, lng);
-  var map = new google.maps.Map($("#map").get(0), {
-    zoom: 10,
-    center: latlng,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    streetViewControl: false,
-    panControl: false,
-    zoomControl: true,
-    mapTypeControl: false,
-    scaleControl: false
+  userpage_init({
+    map: $("#map").get(0),
+    lat: {{ obj.userinfo.position_lat }},
+    lng: {{ obj.userinfo.position_lng }}
   });
-  var mark = new google.maps.Marker({map: map, position: latlng});
 {% endblock js_init %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h1>{{ user.username }}</h1>
+    <h1 class="username" id="{{ obj.username }}">{{ obj.username }}</h1>
     <section id="user-profile">
-      {% if user.userinfo.info %}
-        {{ user.userinfo.info|linebreaks }}
+      {% if obj.userinfo.info %}
+        {{ obj.userinfo.info|linebreaks }}
       {% else %}
         <p style="color:#333">No Profile Information</p>
       {% endif %}
@@ -37,15 +29,20 @@
 
     <h2>Messages</h2>
 
-    <p id="post">
-      {% if user.is_authenticated %}
+    <p class="postform">
+      {% if obj.is_authenticated %}
         <textarea rows="5" cols="50"></textarea><br />
-        <button>send message</button>
+        <button class="save">send message</button>
         <img src="/media/img/ajax-loader.gif" width="16" height="16" />
         <span></span>
       {% else %}
         <p>Must be <a href="/login/">logged in</a> to send messages.</p>
       {% endif %}
+      <div id="messages">
+        {% for message in messages %}
+          {% include "occupywallst/message.html" %}
+        {% endfor %}
+      </div>
     </p>
 
   </td><td id="right">
@@ -53,20 +50,20 @@
     <h2 style="margin-top:0">Information</h2>
     <section id="user-info">
       <p>
-        {{ user.username }} is from
-        <strong>{{ user.userinfo.city }}, {{ user.userinfo.region }}</strong>
+        {{ obj.username }} is from
+        <strong>{{ obj.userinfo.city }}, {{ obj.userinfo.region }}</strong>
          and
-      {% if user.userinfo.attendance == "yes" %}
+      {% if obj.userinfo.attendance == "yes" %}
         <span class="attendance yes">will attend</span>
       {% endif %}
-      {% if user.userinfo.attendance == "no" %}
+      {% if obj.userinfo.attendance == "no" %}
         <span class="attendance no">can't make it</span> to
       {% endif %}
-      {% if user.userinfo.attendance == "maybe" %}
+      {% if obj.userinfo.attendance == "maybe" %}
         <span class="attendance maybe">might be able to attend</span>
       {% endif %}
       the occupation.
-      {% if user.userinfo.need_ride %}
+      {% if obj.userinfo.need_ride %}
         They also <strong>need a ride</strong>!
       {% endif %}
       <div id="map" style="width: 250px; height: 200px;"></div>
@@ -75,10 +72,10 @@
     <h2>Nearby Users</h2>
     <section id="nearby-users">
       <ul>
-        {% for user in nearby_users %}
+        {% for obj in nearby %}
           <li>
-            <a href="{{ user.get_absolute_url }}">{{ user }}</a>
-            <span class="tinygray">{{ user.distance.mi|floatformat:0 }} miles</span>
+            <a href="{{ obj.get_absolute_url }}">{{ obj }}</a>
+            <span class="tinygray">{{ obj.distance.mi|floatformat:0 }} miles</span>
           </li>
         {% endfor %}
       </ul>

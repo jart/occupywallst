@@ -35,7 +35,9 @@ $.fn.numberAdd = function (delta) {
                     var res = data.results[0];
                     var comment = $(res.html);
                     init_comment(comment);
+                    comment.hide();
                     $("#comments").prepend(comment);
+                    comment.fadeIn();
                     $("#comment-count").numberAdd(+1);
                     $("textarea", form).val("");
                 } else {
@@ -69,12 +71,10 @@ $.fn.numberAdd = function (delta) {
                     var res = data.results[0];
                     var reply = $(res.html);
                     init_comment(reply);
+                    form.remove();
                     reply.hide();
                     container.prepend(reply);
-                    reply.slideDown(penguin);
-                    form.slideUp(penguin, function() {
-                        form.remove();
-                    });
+                    reply.fadeIn();
                     $("#comment-count").numberAdd(+1);
                 } else {
                     $("span", form).text(data.message);
@@ -170,11 +170,11 @@ $.fn.numberAdd = function (delta) {
             }, function(data) {
                 if (data.status == "OK") {
                     if (action == "remove") {
-                        $(".content", content).addClass("removed");
+                        content.addClass("removed");
                         $(".remove", content).text("unremove");
                         $("#comment-count").numberAdd(-1);
                     } else {
-                        $(".content", content).removeClass("removed");
+                        content.removeClass("removed");
                         $(".remove", content).text("remove");
                         $("#comment-count").numberAdd(+1);
                     }

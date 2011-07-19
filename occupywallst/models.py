@@ -150,9 +150,12 @@ class Article(models.Model):
         This also temporarily removes the ``is_removed`` flag if user
         is the person who posted the comment.  We don't want trolls to
         know if their comments are being removed.
+
+        The result will include deleted comments so be sure not to
+        render them!
         """
         comments = (Comment.objects
-                    .filter(article=self, is_deleted=False)
+                    .filter(article=self)
                     .order_by('-karma', '-published'))[:]
         if user.is_authenticated():
             for c in comments:
@@ -311,14 +314,18 @@ class CommentVote(models.Model):
 class Message(models.Model):
     """One user sending a message to another.
     """
-    from_user = models.ForeignKey(User, editable=False, unique=True,
+    from_user = models.ForeignKey(User, editable=False,
                                   related_name="messages_sent", help_text="""
         The user who sent the message.""")
-    to_user = models.ForeignKey(User, editable=False, unique=True,
+    to_user = models.ForeignKey(User, editable=False,
                                 related_name="messages_recv", help_text="""
         The user who received the message.""")
-    content = models.TextField(blank=True, help_text="""
+    published = models.DateTimeField(auto_now_add=True, help_text="""
+        When was this message sent?""")
+    content = models.TextField(help_text="""
         The contents of the message.""")
+    is_read = models.BooleanField(default=False, help_text="""
+        Has the user seen this message yet?""")
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate should no longer be listed on site.""")
@@ -333,8 +340,17 @@ class Message(models.Model):
             return "%s is attending" % (self.user.username)
 
     def delete(self):
+        self.content = ""
         self.is_deleted = True
         self.save()
+
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'from_user': self.from_user.username,
+               'to_user': self.to_user.username,
+               'published': self.published}
+        res.update(moar)
+        return res
 
 
 class Ride(models.Model):

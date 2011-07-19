@@ -1,0 +1,11 @@
+<div id="message-{{ message.id }}">
+  <div class="{% cycle off,on %}">
+    <p class="info">
+      From {{ message.from_user }}
+      {{ message.published|timesince }}
+    </p>
+    <div class="content">
+      {{ message.content|linebreaks }}
+    </div>
+  </div>
+</div>

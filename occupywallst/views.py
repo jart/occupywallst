@@ -9,6 +9,7 @@ r"""
 
 import logging
 
+from django.db.models import Q
 from django.contrib import auth
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
@@ -96,12 +97,22 @@ def user_page(request, username):
         user = db.User.objects.get(username=username)
     except db.User.DoesNotExist:
         raise Http404()
+    messages = (db.Message.objects
+                .select_related("from_user", "to_user")
+                .filter(Q(from_user=user, to_user=request.user) |
+                        Q(from_user=request.user, to_user=user))
+                .order_by('-published'))
+    for message in messages:
+        if message.to_user == request.user and message.is_read == False:
+            message.is_read = True
+            message.save()
     nearby_users = (db.UserInfo.objects
                     .distance(user.userinfo.position)
                     .order_by('distance'))[1:10]
     return render_to_response(
-        'occupywallst/user.html', {'user': user,
-                                   'nearby_users': nearby_users},
+        'occupywallst/user.html', {'obj': user,
+                                   'messages': messages,
+                                   'nearby': nearby_users},
         context_instance=RequestContext(request))
 
 

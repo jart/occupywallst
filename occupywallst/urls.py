@@ -35,6 +35,8 @@ urlpatterns = patterns('',
     url(r'^api/comment/remove/$', utils.api_view(api.comment_remove)),
     url(r'^api/comment/delete/$', utils.api_view(api.comment_delete)),
     url(r'^api/comment/vote/$', utils.api_view(api.comment_vote)),
+    url(r'^api/message/send/$', utils.api_view(api.message_send)),
+    url(r'^api/message/delete/$', utils.api_view(api.message_delete)),
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^admin/', include(adminsite.urls)),
 )
