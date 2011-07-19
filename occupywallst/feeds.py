@@ -59,7 +59,7 @@ class RSSCommentFeed(Feed):
                 .order_by('-published'))[:50]
 
     def item_title(self, comment):
-        return re.split(r'\s+', comment.content)[:7]
+        return " ".join(re.split(r'\s+', comment.content)[:7])
 
     def item_pubdate(self, comment):
         return comment.published
