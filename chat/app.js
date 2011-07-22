@@ -1,11 +1,11 @@
 
 var settings = {
-    domain: "dev.occupywallst.org",
+    domain: "occupywallst.org",
     db: {'database': 'occupywallst'},
     ssl_enable: false,
     ssl_key: '/etc/apache2/ssl/occupywallst.org/key',
     ssl_cert: '/etc/apache2/ssl/occupywallst.org/crt-cabundle',
-    random: '/dev/urandom',
+    random: '/dev/urandom'
 };
 
 var fs = require("fs");
@@ -58,8 +58,8 @@ io.configure('production', function () {
     io.set('log level', 1);
     io.enable('browser client etag');
     io.enable('browser client minification');
-    io.set('transports', ['websocket', 'flashsocket', 'htmlfile',
-                          'xhr-polling', 'jsonp-polling']);
+    io.set('transports', ['websocket', 'flashsocket']);
+    // 'htmlfile', 'xhr-polling', 'jsonp-polling'
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -80,9 +80,13 @@ var ip_limits = {};
 
 io.of('/chat').authorization(function (handshake, callback) {
     handshake.user = {};
+    var sessionid = null;
     var cookies = handshake.headers.cookie;
-    var res = cookies.match(/sessionid=([0-9a-f]+)/);
-    var sessionid = res ? res[1] : null;
+    if (cookies) {
+        var res = cookies.match(/sessionid=([0-9a-f]+)/);
+        if (res)
+            sessionid = res[1];
+    }
     get_session(sessionid, function (err, session) {
         if (err) { callback(null, true); return; }
         get_user(session._auth_user_id, function (err, user) {
@@ -114,15 +118,15 @@ io.of('/chat').authorization(function (handshake, callback) {
                 max: 20,
                 count: 0,
                 penalty: 2000,
-                prev: null,
+                prev: null
             },
             {
                 start: Date.now(),
                 interval: 20 * 1000,
                 max: 5,
                 count: 0,
-                penalty: 1000,
-            },
+                penalty: 1000
+            }
         ];
     }
     var limits = ip_limits[ip];
@@ -170,7 +174,7 @@ io.of('/chat').authorization(function (handshake, callback) {
             if (!all_rooms[msg.room]) {
                 all_rooms[msg.room] = {
                     name: msg.room,
-                    users: {},
+                    users: {}
                 };
             }
             all_rooms[msg.room].users[me.name] = me;
@@ -179,11 +183,11 @@ io.of('/chat').authorization(function (handshake, callback) {
             sock.emit('join_ack', {
                 room: msg.room,
                 user: me,
-                users: all_rooms[msg.room].users,
+                users: all_rooms[msg.room].users
             });
             sock.broadcast.to(msg.room).emit('join', {
                 room: msg.room,
-                user: me,
+                user: me
             });
         });
     });
@@ -197,7 +201,7 @@ io.of('/chat').authorization(function (handshake, callback) {
                 room: msg.room,
                 user: me,
                 text: msg.text,
-                emo: msg.emo,
+                emo: msg.emo
             });
         });
     });
@@ -216,7 +220,7 @@ io.of('/chat').authorization(function (handshake, callback) {
         for (room in my_rooms) {
             sock.broadcast.to(room).emit('leave', {
                 room: room,
-                user: me,
+                user: me
             });
             delete all_rooms[room].users[me.name];
         }
@@ -230,11 +234,11 @@ io.of('/chat').authorization(function (handshake, callback) {
             return;
         sock.broadcast.to(msg.room).emit('leave', {
             room: msg.room,
-            user: me,
+            user: me
         });
         sock.emit('leave_ack', {
             room: msg.room,
-            user: me,
+            user: me
         });
         sock.leave(msg.room);
         delete my_rooms[msg.room];
@@ -251,7 +255,8 @@ io.of('/chat').authorization(function (handshake, callback) {
     });
 });
 
-app.listen(80, "chat." + settings.domain);
+// app.listen(80, "chat." + settings.domain);
+app.listen(80, "66.55.144.155");
 console.log("https listening on %s:%d in %s mode", app.address().address,
             app.address().port, app.settings.env);
 
