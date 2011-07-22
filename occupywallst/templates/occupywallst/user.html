@@ -52,9 +52,12 @@
     <h2 style="margin-top:0">Information</h2>
     <section id="user-info">
       <p>
-        {{ obj.username }} is from
-        <strong>{{ obj.userinfo.city }}, {{ obj.userinfo.region }}</strong>
-         and
+        {{ obj.username }} 
+        {% if obj.userinfo.city and obj.userinfo.region %}
+          is from
+          <strong>{{ obj.userinfo.city }}, {{ obj.userinfo.region }}</strong>
+          and
+        {% endif %}
       {% if obj.userinfo.attendance == "yes" %}
         <span class="attendance yes">will attend</span>
       {% endif %}
@@ -71,7 +74,7 @@
       {% if obj.userinfo.position %}
         <div id="map" style="width: 250px; height: 200px;"></div>
       {% else %}
-        <p>User did not specify a location</p>
+        <p>They also didn't specify their location.</p>
       {% endif %}
     </section>
 
