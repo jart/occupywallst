@@ -175,6 +175,8 @@ var attendees_init;
             title: username
         });
         google.maps.event.addListener(marker, "click", function() {
+            $("#loader").show();
+            is_fetching = true;
             $.getJSON("/api/attendee/info/", {
                 "username": username
             }, function(data) {
@@ -194,8 +196,12 @@ var attendees_init;
                 } else {
                     alert(data.status);
                 }
+                $("#loader").hide();
+                is_fetching = false;
             }).error(function(resp) {
                 $("html").html(resp.responseText);
+                $("#loader").hide();
+                is_fetching = false;
             });
         });
         return marker;
