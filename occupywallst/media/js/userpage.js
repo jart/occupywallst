@@ -2,25 +2,27 @@
 var userpage_init;
 
 (function() {
-    "use strict";
+    // "use strict";
 
     var map;
     var mark;
     var latlng;
 
     function init(args) {
-        latlng = new google.maps.LatLng(args.lat, args.lng);
-        map = new google.maps.Map(args.map, {
-            zoom: 10,
-            center: latlng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            streetViewControl: false,
-            panControl: false,
-            zoomControl: true,
-            mapTypeControl: false,
-            scaleControl: false
-        });
-        mark = new google.maps.Marker({map: map, position: latlng});
+        if (args.map) {
+            latlng = new google.maps.LatLng(args.lat, args.lng);
+            map = new google.maps.Map(args.map, {
+                zoom: 10,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+                panControl: false,
+                zoomControl: true,
+                mapTypeControl: false,
+                scaleControl: false
+            });
+            mark = new google.maps.Marker({map: map, position: latlng});
+        }
 
         init_postform($(".postform"));
         $(".message").each(function(i) {

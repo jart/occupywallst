@@ -109,10 +109,13 @@ def user_page(request, username):
                 .get(username=username))
     except db.User.DoesNotExist:
         raise Http404()
-    nearby_users = (db.UserInfo.objects
-                    .select_related("user")
-                    .distance(user.userinfo.position)
-                    .order_by('distance'))[1:10]
+    if user.userinfo.position is not None:
+        nearby_users = (db.UserInfo.objects
+                        .filter(position__isnull=False)
+                        .distance(user.userinfo.position)
+                        .order_by('distance'))[1:10]
+    else:
+        nearby_users = []
     if request.user.is_authenticated():
         messages = (db.Message.objects
                     .select_related("from_user", "from_user__userinfo",

@@ -10,9 +10,11 @@
 {% block js_init %}
   {{ block.super }}
   userpage_init({
-    map: $("#map").get(0),
-    lat: {{ obj.userinfo.position_lat }},
-    lng: {{ obj.userinfo.position_lng }}
+    {% if obj.userinfo.position %}
+      map: $("#map").get(0),
+      lat: {{ obj.userinfo.position_lat }},
+      lng: {{ obj.userinfo.position_lng }}
+    {% endif %}
   });
 {% endblock js_init %}
 
@@ -66,20 +68,26 @@
       {% if obj.userinfo.need_ride %}
         They also <strong>need a ride</strong>!
       {% endif %}
-      <div id="map" style="width: 250px; height: 200px;"></div>
+      {% if obj.userinfo.position %}
+        <div id="map" style="width: 250px; height: 200px;"></div>
+      {% else %}
+        <p>User did not specify a location</p>
+      {% endif %}
     </section>
 
-    <h2>Nearby Users</h2>
-    <section id="nearby-users">
-      <ul>
-        {% for obj in nearby %}
-          <li>
-            <a href="{{ obj.get_absolute_url }}">{{ obj }}</a>
-            <span class="tinygray">{{ obj.distance.mi|floatformat:0 }} miles</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </section>
+    {% if obj.userinfo.position %}
+      <h2>Nearby Users</h2>
+      <section id="nearby-users">
+        <ul>
+          {% for obj in nearby %}
+            <li>
+              <a href="{{ obj.get_absolute_url }}">{{ obj }}</a>
+              <span class="tinygray">{{ obj.distance.mi|floatformat:0 }} miles</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
 
   </td></tr></tbody></table>
 {% endblock content %}
