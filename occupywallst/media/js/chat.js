@@ -88,8 +88,7 @@ var chat_init;
         if (msg.user) {
             if (msg.emo) {
                 line
-                .append($("<span/>").text(curtime()))
-                .append($("<span> &nbsp;* </span>"))
+                .append($("<span/>").text(curtime() + " * "))
                 .append(fun_username(msg.user.name))
                 .append($("<span/>").text(" " + msg.text));
             } else {
