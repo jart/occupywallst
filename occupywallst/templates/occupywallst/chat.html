@@ -1,0 +1,44 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block title %}OccupyWallSt | Chat{% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <style type="text/css">
+    #chat { width: 100%; }
+    #chat a { font-weight: bold; color: black; }
+    #messages, #users { height: 20em; overflow-x: hidden; overflow-y: auto; }
+    #messages { border-top: 2px solid #ccc; border-left: 2px solid #ccc; }
+    #messages div, #users div { font-family: monospace; line-height: 1.2em; }
+    #messages div { text-indent: -3em; margin-left: 3em; }
+    #users div { white-space: nowrap; }
+    #users { width: 150px; float: right; border: 2px solid #ccc;
+             border-bottom: none; }
+    #postform { border: 2px solid #ccc; }
+    #msgtext { width: 100%; border: none; outline: none; clear: both;
+               font-family: monospace; }
+  </style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script type="text/javascript" src="//chat.{{ request.get_host }}/socket.io/socket.io.js"></script>
+  <script src="/media/js/chat.js?v=1" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  chat_init({
+    url: "//chat.{{ request.get_host }}/chat"
+  });
+{% endblock js_init %}
+
+{% block content %}
+  <div id="chat">
+    <div id="users"></div>
+    <div id="messages"></div>
+    <form id="postform">
+      <input id="msgtext" maxlength="200" autocomplete="off" />
+    </form>
+  </div>
+{% endblock content %}
