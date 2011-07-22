@@ -1,6 +1,7 @@
 occupywallst.db
 django_cache
 occupywallst/settings_local.py
+chat/node_modules
 
 core
 *.pyc

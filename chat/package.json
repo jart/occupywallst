@@ -1,0 +1,12 @@
+{
+    "name": "occupywallst.chat",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "socket.io": "0.7",
+        "express": "2.4.3",
+        "jade": ">= 0.0.1",
+        "pg": ">= 0.5.3",
+        "memcached": ">= 0.0.2"
+    }
+}

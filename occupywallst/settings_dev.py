@@ -4,12 +4,8 @@ from occupywallst.settings import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': 'django_cache',
-    }
-}
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_DOMAIN = '.dev.occupywallst.org'
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
 

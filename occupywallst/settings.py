@@ -32,12 +32,15 @@ DATABASES = {
     },
 }
 
+# store cache entries as json so node.js can read them.  also we don't
+# need no goofy key prefixes
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'BACKEND': 'occupywallst.memcachedjson.MemcachedCacheJSON',
+        'KEY_FUNCTION': lambda key, key_prefix, version: key,
         'LOCATION': [
             '127.0.0.1:11211',
-        ]
+        ],
     }
 }
 
@@ -96,6 +99,9 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = False
 USE_THOUSAND_SEPARATOR = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
 DEFAULT_CHARSET = 'utf-8'
