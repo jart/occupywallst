@@ -164,7 +164,8 @@ io.of('/chat').authorization(function (handshake, callback) {
 
     sock.on('join', function (msg) {
         throttle(function () {
-            if (is_dead || my_rooms[msg.room] || !msg.room)
+            if (is_dead || my_rooms[msg.room] || !msg.room ||
+                msg.room > 20 || !msg.room.match(/[a-zA-Z][-_a-zA-Z0-9]/))
                 return;
             if (!all_rooms[msg.room]) {
                 all_rooms[msg.room] = {
@@ -189,7 +190,8 @@ io.of('/chat').authorization(function (handshake, callback) {
 
     sock.on('msg', function (msg) {
         throttle(function () {
-            if (is_dead || !my_rooms[msg.room] || !msg.text)
+            if (is_dead || !my_rooms[msg.room] || !msg.text ||
+                msg.text.length > 200)
                 return;
             sock.broadcast.to(msg.room).emit('msg', {
                 room: msg.room,

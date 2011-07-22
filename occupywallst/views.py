@@ -33,6 +33,12 @@ def index(request):
         context_instance=RequestContext(request))
 
 
+def chat(request):
+    return render_to_response(
+        'occupywallst/chat.html', {},
+        context_instance=RequestContext(request))
+
+
 def _instate_hierarchy(comments):
     """Rearranges list of comments into hierarchical structure
 
