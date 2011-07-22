@@ -7,9 +7,34 @@
   </style>
 {% endblock stylesheets %}
 
+{% block scripts %}
+  {{ block.super }}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+  <script src="/media/js/rides.js?v=1" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  rides_init({
+    "map": document.getElementById("map"),
+    "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
+    "zoom": 8
+  });
+{% endblock js_init %}
+
 {% block content %}
   <section id="rides">
-    <h1>Bus/Carpool</h1>
-    <p>To be written.</p>
+    <h1 style="margin-bottom: 0.5em; ">
+      Bus/Carpool
+      <img id="loader" style="display:none" src="/media/img/ajax-loader.gif" width="16" height="16" />
+    </h1>
+    <p><strong>This feature is still in progress!</strong></p>
+    <div style="width: 100%; height: 500px; " id="map"></div>
+<!--     <p> -->
+<!--       <textarea cols="30" rows="5">phila pa -->
+<!-- new york ny</textarea><br /> -->
+<!--       <button id="addroute">add route</button> -->
+<!--     </p> -->
   </section>
 {% endblock content %}

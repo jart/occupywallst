@@ -17,7 +17,7 @@
 {% block js_init %}
   {{ block.super }}
   attendees_init({
-    "elem": document.getElementById("map"),
+    "map": document.getElementById("map"),
     "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
     "zoom": 5
   });

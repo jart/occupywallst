@@ -4,29 +4,34 @@ var rides_init;
 (function() {
     "use strict";
 
-    rides_init = function() {
-        philadelphia = new google.maps.LatLng(39.95, -75.16);
+    var map;
+    var dserv;
+    var markers = [];
+    var philadelphia;
+
+    function init(args) {
         dserv = new google.maps.DirectionsService();
-        map = new google.maps.Map($("#map").get(0), {
-            zoom: 14,
-            center: philadelphia,
+        map = new google.maps.Map(args.map, {
+            center: args.center,
+            zoom: args.zoom,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             streetViewControl: false,
             panControl: false,
             zoomControl: true,
-            scaleControl: true,
+            scaleControl: true
         });
-        google.maps.event.addListener(map, 'idle', get_events);
+
+        show_route(["phila pa", "new york ny"]);
+        show_route(["washington dc", "new york ny"]);
+        show_route(["danbury ct", "new york ny"]);
+        show_route(["toronto ca", "new york ny"]);
+
+        // $("#addroute").click(function () {
+        //     show_route($("textarea").val().split('\n'));
+        //     return false;
+        // });
+
     };
-
-    //////////////////////////////////////////////////////////////////////
-    // PRIVATE STUFF
-
-    var map;
-    var dserv;
-    var markers = [];
-    var glob = {};
-    var philadelphia;
 
     function happy_line(path) {
         var line = new google.maps.Polyline({
@@ -35,28 +40,44 @@ var rides_init;
             strokeOpacity: 0.4,
             strokeWeight: 5,
             strokeColor: 'blue',
-            zIndex: 1,
-        })
+            zIndex: 1
+        });
         google.maps.event.addListener(line, 'mouseover', function(e) {
-            line.setOptions({strokeColor: 'red',
-                             strokeOpacity: 0.7,
-                             strokeWeight: 10,
-                             zIndex: 10});
+            line.setOptions({
+                strokeColor: 'red',
+                strokeOpacity: 0.7,
+                strokeWeight: 10,
+                zIndex: 10
+            });
         });
         google.maps.event.addListener(line, 'mouseout', function(e) {
-            line.setOptions({strokeColor: 'blue',
-                             strokeOpacity: 0.4,
-                             strokeWeight: 5,
-                             zIndex: 1});
+            line.setOptions({
+                strokeColor: 'blue',
+                strokeOpacity: 0.4,
+                strokeWeight: 5,
+                zIndex: 1
+            });
         });
         return line;
     }
 
-    function show_route(from, to) {
+    function show_route(waypoints) {
+        var i;
+        var from = waypoints[0];
+        var to = waypoints[waypoints.length - 1];
+        var mids = waypoints.slice(1, waypoints.length - 1);
+        waypoints = [];
+        for (i in mids) {
+            waypoints.push({location: mids[i], stopover: false});
+        }
+
         var dreq = {
             origin: from,
             destination: to,
-            travelMode: google.maps.TravelMode.DRIVING
+            waypoints: waypoints,
+            travelMode: google.maps.TravelMode.DRIVING,
+            optimizeWaypoints: true,
+            provideRouteAlternatives: false
         }
         dserv.route(dreq, function(result, status) {
             if (status != google.maps.DirectionsStatus.OK) {
@@ -67,14 +88,17 @@ var rides_init;
             google.maps.event.addListener(line, 'click', function(e) {
                 var balloon = new google.maps.InfoWindow({content: 'we\'re driving from ' + from + '<br /> so you should carpool with us :3'});
                 balloon.open(map, new google.maps.Marker({position: e.latLng}));
-            })
-            if (glob.bounds) {
-                glob.bounds.union(result.routes[0].bounds);
-            } else {
-                glob.bounds = result.routes[0].bounds;
-            }
-            map.fitBounds(glob.bounds);
+            });
+            // if (glob.bounds) {
+            //     glob.bounds.union(result.routes[0].bounds);
+            // } else {
+            //     glob.bounds = result.routes[0].bounds;
+            // }
+            // map.fitBounds(glob.bounds);
         });
     }
+
+    // export stuff
+    rides_init = init;
 
 })();

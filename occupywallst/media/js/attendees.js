@@ -6,7 +6,7 @@ var attendees_init;
 
     attendees_init = function(args) {
         geocoder = new google.maps.Geocoder();
-        map = new google.maps.Map(args.elem, {
+        map = new google.maps.Map(args.map, {
             zoom: args.zoom,
             center: args.center,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
