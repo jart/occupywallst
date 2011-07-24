@@ -41,6 +41,8 @@ header h2 { margin: 0; font-size: 1.5em; }
     height: 2em;
     color: white;
     text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
+    -moz-text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
+    -webkit-text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
     text-decoration: none;
     padding: 0.2em 1em;
 }
@@ -110,3 +112,23 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .maybe { font-weight: bold; color: #cd950c; }
 
 .tinygray { font-size: small; color: #666; }
+
+.funlist li { margin-bottom: 1em; }
+
+.buttons { padding-top: 0.5em; padding-bottom: 1.5em; text-align: right; }
+a.button {
+    padding: 0.5em 1em; margin-left: 0.5em; font-size: 1.2em;
+    box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 3px white inset;
+    -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 3px white inset;
+    -webkit-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 3px white inset;
+    text-shadow: -1px -1px 0px rgba(0,0,0,0.2);
+    -moz-text-shadow: -1px -1px 0px rgba(0,0,0,0.2);
+    -webkit-text-shadow: -1px -1px 0px rgba(0,0,0,0.2);
+}
+a.button:active {
+    box-shadow: 2px 2px 10px rgba(0,0,0,.25) inset, -2px -2px 3px white inset;
+    -moz-box-shadow: 2px 2px 10px rgba(0,0,0,.25) inset, -2px -2px 3px white inset;
+    -webkit-box-shadow: 2px 2px 10px rgba(0,0,0,.25) inset, -2px -2px 3px white inset;
+}
+.gray { background: #666; color: white; font-weight: bold; }
+.orange { background: #ee9a00; color: white; font-weight: bold; }

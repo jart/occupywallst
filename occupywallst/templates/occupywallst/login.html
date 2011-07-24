@@ -1,5 +1,10 @@
 {% extends 'occupywallst/base.html' %}
 
+{% block js_init %}
+  {{ block.super }}
+  $("#id_username").focus();
+{% endblock js_init %}
+
 {% block content %}
   <section id="login">
     <h1>Login</h1>
