@@ -17,7 +17,7 @@ This project has been tested on Ubuntu 10.04 LTS and Ubuntu 10.10.  If
 you're not using Ubuntu >= 10.04 or a recent Debian then spare your
 sanity and set up a virtual machine.
 
-Here's how you get started.
+Here's how you get started!
 
 Put this to ``/etc/hosts``::
 
@@ -41,10 +41,11 @@ Set up a PostgreSQL database with PostGIS::
         psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
         psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
     fi
+
+Now install the project and install the database schema::
+
+    sudo python setup.py develop
     occupywallst-dev syncdb
-
-Run the mini django http server::
-
     occupywallst-dev runserver 127.0.0.1:9001
 
 Set up nginx::
