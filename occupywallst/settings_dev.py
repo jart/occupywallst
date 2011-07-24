@@ -4,7 +4,6 @@ from occupywallst.settings import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_DOMAIN = '.dev.occupywallst.org'
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
