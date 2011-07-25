@@ -13,7 +13,9 @@
         <div class="info">
           <a href="{{ comment.user.get_absolute_url }}">
             {{ comment.user.username }}</a>
-          ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
+          {% if comment.user.userinfo.city and comment.user.userinfo.region %}
+            ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
+          {% endif %}
           <span class="karma">{{ comment.karma }}</span> points
           <span class="published">{{ comment.published|timesince }}</span> ago
           (<span class="ups">{{ comment.ups }}</span>|<span class="downs">{{ comment.downs }}</span>)
