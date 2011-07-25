@@ -105,6 +105,7 @@ def about(request):
 def user_page(request, username):
     try:
         user = (db.User.objects
+                .filter(is_active=True)
                 .select_related("userinfo")
                 .get(username=username))
     except db.User.DoesNotExist:
