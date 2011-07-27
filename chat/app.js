@@ -1,10 +1,12 @@
 
 var settings = {
     domain: "occupywallst.org",
+    listen_host: "66.55.144.155",
+    listen_port: 443,
+    ssl_enable: true,
+    ssl_key: '/etc/apache2/ssl/chat.occupywallst.org/key',
+    ssl_cert: '/etc/apache2/ssl/chat.occupywallst.org/crt-cabundle',
     db: {'database': 'occupywallst'},
-    ssl_enable: false,
-    ssl_key: '/etc/apache2/ssl/occupywallst.org/key',
-    ssl_cert: '/etc/apache2/ssl/occupywallst.org/crt-cabundle',
     random: '/dev/urandom'
 };
 
@@ -255,8 +257,9 @@ io.of('/chat').authorization(function (handshake, callback) {
     });
 });
 
+app.listen(settings.listen_port, settings.listen_host);
 // app.listen(80, "chat." + settings.domain);
-app.listen(80, "66.55.144.155");
+// app.listen(80, "66.55.144.155");
 console.log("https listening on %s:%d in %s mode", app.address().address,
             app.address().port, app.settings.env);
 

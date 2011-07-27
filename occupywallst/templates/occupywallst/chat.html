@@ -32,8 +32,11 @@
 
 {% block js_init %}
   {{ block.super }}
+  // work around bug in socket.io
+  var uschm = document.location.protocol;
+  var uport = (uschm == "http:") ? "80" : "443";
   chat_init({
-    url: "//chat.{{ request.get_host }}/chat"
+    url: uschm + "//chat.{{ request.get_host }}:" + uport + "/chat"
   });
 {% endblock js_init %}
 
