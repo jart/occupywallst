@@ -8,6 +8,9 @@ h1 { font-size: 1.7em; margin: 0 0; }
 h2 { font-size: 1.5em; /* margin: 0 0; */ }
 h1 a { color: black; }
 
+/* header { padding: 0 0 20px 140px; background: url(/media/img/bull128.png?v=2) 5px top no-repeat; } */
+/* #navbar ul { margin-top: 0; } */
+
 header h1 { margin-bottom: 0; padding-top: 0.5em; font-size: 3em; }
 header h1 .red { color: #a00; }
 header h2 { margin: 0; font-size: 1.5em; }
@@ -114,6 +117,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .tinygray { font-size: small; color: #666; }
 
 .funlist li { margin-bottom: 1em; }
+.linklist li { margin-bottom: 0.3em; }
 
 .buttons { padding-top: 0.5em; padding-bottom: 1.5em; text-align: right; }
 a.button {
@@ -132,3 +136,5 @@ a.button:active {
 }
 .gray { background: #666; color: white; font-weight: bold; }
 .orange { background: #ee9a00; color: white; font-weight: bold; }
+
+#right ul { padding-left: 1.5em; }
