@@ -64,5 +64,9 @@ Run the chat server in a second terminal::
 
 Then open this url :) http://dev.occupywallst.org/
 
+There's also a backend for modifying the database and writing
+articles.  Go to http://dev.occupywallst.org/ and log in as user
+"OccupyWallSt" with the password "anarchy".
+
 If you need to customize Django settings for your local install, make
 a file named ``occupywallst/settings_local.py`` and do it there.
