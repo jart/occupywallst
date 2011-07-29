@@ -1,6 +1,8 @@
 {% extends 'occupywallst/base.html' %}
 {% load comments %}
 
+{% block title %}{{ article.title }} | OccupyWallSt{% endblock title %}
+
 {% block scripts %}
   {{ block.super }}
   <script src="/media/js/article.js?v=2" type="text/javascript"></script>
