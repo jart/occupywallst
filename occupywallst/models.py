@@ -109,15 +109,13 @@ class Article(models.Model):
         When was article was published?""")
     content = models.TextField(help_text="""
         The contents of the article.""")
-    comment_count = models.IntegerField(default=0,
-                                        help_text="""
+    comment_count = models.IntegerField(default=0, help_text="""
         Comment counter to optimize listing page.""")
     is_visible = models.BooleanField(default=False, help_text="""
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
         want it published.""")
-    is_forum = models.BooleanField(default=False,
-                                   help_text="""
+    is_forum = models.BooleanField(default=False, help_text="""
         Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be listed on site.""")
