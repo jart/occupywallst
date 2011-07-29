@@ -4,10 +4,15 @@ var occupywallst_init;
 (function() {
     "use strict";
 
-    occupywallst_init = function() {
+    function init() {
+        $(".clickdiv, .clickdiv a").click(function() {
+            window.location.href = ($(this).attr('href') ||
+                                    $("a.primary", this).attr('href'));
+            return false;
+        });
     };
 
-    //////////////////////////////////////////////////////////////////////
-    // PRIVATE STUFF
+    // export stuff
+    occupywallst_init = init;
 
 })();

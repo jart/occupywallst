@@ -2,27 +2,12 @@
 
 {% block title %}OccupyWallSt | Public Chatroom{% endblock title %}
 
-{% block stylesheets %}
-  {{ block.super }}
+{% block extra_head %}
+  <link rel="stylesheet" href="/media/css/chat.css?v=4" type="text/css" media="all" />
   <style type="text/css">
     #navbar .nav-chat { background: #900; }
-
-    #chat { width: 100%; }
-    #chat a { font-weight: bold; color: black; }
-    #messages, #users { height: 20em; overflow-x: hidden; overflow-y: auto; }
-    #messages { border-top: 2px solid #ccc; border-left: 2px solid #ccc; }
-    #messages div, #users div { font-family: monospace; line-height: 1.2em; }
-    #messages div { text-indent: -3em; margin-left: 3em; }
-    #users div { white-space: nowrap; }
-    #users { width: 150px; float: right; border: 2px solid #ccc;
-             border-bottom: none; }
-    #postform { border: 2px solid #ccc; }
-    #msgtext { width: 100%; border: none; outline: none; clear: both;
-               font-family: monospace; }
-    #explain { text-align: center; font-family: sans-serif; font-size: small;
-               color: #666; }
   </style>
-{% endblock stylesheets %}
+{% endblock extra_head %}
 
 {% block scripts %}
   {{ block.super }}

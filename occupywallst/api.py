@@ -16,6 +16,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
+from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 
 from occupywallst import models as db
@@ -79,6 +80,38 @@ def _render_comment(comment, user):
                              'user': user})
 
 
+def thread_new(user, title, content, **kwargs):
+    """Create a new thread on the message board forum.
+    """
+    if not user.is_authenticated():
+        raise APIException("you're not logged in")
+    if len(title) < 4:
+        raise APIException("title too short")
+    if len(title) > 255:
+        raise APIException("title too long")
+    slug = slugify(title)[:50]
+    if db.Article.objects.filter(slug=slug).count():
+        raise APIException("a thread with this title has already been posted")
+    if not settings.DEBUG and not user.is_staff:
+        last = user.article_set.order_by('-published')[:1]
+        if last:
+            limit = settings.OWS_POST_LIMIT_THREAD
+            since = (datetime.now() - last[0].published).seconds
+            if since < limit:
+                raise APIException("please wait %d seconds before making "
+                                   "another post" % (limit - since))
+    thread = db.Article()
+    thread.published = datetime.now()
+    thread.is_forum = True
+    thread.is_visible = True
+    thread.author = user
+    thread.title = title
+    thread.slug = slug
+    thread.content = content
+    thread.save()
+    yield thread.as_dict()
+
+
 def comment_new(user, article_slug, parent_id, content, **kwargs):
     """Leave a comment on an article
 
@@ -106,10 +139,13 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     else:
         parent_id = None
     if not settings.DEBUG:
-        lastcom = user.comment_set.order_by('-published')[:1]
-        if lastcom:
-            if (datetime.now() - lastcom[0].published).seconds < 30:
-                raise APIException("hey slow down a little!")
+        last = user.comment_set.order_by('-published')[:1]
+        if last:
+            limit = settings.OWS_POST_LIMIT_COMMENT
+            since = (datetime.now() - last[0].published).seconds
+            if since < limit:
+                raise APIException("please wait %d seconds before making "
+                                   "another post" % (limit - since))
     com = db.Comment.objects.create(article=article,
                                     user=user,
                                     content=content,
@@ -210,7 +246,7 @@ def message_send(user, to_username, content, **kwargs):
         raise APIException("message too short")
     try:
         to_user = db.User.objects.get(username=to_username, is_active=True)
-    except db.Article.DoesNotExist:
+    except db.User.DoesNotExist:
         raise APIException('user not found')
     if user == to_user:
         raise APIException("you can't message yourself")

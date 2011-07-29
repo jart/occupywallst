@@ -32,13 +32,13 @@ var userpage_init;
 
     function init_postform(form) {
         $(".save", form).click(function() {
-            $("img", form).show();
-            $("span", form).text("");
+            $(".loader", form).show();
+            $(".error", form).text("");
             $.getJSON("/api/message/send/", {
                 "to_username": $(".username").attr("id"),
                 "content": $("textarea", form).val()
             }, function(data) {
-                $("img", form).hide();
+                $(".loader", form).hide();
                 if (data.status == "OK") {
                     var res = data.results[0];
                     var message = $(res.html);
@@ -48,11 +48,11 @@ var userpage_init;
                     message.fadeIn();
                     $("textarea", form).val("");
                 } else {
-                    $("span", form).text(data.message);
+                    $(".error", form).text(data.message);
                 }
             }).error(function(e) {
-                $("img", form).hide();
-                $("span", form).text("oh snap");
+                $(".loader", form).hide();
+                $(".error", form).text("oh snap");
             });
             return false;
         });

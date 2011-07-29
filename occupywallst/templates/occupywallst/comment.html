@@ -1,4 +1,4 @@
-{% load comments %}
+{% load occupywallst %}
 
 {% if not comment.is_deleted or comment.replies %}
   <div class="comment" id="comment-{{ comment.id }}">
@@ -17,7 +17,7 @@
             ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
           {% endif %}
           <span class="karma">{{ comment.karma }}</span> points
-          <span class="published">{{ comment.published|timesince }}</span> ago
+          <span class="published">{{ comment.published|timesince_short }} ago</span>
           (<span class="ups">{{ comment.ups }}</span>|<span class="downs">{{ comment.downs }}</span>)
         </div>
         <div class="words {% if comment.is_removed %}removed{% endif %}">

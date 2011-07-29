@@ -26,10 +26,20 @@ logger = logging.getLogger(__name__)
 def index(request):
     articles = (db.Article.objects
                 .select_related("author")
-                .filter(is_visible=True, is_deleted=False)
+                .filter(is_visible=True, is_forum=False, is_deleted=False)
                 .order_by('-published'))[:25]
     return render_to_response(
         'occupywallst/index.html', {'articles': articles},
+        context_instance=RequestContext(request))
+
+
+def forum(request, sort):
+    articles = (db.Article.objects
+                .select_related("author")
+                .filter(is_visible=True, is_deleted=False)
+                .order_by('-published'))
+    return render_to_response(
+        'occupywallst/forum.html', {'articles': articles},
         context_instance=RequestContext(request))
 
 
@@ -57,24 +67,33 @@ def _instate_hierarchy(comments):
     return res
 
 
-def article(request, slug):
+def article(request, slug, forum=False):
     try:
         article = (db.Article.objects
                    .select_related("author")
                    .get(slug=slug, is_deleted=False))
+        if not forum and article.is_forum:
+            raise db.Article.DoesNotExist()
     except db.Article.DoesNotExist:
         raise Http404()
-    recent = (db.Article.objects
-              .select_related("author")
-              .filter(is_visible=True, is_deleted=False)
-              .order_by('-published'))[:5]
     comments = article.comments_as_user(request.user)
     comments = _instate_hierarchy(comments)
+    recents = (db.Article.objects
+               .select_related("author")
+               .filter(is_visible=True, is_deleted=False)
+               .order_by('-published'))
+    if not forum:
+        recents = recents.filter(is_forum=False)
     return render_to_response(
-        'occupywallst/article.html', {'article': article,
+        "occupywallst/article.html", {'article': article,
                                       'comments': comments,
-                                      'recent': recent},
+                                      'recents': recents[:25],
+                                      'forum': forum},
         context_instance=RequestContext(request))
+
+
+def thread(request, slug):
+    return article(request, slug, forum=True)
 
 
 def attendees(request):

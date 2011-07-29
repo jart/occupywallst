@@ -5,13 +5,17 @@
   <title>{% block title %}OccupyWallSt.org | News & Logistics for September 17th{% endblock title %}</title>
   <link rel="shortcut icon" href="/media/img/bull16.png?v=3" />
   <meta name="description" content="News, maps and logistics for protesters attending the two month occupation of Wall Street starting September 17th." />
+  {% block canonical %}
+    <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
+  {% endblock canonical %}
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="/rss/news/" />
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Comments" href="/rss/comments/" />
-  {% block stylesheets %}
-    <link rel="stylesheet" href="/media/css/occupywallst.css?v=4" type="text/css" media="all" />
-    <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=2" type="text/css" media="print" />
-    <link rel="stylesheet" href="/media/css/article.css?v=2" type="text/css" media="all" />
-  {% endblock stylesheets %}
+  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="/rss/forum/" />
+  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="/rss/comments/" />
+  <link rel="stylesheet" href="/media/css/occupywallst.css?v=4" type="text/css" media="all" />
+  <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=2" type="text/css" media="print" />
+  <link rel="stylesheet" href="/media/css/article.css?v=2" type="text/css" media="all" />
+  {% block extra_head %}
+  {% endblock extra_head %}
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-24711946-1']);
@@ -22,8 +26,6 @@
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
-  {% block extrahead %}
-  {% endblock %}
 </head>
 <body>
   {% block body %}
@@ -48,6 +50,7 @@
         <div id="navbar">
           <ul>
             <li class="nav-news first"><a href="/">News</a></li>
+            <li class="nav-forum"><a href="/forum/">Forum</a></li>
             <li class="nav-attendees"><a href="/attendees/">Map</a></li>
             <li class="nav-rides"><a href="/rides/">Bus/Carpool</a></li>
             <li class="nav-chat"><a href="/chat/">Chat</a></li>

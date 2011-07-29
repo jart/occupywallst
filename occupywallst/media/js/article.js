@@ -23,29 +23,29 @@ $.fn.numberAdd = function (delta) {
 
     function init_postform(form) {
         $(".save", form).click(function() {
-            $("img", form).show();
-            $("span", form).text("");
+            $(".loader", form).show();
+            $(".error", form).text("");
             $.getJSON("/api/comment/new/", {
                 "article_slug": $("article").attr("id"),
                 "parent_id": null,
                 "content": $("textarea", form).val()
             }, function(data) {
-                $("img", form).hide();
+                $(".loader", form).hide();
                 if (data.status == "OK") {
                     var res = data.results[0];
                     var comment = $(res.html);
                     init_comment(comment);
                     comment.hide();
-                    $("#comments").prepend(comment);
+                    $("#comment-list").prepend(comment);
                     comment.fadeIn();
                     $("#comment-count").numberAdd(+1);
                     $("textarea", form).val("");
                 } else {
-                    $("span", form).text(data.message);
+                    $(".error", form).text(data.message);
                 }
             }).error(function(e) {
-                $("img", form).hide();
-                $("span", form).text("oh snap");
+                $(".loader", form).hide();
+                $(".error", form).text("oh snap");
             });
             return false;
         });

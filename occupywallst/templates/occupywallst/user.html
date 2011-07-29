@@ -37,8 +37,9 @@
       <p class="postform">
         <textarea rows="5" cols="50"></textarea><br />
         <button class="save">send message</button>
-        <img src="/media/img/ajax-loader.gif" width="16" height="16" />
-        <span></span>
+        <img class="loader" src="/media/img/ajax-loader.gif"
+             width="16" height="16" />
+        <span class="error"></span>
       </p>
       <div id="messages">
         {% for message in messages %}

@@ -1,7 +1,24 @@
 {% extends 'occupywallst/base.html' %}
-{% load comments %}
+{% load occupywallst %}
 
-{% block title %}{{ article.title }} | OccupyWallSt{% endblock title %}
+{% block title %}{{ article.title }} | OccupyWallSt {% if forum %}Forum{% endif %}{% endblock title %}
+
+{# this is ESPECIALLY important for SEO because news articles are
+  displayed both on the index page and the forum page.  we don't
+  want google indexing both! #}
+{% block canonical %}
+  <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ article.get_absolute_url }}" />
+{% endblock canonical %}
+
+{% block extra_head %}
+  <style type="text/css">
+    {% if forum %}
+      #navbar .nav-forum { background: #900; }
+    {% else %}
+      #navbar .nav-news { background: #900; }
+    {% endif %}
+  </style>
+{% endblock extra_head %}
 
 {% block scripts %}
   {{ block.super }}
@@ -16,45 +33,70 @@
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <article id="{{ article.slug }}">
-      <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
-          {{ article.title }}</a></h1>
+      <h1>
+        {% if article.is_forum %}
+          <span class="threadtype">Thread:</span>
+        {% else %}
+          <span class="threadtype">News:</span>
+        {% endif %}
+        <a href="{{ article.get_forum_url }}">{{ article.title }}</a>
+      </h1>
       <p class="info">
-        Published {{ article.published|date:"Y-m-d h:i:s T" }}
+        {% if forum %}
+          Posted {{ article.published|timesince_short }} ago
+        {% else %}
+          Posted {{ article.published|date:"Y-m-d h:i:s T" }}
+        {% endif %}
         by <a title="View {{ article.author.username }}'s profile"
-              href="{{ article.author.get_absolute_url }}">
+              class="user" href="{{ article.author.get_absolute_url }}">
           {{ article.author.username }}</a>
       </p>
-      {{ article.content|safe }}
+      {% if not article.is_forum and article.author.is_staff %}
+        {{ article.content|safe }}
+      {% else %}
+        {{ article.content|linebreaks }}
+      {% endif %}
     </article>
-    <h2><span id="comment-count">{{ article.comment_count }}</span>
-        Comments</h2>
+    <h2 id="comments">
+      <span id="comment-count">{{ article.comment_count }}</span> Comments
+    </h2>
     <div class="postform">
       {% if user.is_authenticated %}
-        <textarea rows="5" cols="50"></textarea><br />
-        <button class="save">submit</button>
-        <img src="/media/img/ajax-loader.gif" width="16" height="16" />
-        <span></span>
+        <textarea rows="5" cols="70"></textarea><br />
+        <button class="save">post comment</button>
+        <img class="loader" src="/media/img/ajax-loader.gif"
+             width="16" height="16" />
+        <span class="error"></span>
       {% else %}
         <p>Must be <a href="/login/">logged in</a> to comment.</p>
       {% endif %}
     </div>
-    <section id="comments">
+    <section id="comment-list">
       {% show_comments user comments %}
     </section>
   </td><td id="right">
-    <section id="recent-articles">
-      <h2 style="margin-top:0">Recent Articles</h2>
-      {% for article in recent %}
-        <div class="item">
-          <div class="info">
-            {{ article.published|date:"Y-m-d" }}
-            by {{ article.author.username }}
+    {% if forum %}
+      {% include "occupywallst/forum_info.html" %}
+      <h3 style="margin-top:0">Other Threads</h3>
+    {% else %}
+      <h3 style="margin-top:0">Other Articles</h3>
+    {% endif %}
+    <section id="recents">
+      {% for recent in recents %}
+        {% if recent.id != article.id %}
+          <div class="item clickdiv">
+            <div class="info">
+              {{ recent.published|timesince_short }} ago
+              by <a title="View {{ recent.author.username }}'s profile"
+                    class="user" href="{{ recent.author.get_absolute_url }}">
+                {{ recent.author.username }}</a>
+            </div>
+            <div class="title">
+              <a class="primary" title="View Thread"
+                 href="{{ recent.get_forum_url }}">{{ recent.title }}</a>
+            </div>
           </div>
-          <div class="title">
-            <a title="View Article" href="{{ article.get_absolute_url }}">
-              {{ article.title }}</a>
-          </div>
-        </div>
+        {% endif %}
       {% endfor %}
     </section>
   </td></tr></tbody></table>

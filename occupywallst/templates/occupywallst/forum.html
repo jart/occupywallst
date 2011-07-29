@@ -1,0 +1,66 @@
+{% extends 'occupywallst/base.html' %}
+{% load occupywallst %}
+
+{% block title %}OccupyWallSt | Forum{% endblock title %}
+
+{% block extra_head %}
+  <style type="text/css">
+    #navbar .nav-forum { background: #900; }
+  </style>
+{% endblock extra_head %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="/media/js/forum.js?v=2" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  forum_init();
+{% endblock js_init %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    <h1>General Discussion</h1>
+    <section id="thread-list">
+      {% for article in articles %}
+        <div class="item clickdiv">
+          <h3>
+            <a class="primary" title="View Thread"
+               href="{{ article.get_forum_url }}">{{ article.title }}</a>
+          </h3>
+          <div class="info">
+            {{ article.comment_count }} comments |
+            posted {{ article.published|timesince_short }} ago
+            by <a title="View {{ article.author.username }}'s profile"
+                  class="user" href="{{ article.author.get_absolute_url }}">
+              {{ article.author.username }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+    <h3 id="new-thread">New</h3>
+    <div class="postform">
+      {% if user.is_authenticated %}
+        <div>
+          <label for="title">title</label><br />
+          <input class="title" id="title" maxlength="255" size="60" />
+        </div>
+        <div>
+          <label for="content">content</label><br />
+          <textarea class="content" id="content" rows="7" cols="70"></textarea>
+        </div>
+        <div>
+          <button class="save">post thread</button>
+          <img class="loader" src="/media/img/ajax-loader.gif"
+               width="16" height="16" />
+          <span class="error"></span>
+        </div>
+      {% else %}
+        <p>Must be <a href="/login/">logged in</a> to post.</p>
+      {% endif %}
+    </div>
+  </td><td id="right">
+    {% include "occupywallst/forum_info.html" %}
+  </td></tr></tbody></table>
+{% endblock content %}

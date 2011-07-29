@@ -96,7 +96,7 @@ class Article(models.Model):
     """A news article which gets listed on the main page.
 
     This table is also used to store threads on the forum when
-    ``is_forum = True and is_visible = False``.
+    is_forum is True.
     """
     author = models.ForeignKey(User, help_text="""
         The user who wrote this article.""")
@@ -105,16 +105,17 @@ class Article(models.Model):
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.  DO NOT change
         this once the article has been published.""")
-    published = models.DateTimeField(auto_now_add=True, help_text="""
+    published = models.DateTimeField(help_text="""
         When was article was published?""")
     content = models.TextField(help_text="""
-        The contents of the article.""")
+        The contents of the article.  For news articles this should be
+        HTML and for threads this should be safe markup.""")
     comment_count = models.IntegerField(default=0, help_text="""
         Comment counter to optimize listing page.""")
     is_visible = models.BooleanField(default=False, help_text="""
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
-        want it published.""")
+        want it published.  This does not apply if is_forum is True.""")
     is_forum = models.BooleanField(default=False, help_text="""
         Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, help_text="""
@@ -123,15 +124,47 @@ class Article(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return "\"%s\" by %s" % (self.title, self.author.username)
+        if self.is_forum:
+            return "Thread \"%s\" by %s" % (self.title, self.author.username)
+        else:
+            return "Article \"%s\" by %s" % (self.title, self.author.username)
 
     @models.permalink
     def get_absolute_url(self):
-        return ('occupywallst.views.article', [self.slug])
+        """Returns absolute canonical path for article
+        """
+        if self.is_forum:
+            return ('occupywallst.views.thread', [self.slug])
+        else:
+            return ('occupywallst.views.article', [self.slug])
+
+    @models.permalink
+    def get_forum_url(self):
+        """Returns path to display article with forum design
+
+        This is important because news articles are also forum threads
+        and sometimes we want to display the article with all the
+        design elements of the forum.
+        """
+        return ('occupywallst.views.thread', [self.slug])
 
     def delete(self):
         self.is_deleted = True
         self.save()
+
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'title': self.title,
+               'slug': self.slug,
+               'content': self.content,
+               'url': self.get_absolute_url(),
+               'author': self.author.username,
+               'published': self.published,
+               'comment_count': self.comment_count,
+               'is_visible': self.is_visible,
+               'is_forum': self.is_forum}
+        res.update(moar)
+        return res
 
     @staticmethod
     def recalculate():

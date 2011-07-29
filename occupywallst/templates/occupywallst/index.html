@@ -1,11 +1,10 @@
 {% extends 'occupywallst/base.html' %}
 
-{% block stylesheets %}
-  {{ block.super }}
+{% block extra_head %}
   <style type="text/css">
     #navbar .nav-news { background: #900; }
   </style>
-{% endblock stylesheets %}
+{% endblock extra_head %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
@@ -16,10 +15,14 @@
         <p class="info">
           Published {{ article.published|date:"Y-m-d h:i:s T" }}
           by <a title="View {{ article.author.username }}'s profile"
-                href="{{ article.author.get_absolute_url }}">
+                class="user" href="{{ article.author.get_absolute_url }}">
             {{ article.author.username }}</a>
         </p>
-        {{ article.content|safe }}
+        {% if not article.is_forum and article.author.is_staff %}
+          {{ article.content|safe }}
+        {% else %}
+          UH OH SPAGHETTIOS
+        {% endif %}
         <p>
           <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
             {{ article.comment_count }} Comments</a>
