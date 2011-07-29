@@ -94,6 +94,9 @@ class UserInfo(models.Model):
 
 class Article(models.Model):
     """A news article which gets listed on the main page.
+
+    This table is also used to store threads on the forum when
+    ``is_forum = True and is_visible = False``.
     """
     author = models.ForeignKey(User, help_text="""
         The user who wrote this article.""")
@@ -113,6 +116,9 @@ class Article(models.Model):
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
         want it published.""")
+    is_forum = models.BooleanField(default=False, editable=False,
+                                   help_text="""
+        Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate should no longer be listed on site.""")
