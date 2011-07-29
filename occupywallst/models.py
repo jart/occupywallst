@@ -109,18 +109,17 @@ class Article(models.Model):
         When was article was published?""")
     content = models.TextField(help_text="""
         The contents of the article.""")
-    comment_count = models.IntegerField(default=0, editable=False,
+    comment_count = models.IntegerField(default=0,
                                         help_text="""
         Comment counter to optimize listing page.""")
     is_visible = models.BooleanField(default=False, help_text="""
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
         want it published.""")
-    is_forum = models.BooleanField(default=False, editable=False,
+    is_forum = models.BooleanField(default=False,
                                    help_text="""
         Indicates this a thread on the message board forum.""")
-    is_deleted = models.BooleanField(default=False, editable=False,
-                                     help_text="""
+    is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be listed on site.""")
 
     objects = models.GeoManager()
@@ -193,20 +192,18 @@ class Comment(models.Model):
         Who posted this comment?""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
-    parent_id = models.IntegerField(null=True, blank=True)
+    parent_id = models.IntegerField(null=True, blank=True, editable=False)
     content = models.TextField(blank=True, help_text="""
         The contents of the message.""")
-    ups = models.IntegerField(default=0, editable=False, help_text="""
+    ups = models.IntegerField(default=0, help_text="""
         The count of upvotes received.""")
-    downs = models.IntegerField(default=0, editable=False, help_text="""
+    downs = models.IntegerField(default=0, help_text="""
         The count of downvotes received.""")
-    karma = models.IntegerField(default=0, editable=False, help_text="""
+    karma = models.IntegerField(default=0, help_text="""
         Must equal ups minus downs.""")
-    is_removed = models.BooleanField(default=False, editable=False,
-                                     help_text="""
+    is_removed = models.BooleanField(default=False, help_text="""
         Flag to indicate a moderator removed the comment.""")
-    is_deleted = models.BooleanField(default=False, editable=False,
-                                     help_text="""
+    is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate user deleted thier comment.""")
 
     replies = ()
