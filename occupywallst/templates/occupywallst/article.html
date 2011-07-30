@@ -34,11 +34,6 @@
   <table style="width:100%"><tbody><tr><td id="left">
     <article id="{{ article.slug }}">
       <h1>
-        {% if article.is_forum %}
-          <span class="threadtype">Thread:</span>
-        {% else %}
-          <span class="threadtype">News:</span>
-        {% endif %}
         <a href="{{ article.get_forum_url }}">{{ article.title }}</a>
       </h1>
       <p class="info">
@@ -50,6 +45,11 @@
         by <a title="View {{ article.author.username }}'s profile"
               class="user" href="{{ article.author.get_absolute_url }}">
           {{ article.author.username }}</a>
+        {% if article.is_forum %}
+          {% if article.author.userinfo.city and article.author.userinfo.region %}
+            ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
+          {% endif %}
+        {% endif %}
       </p>
       {% if not article.is_forum and article.author.is_staff %}
         {{ article.content|safe }}
@@ -75,10 +75,7 @@
       {% show_comments user comments %}
     </section>
   </td><td id="right">
-    {% if forum %}
-      {% include "occupywallst/forum_info.html" %}
-      <h3 style="margin-top:0">Other Threads</h3>
-    {% else %}
+    {% if not forum %}
       <h3 style="margin-top:0">Other Articles</h3>
     {% endif %}
     <section id="recents">
@@ -86,6 +83,7 @@
         {% if recent.id != article.id %}
           <div class="item clickdiv">
             <div class="info">
+              {{ recent.comment_count }} comments
               {{ recent.published|timesince_short }} ago
               by <a title="View {{ recent.author.username }}'s profile"
                     class="user" href="{{ recent.author.get_absolute_url }}">
@@ -102,11 +100,11 @@
   </td></tr></tbody></table>
 
   <p style="display:none" class="replyform">
-    <textarea rows="5" cols="50"></textarea><br />
+    <textarea rows="5" cols="70"></textarea><br />
     <button class="save">save</button>
     <button class="cancel">cancel</button>
-    <img src="/media/img/ajax-loader.gif" width="16" height="16" />
-    <span></span>
+    <img class="loader" src="/media/img/ajax-loader.gif" width="16" height="16" />
+    <span class="error"></span>
   </p>
 
 {% endblock content %}

@@ -11,14 +11,13 @@
           <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">↧</a>
         </div>
         <div class="info">
-          <a href="{{ comment.user.get_absolute_url }}">
+          <a class="user" href="{{ comment.user.get_absolute_url }}">
             {{ comment.user.username }}</a>
           {% if comment.user.userinfo.city and comment.user.userinfo.region %}
             ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
           {% endif %}
           <span class="karma">{{ comment.karma }}</span> points
           <span class="published">{{ comment.published|timesince_short }} ago</span>
-          (<span class="ups">{{ comment.ups }}</span>|<span class="downs">{{ comment.downs }}</span>)
         </div>
         <div class="words {% if comment.is_removed %}removed{% endif %}">
           {{ comment.content|linebreaks }}

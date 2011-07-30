@@ -45,7 +45,7 @@ $.fn.numberAdd = function (delta) {
                 }
             }).error(function(e) {
                 $(".loader", form).hide();
-                $(".error", form).text("oh snap");
+                $(".error", form).text(e.status + e.statusText);
             });
             return false;
         });
@@ -59,14 +59,14 @@ $.fn.numberAdd = function (delta) {
             return false;
         });
         $(".save", form).click(function() {
-            $("img", form).show();
-            $("span", form).text("");
+            $(".loader", form).show();
+            $(".error", form).text("");
             $.getJSON("/api/comment/new/", {
                 "article_slug": $("article").attr("id"),
                 "parent_id": parent_id,
                 "content": $("textarea", form).val()
             }, function(data) {
-                $("img", form).hide();
+                $(".loader", form).hide();
                 if (data.status == "OK") {
                     var res = data.results[0];
                     var reply = $(res.html);
@@ -77,11 +77,11 @@ $.fn.numberAdd = function (delta) {
                     reply.fadeIn();
                     $("#comment-count").numberAdd(+1);
                 } else {
-                    $("span", form).text(data.message);
+                    $(".error", form).text(data.message);
                 }
             }).error(function(e) {
-                $("img", form).hide();
-                $("span", form).text("oh snap");
+                $(".loader", form).hide();
+                $(".error", form).text(e.status + e.statusText);
             });
             return false;
         });

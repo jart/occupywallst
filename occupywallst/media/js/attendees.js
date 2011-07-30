@@ -144,24 +144,24 @@ var attendees_init;
 
     function init_msgform(form, to_username) {
         $(".save", form).click(function() {
-            $("img", form).show();
-            $("span", form).text("");
+            $(".loader", form).show();
+            $(".error", form).text("");
             $.getJSON("/api/message/send/", {
                 "to_username": to_username,
                 "content": $("textarea", form).val()
             }, function(data) {
-                $("img", form).hide();
+                $(".loader", form).hide();
                 if (data.status == "OK") {
                     var res = data.results[0];
                     var message = $(res.html);
                     $("textarea", form).val("");
-                    $("span", form).text("Message Sent!");
+                    $(".error", form).text("Message Sent!");
                 } else {
-                    $("span", form).text(data.message);
+                    $(".error", form).text(data.message);
                 }
             }).error(function(e) {
-                $("img", form).hide();
-                $("span", form).text("oh snap");
+                $(".loader", form).hide();
+                $(".error", form).text(e.status + e.statusText);
             });
             return false;
         });

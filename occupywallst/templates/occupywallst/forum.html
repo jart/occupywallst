@@ -21,17 +21,18 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h1>General Discussion</h1>
+    <h1>Planning <span class="amp">&amp;</span> Discussion</h1>
     <section id="thread-list">
       {% for article in articles %}
         <div class="item clickdiv">
           <h3>
+            {% if not article.is_forum %}News Article:{% endif %}
             <a class="primary" title="View Thread"
                href="{{ article.get_forum_url }}">{{ article.title }}</a>
           </h3>
           <div class="info">
-            {{ article.comment_count }} comments |
-            posted {{ article.published|timesince_short }} ago
+            {{ article.comment_count }} comments
+            {{ article.published|timesince_short }} ago
             by <a title="View {{ article.author.username }}'s profile"
                   class="user" href="{{ article.author.get_absolute_url }}">
               {{ article.author.username }}</a>

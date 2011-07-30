@@ -9,6 +9,9 @@ h2 { font-size: 1.5em; /* margin: 0 0; */ }
 h1 a { color: black; }
 textarea { font-family: sans-serif; }
 
+.amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
+       font-style: italic; font-size: 1.2em; }
+
 /* header { padding: 0 0 20px 140px; background: url(/media/img/bull128.png?v=2) 5px top no-repeat; } */
 /* #navbar ul { margin-top: 0; } */
 
@@ -150,20 +153,3 @@ a.button:active {
 .threadtype {  color: #a00; }
 
 #new-thread { margin-top: 1em; margin-bottom: 0.25em; }
-
-a.user[href$="/OccupyWallSt/"],
-a.user[href$="/jart/"] {
-    color: #a00;
-}
-
-/* a.user[href$="/OccupyWallSt/"], */
-/* a.user[href$="/jart/"] { */
-/*     color: white; */
-/*     background: #a00; */
-/*     padding: 0 0.2em; */
-/*     line-height: 1.2em; */
-/*     display: inline-block; */
-/*     -moz-border-radius: 4px; */
-/*     -webkit-border-radius: 4px; */
-/*     border-radius: 4px; */
-/* } */
