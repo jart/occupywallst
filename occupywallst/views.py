@@ -115,6 +115,12 @@ def housing(request):
         context_instance=RequestContext(request))
 
 
+def telecom(request):
+    return render_to_response(
+        'occupywallst/telecom.html', {},
+        context_instance=RequestContext(request))
+
+
 def about(request):
     return render_to_response(
         'occupywallst/about.html', {},

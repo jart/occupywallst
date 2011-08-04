@@ -9,8 +9,9 @@ h2 { font-size: 1.5em; /* margin: 0 0; */ }
 h1 a { color: black; }
 textarea { font-family: sans-serif; }
 
-.amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
-       font-style: italic; font-size: 1.2em; }
+.amp { font-family: Baskerville, 'Goudy Old Style', Palatino,
+                    'Book Antiqua', serif;
+       font-style: italic; font-size: 1.1em; }
 
 /* header { padding: 0 0 20px 140px; background: url(/media/img/bull128.png?v=2) 5px top no-repeat; } */
 /* #navbar ul { margin-top: 0; } */
