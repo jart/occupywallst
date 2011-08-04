@@ -15,6 +15,9 @@ var chat_init;
         chat.socket.on('error', function (reason) {
             display({text: "error: " + reason});
         });
+        chat.socket.on('disconnect', function (reason) {
+            display({text: "disconnected: " + reason});
+        });
         chat.on("msg", display);
         chat.on("join_ack", function (msg) {
             me = msg.user;

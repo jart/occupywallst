@@ -1,21 +1,26 @@
 
-var settings = {
-    domain: "occupywallst.org",
-    listen_host: "66.55.144.155",
-    listen_port: 443,
-    ssl_enable: true,
-    ssl_key: '/etc/apache2/ssl/chat.occupywallst.org/key',
-    ssl_cert: '/etc/apache2/ssl/chat.occupywallst.org/crt-cabundle',
-    db: {'database': 'occupywallst'},
-    random: '/dev/urandom'
-};
-
 var fs = require("fs");
 var net = require("net");
 var express = require('express');
 var memcached = require('memcached');
 var cache = new memcached("127.0.0.1:11211");
 var pg = require('pg').native;
+var freeswitch = require('./freeswitch');
+
+var settings = (function(){
+    var f = fs.readFileSync("settings.json");
+    var set = eval('(' + f.toString() + ')');
+    try {
+        f = fs.readFileSync("settings_local.json");
+    } catch (e) {
+        return set;
+    }
+    var locset = eval('(' + f.toString() + ')');
+    for (var key in locset) {
+        set[key] = locset[key];
+    }
+    return set;
+})();
 
 var app;
 if (settings.ssl_enable) {
@@ -32,8 +37,6 @@ var io = require('socket.io').listen(app);
 app.configure(function () {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
-    app.redirect('login', ((settings.use_ssl ? 'https' : 'http') + 
-                           '://' + settings.domain + '/login/'));
     // app.use(express.logger());
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -65,14 +68,14 @@ io.configure('production', function () {
 });
 
 //////////////////////////////////////////////////////////////////////
+// web application
 
 app.get('/', function (req, res) {
-    // if (!req.cookies.sessionid) {
-    //     res.redirect('login');
-    //     return;
-    // }
     res.render('index', {});
 });
+
+//////////////////////////////////////////////////////////////////////
+// chatroom code
 
 var all_users = {};
 var all_rooms = {};
@@ -80,7 +83,7 @@ var guest_counter = 1;
 var all_user_ids = {};
 var ip_limits = {};
 
-io.of('/chat').authorization(function (handshake, callback) {
+function authorization(handshake, callback) {
     handshake.user = {};
     var sessionid = null;
     var cookies = handshake.headers.cookie;
@@ -94,15 +97,19 @@ io.of('/chat').authorization(function (handshake, callback) {
         get_user(session._auth_user_id, function (err, user) {
             if (err) { callback(null, true); return; }
             handshake.user.name = user.username;
-            handshake.user.is_op = user.is_staff;
+            handshake.user.is_staff = user.is_staff;
             callback(null, true);
         });
     });
-}).on('connection', function (sock) {
+}
+
+var chatio = io.of('/chat');
+chatio.authorization(authorization);
+chatio.on('connection', function (sock) {
     var my_rooms = {};
     var me = sock.handshake.user;
     if (!me.name) {
-        me.is_op = false;
+        me.is_staff = false;
         me.name = "anon" + guest_counter++;
     }
     all_users[me.name] = me;
@@ -209,7 +216,7 @@ io.of('/chat').authorization(function (handshake, callback) {
     });
 
     sock.on('kick', function (msg) {
-        if (!me.is_op)
+        if (!me.is_staff)
             return;
         if (!all_users[msg.user.name])
             return;
@@ -249,7 +256,7 @@ io.of('/chat').authorization(function (handshake, callback) {
 
     sock.on('leave', on_leave);
 
-    process.on('kick', function (msg) {
+    process.once('kick', function (msg) {
         if (msg.user.name == me.name && my_rooms[msg.room]) {
             sock.emit('kicked', msg);
             on_leave(msg);
@@ -257,13 +264,107 @@ io.of('/chat').authorization(function (handshake, callback) {
     });
 });
 
+//////////////////////////////////////////////////////////////////////
+// conference bridge: web socket interface
+
+var confs = {};
+var confio = io.of('/conf');
+confio.authorization(authorization);
+confio.on('connection', function (sock) {
+    var me = sock.handshake.user;
+    sock.on('monitor start', function (conf) {
+        sock.emit("conference", confs[conf] || {name: conf, members: {}});
+        sock.join(conf);
+        console.log("JOINING %j", "conf " + conf);
+    });
+    sock.on('monitor stop', function (conf) {
+        sock.leave(conf);
+    });
+    if (me.is_staff) {
+        sock.on('mute', function (conf, id) {
+            if (!confs[conf] || !confs[conf].members[id])
+                return;
+            fs_api("conference " + conf + " mute " + id);
+        });
+        sock.on('unmute', function (conf, id) {
+            if (!confs[conf] || !confs[conf].members[id])
+                return;
+            fs_api("conference " + conf + " unmute " + id);
+        });
+        sock.on('kick', function (conf, id) {
+            if (!confs[conf] || !confs[conf].members[id])
+                return;
+            fs_api("conference " + conf + " kick " + id);
+        });
+    }
+});
+
+//////////////////////////////////////////////////////////////////////
+// conference bridge: freeswitch interface
+
+var fsev = freeswitch.eventSocket(settings.freeswitch);
+fsev.on('connect', function() {
+    fsev.send("event json CUSTOM conference::maintenance");
+}).on('event', function(type, event) {
+    if (event["Event-Subclass"] != "conference::maintenance")
+        return;
+
+    var s = (event["Conference-Name"] + "@" +
+             event["Conference-Profile-Name"] + ": " +
+             event["Action"] + " " +
+             event["Caller-Caller-ID-Number"]);
+    if (fs_bool(event["Talking"])) {
+        s += " (Talking " + event["Energy-Level"] + ")";
+    }
+    console.log(s);
+
+    var name = event["Conference-Name"];
+    var id = parseInt(event["Member-ID"]);
+    switch (event["Action"]) {
+    case "add-member":
+        if (!confs[name])
+            confs[name] = {name: name, members: {}};
+        confs[name].members[id] = {
+            id: id,
+            conf: name,
+            cid: mask(event["Caller-Caller-ID-Number"]),
+            talking: fs_bool(event["Talking"]),
+            muted: !fs_bool(event["Speak"]),
+            energy: fs_bool(event["Energy-Level"]),
+        };
+        confio.in(name).emit("member join", confs[name].members[id]);
+        console.log("BROADCASTING %j", "conf " + name);
+        break;
+    case "del-member":
+        if (confs[name] && confs[name].members[id]) {
+            confio.in(name).emit("member leave", confs[name].members[id]);
+            delete confs[name].members[id];
+            if (Object.keys(confs[name].members).length == 0)
+                delete confs[name];
+        }
+        break;
+    case "mute-member":
+    case "unmute-member":
+    case "start-talking":
+    case "stop-talking":
+        if (confs[name] && confs[name].members[id]) {
+            var conf = confs[name].members[id];
+            conf.muted = !fs_bool(event["Speak"]);
+            conf.talking = fs_bool(event["Talking"]);
+            conf.energy = fs_bool(event["Energy-Level"]);
+            confio.in(name).emit("member update", conf);
+        }
+        break;
+    }
+});
+
+//////////////////////////////////////////////////////////////////////
+
 app.listen(settings.listen_port, settings.listen_host);
 // app.listen(80, "chat." + settings.domain);
 // app.listen(80, "66.55.144.155");
 console.log("https listening on %s:%d in %s mode", app.address().address,
             app.address().port, app.settings.env);
-
-//////////////////////////////////////////////////////////////////////
 
 // var fps = net.createServer(function (sock) {
 //     console.log("got request to flash policy server!");
@@ -364,5 +465,34 @@ function gen_uid(bytes, callback) {
             fs.close(fd);
             callback(null, buf.toString('base64'));
         });
+    });
+}
+
+/// formats and masks last four digits of caller ids
+function mask(s) {
+    var m = s.match(/^\+?1([2-9]\d\d)([2-9]\d\d)(\d\d\d\d)$/);
+    if (m)
+        return "+1 " + m[1] + "-" + m[2] + "-xxxx";
+    var m = s.match(/^\+?(\d{6,})$/);
+    if (m)
+        return "+" + m[1].slice(0, m[1].length - 4);
+    return s;
+}
+
+/// turns string bool into normal bool
+function fs_bool(s) {
+    return (s == "true");
+}
+
+/// send a single command to freeswitch not caring about result
+function fs_api(cmd) {
+    var fsev = freeswitch.eventSocket(settings.freeswitch);
+    var deathclock = setTimeout(function() {
+        fsev.close();
+    }, 1000);
+    fsev.on('connect', function() {
+        fsev.send("api " + cmd);
+        fsev.close();
+        clearTimeout(deathclock);
     });
 }

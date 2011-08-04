@@ -1,0 +1,9 @@
+
+.conference { margin: 0 1em; }
+.conference .details { font-weight: bold; }
+.conference .member { clear: both; padding: 2px; }
+.conference .member:hover { background: #f3f3ff; }
+.conference .member .links { float: right; }
+.conference .member .links a { padding-left: 0.5em; }
+.conference .member .cid { }
+.conference .member .info { padding-left: 0.5em; }

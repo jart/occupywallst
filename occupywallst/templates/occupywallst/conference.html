@@ -1,0 +1,81 @@
+{% extends 'occupywallst/base.html' %}
+
+{% block title %}OccupyWallSt | Conference Bridges{% endblock title %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="/media/css/conference.css?v=5" type="text/css" media="all" />
+  <style type="text/css">
+    #navbar .nav-conf { background: #900; }
+  </style>
+{% endblock extra_head %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script type="text/javascript" src="//chat.{{ request.get_host }}/socket.io/socket.io.js"></script>
+  <script src="/media/js/conference.js?v=5" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  // work around bug in socket.io
+  var uschm = document.location.protocol;
+  var uport = (uschm == "http:") ? "80" : "443";
+  conference_init({
+    admin: {% if user.is_staff %}true{% else %}false{% endif %},
+    url: uschm + "//chat.{{ request.get_host }}:" + uport + "/conf",
+    confs: {
+      'ows.conf': {elem: $('#ows-conf')}
+    }
+  });
+{% endblock js_init %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    <div id="telecom">
+      <h1>Conference Bridges</h1>
+      <h3>Conference #1</h3>
+      <ul>
+        <li>Tel: <strong><a href="tel:+12034456232">+1 (203) 445-6232</a></strong> (Dial this number to join)</li>
+        <li>VoIP: <a href="sip:ows.conf@occupywallst.org">sip:ows.conf@occupywallst.org</a></li>
+        <li>Secure: <a href="sips:ows.conf@occupywallst.org">sips:ows.conf@occupywallst.org</a></li>
+      </ul>
+      <div class="conference" id="ows-conf">
+        <p class="details">
+          <span class="count">0</span>
+          <span class="people">people</span> currently in conference
+          <span class="mp3stream" style="display:none">
+            | <a href="/stream/ows.conf.mp3">MP3 Stream</a>
+          </span>
+        </p>
+      </div>
+      <h3>Private Conferences (VoIP Only)</h3>
+      <ul>
+        <li>VoIP: sip:ows.conf.CHANGEME@occupywallst.org</li>
+        <li>Secure: sips:ows.conf.CHANGEME@occupywallst.org</li>
+      </ul>
+      <h3>Donations</h3>
+      <p>
+        <a class="wepay-widget" href="https://www.wepay.com/donate/110790/?widget_type=donations&widget_donation_id=110790&widget_auth_token=6b1e4a2178f88a066984157682ce7e2260201d41&widget_show_description=1&widget_show_thermometer=1&widget_show_donations=1">Donate to Telecom Fund</a><script id="wepay-widget_script" type="text/javascript" src="https://www.wepay.com/min/js/widget.wepay.js"></script>
+      </p>
+    </div>
+  </td><td id="right">
+    <h2 style="margin-top:0">Information</h2>
+    <p>
+      A conference bridge (or party line) is a phone number several or
+      more people can dial to have a meeting by phone.  This is useful
+      if you don't want to reveal your phone number or want to chat
+      with more than three people (because then you could just have a
+      three-way call.)
+    </p>
+    <p>
+      To get started, ask your group to call into one of the numbers
+      below at a specified time.  Please also be aware that anyone
+      is able to listen to your conversation.
+    </p>
+    <p>
+      Once a conference has 2+ members, an "MP3 Stream" link will
+      appear to allow others to listen to the meeting.  Please note
+      that when streaming there's a 30 second audio delay.
+    </p>
+  </td></tr></tbody></table>
+{% endblock content %}

@@ -2,7 +2,7 @@
 var forum_init;
 
 (function() {
-    // "use strict";
+    "use strict";
 
     var map;
     var mark;

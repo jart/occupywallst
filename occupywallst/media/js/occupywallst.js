@@ -4,9 +4,9 @@ var occupywallst_init;
 (function() {
     "use strict";
 
-    const MOUSE_LEFT = 1;
-    const MOUSE_MIDDLE = 2;
-    const MOUSE_RIGHT = 3;
+    var MOUSE_LEFT = 1;
+    var MOUSE_MIDDLE = 2;
+    var MOUSE_RIGHT = 3;
 
     function init() {
         $(".clickdiv, .clickdiv a").click(function(e) {

@@ -115,9 +115,9 @@ def housing(request):
         context_instance=RequestContext(request))
 
 
-def telecom(request):
+def conference(request):
     return render_to_response(
-        'occupywallst/telecom.html', {},
+        'occupywallst/conference.html', {},
         context_instance=RequestContext(request))
 
 
