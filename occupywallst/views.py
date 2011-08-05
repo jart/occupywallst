@@ -43,9 +43,9 @@ def forum(request, sort):
         context_instance=RequestContext(request))
 
 
-def chat(request):
+def chat(request, room="pub"):
     return render_to_response(
-        'occupywallst/chat.html', {},
+        'occupywallst/chat.html', {'room': room},
         context_instance=RequestContext(request))
 
 

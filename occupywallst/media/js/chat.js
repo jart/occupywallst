@@ -11,15 +11,15 @@ var chat_init;
     function init(args) {
         $("#msgtext").focus();
         $("#postform").submit(on_postform);
-        connect(args.url);
+        connect(args.url, args.room);
     }
 
-    function connect(url) {
+    function connect(url, room) {
         var pinger, ponged;
         chat = io.connect(url);
         chat.on('connect', function () {
             is_connected = true;
-            chat.emit("join", {room: "pub"});
+            chat.emit("join", {room: room});
             ponged = true;
             pinger = setInterval(function() {
                 if (ponged) {
@@ -63,6 +63,9 @@ var chat_init;
         chat.on("kicked", function (msg) {
             display({text: "you were kicked from " + msg.room});
         });
+        chat.on("disconnected", function (msg) {
+            chat.socket.disconnect();
+        });
         chat.on("join", function (msg) {
             add_user(msg.user);
             display({text: msg.user.name + " has joined"});
@@ -79,7 +82,7 @@ var chat_init;
         var text = $("#msgtext").val();
         $("#msgtext").val("");
         if (text.length < 2)
-            return;
+            return false;
         if (text[0] == "/") {
             var command, args;
             if (text.indexOf(" ") != -1) {

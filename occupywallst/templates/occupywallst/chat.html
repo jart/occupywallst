@@ -21,7 +21,8 @@
   var uschm = document.location.protocol;
   var uport = (uschm == "http:") ? "80" : "443";
   chat_init({
-    url: uschm + "//chat.{{ request.get_host }}:" + uport + "/chat"
+    url: uschm + "//chat.{{ request.get_host }}:" + uport + "/chat",
+    room: "{{ room|addslashes }}"
   });
 {% endblock js_init %}
 

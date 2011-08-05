@@ -13,5 +13,24 @@
         password: "ClueCon",
         reconnect_timeout: 5000,
         login_timeout: 1000
+    },
+    // penalize ip addresses that do more than:
+    // - 5 things every 10 seconds
+    // - 20 things every 60 seconds
+    throttler: {
+        max_age: 60 * 60 * 1000,
+        logging: true,
+        limits: [
+            {
+                interval: 60 * 1000,
+                max: 20,
+                penalty: 2000,
+            },
+            {
+                interval: 20 * 1000,
+                max: 5,
+                penalty: 1000
+            }
+        ]
     }
 }

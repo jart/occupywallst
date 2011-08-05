@@ -6,6 +6,7 @@ var memcached = require('memcached');
 var cache = new memcached("127.0.0.1:11211");
 var pg = require('pg').native;
 var freeswitch = require('./freeswitch');
+var throttler = require('./throttler');
 
 var settings = (function(){
     var f = fs.readFileSync("settings.json");
@@ -34,7 +35,7 @@ if (settings.ssl_enable) {
 
 var io = require('socket.io').listen(app);
 
-app.configure(function () {
+app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     // app.use(express.logger());
@@ -44,23 +45,23 @@ app.configure(function () {
     app.use(app.router);
     app.use(express.static(__dirname + '/public'));
 });
-app.configure('development', function () {
+app.configure('development', function() {
     app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
 });
-app.configure('production', function () {
+app.configure('production', function() {
     app.use(express.errorHandler()); 
 });
 
-io.configure(function () {
+io.configure(function() {
     io.set('close timeout', 99999999999);
     io.set('transports', ['websocket', 'flashsocket']);
     // 'htmlfile', 'xhr-polling', 'jsonp-polling'
 });
-io.configure('development', function () {
+io.configure('development', function() {
     console.log("SOCKET.IO DEVELOPMENT MODE");
     io.set('log level', 3);
 });
-io.configure('production', function () {
+io.configure('production', function() {
     console.log("SOCKET.IO PRODUCTION MODE");
     io.set('log level', 1);
     io.enable('browser client etag');
@@ -70,7 +71,7 @@ io.configure('production', function () {
 //////////////////////////////////////////////////////////////////////
 // web application
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     res.render('index', {});
 });
 
@@ -79,9 +80,9 @@ app.get('/', function (req, res) {
 
 var all_users = {};
 var all_rooms = {};
+var user_internal = {};
 var guest_counter = 1;
-var all_user_ids = {};
-var ip_limits = {};
+var throttle = throttler.throttler(settings.throttler);
 
 function authorization(handshake, callback) {
     handshake.user = {};
@@ -92,9 +93,9 @@ function authorization(handshake, callback) {
         if (res)
             sessionid = res[1];
     }
-    get_session(sessionid, function (err, session) {
+    get_session(sessionid, function(err, session) {
         if (err) { callback(null, true); return; }
-        get_user(session._auth_user_id, function (err, user) {
+        get_user(session._auth_user_id, function(err, user) {
             if (err) { callback(null, true); return; }
             handshake.user.name = user.username;
             handshake.user.is_staff = user.is_staff;
@@ -105,82 +106,29 @@ function authorization(handshake, callback) {
 
 var chatio = io.of('/chat');
 chatio.authorization(authorization);
-chatio.on('connection', function (sock) {
-    var my_rooms = {};
+chatio.on('connection', function(sock) {
+    var ip = sock.handshake.address.address;
     var me = sock.handshake.user;
+    var my_rooms = {};
+    var is_dead = false;
+
+    // assign anonymous nicknames if not authenticated
     if (!me.name) {
         me.is_staff = false;
         me.name = "anon" + guest_counter++;
     }
-    all_users[me.name] = me;
-    all_user_ids[me.name] = sock.id;
 
-    // penalize ip addresses that do more than:
-    // - 5 things every 10 seconds
-    // - 20 things every 60 seconds
-    var ip = sock.handshake.address.address;
-    if (!ip_limits[ip]) {
-        ip_limits[ip] = [
-            {
-                start: Date.now(),
-                interval: 60 * 1000,
-                max: 20,
-                count: 0,
-                penalty: 2000,
-                prev: null
-            },
-            {
-                start: Date.now(),
-                interval: 20 * 1000,
-                max: 5,
-                count: 0,
-                penalty: 1000
-            }
-        ];
-    }
-    var limits = ip_limits[ip];
-    var last_penalty_ends = Date.now();
-    var is_dead = false;
-
-    function throttle(callback) {
-        var timeout = 0;
-        for (var i in limits) {
-            var limit = limits[i];
-            var now = Date.now();
-            var end = limit.start + limit.interval;
-            if (now > end) {
-                limit.start = now;
-                limit.count = 1;
-            } else {
-                limit.count++;
-                if (limit.count >= limit.max) {
-                    timeout = Math.max(timeout, limit.penalty);
-                }
-            }
-        }
-        if (timeout > 0) {
-            if (last_penalty_ends > now) {
-                timeout += last_penalty_ends - now;
-            }
-            if (timeout > 20000) {
-                console.log("User %s (%s) floods!  Dropping msg", me.name, ip);
-            } else {
-                console.log("User %s (%s) msg being throttled for %dms",
-                        me.name, ip, timeout);
-                setTimeout(callback, timeout);
-                last_penalty_ends = now + timeout;
-            }
-        } else {
-            callback();
-        }
+    // drop user if they join chat in new browser window
+    if (user_internal[me.name]) {
+        user_internal[me.name].disconnect();
     }
 
-    sock.on('ping', function () {
+    sock.on('ping', function() {
         sock.emit('pong');
     });
 
-    sock.on('join', function (msg) {
-        throttle(function () {
+    sock.on('join', function(msg) {
+        throttle(ip, function() {
             if (is_dead || my_rooms[msg.room] || !msg.room ||
                 msg.room > 20 || !msg.room.match(/[a-zA-Z][-_a-zA-Z0-9]/))
                 return;
@@ -205,8 +153,8 @@ chatio.on('connection', function (sock) {
         });
     });
 
-    sock.on('msg', function (msg) {
-        throttle(function () {
+    sock.on('msg', function(msg) {
+        throttle(ip, function() {
             if (is_dead || !my_rooms[msg.room] || !msg.text ||
                 msg.text.length > 200)
                 return;
@@ -220,17 +168,16 @@ chatio.on('connection', function (sock) {
     });
 
     if (me.is_staff) {
-        sock.on('kick', function (msg) {
-            if (!all_users[msg.user.name])
-                return;
-            process.emit('kick', msg);
+        sock.on('kick', function(msg) {
+            if (user_internal[msg.user.name])
+                user_internal[msg.user.name].kick(msg);
         });
     }
 
-    sock.on('disconnect', function () {
+    function disconnect() {
         is_dead = true;
-        var room;
-        for (room in my_rooms) {
+        sock.emit('disconnected');
+        for (var room in my_rooms) {
             sock.broadcast.to(room).emit('leave', {
                 room: room,
                 user: me
@@ -239,10 +186,11 @@ chatio.on('connection', function (sock) {
         }
         my_rooms = {};
         delete all_users[me.name];
-        delete all_user_ids[sock.id];
-    });
+        delete user_internal[me.name];
+    }
+    sock.on('disconnect', disconnect);
 
-    function on_leave(msg) {
+    function leave(msg) {
         if (!my_rooms[msg.room])
             return;
         sock.broadcast.to(msg.room).emit('leave', {
@@ -257,15 +205,17 @@ chatio.on('connection', function (sock) {
         delete my_rooms[msg.room];
         delete all_rooms[msg.room].users[me.name];
     }
+    sock.on('leave', leave);
 
-    sock.on('leave', on_leave);
-
-    process.once('kick', function (msg) {
+    function kick(msg) {
         if (msg.user.name == me.name && my_rooms[msg.room]) {
             sock.emit('kicked', msg);
             on_leave(msg);
         }
-    });
+    };
+
+    all_users[me.name] = me;
+    user_internal[me.name] = {kick: kick, disconnect: disconnect};
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -274,28 +224,28 @@ chatio.on('connection', function (sock) {
 var confs = {};
 var confio = io.of('/conf');
 confio.authorization(authorization);
-confio.on('connection', function (sock) {
+confio.on('connection', function(sock) {
     var me = sock.handshake.user;
-    sock.on('monitor start', function (conf) {
+    sock.on('monitor start', function(conf) {
         sock.emit("conference", confs[conf] || {name: conf, members: {}});
         sock.join(conf);
         console.log("JOINING %j", "conf " + conf);
     });
-    sock.on('monitor stop', function (conf) {
+    sock.on('monitor stop', function(conf) {
         sock.leave(conf);
     });
     if (me.is_staff) {
-        sock.on('mute', function (conf, id) {
+        sock.on('mute', function(conf, id) {
             if (!confs[conf] || !confs[conf].members[id])
                 return;
             fs_api("conference " + conf + " mute " + id);
         });
-        sock.on('unmute', function (conf, id) {
+        sock.on('unmute', function(conf, id) {
             if (!confs[conf] || !confs[conf].members[id])
                 return;
             fs_api("conference " + conf + " unmute " + id);
         });
-        sock.on('kick', function (conf, id) {
+        sock.on('kick', function(conf, id) {
             if (!confs[conf] || !confs[conf].members[id])
                 return;
             fs_api("conference " + conf + " kick " + id);
@@ -365,12 +315,10 @@ fsev.on('connect', function() {
 //////////////////////////////////////////////////////////////////////
 
 app.listen(settings.listen_port, settings.listen_host);
-// app.listen(80, "chat." + settings.domain);
-// app.listen(80, "66.55.144.155");
 console.log("https listening on %s:%d in %s mode", app.address().address,
             app.address().port, app.settings.env);
 
-// var fps = net.createServer(function (sock) {
+// var fps = net.createServer(function(sock) {
 //     console.log("got request to flash policy server!");
 //     sock.write('<?xml version="1.0"?>\n' +
 //                '<!DOCTYPE cross-domain-policy SYSTEM "http://www.' +
@@ -419,7 +367,7 @@ function get_session(sessionid, callback) {
         callback("sessionid not found", null);
         return;
     }
-    cache.get(sessionid, function (err, result) {
+    cache.get(sessionid, function(err, result) {
         if (err) {
             callback("session not found", null);
             return;
@@ -453,14 +401,14 @@ function get_user(userid, callback) {
 
 // generates a random id for chat users
 function gen_uid(bytes, callback) {
-    fs.open(settings.random, 'r', function (err, fd) {
+    fs.open(settings.random, 'r', function(err, fd) {
         if (err) {
             console.error(err);
             callback("no random device", null);
             return;
         }
         var buf = new Buffer(bytes);
-        fs.read(fd, buf, 0, buf.length, 0, function (err, bytes, buf) {
+        fs.read(fd, buf, 0, buf.length, 0, function(err, bytes, buf) {
             if (err) {
                 console.error(err);
                 callback("no random bytes", null);
