@@ -4,19 +4,44 @@ var chat_init;
 (function() {
     "use strict";
 
-    var me = null;
+    var me;
+    var chat;
+    var is_connected = false;
 
     function init(args) {
         $("#msgtext").focus();
-        var chat = io.connect(args.url);
+        $("#postform").submit(on_postform);
+        connect(args.url);
+    }
+
+    function connect(url) {
+        var pinger, ponged;
+        chat = io.connect(url);
         chat.on('connect', function () {
+            is_connected = true;
             chat.emit("join", {room: "pub"});
+            ponged = true;
+            pinger = setInterval(function() {
+                if (ponged) {
+                    ponged = false;
+                    chat.emit('ping');
+                } else {
+                    chat.socket.disconnect();
+                }
+            }, 5000);
         });
         chat.socket.on('error', function (reason) {
             display({text: "error: " + reason});
         });
-        chat.socket.on('disconnect', function (reason) {
-            display({text: "disconnected: " + reason});
+        chat.socket.on('disconnect', function(reason) {
+            chat = null;
+            is_connected = false;
+            clearInterval(pinger);
+            $("#users > div").remove();
+            display({text: "disconnected from server :'("});
+        });
+        chat.on("pong", function () {
+            ponged = true;
         });
         chat.on("msg", display);
         chat.on("join_ack", function (msg) {
@@ -42,48 +67,51 @@ var chat_init;
             add_user(msg.user);
             display({text: msg.user.name + " has joined"});
         });
-        $("#postform").submit(function () {
-            if (!me)
-                return false;
-            var text = $("#msgtext").val();
-            $("#msgtext").val("");
-            if (text.length < 2)
-                return;
-            if (text[0] == "/") {
-                var command, args;
-                if (text.indexOf(" ") != -1) {
-                    command = text.slice(1, text.indexOf(' '));
-                    args = text.slice(text.indexOf(' ') + 1);
-                } else {
-                    command = text.slice(1);
-                    args = '';
-                }
-                if (command == "kick") {
-                    chat.emit("kick", {room: "pub", user: {name: args}});
-                } else if (command == "me") {
-                    var msg = {
-                        room: "pub",
-                        user: me,
-                        text: args,
-                        emo: true
-                    };
-                    display(msg);
-                    chat.emit("msg", msg);
-                } else {
-                    display({text: "unknown command"});
-                }
+    }
+
+    function on_postform() {
+        if (!me)
+            return false;
+        if (!is_connected) {
+            display({text: "not connected"});
+            return false;
+        }
+        var text = $("#msgtext").val();
+        $("#msgtext").val("");
+        if (text.length < 2)
+            return;
+        if (text[0] == "/") {
+            var command, args;
+            if (text.indexOf(" ") != -1) {
+                command = text.slice(1, text.indexOf(' '));
+                args = text.slice(text.indexOf(' ') + 1);
             } else {
+                command = text.slice(1);
+                args = '';
+            }
+            if (command == "kick") {
+                chat.emit("kick", {room: "pub", user: {name: args}});
+            } else if (command == "me") {
                 var msg = {
                     room: "pub",
                     user: me,
-                    text: text,
-                    emo: false
+                    text: args,
+                    emo: true
                 };
-                display(msg);
                 chat.emit("msg", msg);
+            } else {
+                display({text: "unknown command"});
             }
-            return false;
-        });
+        } else {
+            var msg = {
+                room: "pub",
+                user: me,
+                text: text,
+                emo: false
+            };
+            chat.emit("msg", msg);
+        }
+        return false;
     }
 
     function display(msg) {
@@ -122,7 +150,7 @@ var chat_init;
     }
 
     function remove_user(user) {
-        $("#users div").each(function () {
+        $("#users > div").each(function () {
             if ($(this).text() == user.name) {
                 $(this).remove();
             }

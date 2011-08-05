@@ -28,12 +28,16 @@ EventSocket.prototype.connect = function() {
     var login_timer;
     var buf = "";
 
+    function log(msg) {
+        console.log("freeswitch(%s:%d): %s", self.host, self.port, msg);
+    }
+
     function pre_auth(msg) {
         if (msg.is('auth/request')) {
             self.send("auth " + self.password);
             state = auth;
         } else {
-            console.log("expected auth/request but got: %j", msg);
+            log("expected auth/request but got: %j", msg);
             self.sock.end();
         }
     }
@@ -44,7 +48,7 @@ EventSocket.prototype.connect = function() {
             state = established;
             clearTimeout(login_timer);
         } else {
-            console.log("freeswitch auth failed: %j", msg);
+            log("auth failed: %j", msg);
             self.sock.end();
         }
     }
@@ -60,11 +64,14 @@ EventSocket.prototype.connect = function() {
     self.sock = net.createConnection(self.port, self.host);
     self.sock.setEncoding('utf8');
     self.sock.on('connect', function() {
+        log("connected");
         state = pre_auth;
         login_timer = setTimeout(function() {
             console.log("freeswitch login timer expired");
             self.sock.end();
         }, self.login_timeout);
+    }).on('error', function(e) {
+        log(e.message);
     }).on('close', function() {
         self.sock = null;
         clearTimeout(login_timer);

@@ -52,19 +52,19 @@ app.configure('production', function () {
 });
 
 io.configure(function () {
+    io.set('close timeout', 99999999999);
+    io.set('transports', ['websocket', 'flashsocket']);
+    // 'htmlfile', 'xhr-polling', 'jsonp-polling'
 });
 io.configure('development', function () {
     console.log("SOCKET.IO DEVELOPMENT MODE");
     io.set('log level', 3);
-    io.set('transports', ['websocket', 'flashsocket']);
 });
 io.configure('production', function () {
     console.log("SOCKET.IO PRODUCTION MODE");
     io.set('log level', 1);
     io.enable('browser client etag');
     io.enable('browser client minification');
-    io.set('transports', ['websocket', 'flashsocket']);
-    // 'htmlfile', 'xhr-polling', 'jsonp-polling'
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -175,6 +175,10 @@ chatio.on('connection', function (sock) {
         }
     }
 
+    sock.on('ping', function () {
+        sock.emit('pong');
+    });
+
     sock.on('join', function (msg) {
         throttle(function () {
             if (is_dead || my_rooms[msg.room] || !msg.room ||
@@ -206,7 +210,7 @@ chatio.on('connection', function (sock) {
             if (is_dead || !my_rooms[msg.room] || !msg.text ||
                 msg.text.length > 200)
                 return;
-            sock.broadcast.to(msg.room).emit('msg', {
+            chatio.in(msg.room).emit('msg', {
                 room: msg.room,
                 user: me,
                 text: msg.text,
@@ -215,13 +219,13 @@ chatio.on('connection', function (sock) {
         });
     });
 
-    sock.on('kick', function (msg) {
-        if (!me.is_staff)
-            return;
-        if (!all_users[msg.user.name])
-            return;
-        process.emit('kick', msg);
-    });
+    if (me.is_staff) {
+        sock.on('kick', function (msg) {
+            if (!all_users[msg.user.name])
+                return;
+            process.emit('kick', msg);
+        });
+    }
 
     sock.on('disconnect', function () {
         is_dead = true;
