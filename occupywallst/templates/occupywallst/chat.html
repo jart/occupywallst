@@ -1,8 +1,9 @@
 {% extends 'occupywallst/base.html' %}
 
-{% block title %}OccupyWallSt | Public Chatroom{% endblock title %}
+{% block title %}OccupyWallSt.org | Chatroom{% endblock title %}
 
 {% block extra_head %}
+  {% if room == "pub" %}<meta name="robots" content="noindex" />{% endif %}
   <link rel="stylesheet" href="/media/css/chat.css?v=5" type="text/css" media="all" />
   <style type="text/css">
     #navbar .nav-chat { background: #900; }
@@ -27,7 +28,11 @@
 {% endblock js_init %}
 
 {% block content %}
-  <h1>Public Chat</h1>
+  {% if room == "pub" %}
+    <h1>Public Chatroom</h1>
+  {% else %}
+    <h1>Private Chatroom: {{ room }}</h1>
+  {% endif %}
   <div id="chat">
     <div id="users"></div>
     <div id="messages"></div>
@@ -36,7 +41,6 @@
     </form>
   </div>
   <p id="explain">
-    This is still a little buggy<br />
     Tested on Google Chrome, Mozilla Firefox, and Oprah<br />
     If you want a non-anonymous nickname, you have
     to <a href="/signup/">sign up</a> for an account or <a href="/login/">log in</a>.
