@@ -1,13 +1,13 @@
 
-body { padding: 0 50px; min-width: 850px; }
+body { padding: 0 50px; min-width: 900px; }
 body p { text-align: justify; }
-header, nav, h1, h2, h3, h4 { font-family: sans-serif; }
+header, nav, h1, h2, h3, h4 { font-family: Arial, sans-serif; }
 a { text-decoration: none; }
 img { border: none; }
 h1 { font-size: 1.7em; margin: 0; }
 h2 { font-size: 1.5em; /* margin: 0 0; */ }
 h1 a { color: black; }
-textarea { font-family: sans-serif; }
+textarea { font-family: Arial, sans-serif; }
 
 .amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
        font-style: italic; font-size: 1.1em; }
@@ -22,6 +22,7 @@ header h2 { margin: 0; font-size: 1.5em; }
 #loginbox { float: right; text-align: right; }
 
 #navbar ul {
+    font-size: 0.95em;
     padding: 0;
     width: 100%;
     float: left;
@@ -29,6 +30,7 @@ header h2 { margin: 0; font-size: 1.5em; }
     box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
     -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
     -webkit-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
+    white-space: nowrap;
 }
 
 #navbar li {
@@ -58,7 +60,7 @@ header h2 { margin: 0; font-size: 1.5em; }
     background: #900;
 }
 
-#right { width: 250px; font-family: sans-serif; font-size: 0.9em; 
+#right { width: 250px; font-family: Arial, sans-serif; font-size: 0.9em; 
          vertical-align: top; }
 #left { margin-right: 1em; padding: 0 0.5em; vertical-align: top; }
 
@@ -67,29 +69,29 @@ article h1 { margin-bottom: 0; }
 article h1 a { color: black; }
 article p, article blockquote { font-size: 1.1em; line-height: 1.4em; }
 article blockquote { color: #333; }
-article p.info { color: #777; font-family: sans-serif; font-size: 0.9em;
+article p.info { color: #777; font-family: Arial, sans-serif; font-size: 0.9em;
                  margin-top: 0; }
 
 footer { clear: both; }
 footer p { border-top: 1px solid #999; padding-top: 0.5em;
-           font-family: sans-serif; font-size: 0.7em; text-align: right; }
+           font-family: Arial, sans-serif; font-size: 0.7em; text-align: right; }
 
 .formtable th { text-align: right; vertical-align: top; line-height: 2em;
-                white-space: nowrap; font-family: sans-serif;
+                white-space: nowrap; font-family: Arial, sans-serif;
                 font-size: small; }
 .formtable .helptext { font-size: small; color: #666; }
 ul.errorlist { padding: 0; margin: 0; list-style-type: none;
-               font-family: sans-serif; font-size: small; }
+               font-family: Arial, sans-serif; font-size: small; }
 ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 
 #article-page { }
 
-.comment .content { margin: 1em 1em; font-family: sans-serif;
+.comment .content { margin: 1em 1em; font-family: Arial, sans-serif;
                     font-size: small; }
 .comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
 .comment .info { color: #666; font-size: 0.9em; }
 .comment .links { font-size: 0.9em; }
-.comment .links a { margin-right: 0.5em; font-family: sans-serif; }
+.comment .links a { margin-right: 0.5em; font-family: Arial, sans-serif; }
 .comment .arrows a { color: #aaa; font-weight: bold; }
 .comment .arrows a.upvoted { color: red; }
 .comment .arrows a.downvoted { color: blue; }
@@ -99,15 +101,15 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .removed { background: #fcc; }
 .replies { margin-left: 1em; }
 
-.postform label { font-size: small; color: #666; font-family: sans-serif; }
-.error { color: red; font-family: sans-serif; font-size: small; }
+.postform label { font-size: small; color: #666; font-family: Arial, sans-serif; }
+.error { color: red; font-family: Arial, sans-serif; font-size: small; }
 .loader { display: none; }
 
 .message .on { background: #f2f2f2; }
-.message .info { font-size: small; font-family: sans-serif;
+.message .info { font-size: small; font-family: Arial, sans-serif;
                  font-weight: bold; color: #777; }
 
-.bubble { font-family: sans-serif; font-size: 13px; }
+.bubble { font-family: Arial, sans-serif; font-size: 13px; }
 
 .attendee-info .links { margin-bottom: 0; }
 .attendee-info .info { margin-top: 0; }

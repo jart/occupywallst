@@ -43,6 +43,12 @@ def forum(request, sort):
         context_instance=RequestContext(request))
 
 
+def calendar(request):
+    return render_to_response(
+        'occupywallst/calendar.html', {},
+        context_instance=RequestContext(request))
+
+
 def chat(request, room="pub"):
     return render_to_response(
         'occupywallst/chat.html', {'room': room},
