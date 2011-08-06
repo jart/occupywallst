@@ -3,7 +3,7 @@
 {% block title %}OccupyWallSt.org | Chatroom{% endblock title %}
 
 {% block extra_head %}
-  {% if room == "pub" %}<meta name="robots" content="noindex" />{% endif %}
+  {% if room != "pub" %}<meta name="robots" content="noindex" />{% endif %}
   <link rel="stylesheet" href="/media/css/chat.css?v=5" type="text/css" media="all" />
   <style type="text/css">
     #navbar .nav-chat { background: #900; }
@@ -43,6 +43,12 @@
   <p id="explain">
     Tested on Google Chrome, Mozilla Firefox, and Oprah<br />
     If you want a non-anonymous nickname, you have
-    to <a href="/signup/">sign up</a> for an account or <a href="/login/">log in</a>.
+    to <a href="/signup/">sign up</a> for an account or <a href="/login/">log in</a>.<br />
+    {% if room == "pub" %}
+      <form id="privateroom" style="text-align:center">
+        <input class="room" />
+        <input type="submit" value="Join Private Room" />
+      </form>
+    {% endif %}
   </p>
 {% endblock content %}

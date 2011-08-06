@@ -11,6 +11,10 @@ var chat_init;
     function init(args) {
         $("#msgtext").focus();
         $("#postform").submit(on_postform);
+        $("#privateroom").submit(function() {
+            window.location.href = $(".room", this).val() + '/';
+            return false;
+        });
         connect(args.url, args.room);
     }
 
