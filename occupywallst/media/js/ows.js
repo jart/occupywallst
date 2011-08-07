@@ -90,10 +90,8 @@ var ows_sockio_url;
     jQuery.fn.clickdiv = function() {
         return this.each(function() {
             var primary = $("a.primary", this).attr('href');
-            function clicky(e) {
-                var url = ($(this).attr('href') || primary);
-                if (url == "#")
-                    return false;
+            $(this).click(function(e) {
+                var url = ($(e.target).attr('href') || primary);
                 if (e.which == MOUSE_LEFT) {
                     window.location.href = url;
                     return false;
@@ -101,9 +99,7 @@ var ows_sockio_url;
                     window.open(url);
                     return false;
                 }
-            }
-            $(this).click(clicky);
-            $("*", this).click(clicky);
+            });
         });
     };
 

@@ -134,8 +134,8 @@ class Notification(models.Model):
         return {'id': self.id,
                 'published': self.published,
                 'message': self.message,
-                'url': self.url,
-                'is_read': self.is_read}
+                'is_read': self.is_read,
+                'url': self.get_absolute_url()}
 
     @staticmethod
     def send(user, url, message):

@@ -10,7 +10,7 @@
   <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ article.get_absolute_url }}" />
 {% endblock canonical %}
 
-{% block extra_head %}
+{% block stylesheets %}
   <style type="text/css">
     {% if forum %}
       #navbar .nav-forum { background: #900; }
@@ -18,11 +18,11 @@
       #navbar .nav-news { background: #900; }
     {% endif %}
   </style>
-{% endblock extra_head %}
+{% endblock stylesheets %}
 
-{% block extra_scripts %}
+{% block scripts %}
   <script src="/media/js/article.js?v=5" type="text/javascript"></script>
-{% endblock extra_scripts %}
+{% endblock scripts %}
 
 {% block js_init %}
   {{ block.super }}

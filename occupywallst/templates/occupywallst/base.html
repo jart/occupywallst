@@ -50,17 +50,17 @@
       <nav>
         <div id="navbar">
           <ul>
-            <li class="nav-news first"><a title="News Articles" href="/">News</a></li>
+            <li class="nav-news first"><a class="fast" title="News Articles" href="/">News</a></li>
             <li class="nav-forum"><a title="Public discussion board" href="/forum/">Forum</a></li>
-            <li class="nav-attendees"><a title="Map of people involved" href="/attendees/">Map</a></li>
-            <li class="nav-rides"><a title="Free Bus/Carpool Rides" href="/rides/">Rides</a></li>
-            <li class="nav-calendar"><a title="Google Calendar" href="/calendar/">Calendar</a></li>
-            <li class="nav-chat"><a title="Web-based chatroom" href="/chat/">Chat</a></li>
-            <li class="nav-conf"><a title="Telephone Conference Bridges" href="/conference/">Conference</a></li>
+            <li class="nav-attendees"><a class="fast" title="Map of people involved" href="/attendees/">Map</a></li>
+            <li class="nav-rides"><a class="fast" title="Free Bus/Carpool Rides" href="/rides/">Rides</a></li>
+            <li class="nav-calendar"><a class="fast" title="Google Calendar" href="/calendar/">Calendar</a></li>
+            <li class="nav-chat"><a class="fast" title="Web-based chatroom" href="/chat/">Chat</a></li>
+            <li class="nav-conf"><a class="fast" title="Telephone Conference Bridges" href="/conference/">Conference</a></li>
             <li class="nav-twitter"><a title="Our Twitter Page" href="https://twitter.com/#!/OccupyWallSt">Twitter</a></li>
             <li class="nav-reddit"><a title="Organize on Reddit" href="http://www.reddit.com/r/occupywallstreet/">Reddit</a></li>
             <li class="nav-facebook"><a title="Facebook Event" href="http://www.facebook.com/event.php?eid=144937025580428">Facebook</a></li>
-            <li class="nav-about"><a title="About Us" href="/about/">About</a></li>
+            <li class="nav-about"><a class="fast" title="About Us" href="/about/">About</a></li>
             <li class="last"><span>&nbsp;</span></li>
           </ul>
         </div>
@@ -68,6 +68,8 @@
       <div style="clear:both"></div>
     {% endblock nav %}
     <div id="content">
+      {% block stylesheets %}
+      {% endblock stylesheets %}
       {% block content %}
         <p>
           No Content Available.
@@ -95,8 +97,8 @@
   <script src="/media/js/csrf.js?v=5" type="text/javascript"></script>
   <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script>
   <script src="/media/js/ows.js?v=5" type="text/javascript"></script>
-  {% block extra_scripts %}
-  {% endblock extra_scripts %}
+  {% block scripts %}
+  {% endblock scripts %}
   <script type="text/javascript">
     $(function() {
       {% block js_init %}

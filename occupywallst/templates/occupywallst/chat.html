@@ -5,15 +5,18 @@
 
 {% block extra_head %}
   {% if room != "pub" %}<meta name="robots" content="noindex" />{% endif %}
+{% endblock extra_head %}
+
+{% block stylesheets %}
   <link rel="stylesheet" href="/media/css/chat.css?v=5" type="text/css" media="all" />
   <style type="text/css">
     #navbar .nav-chat { background: #900; }
   </style>
-{% endblock extra_head %}
+{% endblock stylesheets %}
 
-{% block extra_scripts %}
+{% block scripts %}
   <script src="/media/js/chat.js?v=5" type="text/javascript"></script>
-{% endblock extra_scripts %}
+{% endblock scripts %}
 
 {% block js_init %}
   {{ block.super }}

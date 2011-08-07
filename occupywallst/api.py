@@ -155,9 +155,11 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     com.upvote(user)
     article.comment_count += 1
     article.save()
-    db.Notification.send(parent.user, parent.get_absolute_url(),
-                         '%s replied to your comment: %s'
-                         % (user.username, truncate_words(parent.content, 7)))
+    if parent:
+        db.Notification.send(parent.user, parent.get_absolute_url(),
+                             '%s replied to your comment: %s'
+                             % (user.username,
+                                truncate_words(parent.content, 7)))
     yield com.as_dict({'html': _render_comment(com, user)})
 
 
