@@ -150,6 +150,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
 .comment p { margin: 0.5em 0; }
 .removed { background: #fcc; }
+.highlight { background: #fffbcc; }
 .replies { margin-left: 1em; }
 
 .postform label { font-size: small; color: #666; font-family: Arial, sans-serif; }
