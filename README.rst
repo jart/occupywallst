@@ -70,3 +70,28 @@ articles.  Go to http://dev.occupywallst.org/ and log in as user
 
 If you need to customize Django settings for your local install, make
 a file named ``occupywallst/settings_local.py`` and do it there.
+
+
+Network Topology
+================
+
+OccupyWallSt is NOT a simple web application.  It consists of many
+network programs all working together and talking to each other.  This
+should hopefully give you a better understanding of the system design
+in production::
+
+    tcp:occupywallst.org:80       nginx redirects browser to https
+    tcp:occupywallst.org:443      nginx load balancing proxy / media server
+    tcp:chat.occupywallst.org:80  nginx redirects browser to https
+    tcp:chat.occupywallst.org:443 chat/app.js: node.js realtime http stuff
+    tcp:chat.occupywallst.org:843 chat/app.js: flashsocket policy server
+    udp:127.0.0.1:9010            chat/app.js: notification event subscriber
+    tcp:127.0.0.1:9000-9009       web app backend django http instances
+    tcp:127.0.0.1:9040:           icecast2 mp3 streaming
+    tcp:127.0.0.1:8040:           freeswitch mod_event_socket
+    udp:occupywallst.org:5060     freeswitch sip server
+    tcp:occupywallst.org:5060     freeswitch sip server
+    tcp:occupywallst.org:5061     freeswitch secure-sip server
+    tcp:127.0.0.1:11211           memcached
+    tcp:127.0.0.1:5432            postgresql database server
+    tcp:127.0.0.1:6432            pgbouncer database connection pooler

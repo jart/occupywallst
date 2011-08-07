@@ -168,6 +168,17 @@ def user_page(request, username):
         context_instance=RequestContext(request))
 
 
+def notification(request, id):
+    try:
+        notify = db.Notification.objects.get(id=id, user=request.user)
+    except db.Notification.DoesNotExist:
+        raise Http404()
+    if not notify.is_read:
+        notify.is_read = True
+        notify.save()
+    return HttpResponseRedirect(notify.url)
+
+
 def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(request.user.get_absolute_url())

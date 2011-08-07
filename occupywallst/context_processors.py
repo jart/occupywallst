@@ -9,6 +9,21 @@ r"""
 
 from django.conf import settings
 
+from occupywallst import models as db
+
 
 def goodies(request):
-    return {'OWS_CANONICAL_URL': settings.OWS_CANONICAL_URL}
+    if 'content_only' in request.REQUEST:
+        base = 'occupywallst/base_content_only.html'
+    else:
+        base = 'occupywallst/base.html'
+    return {'OWS_CANONICAL_URL': settings.OWS_CANONICAL_URL,
+            'base': base}
+
+
+def notifications(request):
+    if request.user.is_authenticated():
+        qset = request.user.notification_set.filter(is_read=False)
+        return {'notifications': qset}
+    else:
+        return {}

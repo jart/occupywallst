@@ -19,7 +19,58 @@ header h1 { padding-top: 0.5em; font-size: 3em; }
 header h1 .red { color: #a00; }
 header h2 { margin: 0; font-size: 1.5em; }
 
-#loginbox { float: right; text-align: right; }
+#userbox {
+    position: absolute;
+    top: 0px;
+    right: 50px;
+    width: auto;
+    padding: 0.5em;
+    /* background: #e2e2e2; */
+    /* background: #333; */
+}
+
+#notifications {
+    position: fixed;
+    right: 40px;
+    bottom: 0px;
+    width: 300px;
+    font-size: 0.85em;
+    opacity: 0.95;
+    font-family: Arial, sans-serif;
+}
+#notifications .info {
+    font-weight: bold;
+    width: auto;
+    padding: 0.5em;
+}
+#notifications .info span {
+    background: white;
+    box-shadow: -3px -3px 3px white, 3px 3px 3px white;
+    -mox-box-shadow: -3px -3px 3px white, 3px 3px 3px white;
+    -webkit-box-shadow: -3px -3px 3px white, 3px 3px 3px white;
+}
+#notifications .items {
+    border: 1px solid #9a9a9a; border-bottom: none; border-top: none;
+    overflow: hidden;
+    max-height: 300px;
+}
+#notifications .item {
+    cursor: pointer;
+    padding: 0.5em;
+    background: #333;
+    border-bottom: 1px solid #000;
+    border-top: 1px solid #666;
+    /* text-overflow: ellipsis; */
+}
+#notifications .item, #notifications a {
+    color: white;
+    text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
+    -moz-text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
+    -webkit-text-shadow: -1px -1px 0px rgba(0,0,0,0.3);
+}
+#notifications .item:hover { background: #900; }
+#notifications .item a { display: block; }
+#notifications .item span { display: block; font-size: 0.8em; color: #ccc; }
 
 #navbar ul {
     font-size: 0.95em;

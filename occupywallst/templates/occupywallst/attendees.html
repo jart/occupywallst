@@ -1,4 +1,4 @@
-{% extends 'occupywallst/base.html' %}
+{% extends base %}
 
 {% block title %}OccupyWallSt.org | User Map{% endblock title %}
 
@@ -8,11 +8,10 @@
   </style>
 {% endblock extra_head %}
 
-{% block scripts %}
-  {{ block.super }}
+{% block extra_scripts %}
   <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
   <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
-  <script src="/media/js/attendees.js?v=5" type="text/javascript"></script>
+  <script src="/media/js/attendees.extra_js?v=5" type="text/javascript"></script>
 {% endblock scripts %}
 
 {% block js_init %}

@@ -1,5 +1,5 @@
-{% extends 'occupywallst/base.html' %}
-{% load occupywallst %}
+{% extends base %}
+{% load ows %}
 
 {% block title %}{{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}{% endblock title %}
 
@@ -20,10 +20,9 @@
   </style>
 {% endblock extra_head %}
 
-{% block scripts %}
-  {{ block.super }}
+{% block extra_scripts %}
   <script src="/media/js/article.js?v=5" type="text/javascript"></script>
-{% endblock scripts %}
+{% endblock extra_scripts %}
 
 {% block js_init %}
   {{ block.super }}
@@ -42,7 +41,7 @@
         {% else %}
           Posted {{ article.published|date:"Y-m-d h:i:s T" }}
         {% endif %}
-        by <a title="View {{ article.author.username }}'s profile"
+        by <a rel="author" title="View {{ article.author.username }}'s profile"
               class="user" href="{{ article.author.get_absolute_url }}">
           {{ article.author.username }}</a>
         {% if article.is_forum %}

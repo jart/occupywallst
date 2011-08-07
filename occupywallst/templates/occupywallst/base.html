@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% load ows %}
   <meta charset="utf-8" />
   <title>{% block title %}OccupyWallSt.org | News & Logistics for September 17th{% endblock title %}</title>
   <link rel="shortcut icon" href="/media/img/bull16.png?v=5" />
@@ -31,7 +32,7 @@
   {% block body %}
     {% block header %}
       <header>
-        <div id="loginbox">
+        <div id="userbox">
           {% if user.is_authenticated %}
             Welcome <a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
             &mdash; <a href="/logout/">logout</a>
@@ -66,11 +67,13 @@
       </nav>
       <div style="clear:both"></div>
     {% endblock nav %}
-    {% block content %}
-      <p>
-        No Content Available.
-      </p>
-    {% endblock content %}
+    <div id="content">
+      {% block content %}
+        <p>
+          No Content Available.
+        </p>
+      {% endblock content %}
+    </div>
     {% block footer %}
       <footer>
         <p>
@@ -80,16 +83,26 @@
         </p>
       </footer>
     {% endblock footer %}
+    <div id="notifications" style="display:none">
+      <div class="info">
+        <span>Notifications</span>
+      </div>
+      <div class="items">
+      </div>
+    </div>
   {% endblock body %}
-  {% block scripts %}
-    <script src="/media/js/jquery-1.6.min.js" type="text/javascript"></script>
-    <script src="/media/js/csrf.js?v=5" type="text/javascript"></script>
-    <script src="/media/js/occupywallst.js?v=5" type="text/javascript"></script>
-  {% endblock scripts %}
+  <script src="/media/js/jquery-1.6.min.js" type="text/javascript"></script>
+  <script src="/media/js/csrf.js?v=5" type="text/javascript"></script>
+  <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script>
+  <script src="/media/js/ows.js?v=5" type="text/javascript"></script>
+  {% block extra_scripts %}
+  {% endblock extra_scripts %}
   <script type="text/javascript">
     $(function() {
       {% block js_init %}
-        occupywallst_init();
+        ows_init({
+          notifications: {{ notifications|jsonify|safe }}
+        });
       {% endblock js_init %}
     });
   </script>

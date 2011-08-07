@@ -1,6 +1,15 @@
+/// occupywallst node.js realtime http stuff
+///
+/// This program does the following:
+///
+/// 1. Chat server
+/// 2. Publish user notifications as soon as they're created
+/// 3. Publish realtime information about what FreeSWITCH is doing
+///
 
 var fs = require("fs");
 var net = require("net");
+var dgram = require("dgram");
 var express = require('express');
 var memcached = require('memcached');
 var cache = new memcached("127.0.0.1:11211");
@@ -24,10 +33,10 @@ var settings = (function(){
 })();
 
 var app;
-if (settings.ssl_enable) {
+if (settings.http.ssl_enable) {
     app = express.createServer({
-        key: fs.readFileSync(settings.ssl_key),
-        cert: fs.readFileSync(settings.ssl_cert)
+        key: fs.readFileSync(settings.http.ssl_key),
+        cert: fs.readFileSync(settings.http.ssl_cert)
     });
 } else {
     app = express.createServer();
@@ -219,7 +228,7 @@ chatio.on('connection', function(sock) {
 });
 
 //////////////////////////////////////////////////////////////////////
-// conference bridge: web socket interface
+// conference bridge: websocket interface
 
 var confs = {};
 var confio = io.of('/conf');
@@ -313,8 +322,45 @@ fsev.on('connect', function() {
 });
 
 //////////////////////////////////////////////////////////////////////
+// notifications: websocket interface
 
-app.listen(settings.listen_port, settings.listen_host);
+var notifyio = io.of('/notifications');
+notifyio.authorization(authorization);
+notifyio.on('connection', function(sock) {
+    sock.join("all");
+    var me = sock.handshake.user;
+    if (me.name) {
+        sock.join("user." + me.name);
+    }
+});
+
+//////////////////////////////////////////////////////////////////////
+// notifications: subscriber receiving json messages from web app
+
+dgram.createSocket('udp4', function(data, rinfo) {
+    // todo: secure me from local system users
+    var msg;
+    try {
+        msg = JSON.parse(data.toString('ascii'));
+    } catch (e) {
+        console.log("couldn't parse notify msg");
+        console.error(e);
+        return;
+    }
+    if (typeof(msg) != "object" || !msg.type || !msg.dest) {
+        console.log("bad notify msg: %j", msg);
+        return;
+    }
+    // console.log("sending %s msg to %s: %j", msg.type, msg.dest, msg.msg);
+    notifyio.in(msg.dest).emit(msg.type, msg.msg);
+}).bind(settings.notify_sub.port, settings.notify_sub.host);
+
+console.log("notification subscriber listening on %s:%d",
+            settings.notify_sub.host, settings.notify_sub.port);
+
+//////////////////////////////////////////////////////////////////////
+
+app.listen(settings.http.port, settings.http.host);
 console.log("https listening on %s:%d in %s mode", app.address().address,
             app.address().port, app.settings.env);
 

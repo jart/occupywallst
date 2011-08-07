@@ -15,6 +15,11 @@ PAYPAL_DEBUG = DEBUG
 AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
+OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
+OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
+OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
+OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
+
 MEDIA_ROOT = join(project_root, 'media')
 GEOIP_PATH = join(project_root, 'data')
 SHP_PATH = join(project_root, 'data')
@@ -95,10 +100,6 @@ LOGGING = {
     },
 }
 
-OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
-OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
-OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
-
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = False
@@ -135,6 +136,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.request",
     "django.contrib.messages.context_processors.messages",
     "occupywallst.context_processors.goodies",
+    "occupywallst.context_processors.notifications",
 ]
 
 MIDDLEWARE_CLASSES = [

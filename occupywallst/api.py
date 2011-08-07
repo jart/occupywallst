@@ -15,6 +15,7 @@ r"""
 from datetime import datetime
 
 from django.conf import settings
+from django.utils.text import truncate_words
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -137,6 +138,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         except db.Comment.DoesNotExist:
             raise APIException("parent comment not found")
     else:
+        parent = None
         parent_id = None
     if not settings.DEBUG:
         last = user.comment_set.order_by('-published')[:1]
@@ -153,6 +155,9 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     com.upvote(user)
     article.comment_count += 1
     article.save()
+    db.Notification.send(parent.user, parent.get_absolute_url(),
+                         '%s replied to your comment: %s'
+                         % (user.username, truncate_words(parent.content, 7)))
     yield com.as_dict({'html': _render_comment(com, user)})
 
 
@@ -258,6 +263,8 @@ def message_send(user, to_username, content, **kwargs):
     msg = db.Message.objects.create(from_user=user,
                                     to_user=to_user,
                                     content=content)
+    db.Notification.send(to_user, user.get_absolute_url(),
+                         '%s sent you a message' % (user.username))
     yield msg.as_dict({'html': render_to_string('occupywallst/message.html',
                                                 {'message': msg})})
 

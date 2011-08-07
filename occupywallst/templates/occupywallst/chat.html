@@ -1,4 +1,5 @@
-{% extends 'occupywallst/base.html' %}
+{% extends base %}
+{% load ows %}
 
 {% block title %}OccupyWallSt.org | Chatroom{% endblock title %}
 
@@ -10,20 +11,15 @@
   </style>
 {% endblock extra_head %}
 
-{% block scripts %}
-  {{ block.super }}
-  <script type="text/javascript" src="//chat.{{ request.get_host }}/socket.io/socket.io.js"></script>
+{% block extra_scripts %}
   <script src="/media/js/chat.js?v=5" type="text/javascript"></script>
-{% endblock scripts %}
+{% endblock extra_scripts %}
 
 {% block js_init %}
   {{ block.super }}
-  // work around bug in socket.io
-  var uschm = document.location.protocol;
-  var uport = (uschm == "http:") ? "80" : "443";
   chat_init({
-    url: uschm + "//chat.{{ request.get_host }}:" + uport + "/chat",
-    room: "{{ room|addslashes }}"
+    url: ows_sockio_url() + "chat",
+    room: {{ room|jsonify|safe }}
   });
 {% endblock js_init %}
 

@@ -11,11 +11,11 @@ r"""
 
 """
 
-import re
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.utils.html import escape
+from django.utils.text import truncate_words
 from django.contrib.syndication.views import Feed
 
 from occupywallst import models as db
@@ -37,7 +37,7 @@ class RSSNewsFeed(Feed):
                 .order_by('-published'))[:25]
 
     def item_title(self, article):
-        return unicode(escape(article.title))
+        return escape(comment.title)
 
     def item_pubdate(self, article):
         return article.published
@@ -78,8 +78,7 @@ class RSSCommentFeed(Feed):
                 .order_by('-published'))[:50]
 
     def item_title(self, comment):
-        safe = unicode(escape(comment.content))
-        return " ".join(re.split(r'\s+', safe)[:7])
+        return escape(truncate_words(comment.content, 7))
 
     def item_pubdate(self, comment):
         return comment.published

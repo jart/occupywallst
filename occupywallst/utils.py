@@ -12,8 +12,9 @@ import json
 import time
 import logging
 import StringIO
-from functools import wraps
 from decimal import Decimal
+from functools import wraps
+from datetime import datetime
 
 from django.db import transaction
 from django.http import HttpResponse
@@ -84,24 +85,53 @@ def api_view(function):
 def _as_json(data):
     """Turns API result into JSON data
     """
-    def sanitize(v):
-        if hasattr(v, 'timetuple'):
-            return jstime(v)
-        elif isinstance(v, Decimal):
-            return str(v)
-        elif isinstance(v, basestring):
-            return v
-        elif isinstance(v, dict):
-            for k in v:
-                v[k] = sanitize(v[k])
-            return v
-        elif hasattr(v, '__iter__'):
-            return [sanitize(i) for i in v]
-        else:
-            return v
-    data['results'] = sanitize(data['results'])
+    data['results'] = sanitize_json(data['results'])
     response = HttpResponse(json.dumps(data), mimetype="application/json")
     return response
+
+
+def jsonify(value, **json_argv):
+    return json.dumps(sanitize_json(value), **json_argv)
+
+
+def sanitize_json(value):
+    if hasattr(value, 'as_dict'):
+        return sanitize_json(value.as_dict())
+    elif hasattr(value, 'timetuple'):
+        return jstime(value)
+    elif isinstance(value, Decimal):
+        return str(value)
+    elif isinstance(value, basestring):
+        return value
+    elif isinstance(value, dict):
+        for k in value:
+            value[k] = sanitize_json(value[k])
+        return value
+    elif hasattr(value, '__iter__'):
+        return [sanitize_json(i) for i in value]
+    else:
+        return value
+
+
+def timesince(timestamp):
+    delta = (datetime.now() - timestamp)
+    seconds = delta.days * 60 * 60 * 24 + delta.seconds
+    if seconds <= 60:
+        x = seconds
+        s = ('second', 'seconds')
+    elif seconds <= 60 * 60:
+        x = int(round(seconds / 60.0))
+        s = ('minute', 'minutes')
+    elif seconds <= 60 * 60 * 24:
+        x = int(round(seconds / 60 / 60))
+        s = ('hour', 'hours')
+    elif seconds <= 60 * 60 * 24 * 30:
+        x = int(round(seconds / 60 / 60 / 24))
+        s = ('day', 'days')
+    else:
+        x = int(round(seconds / 60 / 60 / 24 / 30))
+        s = ('month', 'months')
+    return "%d %s" % (x, s[x != 1])
 
 
 def jstime(dt):

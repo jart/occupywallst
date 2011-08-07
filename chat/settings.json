@@ -1,14 +1,20 @@
 {
     domain: "occupywallst.org",
-    listen_host: "127.0.2.2",
-    listen_port: 80,
-    ssl_enable: false,
-    ssl_key: '/etc/apache2/ssl/chat.occupywallst.org/key',
-    ssl_cert: '/etc/apache2/ssl/chat.occupywallst.org/crt-cabundle',
+    http: {
+        host: "127.0.2.2",
+        port: 80,
+        ssl_enable: false,
+        ssl_key: '/etc/apache2/ssl/chat.occupywallst.org/key',
+        ssl_cert: '/etc/apache2/ssl/chat.occupywallst.org/crt-cabundle'
+    },
     db: {'database': 'occupywallst'},
     random: '/dev/urandom',
+    notify_sub: {
+        host: "127.0.0.1",
+        port: 9010
+    },
     freeswitch: {
-        host: "localhost",
+        host: "127.0.0.1",
         port: 8021,
         password: "ClueCon",
         reconnect_timeout: 5000,

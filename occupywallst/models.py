@@ -12,12 +12,20 @@ r"""
 
 """
 
+import socket
+import logging
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+
+from occupywallst.utils import jsonify, timesince
+
+
+logger = logging.getLogger(__name__)
 
 
 def memoize(method):
@@ -55,7 +63,7 @@ class UserInfo(models.Model):
                                   help_text="""
         Whether or not user is attending protest.""")
     notify_message = models.BooleanField(default=True, help_text="""
-        Does user want an email when they get private messages?""")
+        Does user want an email when they message or comment response.""")
     notify_news = models.BooleanField(default=True, help_text="""
         Does user want an email new articles are published?""")
 
@@ -90,6 +98,76 @@ class UserInfo(models.Model):
     position_latlng = property(
         lambda s: (s.position.y, s.position.x),
         lambda s, v: setattr(s, 'position', Point(v[1], v[0])))
+
+
+class Notification(models.Model):
+    """User notifications
+
+    This table allows you to tell users in realtime when someone
+    responds to their comments or sends them a private message.
+
+    There are two types of notifications:
+
+    1. User notifications which persist in the database until a user
+       clicks the notification to mark it as read.
+
+    2. Broadcast notifications which are published transiently to all
+       people currently using the site, even if they're not logged in.
+
+    """
+    user = models.ForeignKey(User)
+    published = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField()
+    message = models.TextField()
+    url = models.TextField()
+
+    objects = models.GeoManager()
+
+    def __unicode__(self):
+        return unicode(self.user)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('occupywallst.views.notification', [self.id])
+
+    def as_dict(self):
+        return {'id': self.id,
+                'published': self.published,
+                'message': self.message,
+                'url': self.url,
+                'is_read': self.is_read}
+
+    @staticmethod
+    def send(user, url, message):
+        for notify in user.notification_set.filter(is_read=False):
+            if notify.message == message:
+                return  # don't send multiple of same notification
+        notify = Notification()
+        notify.user = user
+        notify.message = message
+        notify.url = url
+        notify.save()
+        Notification.publish({'type': 'notification',
+                              'dest': 'user.' + notify.user.username,
+                              'msg': notify.as_dict()})
+
+    @staticmethod
+    def broadcast(msg, dest='all'):
+        Notification.publish({'type': 'broadcast',
+                              'dest': dest,
+                              'msg': msg})
+
+    @staticmethod
+    def publish(msg):
+        data = jsonify(msg)
+        addr = settings.OWS_NOTIFY_PUB_ADDR
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            sock.sendto(data, addr)
+        except Exception, e:
+            logger.warning('notification publish failed: %s', e)
+        finally:
+            sock.close()
 
 
 class Article(models.Model):
@@ -368,11 +446,9 @@ class Message(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        if self.address:
-            return "message from %s to %s" % (
-                self.user.username, self.address)
-        else:
-            return "%s is attending" % (self.user.username)
+        return "message from %s to %s" % (
+            self.from_user.username,
+            self.to_user.username)
 
     def delete(self):
         self.content = ""

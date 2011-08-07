@@ -1,5 +1,5 @@
-{% extends 'occupywallst/base.html' %}
-{% load occupywallst %}
+{% extends base %}
+{% load ows %}
 
 {% block title %}OccupyWallSt.org | Forum{% endblock title %}
 
@@ -9,10 +9,9 @@
   </style>
 {% endblock extra_head %}
 
-{% block scripts %}
-  {{ block.super }}
+{% block extra_scripts %}
   <script src="/media/js/forum.js?v=5" type="text/javascript"></script>
-{% endblock scripts %}
+{% endblock extra_scripts %}
 
 {% block js_init %}
   {{ block.super }}
