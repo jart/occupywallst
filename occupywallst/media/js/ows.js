@@ -41,6 +41,8 @@ var ows_sockio_url;
     }
 
     function subscriber() {
+        if (typeof(io) == "undefined")
+            return;
         sub = io.connect(sockio_url() + "notifications");
         sub.on('notification', function(notify) {
             var elem = notify_to_elem(notify).clickdiv();

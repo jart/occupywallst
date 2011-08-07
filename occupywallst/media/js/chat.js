@@ -20,6 +20,10 @@ var chat_init;
 
     function connect(url, room) {
         var pinger, ponged;
+        if (typeof(io) == "undefined") {
+            display({text: "error: chat server is down"});
+            return;
+        }
         chat = io.connect(url);
         chat.on('connect', function () {
             is_connected = true;

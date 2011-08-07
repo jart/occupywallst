@@ -11,6 +11,8 @@ var conference_init;
     function init(args) {
         confs = args.confs;
         admin = args.admin;
+        if (typeof(io) == "undefined")
+            return;
         confio = io.connect(args.url);
         confio.on('connect', function() {
             for (var conf in confs) {
