@@ -137,6 +137,8 @@ chatio.on('connection', function(sock) {
     });
 
     sock.on('join', function(msg) {
+        if (!msg || !msg.room)
+            return;
         throttle(ip, function() {
             if (is_dead || my_rooms[msg.room] || !msg.room ||
                 msg.room > 20 || !msg.room.match(/[a-zA-Z][-_a-zA-Z0-9]/))
@@ -163,6 +165,8 @@ chatio.on('connection', function(sock) {
     });
 
     sock.on('msg', function(msg) {
+        if (!msg || !msg.room || !msg.text)
+            return;
         throttle(ip, function() {
             if (is_dead || !my_rooms[msg.room] || !msg.text ||
                 msg.text.length > 200)
@@ -200,6 +204,8 @@ chatio.on('connection', function(sock) {
     sock.on('disconnect', disconnect);
 
     function leave(msg) {
+        if (!msg || !msg.room)
+            return;
         if (!my_rooms[msg.room])
             return;
         sock.broadcast.to(msg.room).emit('leave', {
