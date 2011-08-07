@@ -48,7 +48,7 @@ var ows_sockio_url;
         if (typeof(io) == "undefined")
             return;
         sub = io.connect(sockio_url() + "notifications");
-        sub.on('notification', function(notify) {
+        sub.on('ows.notification', function(notify) {
             var elem = notify_to_elem(notify).clickdiv();
             if ($("#notifications .item").length > 0) {
                 elem.hide();
@@ -59,7 +59,7 @@ var ows_sockio_url;
                 $("#notifications").slideDown();
             }
         });
-        sub.on('broadcast', function(msg) {
+        sub.on('ows.broadcast', function(msg) {
         });
     }
 

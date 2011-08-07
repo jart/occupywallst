@@ -84,6 +84,10 @@ app.get('/', function(req, res) {
     res.render('index', {});
 });
 
+app.listen(settings.http.port, settings.http.host);
+console.log("webserver listening on %s:%d",
+            settings.http.host, settings.http.port);
+
 //////////////////////////////////////////////////////////////////////
 // chatroom code
 
@@ -127,69 +131,38 @@ chatio.on('connection', function(sock) {
         me.name = "anon" + guest_counter++;
     }
 
-    // drop user if they join chat in new browser window
-    if (user_internal[me.name]) {
-        user_internal[me.name].disconnect();
+    // drop old user if they join chat in a new browser window
+    if (user_internal[me.name])
+        user_internal[me.name].sock.disconnect();
+
+    log("connected");
+
+    function log(msg) {
+        console.error("%s(%s): %s", me.name, ip, msg);
     }
 
-    sock.on('ping', function() {
-        sock.emit('pong');
-    });
-
-    sock.on('join', function(msg) {
-        if (!msg || !msg.room)
-            return;
-        throttle(ip, function() {
-            if (is_dead || my_rooms[msg.room] || !msg.room ||
-                msg.room > 20 || !msg.room.match(/[a-zA-Z][-_a-zA-Z0-9]/))
-                return;
-            if (!all_rooms[msg.room]) {
-                all_rooms[msg.room] = {
-                    name: msg.room,
-                    users: {}
-                };
+    function safe(funk) {
+        return function failsafe() {
+            try {
+                return funk.apply(null, arguments);
+            } catch (err) {
+                console.error("%s", err);
+                console.trace();
+                sock.disconnect();
             }
-            all_rooms[msg.room].users[me.name] = me;
-            my_rooms[msg.room] = all_rooms[msg.room];
-            sock.join(msg.room);
-            sock.emit('join_ack', {
-                room: msg.room,
-                user: me,
-                users: all_rooms[msg.room].users
-            });
-            sock.broadcast.to(msg.room).emit('join', {
-                room: msg.room,
-                user: me
-            });
-        });
-    });
-
-    sock.on('msg', function(msg) {
-        if (!msg || !msg.room || !msg.text)
-            return;
-        throttle(ip, function() {
-            if (is_dead || !my_rooms[msg.room] || !msg.text ||
-                msg.text.length > 200)
-                return;
-            chatio.in(msg.room).emit('msg', {
-                room: msg.room,
-                user: me,
-                text: msg.text,
-                emo: msg.emo
-            });
-        });
-    });
-
-    if (me.is_staff) {
-        sock.on('kick', function(msg) {
-            if (user_internal[msg.user.name])
-                user_internal[msg.user.name].kick(msg);
-        });
+        };
     }
 
-    function disconnect() {
+    function undead(funk) {
+        return function _undead() {
+            if (!is_dead)
+                return funk.apply(null, arguments);
+        };
+    }
+
+    function on_disconnect() {
         is_dead = true;
-        sock.emit('disconnected');
+        log("disconnected");
         for (var room in my_rooms) {
             sock.broadcast.to(room).emit('leave', {
                 room: room,
@@ -201,13 +174,88 @@ chatio.on('connection', function(sock) {
         delete all_users[me.name];
         delete user_internal[me.name];
     }
-    sock.on('disconnect', disconnect);
 
-    function leave(msg) {
-        if (!msg || !msg.room)
+    function on_ping() {
+        sock.emit('pong');
+    }
+
+    function on_join(msg) {
+        if (typeof(msg) != "object" ||
+            typeof(msg.room) != "string" ||
+            !msg.room.match(/^[a-z][a-z0-9]{2,19}$/)) {
+            log("bad join message: " + JSON.stringify(msg));
+            sock.disconnect();
             return;
+        }
+        if (my_rooms[msg.room])
+            return; // already member
+        if (!all_rooms[msg.room]) {
+            all_rooms[msg.room] = {
+                name: msg.room,
+                users: {}
+            };
+        }
+        all_rooms[msg.room].users[me.name] = me;
+        my_rooms[msg.room] = all_rooms[msg.room];
+        sock.join(msg.room);
+        sock.emit('join_ack', {
+            room: msg.room,
+            user: me,
+            users: all_rooms[msg.room].users
+        });
+        sock.broadcast.to(msg.room).emit('join', {
+            room: msg.room,
+            user: me
+        });
+    }
+
+    function on_msg(msg) {
+        if (typeof(msg) != "object" ||
+            typeof(msg.room) != "string" ||
+            typeof(msg.text) != "string" ||
+            msg.text.length < 1 ||
+            msg.text.length > 200) {
+            log("bad msg message: " + JSON.stringify(msg));
+            sock.disconnect();
+            return;
+        }
         if (!my_rooms[msg.room])
+            return; // not a member
+        chatio.in(msg.room).emit('msg', {
+            room: msg.room,
+            user: me,
+            text: msg.text,
+            emo: msg.emo
+        });
+    }
+
+    function on_kick(msg) {
+        if (typeof(msg) != "object" ||
+            typeof(msg.room) != "string" ||
+            typeof(msg.user) != "object" ||
+            typeof(msg.user.name) != "string") {
+            log("bad kick message: " + JSON.stringify(msg));
+            sock.disconnect();
             return;
+        }
+        if (!me.is_staff) {
+            log("tried to kick w/o ops: " + JSON.stringify(msg));
+            return;
+        }
+        var ui = user_internal[msg.user.name];
+        if (ui)
+            ui.kick(msg);
+    }
+
+    function on_leave(msg) {
+        if (typeof(msg) != "object" ||
+            typeof(msg.room) != "string") {
+            log("bad leave message: " + JSON.stringify(msg));
+            sock.disconnect();
+            return;
+        }
+        if (!my_rooms[msg.room])
+            return; // not a member
         sock.broadcast.to(msg.room).emit('leave', {
             room: msg.room,
             user: me
@@ -220,7 +268,6 @@ chatio.on('connection', function(sock) {
         delete my_rooms[msg.room];
         delete all_rooms[msg.room].users[me.name];
     }
-    sock.on('leave', leave);
 
     function kick(msg) {
         if (msg.user.name == me.name && my_rooms[msg.room]) {
@@ -229,8 +276,15 @@ chatio.on('connection', function(sock) {
         }
     };
 
+    sock.on('ping', safe(on_ping));
+    sock.on('join', safe(throttle(ip, safe(undead(on_join)))));
+    sock.on('msg', safe(throttle(ip, safe(undead(on_msg)))));
+    sock.on('kick', safe(on_kick));
+    sock.on('leave', safe(on_leave));
+    sock.on('disconnect', on_disconnect);
+
     all_users[me.name] = me;
-    user_internal[me.name] = {kick: kick, disconnect: disconnect};
+    user_internal[me.name] = {sock: sock, kick: kick};
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -343,32 +397,30 @@ notifyio.on('connection', function(sock) {
 //////////////////////////////////////////////////////////////////////
 // notifications: subscriber receiving json messages from web app
 
-dgram.createSocket('udp4', function(data, rinfo) {
+function on_notification(data, rinfo) {
     // todo: secure me from local system users
-    var msg;
     try {
-        msg = JSON.parse(data.toString('ascii'));
+        var msg = JSON.parse(data.toString('ascii'));
+        if (typeof msg != "object" ||
+            typeof msg.type != "string" || !msg.type.match(/^ows\.[.a-z]+$/) ||
+            typeof msg.dest != "string" || !msg.dest.match(/^[.a-zA-Z]+$/)) {
+            console.error("bad notify msg: " + JSON.stringify(msg));
+            return;
+        }
+        // console.log("send %s msg to %s: %j", msg.type, msg.dest, msg.msg);
+        notifyio.in(msg.dest).emit(msg.type, msg.msg);
     } catch (e) {
-        console.log("couldn't parse notify msg");
-        console.error(e);
-        return;
+        console.trace(e);
     }
-    if (typeof(msg) != "object" || !msg.type || !msg.dest) {
-        console.log("bad notify msg: %j", msg);
-        return;
-    }
-    // console.log("sending %s msg to %s: %j", msg.type, msg.dest, msg.msg);
-    notifyio.in(msg.dest).emit(msg.type, msg.msg);
-}).bind(settings.notify_sub.port, settings.notify_sub.host);
+}
 
+var notify_sub = dgram.createSocket('udp4', on_notification);
+notify_sub.bind(settings.notify_sub.port, settings.notify_sub.host);
 console.log("notification subscriber listening on %s:%d",
             settings.notify_sub.host, settings.notify_sub.port);
 
 //////////////////////////////////////////////////////////////////////
-
-app.listen(settings.http.port, settings.http.host);
-console.log("https listening on %s:%d in %s mode", app.address().address,
-            app.address().port, app.settings.env);
+// flash media policy server
 
 // var fps = net.createServer(function(sock) {
 //     console.log("got request to flash policy server!");
@@ -387,20 +439,20 @@ console.log("https listening on %s:%d in %s mode", app.address().address,
 //             fps.address().address, fps.address().port);
 
 //////////////////////////////////////////////////////////////////////
+// Utilities
 
 /// Return one row from database
 function db_fetch(query, args, callback) {
     pg.connect(settings.db, function(err, db) {
         if (err) {
-            console.log("failed to connect to postgresql");
-            console.error(err);
+            console.error("failed to connect to postgresql: %s", err);
             callback("database is down D:", null);
             return;
         }
         db.query(query, args, function(err, result) {
             if (err) {
-                console.log("query failed: %s %j", query, args);
-                console.error(err);
+                console.error("query failed: %s", err);
+                console.error("sql(%j, %j)", query, args);
                 callback("query failed", null);
                 return;
             }
@@ -430,8 +482,8 @@ function get_session(sessionid, callback) {
             if (typeof(session) != "object")
                 throw "not an object";
         } catch (err) {
-            console.log("corrupt session data: %s", result);
-            console.error(err);
+            console.error("corrupt session data: %s", err);
+            console.error("session data: %j", result);
             callback("corrupt session data", null);
             return;
         }
@@ -500,3 +552,11 @@ function fs_api(cmd) {
         clearTimeout(deathclock);
     });
 }
+
+//////////////////////////////////////////////////////////////////////
+// prevent crashes at all costs
+
+process.on('uncaughtException', function (err) {
+    console.error('UNHANDLED EXCEPTION');
+    console.trace(err);
+});

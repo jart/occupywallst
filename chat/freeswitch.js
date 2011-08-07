@@ -29,7 +29,7 @@ EventSocket.prototype.connect = function() {
     var buf = "";
 
     function log(msg) {
-        console.log("freeswitch(%s:%d): %s", self.host, self.port, msg);
+        console.error("freeswitch(%s:%d): %s", self.host, self.port, msg);
     }
 
     function pre_auth(msg) {
@@ -67,7 +67,7 @@ EventSocket.prototype.connect = function() {
         log("connected");
         state = pre_auth;
         login_timer = setTimeout(function() {
-            console.log("freeswitch login timer expired");
+            log("login timer expired");
             self.sock.end();
         }, self.login_timeout);
     }).on('error', function(e) {
@@ -83,21 +83,31 @@ EventSocket.prototype.connect = function() {
             }, self.reconnect_timeout);
         }
     }).on('data', function(data) {
+        var msg;
         try {
             buf += data;
             var res = parse(buf);
             if (!res)
                 return;
-            var msg = res.msg;
+            msg = res.msg;
             buf = res.remain;
+        } catch (err) {
+            log("failed to parse message");
+            console.trace(err);
+            self.sock.end();
+            return;
+        }
+        try {
             if (msg.is('text/disconnect-notice')) {
                 self.sock.end();
             } else {
                 state(msg);
             }
-        } catch (e) {
-            console.error(e);
+        } catch (err) {
+            log("failed to handle message");
+            console.trace(err);
             self.sock.end();
+            return;
         }
     });
 };

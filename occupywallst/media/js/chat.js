@@ -38,10 +38,13 @@ var chat_init;
                 }
             }, 5000);
         });
-        chat.socket.on('error', function (reason) {
-            display({text: "error: " + reason});
+        chat.on('connecting', function () {
+            display({text: "Connecting..."});
         });
-        chat.socket.on('disconnect', function(reason) {
+        chat.on('error', function (reason) {
+            display({text: "Error: " + reason});
+        });
+        chat.on('disconnect', function(reason) {
             chat = null;
             is_connected = false;
             clearInterval(pinger);
@@ -70,9 +73,6 @@ var chat_init;
         });
         chat.on("kicked", function (msg) {
             display({text: "you were kicked from " + msg.room});
-        });
-        chat.on("disconnected", function (msg) {
-            chat.socket.disconnect();
         });
         chat.on("join", function (msg) {
             add_user(msg.user);

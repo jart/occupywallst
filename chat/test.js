@@ -1,20 +1,29 @@
 
-var pg = require('pg').native;
-
-pg.connect({'database': 'occupywallst'}, function(err, db) {
-    if (err) {
-        console.dir(err);
-        process.exit(0);
-    }
-    var query = ("SELECT *" +
-                 "  FROM auth_user" +
-                 " WHERE id = $1");
-    db.query(query, [1], function(err, result) {
-        console.log("Row count: %d", result.rows.length);
-        console.log("Username: %s", result.rows[0].username);
-        process.exit(0);
-    });
+process.on('uncaughtException', function (err) {
+    console.error('UNHANDLED EXCEPTION');
+    console.trace(err);
 });
+
+fuck();
+
+//////////////////////////////////////////////////////////////////////
+
+// var pg = require('pg').native;
+
+// pg.connect({'database': 'occupywallst'}, function(err, db) {
+//     if (err) {
+//         console.dir(err);
+//         process.exit(0);
+//     }
+//     var query = ("SELECT *" +
+//                  "  FROM auth_user" +
+//                  " WHERE id = $1");
+//     db.query(query, [1], function(err, result) {
+//         console.log("Row count: %d", result.rows.length);
+//         console.log("Username: %s", result.rows[0].username);
+//         process.exit(0);
+//     });
+// });
 
 //////////////////////////////////////////////////////////////////////
 

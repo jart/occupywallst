@@ -147,13 +147,13 @@ class Notification(models.Model):
         notify.message = message
         notify.url = url
         notify.save()
-        Notification.publish({'type': 'notification',
+        Notification.publish({'type': 'ows.notification',
                               'dest': 'user.' + notify.user.username,
                               'msg': notify.as_dict()})
 
     @staticmethod
     def broadcast(msg, dest='all'):
-        Notification.publish({'type': 'broadcast',
+        Notification.publish({'type': 'ows.broadcast',
                               'dest': dest,
                               'msg': msg})
 
