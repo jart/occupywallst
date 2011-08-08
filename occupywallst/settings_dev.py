@@ -5,6 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SESSION_COOKIE_DOMAIN = '.dev.occupywallst.org'
+CSRF_COOKIE_DOMAIN = '.dev.occupywallst.org'
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
 
