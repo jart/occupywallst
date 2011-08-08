@@ -14,7 +14,7 @@ var ows_sockio_url;
 
     function init(args) {
         $.each(args.notifications, function(i, notify) {
-            $("#notifications .items").append(notify_to_elem(notify));
+            $("#notifications .items").prepend(notify_to_elem(notify));
         });
         if ($("#notifications .item").length > 0) {
             $("#notifications").slideDown();
@@ -43,7 +43,7 @@ var ows_sockio_url;
         return elem;
     }
 
-    function notify(elem) {
+    function notification(elem) {
         if (!elem.jquery)
             elem = notify_to_elem(elem);
         elem.clickdiv();
@@ -62,7 +62,7 @@ var ows_sockio_url;
             return;
         sub = io.connect(sockio_url() + "notifications");
         sub.on('ows.notification', function(notify) {
-            notify(notify);
+            notification(notify);
         });
         sub.on('ows.broadcast', function(msg) {
         });

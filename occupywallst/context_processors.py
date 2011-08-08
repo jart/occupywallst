@@ -24,7 +24,9 @@ def goodies(request):
 
 def notifications(request):
     if request.user.is_authenticated():
-        qset = request.user.notification_set.filter(is_read=False)
+        qset = (request.user.notification_set
+                .filter(is_read=False)
+                .order_by('published'))
         return {'notifications': qset}
     else:
         return {}

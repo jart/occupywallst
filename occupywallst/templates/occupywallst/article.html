@@ -59,7 +59,7 @@
     <h2 id="comments">
       <span id="comment-count">{{ article.comment_count }}</span> Comments
     </h2>
-    <div class="postform">
+    <div id="postform">
       {% if user.is_authenticated %}
         <textarea rows="5" cols="70"></textarea><br />
         <button class="save">post comment</button>
@@ -98,7 +98,7 @@
     </section>
   </td></tr></tbody></table>
 
-  <p style="display:none" class="replyform">
+  <p style="display:none" id="commentform" class="commentform">
     <textarea rows="5" cols="70"></textarea><br />
     <button class="save">save</button>
     <button class="cancel">cancel</button>

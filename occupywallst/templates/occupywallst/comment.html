@@ -26,6 +26,7 @@
           <a class="reply" href="#">reply</a>
           <a href="{{ comment.get_absolute_url }}">permalink</a>
           {% if comment.user == user %}
+            <a class="edit" href="#">edit</a>
             <a class="delete" href="#">delete</a>
           {% endif %}
           {% if user.is_staff %}

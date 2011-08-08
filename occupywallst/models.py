@@ -376,6 +376,8 @@ class Comment(models.Model):
         res = {'id': self.id,
                'user': self.user.username,
                'published': self.published,
+               'parent_id': self.parent_id,
+               'content': self.content,
                'ups': self.ups,
                'downs': self.downs,
                'karma': self.karma}

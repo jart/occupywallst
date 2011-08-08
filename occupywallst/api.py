@@ -162,6 +162,16 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     yield com.as_dict({'html': _render_comment(com, user)})
 
 
+def comment_get(user, comment_id, **kwargs):
+    """Fetch a single comment information
+    """
+    try:
+        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
+    except db.Comment.DoesNotExist:
+        raise APIException("comment not found")
+    yield com.as_dict({'html': _render_comment(com, user)})
+
+
 def comment_edit(user, comment_id, content, **kwargs):
     """Edit a comment's content
     """
@@ -178,7 +188,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         raise APIException("you didn't post that comment")
     com.content = content
     com.save()
-    yield com.as_dict()
+    yield com.as_dict({'html': _render_comment(com, user)})
 
 
 def comment_remove(user, comment_id, action, **kwargs):
