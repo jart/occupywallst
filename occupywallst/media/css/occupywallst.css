@@ -122,6 +122,8 @@ article p, article blockquote { font-size: 1.1em; line-height: 1.4em; }
 article blockquote { color: #333; }
 article p.info { color: #777; font-family: Arial, sans-serif; font-size: 0.9em;
                  margin-top: 0; }
+#articles article { border-bottom: 2px solid #eee; margin-bottom: 1em; }
+#articles article:last-child { border-bottom: none; margin-bottom: 0; }
 
 footer { clear: both; }
 footer p { border-top: 1px solid #999; padding-top: 0.5em;

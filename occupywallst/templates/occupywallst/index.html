@@ -8,27 +8,31 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    {% for article in articles %}
-      <article id="article-{{ article.id }}">
-        <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
-            {{ article.title }}</a></h1>
-        <p class="info">
-          Published {{ article.published|date:"Y-m-d h:i:s T" }}
-          by <a title="View {{ article.author.username }}'s profile"
-                class="user" href="{{ article.author.get_absolute_url }}">
-            {{ article.author.username }}</a>
-        </p>
-        {% if not article.is_forum and article.author.is_staff %}
-          {{ article.content|safe }}
-        {% else %}
-          UH OH SPAGHETTIOS
-        {% endif %}
-        <p>
-          <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
-            {{ article.comment_count }} Comments</a>
-        </p>
-      </article>
-    {% endfor %}
+    <section id="articles">
+      {% for article in articles %}
+        <article id="article-{{ article.id }}">
+          <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
+              {{ article.title }}</a></h1>
+          <p class="info">
+            Published {{ article.published|date:"Y-m-d h:i:s T" }}
+            by <a title="View {{ article.author.username }}'s profile"
+                  class="user" href="{{ article.author.get_absolute_url }}">
+              {{ article.author.username }}</a>
+          </p>
+          <div class="article-content">
+            {% if not article.is_forum and article.author.is_staff %}
+              {{ article.content|safe }}
+            {% else %}
+              UH OH SPAGHETTIOS
+            {% endif %}
+          </div>
+          <p>
+            <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
+              {{ article.comment_count }} Comments</a>
+          </p>
+        </article>
+      {% endfor %}
+    </section>
   </td><td id="right">
     <section id="mission">
       {% if not user.is_authenticated %}
