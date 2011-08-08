@@ -37,7 +37,7 @@ class RSSNewsFeed(Feed):
                 .order_by('-published'))[:25]
 
     def item_title(self, article):
-        return escape(comment.title)
+        return escape(article.title)
 
     def item_pubdate(self, article):
         return article.published
