@@ -15,49 +15,13 @@ $.fn.numberAdd = function (delta) {
 
     function init() {
         replyform = $(".replyform");
-        init_postform($(".postform"));
+        init_postform($(".postform"), $("#comment-list"), "");
         $(".comment").each(function(i) {
             init_comment($(this));
         });
     }
 
-    function init_postform(form) {
-        $(".save", form).click(function() {
-            $(".loader", form).show();
-            $(".error", form).text("");
-            api("/api/comment/new/", {
-                "article_slug": $("article").attr("id"),
-                "parent_id": "",
-                "content": $("textarea", form).val()
-            }, function(data) {
-                $(".loader", form).hide();
-                if (data.status == "OK") {
-                    var res = data.results[0];
-                    var comment = $(res.html);
-                    init_comment(comment);
-                    comment.hide();
-                    $("#comment-list").prepend(comment);
-                    comment.fadeIn();
-                    $("#comment-count").numberAdd(+1);
-                    $("textarea", form).val("");
-                } else {
-                    $(".error", form).text(data.message);
-                }
-            }).error(function(err) {
-                $(".loader", form).hide();
-                $(".error", form).text(err.status + ' ' + err.statusText);
-            });
-            return false;
-        });
-    }
-
-    function init_replyform(form, container, parent_id) {
-        $(".cancel", form).click(function() {
-            form.slideUp(penguin, function() {
-                form.remove();
-            });
-            return false;
-        });
+    function init_postform(form, container, parent_id) {
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
@@ -69,19 +33,27 @@ $.fn.numberAdd = function (delta) {
                 $(".loader", form).hide();
                 if (data.status == "OK") {
                     var res = data.results[0];
-                    var reply = $(res.html);
-                    init_comment(reply);
-                    form.remove();
-                    reply.hide();
-                    container.prepend(reply);
-                    reply.fadeIn();
+                    var comment = $(res.html);
+                    init_comment(comment);
+                    comment.hide();
+                    container.prepend(comment);
+                    comment.fadeIn();
                     $("#comment-count").numberAdd(+1);
+                    $("textarea", form).val("");
+                    if (!form.is(".postform"))
+                        form.remove();
                 } else {
                     $(".error", form).text(data.message);
                 }
             }).error(function(err) {
                 $(".loader", form).hide();
                 $(".error", form).text(err.status + ' ' + err.statusText);
+            });
+            return false;
+        });
+        $(".cancel", form).click(function() {
+            form.slideUp(penguin, function() {
+                form.remove();
             });
             return false;
         });
@@ -100,7 +72,7 @@ $.fn.numberAdd = function (delta) {
             form.slideDown(penguin, function() {
                 $("textarea", form).focus();
             });
-            init_replyform(form, replies, comment_id);
+            init_postform(form, replies, comment_id);
             return false;
         });
 
