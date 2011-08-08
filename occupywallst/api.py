@@ -116,8 +116,7 @@ def thread_new(user, title, content, **kwargs):
 def comment_new(user, article_slug, parent_id, content, **kwargs):
     """Leave a comment on an article
 
-    If ``parent_id != "null"``, this will be a reply to an existing
-    comment.
+    If parent_id is set, this will be a reply to an existing comment.
 
     Also upvotes comment and increments article comment count.
     """
@@ -130,7 +129,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException('article not found')
-    if parent_id != "null":
+    if parent_id:
         try:
             parent = db.Comment.objects.get(id=parent_id,
                                             is_deleted=False,

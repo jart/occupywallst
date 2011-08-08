@@ -18,6 +18,7 @@ from datetime import datetime
 
 from django.db import transaction
 from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
@@ -48,9 +49,12 @@ def api_view(function):
     always receives data in JSON format.
     """
     @wraps(function)
+    @require_POST
     @transaction.commit_manually
     def _api_view(request):
-        args = dict(request.REQUEST)
+        args = {}
+        for key in request.POST:
+            args[key] = request.POST[key]
         args['request'] = request
         args['user'] = request.user
         try:

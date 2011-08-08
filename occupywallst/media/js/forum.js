@@ -16,7 +16,7 @@ var forum_init;
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
-            $.getJSON("/api/thread/new/", {
+            api("/api/thread/new/", {
                 "title": $(".title", form).val(),
                 "content": $(".content", form).val()
             }, function(data) {
@@ -27,9 +27,9 @@ var forum_init;
                 } else {
                     $(".error", form).text(data.message);
                 }
-            }).error(function(e) {
+            }).error(function(err) {
                 $(".loader", form).hide();
-                $(".error", form).text(e.status + e.statusText);
+                $(".error", form).text(err.status + ' ' + err.statusText);
             });
             return false;
         });

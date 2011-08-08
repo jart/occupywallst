@@ -33,8 +33,7 @@ var ows_sockio_url;
     }
 
     function notify_to_elem(notify) {
-        var elem;
-        elem = $('<div class="item clickdiv"></div>');
+        var elem = $('<div class="item clickdiv"></div>');
         elem.append($('<a class="primary"/>')
                     .attr('href', notify.url)
                     .text(notify.message));
@@ -44,20 +43,26 @@ var ows_sockio_url;
         return elem;
     }
 
+    function notify(elem) {
+        if (!elem.jquery)
+            elem = notify_to_elem(elem);
+        elem.clickdiv();
+        if ($("#notifications .item").length > 0) {
+            elem.hide();
+            $("#notifications .items").prepend(elem);
+            elem.slideDown();
+        } else {
+            $("#notifications .items").prepend(elem);
+            $("#notifications").slideDown();
+        }
+    }
+
     function subscriber() {
         if (typeof(io) == "undefined")
             return;
         sub = io.connect(sockio_url() + "notifications");
         sub.on('ows.notification', function(notify) {
-            var elem = notify_to_elem(notify).clickdiv();
-            if ($("#notifications .item").length > 0) {
-                elem.hide();
-                $("#notifications .items").prepend(elem);
-                elem.slideDown();
-            } else {
-                $("#notifications .items").prepend(elem);
-                $("#notifications").slideDown();
-            }
+            notify(notify);
         });
         sub.on('ows.broadcast', function(msg) {
         });
@@ -96,12 +101,12 @@ var ows_sockio_url;
     jQuery.fn.clickdiv = function() {
         return this.each(function() {
             var primary = $("a.primary", this).attr('href');
-            $(this).click(function(e) {
-                var url = ($(e.target).attr('href') || primary);
-                if (e.which == MOUSE_LEFT) {
+            $(this).click(function(ev) {
+                var url = ($(ev.target).attr('href') || primary);
+                if (ev.which == MOUSE_LEFT) {
                     window.location.href = url;
                     return false;
-                } else if (e.which == MOUSE_MIDDLE) {
+                } else if (ev.which == MOUSE_MIDDLE) {
                     window.open(url);
                     return false;
                 }

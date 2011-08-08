@@ -25,9 +25,9 @@ $.fn.numberAdd = function (delta) {
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
-            $.getJSON("/api/comment/new/", {
+            api("/api/comment/new/", {
                 "article_slug": $("article").attr("id"),
-                "parent_id": null,
+                "parent_id": "",
                 "content": $("textarea", form).val()
             }, function(data) {
                 $(".loader", form).hide();
@@ -43,9 +43,9 @@ $.fn.numberAdd = function (delta) {
                 } else {
                     $(".error", form).text(data.message);
                 }
-            }).error(function(e) {
+            }).error(function(err) {
                 $(".loader", form).hide();
-                $(".error", form).text(e.status + e.statusText);
+                $(".error", form).text(err.status + ' ' + err.statusText);
             });
             return false;
         });
@@ -61,7 +61,7 @@ $.fn.numberAdd = function (delta) {
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
-            $.getJSON("/api/comment/new/", {
+            api("/api/comment/new/", {
                 "article_slug": $("article").attr("id"),
                 "parent_id": parent_id,
                 "content": $("textarea", form).val()
@@ -79,9 +79,9 @@ $.fn.numberAdd = function (delta) {
                 } else {
                     $(".error", form).text(data.message);
                 }
-            }).error(function(e) {
+            }).error(function(err) {
                 $(".loader", form).hide();
-                $(".error", form).text(e.status + e.statusText);
+                $(".error", form).text(err.status + ' ' + err.statusText);
             });
             return false;
         });
@@ -107,7 +107,7 @@ $.fn.numberAdd = function (delta) {
         $(".up", content).click(function() {
             if ($(".up", content).hasClass("upvoted"))
                 return false;
-            $.getJSON("/api/comment/vote/", {
+            api("/api/comment/vote/", {
                 "comment_id": comment_id,
                 "vote": "up"
             }, function(data) {
@@ -128,7 +128,7 @@ $.fn.numberAdd = function (delta) {
         $(".down", content).click(function() {
             if ($(".up", content).hasClass("downvoted"))
                 return false;
-            $.getJSON("/api/comment/vote/", {
+            api("/api/comment/vote/", {
                 "comment_id": comment_id,
                 "vote": "down"
             }, function(data) {
@@ -149,7 +149,7 @@ $.fn.numberAdd = function (delta) {
         $(".delete", content).click(function() {
             if (!confirm("Sure you want to delete this comment?"))
                 return false;
-            $.getJSON("/api/comment/delete/", {
+            api("/api/comment/delete/", {
                 "comment_id": comment_id
             }, function(data) {
                 if (data.status == "OK") {
@@ -164,7 +164,7 @@ $.fn.numberAdd = function (delta) {
 
         $(".remove", content).click(function() {
             var action = $(".remove", content).text();
-            $.getJSON("/api/comment/remove/", {
+            api("/api/comment/remove/", {
                 "comment_id": comment_id,
                 "action": action
             }, function(data) {

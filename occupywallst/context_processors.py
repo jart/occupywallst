@@ -18,6 +18,7 @@ def goodies(request):
     else:
         base = 'occupywallst/base.html'
     return {'OWS_CANONICAL_URL': settings.OWS_CANONICAL_URL,
+            'DEBUG': settings.DEBUG,
             'base': base}
 
 

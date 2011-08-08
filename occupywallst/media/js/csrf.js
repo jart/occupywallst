@@ -1,9 +1,3 @@
-/*
- * occupywallst
- * Copyright (c) 2011 Justine Tunney
- * Licensed under the AGPL v3 or later
- */
-
 "use strict";
 
 $(document).ajaxSend(function(event, xhr, settings) {

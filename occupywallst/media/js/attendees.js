@@ -71,7 +71,7 @@ var attendees_init;
     function fetch() {
         $("#loader").show();
         is_fetching = true;
-        $.getJSON("/api/attendees/", {
+        api("/api/attendees/", {
             "bounds": bounds_to_string(map.getBounds())
         }, function(data) {
             if (data.status == "OK") {
@@ -83,8 +83,7 @@ var attendees_init;
             }
             $("#loader").hide();
             is_fetching = false;
-        }).error(function(resp) {
-            $("html").html(resp.responseText);
+        }).error(function(err) {
             $("#loader").hide();
             is_fetching = false;
         });
@@ -146,7 +145,7 @@ var attendees_init;
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
-            $.getJSON("/api/message/send/", {
+            api("/api/message/send/", {
                 "to_username": to_username,
                 "content": $("textarea", form).val()
             }, function(data) {
@@ -159,9 +158,9 @@ var attendees_init;
                 } else {
                     $(".error", form).text(data.message);
                 }
-            }).error(function(e) {
+            }).error(function(err) {
                 $(".loader", form).hide();
-                $(".error", form).text(e.status + e.statusText);
+                $(".error", form).text(err.status + ' ' + err.statusText);
             });
             return false;
         });
@@ -177,7 +176,7 @@ var attendees_init;
         google.maps.event.addListener(marker, "click", function() {
             $("#loader").show();
             is_fetching = true;
-            $.getJSON("/api/attendee/info/", {
+            api("/api/attendee/info/", {
                 "username": username
             }, function(data) {
                 if (pin.flag_remove)
@@ -198,8 +197,7 @@ var attendees_init;
                 }
                 $("#loader").hide();
                 is_fetching = false;
-            }).error(function(resp) {
-                $("html").html(resp.responseText);
+            }).error(function(err) {
                 $("#loader").hide();
                 is_fetching = false;
             });

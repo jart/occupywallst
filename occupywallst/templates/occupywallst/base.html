@@ -100,7 +100,11 @@
   {% block scripts %}
   {% endblock scripts %}
   <script type="text/javascript">
+    function api(path, data, callback) {
+        return $.post(path, data, callback, "json");
+    }
     $(function() {
+      var OWS_DEBUG = {% if DEBUG %}true{% else %}false{% endif %};
       {% block js_init %}
         ows_init({
           notifications: {{ notifications|jsonify|safe }}

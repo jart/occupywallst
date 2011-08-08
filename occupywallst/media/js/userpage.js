@@ -34,7 +34,7 @@ var userpage_init;
         $(".save", form).click(function() {
             $(".loader", form).show();
             $(".error", form).text("");
-            $.getJSON("/api/message/send/", {
+            api("/api/message/send/", {
                 "to_username": $(".username").attr("id"),
                 "content": $("textarea", form).val()
             }, function(data) {
@@ -50,9 +50,9 @@ var userpage_init;
                 } else {
                     $(".error", form).text(data.message);
                 }
-            }).error(function(e) {
+            }).error(function(err) {
                 $(".loader", form).hide();
-                $(".error", form).text("oh snap");
+                $(".error", form).text(err.status + ' ' + err.statusText);
             });
             return false;
         });
@@ -63,7 +63,7 @@ var userpage_init;
         $(".delete", message).click(function() {
             if (!confirm("Sure you want to delete this message?"))
                 return false;
-            $.getJSON("/api/message/delete/", {
+            api("/api/message/delete/", {
                 "message_id": message_id
             }, function(data) {
                 if (data.status == "OK") {
