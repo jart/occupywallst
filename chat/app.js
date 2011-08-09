@@ -63,8 +63,7 @@ app.configure('production', function() {
 
 io.configure(function() {
     io.set('close timeout', 99999999999);
-    io.set('transports', ['websocket', 'flashsocket']);
-    // 'htmlfile', 'xhr-polling', 'jsonp-polling'
+    io.set('transports', ['websocket', 'flashsocket', 'xhr-polling']);
 });
 io.configure('development', function() {
     console.log("SOCKET.IO DEVELOPMENT MODE");
