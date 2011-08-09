@@ -17,16 +17,8 @@
   <link rel="stylesheet" href="/media/css/article.css?v=7" type="text/css" media="all" />
   {% block extra_head %}
   {% endblock extra_head %}
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-24711946-1']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+  {% block stylesheets %}
+  {% endblock stylesheets %}
 </head>
 <body>
   {% block body %}
@@ -68,8 +60,6 @@
       <div style="clear:both"></div>
     {% endblock nav %}
     <div id="content">
-      {% block stylesheets %}
-      {% endblock stylesheets %}
       {% block content %}
         <p>
           No Content Available.
@@ -93,18 +83,31 @@
       </div>
     </div>
   {% endblock body %}
-  <script src="/media/js/jquery-1.6.min.js" type="text/javascript"></script>
+  <script src="/media/js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
+  {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
+    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}" type="text/javascript"></script>
+  {% else %}
+    {% for script in OWS_SCRIPTS %}
+      <script src="{{ MEDIA_URL }}{{ script }}" type="text/javascript"></script>
+    {% endfor %}
+  {% endif %}
   <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script>
-  <script src="/media/js/ows.js?v=7" type="text/javascript"></script>
   {% block scripts %}
   {% endblock scripts %}
   <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-24711946-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
     function api(path, data, callback) {
         data.csrfmiddlewaretoken = "{{ csrf_token }}";
         return $.post(path, data, callback, "json");
     }
     $(function() {
-      var OWS_DEBUG = {% if DEBUG %}true{% else %}false{% endif %};
       {% block js_init %}
         ows_init({
           notifications: {{ notifications|jsonify|safe }}

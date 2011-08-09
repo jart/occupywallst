@@ -7,8 +7,14 @@ r"""
 
 """
 
-from os.path import abspath, dirname, join
+import os
+import sys
+from os.path import abspath, dirname, join, exists
 project_root = dirname(abspath(__file__))
+
+MEDIA_ROOT = join(project_root, 'media')
+GEOIP_PATH = join(project_root, 'data')
+SHP_PATH = join(project_root, 'data')
 
 DEBUG = False
 PAYPAL_DEBUG = DEBUG
@@ -20,9 +26,9 @@ OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
 OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 
-MEDIA_ROOT = join(project_root, 'media')
-GEOIP_PATH = join(project_root, 'data')
-SHP_PATH = join(project_root, 'data')
+OWS_SCRIPTS = ['js/occupywallst/' + fname
+               for fname in os.listdir(join(MEDIA_ROOT, 'js/occupywallst'))]
+OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
 
 ADMINS = (
     ('', 'errors@occupywallst.org'),
@@ -163,3 +169,17 @@ try:
     from occupywallst.settings_local import *
 except ImportError:
     pass
+
+try:
+    import subprocess
+    minifier = join(project_root, "../chat/minify.js")
+    outfile = join(MEDIA_ROOT, OWS_SCRIPTS_MINIFIED)
+    if exists(outfile):
+        os.unlink(outfile)
+    infiles = [abspath(join(MEDIA_ROOT, f)) for f in OWS_SCRIPTS]
+    proc = subprocess.Popen([minifier, outfile] + infiles)
+    assert proc.wait() == 0, "minifier exited non-zero"
+    assert exists(outfile), "minifier didn't produce output"
+except Exception, exc:
+    OWS_SCRIPTS_MINIFIED = ""
+    print >>sys.stderr, "javascript minifier failed:", exc
