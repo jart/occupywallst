@@ -171,16 +171,22 @@ try:
 except ImportError:
     pass
 
-try:
+def minify():
     import subprocess
     minifier = join(project_root, "../chat/minify.js")
     outfile = join(MEDIA_ROOT, OWS_SCRIPTS_MINIFIED)
-    if exists(outfile):
-        os.unlink(outfile)
     infiles = [abspath(join(MEDIA_ROOT, f)) for f in OWS_SCRIPTS]
+    if exists(outfile):
+        modified = lambda fname: os.stat(fname).st_mtime
+        if modified(outfile) > max(modified(infile) for infile in infiles):
+            return
+        os.unlink(outfile)
     proc = subprocess.Popen([minifier, outfile] + infiles)
     assert proc.wait() == 0, "minifier exited non-zero"
     assert exists(outfile), "minifier didn't produce output"
+
+try:
+    minify()
 except Exception, exc:
     OWS_SCRIPTS_MINIFIED = ""
     print >>sys.stderr, "javascript minifier failed:", exc
