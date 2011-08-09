@@ -16,8 +16,7 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h1>Planning <span class="amp">&amp;</span> Discussion</h1>
-    <section id="thread-list">
+    <section id="thread-list" style="margin-top:0">
       {% for article in articles %}
         <div class="item clickdiv">
           <h3>
@@ -35,7 +34,6 @@
         </div>
       {% endfor %}
     </section>
-    <h3 id="new-thread">New</h3>
     <div class="postform">
       {% if user.is_authenticated %}
         <div>

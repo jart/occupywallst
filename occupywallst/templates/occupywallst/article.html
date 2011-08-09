@@ -77,16 +77,16 @@
       {% for recent in recents %}
         {% if recent.id != article.id %}
           <div class="item clickdiv">
+            <div class="title">
+              <a class="primary" title="View Thread"
+                 href="{{ recent.get_forum_url }}">{{ recent.title }}</a>
+            </div>
             <div class="info">
               {{ recent.comment_count }} comments
               {{ recent.published|timesince_short }} ago
               by <a title="View {{ recent.author.username }}'s profile"
                     class="user" href="{{ recent.author.get_absolute_url }}">
                 {{ recent.author.username }}</a>
-            </div>
-            <div class="title">
-              <a class="primary" title="View Thread"
-                 href="{{ recent.get_forum_url }}">{{ recent.title }}</a>
             </div>
           </div>
         {% endif %}
