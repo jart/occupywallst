@@ -1,8 +1,8 @@
 {# this generates the html for the article description in an rss feed #}
 <div class="article-feed">
-  {% if not article.is_forum and article.author.is_staff %}
-    {{ obj.content|safe }}
-  {% else %}
+  {% if article.is_forum %}
     {{ obj.content|linebreaks }}
+  {% else %}
+    {{ obj.content|safe }}
   {% endif %}
 </div>

@@ -20,10 +20,10 @@
               {{ article.author.username }}</a>
           </p>
           <div class="article-content">
-            {% if not article.is_forum and article.author.is_staff %}
-              {{ article.content|safe }}
-            {% else %}
+            {% if article.is_forum %}
               UH OH SPAGHETTIOS
+            {% else %}
+              {{ article.content|safe }}
             {% endif %}
           </div>
           <p>

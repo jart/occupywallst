@@ -46,10 +46,10 @@
           {% endif %}
         {% endif %}
       </p>
-      {% if not article.is_forum and article.author.is_staff %}
-        {{ article.content|safe }}
-      {% else %}
+      {% if article.is_forum %}
         {{ article.content|linebreaks }}
+      {% else %}
+        {{ article.content|safe }}
       {% endif %}
     </article>
     <h2 id="comments">
