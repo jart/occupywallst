@@ -15,7 +15,9 @@
     admin: {% if user.is_staff %}true{% else %}false{% endif %},
     url: ows_sockio_url() + "conf",
     confs: {
-      'ows.conf': {elem: $('#ows-conf')}
+      'ows.conf': {elem: $('#ows-conf')},
+      'ows.conf2': {elem: $('#ows-conf2')},
+      'ows.conf3': {elem: $('#ows-conf3')},
     }
   });
 {% endblock js_init %}
@@ -24,12 +26,8 @@
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="telecom">
       <h1>Conference Bridges</h1>
-      <h3>Conference #1</h3>
-      <ul>
-        <li>Tel: <strong><a href="tel:+12034456232">+1 (203) 445-6232</a></strong> (Dial this number to join)</li>
-        <li>VoIP: <a href="sip:ows.conf@occupywallst.org">sip:ows.conf@occupywallst.org</a></li>
-        <li>Secure: <a href="sips:ows.conf@occupywallst.org">sips:ows.conf@occupywallst.org</a></li>
-      </ul>
+
+      <h3>Dial: <a href="tel:+15165709225">+1 (516) 570-9225</a> (<a href="sip:ows.conf@occupywallst.org">SIP</a>)</h3>
       <div class="conference" id="ows-conf">
         <p class="details">
           <span class="count">0</span>
@@ -39,10 +37,33 @@
           </span>
         </p>
       </div>
+
+      <h3>Dial: <a href="tel:+15165709226">+1 (516) 570-9226</a> (<a href="sip:ows.conf2@occupywallst.org">SIP</a>)</h3>
+      <div class="conference" id="ows-conf2">
+        <p class="details">
+          <span class="count">0</span>
+          <span class="people">people</span> currently in conference
+          <span class="mp3stream" style="display:none">
+            | <a href="/stream/ows.conf.mp3">MP3 Stream</a>
+          </span>
+        </p>
+      </div>
+
+      <h3>Dial: <a href="tel:+15165709227">+1 (516) 570-9227</a> (<a href="sip:ows.conf3@occupywallst.org">SIP</a>)</h3>
+      <div class="conference" id="ows-conf3">
+        <p class="details">
+          <span class="count">0</span>
+          <span class="people">people</span> currently in conference
+          <span class="mp3stream" style="display:none">
+            | <a href="/stream/ows.conf.mp3">MP3 Stream</a>
+          </span>
+        </p>
+      </div>
+
       <h3>Private Conferences (VoIP Only)</h3>
       <ul>
-        <li>VoIP: sip:ows.conf.CHANGEME@occupywallst.org</li>
-        <li>Secure: sips:ows.conf.CHANGEME@occupywallst.org</li>
+        <li>sip:ows.conf.CHANGEME@occupywallst.org</li>
+        <li>sips:ows.conf.CHANGEME@occupywallst.org</li>
       </ul>
       <h3>Donations</h3>
       <p>
