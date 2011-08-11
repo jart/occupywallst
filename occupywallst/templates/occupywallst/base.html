@@ -4,7 +4,7 @@
   {% load ows %}
   <meta charset="utf-8" />
   <title>{% block title %}OccupyWallSt.org | News & Logistics for September 17th{% endblock title %}</title>
-  <link rel="shortcut icon" href="/media/img/bull16.png?v=8" />
+  <link rel="shortcut icon" href="/media/img/bull16.png" />
   <meta name="description" content="News, maps and logistics for protesters attending the two month occupation of Wall Street starting September 17th." />
   {% block canonical %}
     <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
@@ -12,9 +12,9 @@
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="/rss/news/" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="/rss/forum/" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="/rss/comments/" />
-  <link rel="stylesheet" href="/media/css/occupywallst.css?v=8" type="text/css" media="all" />
-  <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=8" type="text/css" media="print" />
-  <link rel="stylesheet" href="/media/css/article.css?v=8" type="text/css" media="all" />
+  <link rel="stylesheet" href="/media/css/occupywallst.css?v=9" type="text/css" media="all" />
+  <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=9" type="text/css" media="print" />
+  <link rel="stylesheet" href="/media/css/article.css?v=9" type="text/css" media="all" />
   {% block extra_head %}
   {% endblock extra_head %}
   {% block stylesheets %}
@@ -84,10 +84,10 @@
   {% endblock body %}
   <script src="/media/js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
   {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
-    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=8" type="text/javascript"></script>
+    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=9" type="text/javascript"></script>
   {% else %}
     {% for script in OWS_SCRIPTS %}
-      <script src="{{ MEDIA_URL }}{{ script }}?v=8" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}{{ script }}?v=9" type="text/javascript"></script>
     {% endfor %}
   {% endif %}
   <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script>

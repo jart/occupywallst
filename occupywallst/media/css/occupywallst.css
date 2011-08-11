@@ -197,7 +197,6 @@ a.button:active {
 #right ul { padding-left: 1.5em; }
 
 #recents h4 { margin-top: 0; }
-#recents .title a { color: black; }
 #recents .item { padding: 3px -3px; padding: 3px; cursor: pointer; }
 #recents .item:hover { background: #f3f3ff; }
 #recents .item .info { font-size: x-small; color: #777; }
@@ -206,7 +205,6 @@ a.button:active {
 #thread-list .item { margin: 0 -5px; padding: 3px; cursor: pointer; }
 #thread-list .item:hover { background: #f3f3ff; }
 #thread-list .item h3 { margin: 0; font-size: 1em; font-weight: normal; }
-#thread-list .item h3 a { color: black; }
 #thread-list .item .info { font-size: small; color: #555; }
 .threadtype {  color: #a00; }
 
