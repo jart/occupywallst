@@ -402,7 +402,7 @@ function on_notification(data, rinfo) {
         var msg = JSON.parse(data.toString('ascii'));
         if (typeof msg != "object" ||
             typeof msg.type != "string" || !msg.type.match(/^ows\.[.a-z]+$/) ||
-            typeof msg.dest != "string" || !msg.dest.match(/^[.a-zA-Z]+$/)) {
+            typeof msg.dest != "string" || !msg.dest.match(/^[._@+a-zA-Z0-9]+$/)) {
             console.error("bad notify msg: " + JSON.stringify(msg));
             return;
         }
