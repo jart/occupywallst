@@ -95,7 +95,7 @@ header h2 { margin: 0; font-size: 1.5em; }
 #navbar li.first { border-left: none; }
 #navbar li.last { border-right: none; }
 
-#navbar li a, #navbar li.last span {
+#navbar li.item a {
     line-height: 2;
     display: block;
     height: 2em;
@@ -107,9 +107,21 @@ header h2 { margin: 0; font-size: 1.5em; }
     padding: 0.2em 1em;
 }
 
-#navbar li a:hover {
+#navbar li.item a:hover {
     background: #900;
 }
+
+#navbar li.last { padding-left: 0.5em; }
+#navbar li.last img { vertical-align: middle; }
+#navbar li.last a {
+    display: block;
+    height: 2em;
+    line-height: 2;
+    float: left;
+    padding: 0.2em 0;
+    padding-left: 0.2em;
+}
+
 
 #right { width: 250px; font-family: Arial, sans-serif; font-size: 0.9em; 
          vertical-align: top; }
