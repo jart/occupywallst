@@ -10,10 +10,14 @@ r"""
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 
-from occupywallst import admin, api, utils, feeds
+from occupywallst import admin, api, utils, feeds, sitemaps
 
 
 adminsite = admin.AdminSite(name='occupyadmin')
+
+sitemaps = {
+    'articles': sitemaps.ArticleSitemap,
+}
 
 urlpatterns = patterns('',
     url(r'^$', 'occupywallst.views.index'),
@@ -49,6 +53,7 @@ urlpatterns = patterns('',
     url(r'^api/message/delete/$', utils.api_view(api.message_delete)),
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^admin/', include(adminsite.urls)),
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
 )
 
 if settings.DEBUG:
