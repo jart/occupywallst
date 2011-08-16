@@ -17,6 +17,10 @@ $.fn.numberAdd = function (delta) {
         $(".comment").each(function(i) {
             init_comment($(this));
         });
+        var anchor = $(document.location.hash);
+        if (anchor.hasClass("comment")) {
+            $("> .content", anchor).addClass("highlight");
+        }
     }
 
     function init_comment_form(form, container, parent_id) {
@@ -162,6 +166,10 @@ $.fn.numberAdd = function (delta) {
             $(".up", content).removeClass("upvoted");
             $(".down", content).addClass("downvoted");
             return false;
+        });
+
+        $(".permalink", content).click(function() {
+            content.addClass("highlight");
         });
 
         $(".delete", content).click(function() {

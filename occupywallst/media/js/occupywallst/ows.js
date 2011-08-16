@@ -26,10 +26,6 @@ var ows_sockio_url;
                 $(this).text(timesince($(this).data('published')) + ' ago');
             });
         }, 1000);
-        var anchor = $(document.location.hash);
-        if (anchor.hasClass("comment")) {
-            $("> .content .words", anchor).addClass("highlight");
-        }
     }
 
     function notify_to_elem(notify) {
