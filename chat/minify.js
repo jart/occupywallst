@@ -19,7 +19,7 @@ for (var n in infiles) {
     var infile = infiles[n];
     var incode = fs.readFileSync(infile, 'utf8');
     size += incode.length;
-    outcode += min(incode) + '\n';
+    outcode += min(incode) + ';\n';
 }
 
 fs.writeFileSync(outfile, outcode);
