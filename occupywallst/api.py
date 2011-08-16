@@ -202,10 +202,10 @@ def comment_remove(user, comment_id, action, **kwargs):
         com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if action == 'remove':
+    if action == 'remove' and not com.is_removed:
         com.is_removed = True
         com.article.comment_count -= 1
-    elif action == 'unremove':
+    elif action == 'unremove' and com.is_removed:
         com.is_removed = False
         com.article.comment_count += 1
     else:
