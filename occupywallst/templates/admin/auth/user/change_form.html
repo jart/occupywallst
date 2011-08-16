@@ -1,0 +1,5 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block object-tools-items %}{{ block.super }}
+  <li><a href="/admin/occupywallst/userinfo/{{ original.userinfo.id }}/" class="historylink">{% trans "OccupyWallSt User Info" %}</a></li>
+{% endblock object-tools-items %}

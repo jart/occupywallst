@@ -7,7 +7,9 @@ r"""
 
 """
 
+import markdown
 from django import template
+from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
 from occupywallst import utils
@@ -24,6 +26,11 @@ def jsonify(value):
 @register.filter
 def timesince_short(timestamp):
     return utils.timesince(timestamp)
+
+
+@register.filter
+def markup(text):
+    return mark_safe(markdown.markdown(text, safe_mode=True))
 
 
 @register.simple_tag

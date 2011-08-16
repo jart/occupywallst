@@ -18,8 +18,8 @@ def goodies(request):
     else:
         base = 'occupywallst/base.html'
     return {'OWS_CANONICAL_URL': settings.OWS_CANONICAL_URL,
-            'OWS_SCRIPTS_MINIFIED': settings.OWS_SCRIPTS_MINIFIED,
             'OWS_SCRIPTS': settings.OWS_SCRIPTS,
+            'OWS_SCRIPTS_MINIFIED': settings.OWS_SCRIPTS_MINIFIED,
             'DEBUG': settings.DEBUG,
             'base': base}
 

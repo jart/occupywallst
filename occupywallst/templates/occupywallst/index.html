@@ -1,4 +1,5 @@
 {% extends base %}
+{% load ows %}
 
 {% block stylesheets %}
   <style type="text/css">
@@ -20,11 +21,7 @@
               {{ article.author.username }}</a>
           </p>
           <div class="article-content">
-            {% if article.is_forum %}
-              UH OH SPAGHETTIOS
-            {% else %}
-              {{ article.content|safe }}
-            {% endif %}
+            {{ article.content|markup }}
           </div>
           <p>
             <a title="View Comments" href="{{ article.get_absolute_url }}#comments">

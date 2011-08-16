@@ -152,7 +152,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 #article-page { }
 
 .comment .content { margin: 1em 1em; font-family: Arial, sans-serif;
-                    font-size: small; }
+                    font-size: 0.9em; }
 .comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
 .comment .info { color: #666; font-size: 0.9em; }
 .comment .links { font-size: 0.9em; }

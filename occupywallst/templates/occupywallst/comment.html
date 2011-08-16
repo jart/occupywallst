@@ -20,11 +20,11 @@
           <span class="published">{{ comment.published|timesince_short }} ago</span>
         </div>
         <div class="words">
-          {{ comment.content|linebreaks }}
+          {{ comment.content|markup }}
         </div>
         <div class="links">
           <a class="reply" href="#">reply</a>
-          <a href="{{ comment.get_absolute_url }}">permalink</a>
+          <a class="permalink" href="{{ comment.get_absolute_url }}">permalink</a>
           {% if comment.user == user %}
             <a class="edit" href="#">edit</a>
             <a class="delete" href="#">delete</a>

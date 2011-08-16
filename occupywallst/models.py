@@ -19,7 +19,7 @@ from datetime import date, timedelta
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 
 from occupywallst.utils import jsonify, timesince
@@ -56,7 +56,7 @@ class UserInfo(models.Model):
         Reference to Django auth user.""")
     info = models.TextField(blank=True, help_text="""
         Some profile or "about me" information.""")
-    need_ride = models.BooleanField(default=True, help_text="""
+    need_ride = models.BooleanField(default=False, help_text="""
         Do they currently need a ride?  If so, display their position
         on the need a ride map.""")
     attendance = models.CharField(max_length=32, choices=ATTENDANCE_CHOICES,
@@ -85,6 +85,10 @@ class UserInfo(models.Model):
         Postal code that google reverse geocode gave us on position.""")
 
     objects = models.GeoManager()
+
+    class Meta:
+        verbose_name = 'User Info'
+        verbose_name_plural = 'User Infos'
 
     def __unicode__(self):
         return unicode(self.user)
@@ -186,8 +190,7 @@ class Article(models.Model):
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
     content = models.TextField(help_text="""
-        The contents of the article.  For news articles this should be
-        HTML and for threads this should be safe markup.""")
+        The contents of the article in Markdown.""")
     comment_count = models.IntegerField(default=0, editable=False,
                                         help_text="""
         Comment counter to optimize listing page.""")
@@ -195,7 +198,7 @@ class Article(models.Model):
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
         want it published.  This does not apply if is_forum is True.""")
-    is_forum = models.BooleanField(default=False, help_text="""
+    is_forum = models.BooleanField(default=False, editable=False, help_text="""
         Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be listed on site.""")
@@ -292,6 +295,48 @@ class Article(models.Model):
                 if com.is_removed and com.user == user:
                     com.is_removed = False
         return comments
+
+
+class NewsArticleManager(models.GeoManager):
+    def get_query_set(self):
+        qset = super(NewsArticleManager, self).get_query_set()
+        return qset.filter(is_forum=False)
+
+
+class NewsArticle(Article):
+    """View of Article table that doesn't show forum posts
+    """
+    objects = NewsArticleManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "News Article"
+        verbose_name_plural = "News Articles"
+
+    def save(self, *args, **kwargs):
+        self.is_forum = False
+        return super(NewsArticle, self).save(*args, **kwargs)
+
+
+class ForumPostManager(models.GeoManager):
+    def get_query_set(self):
+        qset = super(ForumPostManager, self).get_query_set()
+        return qset.filter(is_forum=True)
+
+
+class ForumPost(Article):
+    """View of Article table that doesn't news articles
+    """
+    objects = ForumPostManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Forum Post"
+        verbose_name_plural = "Forum Posts"
+
+    def save(self, *args, **kwargs):
+        self.is_forum = True
+        return super(ForumPost, self).save(*args, **kwargs)
 
 
 class Comment(models.Model):

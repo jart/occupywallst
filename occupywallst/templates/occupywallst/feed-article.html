@@ -1,8 +1,5 @@
 {# this generates the html for the article description in an rss feed #}
+{% load ows %}
 <div class="article-feed">
-  {% if article.is_forum %}
-    {{ obj.content|linebreaks }}
-  {% else %}
-    {{ obj.content|safe }}
-  {% endif %}
+  {{ obj.content|markup }}
 </div>

@@ -46,15 +46,11 @@
           {% endif %}
         {% endif %}
       </p>
-      {% if article.is_forum %}
-        {{ article.content|linebreaks }}
-      {% else %}
-        {{ article.content|safe }}
-      {% endif %}
+      {{ article.content|markup }}
     </article>
-    <h2 id="comments">
+    <h3 id="comments">
       <span id="comment-count">{{ article.comment_count }}</span> Comments
-    </h2>
+    </h3>
     <div id="postform">
       {% if user.is_authenticated %}
         <textarea rows="5" cols="70"></textarea><br />

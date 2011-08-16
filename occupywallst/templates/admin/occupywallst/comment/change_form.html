@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block object-tools-items %}{{ block.super }}
+  {% if original.parent_id %}
+    <li><a href="/admin/occupywallst/comment/{{ original.parent_id }}/" class="historylink">{% trans "Parent Comment" %}</a></li>
+  {% endif %}
+{% endblock object-tools-items %}
