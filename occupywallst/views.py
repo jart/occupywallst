@@ -44,9 +44,14 @@ def forum(request, sort):
              .filter(is_removed=False, is_deleted=False)
              .filter(published__gt=datetime.now() - timedelta(days=1))
              .order_by('-karma'))
+    recents = (db.Comment.objects
+               .select_related("user")
+               .filter(is_removed=False, is_deleted=False)
+               .order_by('-published'))
     return render_to_response(
         'occupywallst/forum.html', {'articles': articles,
-                                    'bests': bests[:20]},
+                                    'bests': bests[:10],
+                                    'recents': recents[:10]},
         context_instance=RequestContext(request))
 
 

@@ -56,8 +56,8 @@
       {% endif %}
     </div>
   </td><td id="right">
-    <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
     <section id="recents">
+      <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
       {% if not bests %}
         <p>None Found :'(</p>
       {% endif %}
@@ -73,6 +73,22 @@
             by <a title="View {{ best.user.username }}'s profile"
                   class="user" href="{{ best.user.get_absolute_url }}">
               {{ best.user.username }}</a>
+          </div>
+        </div>
+      {% endfor %}
+      <h2 style="margin:0.5em 0">Recent Comments</h2>
+      {% for recent in recents %}
+        <div class="item clickdiv recent-comment">
+          <div class="title">
+            <a class="primary" title="View Comment Thread"
+               href="{{ recent.get_forum_url }}">{{ recent.content|truncatewords:10 }}</a>
+          </div>
+          <div class="info">
+            {{ recent.karma }} points
+            {{ recent.published|timesince_short }} ago
+            by <a title="View {{ recent.user.username }}'s profile"
+                  class="user" href="{{ recent.user.get_absolute_url }}">
+              {{ recent.user.username }}</a>
           </div>
         </div>
       {% endfor %}
