@@ -8,6 +8,7 @@ r"""
 """
 
 import logging
+from datetime import datetime, timedelta
 
 from django.db.models import Q
 from django.contrib import auth
@@ -38,8 +39,14 @@ def forum(request, sort):
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
                 .order_by('-published'))
+    bests = (db.Comment.objects
+             .select_related("user")
+             .filter(is_removed=False, is_deleted=False)
+             .filter(published__gt=datetime.now() - timedelta(days=1))
+             .order_by('-karma'))
     return render_to_response(
-        'occupywallst/forum.html', {'articles': articles},
+        'occupywallst/forum.html', {'articles': articles,
+                                    'bests': bests[:20]},
         context_instance=RequestContext(request))
 
 

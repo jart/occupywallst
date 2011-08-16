@@ -377,6 +377,9 @@ class Comment(models.Model):
     def get_absolute_url(self):
         return "%s#comment-%d" % (self.article.get_absolute_url(), self.id)
 
+    def get_forum_url(self):
+        return "%s#comment-%d" % (self.article.get_forum_url(), self.id)
+
     def upvote(self, user):
         assert user.is_authenticated()
         try:

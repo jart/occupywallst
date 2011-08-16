@@ -16,6 +16,7 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
+    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum</h2>
     <section id="thread-list" style="margin-top:0">
       {% for article in articles %}
         <div class="item clickdiv">
@@ -55,6 +56,26 @@
       {% endif %}
     </div>
   </td><td id="right">
-    {% include "occupywallst/forum_info.html" %}
+    <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
+    <section id="recents">
+      {% if not bests %}
+        <p>None Found :'(</p>
+      {% endif %}
+      {% for best in bests %}
+        <div class="item clickdiv recent-comment">
+          <div class="title">
+            <a class="primary" title="View Comment Thread"
+               href="{{ best.get_forum_url }}">{{ best.content|truncatewords:10 }}</a>
+          </div>
+          <div class="info">
+            {{ best.karma }} points
+            {{ best.published|timesince_short }} ago
+            by <a title="View {{ best.user.username }}'s profile"
+                  class="user" href="{{ best.user.get_absolute_url }}">
+              {{ best.user.username }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
   </td></tr></tbody></table>
 {% endblock content %}

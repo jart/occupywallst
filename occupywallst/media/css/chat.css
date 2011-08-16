@@ -1,5 +1,5 @@
 
-#chat { width: 100%; }
+#chat { width: 100%; font-size: 14px; }
 #chat a { font-weight: bold; color: black; }
 #messages, #users { height: 20em; overflow-x: hidden; overflow-y: auto; }
 #messages { border-top: 2px solid #ccc; border-left: 2px solid #ccc; }

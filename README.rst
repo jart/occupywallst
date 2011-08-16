@@ -30,7 +30,7 @@ Install dependencies::
 
 Set up a PostgreSQL database with PostGIS::
 
-    sudo -u postgres -i createuser --superuser root  # make root a pg admin
+    sudo -u postgres -i createuser --superuser root   # make root a pg admin
     sudo -u postgres -i createuser --superuser $USER  # make you a pg admin
     createdb occupywallst
     createlang plpgsql occupywallst
@@ -45,18 +45,19 @@ Set up a PostgreSQL database with PostGIS::
 Now install the project and install the database schema::
 
     sudo python setup.py develop
-    occupywallst-dev syncdb
+    occupywallst-dev syncdb --noinput
     occupywallst-dev loaddata example_data
     occupywallst-dev runserver 127.0.0.1:9001
 
-Set up nginx::
+Set up nginx.  This is optional but strongly recommended for both
+development and production::
 
     sudo apt-get install nginx
     sudo rm /etc/nginx/sites-enabled/default
     sudo cp conf/occupywallst.org.conf /etc/nginx/sites-enabled
     sudo /etc/init.d/nginx restart
 
-Run the chat server in a second terminal::
+Optional: Run the chat server in a second terminal::
 
     cd chat
     curl http://npmjs.org/install.sh | sudo sh
@@ -66,11 +67,12 @@ Run the chat server in a second terminal::
 Then open this url :) http://dev.occupywallst.org/
 
 There's also a backend for modifying the database and writing
-articles.  Go to http://dev.occupywallst.org/ and log in as user
+articles.  Go to http://dev.occupywallst.org/admin/ and log in as user
 "OccupyWallSt" with the password "anarchy".
 
-If you need to customize Django settings for your local install, make
-a file named ``occupywallst/settings_local.py`` and do it there.
+If you need to customize Django settings for your local install, do it
+inside ``occupywallst/settings_local.py`` and
+``chat/settings_local.json`` because git ignores them.
 
 
 Network Topology
