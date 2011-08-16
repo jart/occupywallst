@@ -45,6 +45,13 @@
             ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
           {% endif %}
         {% endif %}
+        {% if user.is_staff %}
+          {% if article.is_forum %}
+            [<a href="/admin/occupywallst/forumpost/{{ article.id }}/">Admin</a>]
+          {% else %}
+            [<a href="/admin/occupywallst/newsarticle/{{ article.id }}/">Admin</a>]
+          {% endif %}
+        {% endif %}
       </p>
       {{ article.content|markup }}
     </article>
