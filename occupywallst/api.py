@@ -123,7 +123,7 @@ def thread_new(user, title, content, **kwargs):
     """
     if not user.is_authenticated():
         raise APIException("you're not logged in")
-    if len(title) < 4:
+    if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
         raise APIException("title too long")
@@ -160,7 +160,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     content = content.strip()
-    if len(content) < 5:
+    if len(content) < 3:
         raise APIException("comment too short")
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
@@ -215,7 +215,7 @@ def comment_edit(user, comment_id, content, **kwargs):
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     content = content.strip()
-    if len(content) < 5:
+    if len(content) < 3:
         raise APIException("comment too short")
     try:
         com = db.Comment.objects.get(id=comment_id, is_deleted=False)
@@ -295,7 +295,7 @@ def message_send(user, to_username, content, **kwargs):
     if not user.is_authenticated():
         raise APIException("you're not logged in")
     content = content.strip()
-    if len(content) < 5:
+    if len(content) < 3:
         raise APIException("message too short")
     try:
         to_user = db.User.objects.get(username=to_username, is_active=True)

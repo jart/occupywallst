@@ -66,11 +66,12 @@
       {% show_comments user comments %}
     </section>
   </td><td id="right">
-    {% if not forum %}
+    {% if forum %}
+      <h3 style="margin-top:0">Recent Posts</h3>
+    {% else %}
       <h3 style="margin-top:0">Other Articles</h3>
     {% endif %}
     <section id="recents">
-      <h3 style="margin-top:0">Recent Posts</h3>
       {% for recent in recents %}
         {% if recent.id != article.id %}
           <div class="item clickdiv">
