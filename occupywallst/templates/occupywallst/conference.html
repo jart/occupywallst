@@ -9,6 +9,10 @@
   </style>
 {% endblock stylesheets %}
 
+{% block scripts %}
+  <script id="wepay-widget_script" type="text/javascript" src="https://www.wepay.com/min/js/widget.wepay.js"></script>
+{% endblock %}
+
 {% block js_init %}
   {{ block.super }}
   conference_init({
@@ -26,6 +30,13 @@
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="telecom">
       <h1>Conference Bridges</h1>
+
+      <p>When dialing these conferences please remember that they're
+      public which means <big><strong>anyone who wants can listen to
+      or participate in your conversation!</strong></big>  We designed
+      the system this way to allow organizers to have open and
+      transparent meetings which can be broadcasted over the
+      Internet.</p>
 
       <h3>Dial: <a href="tel:+15165709225">+1 (516) 570-9225</a> (<a href="sip:ows.conf@occupywallst.org">SIP</a>)</h3>
       <div class="conference" id="ows-conf">
@@ -67,7 +78,7 @@
       </ul>
       <h3>Donations</h3>
       <p>
-        <a class="wepay-widget" href="https://www.wepay.com/donate/110790/?widget_type=donations&widget_donation_id=110790&widget_auth_token=6b1e4a2178f88a066984157682ce7e2260201d41&widget_show_description=1&widget_show_thermometer=1&widget_show_donations=1">Donate to Telecom Fund</a><script id="wepay-widget_script" type="text/javascript" src="https://www.wepay.com/min/js/widget.wepay.js"></script>
+        <a class="wepay-widget" href="https://www.wepay.com/donate/110790/?widget_type=donations&widget_donation_id=110790&widget_auth_token=6b1e4a2178f88a066984157682ce7e2260201d41&widget_show_description=1&widget_show_thermometer=1&widget_show_donations=1">Donate to Telecom Fund</a>
       </p>
     </div>
   </td><td id="right">
@@ -88,6 +99,12 @@
       Once a conference has 2+ members, an "MP3 Stream" link will
       appear to allow others to listen to the meeting.  Please note
       that when streaming there's a 30 second audio delay.
+    </p>
+    <p>
+      If you're planning an important meeting with a large number of
+      people, you might want
+      to <a href="mailto:justine@occupywallst.org">contact us</a> in
+      advance so we can give you access to the mute/kick buttons.
     </p>
   </td></tr></tbody></table>
 {% endblock content %}
