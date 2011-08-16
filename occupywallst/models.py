@@ -183,12 +183,13 @@ class Article(models.Model):
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.  DO NOT change
         this once the article has been published.""")
-    published = models.DateTimeField(help_text="""
+    published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
     content = models.TextField(help_text="""
         The contents of the article.  For news articles this should be
         HTML and for threads this should be safe markup.""")
-    comment_count = models.IntegerField(default=0, help_text="""
+    comment_count = models.IntegerField(default=0, editable=False,
+                                        help_text="""
         Comment counter to optimize listing page.""")
     is_visible = models.BooleanField(default=False, help_text="""
         Should it show up on the main page listing and rss feeds?
@@ -286,9 +287,10 @@ class Article(models.Model):
                         comhash[comid].upvoted = True
                     elif vote.vote == -1:
                         comhash[comid].downvoted = True
-        for com in comments:
-            if com.is_removed and com.user == user:
-                com.is_removed = False
+        if not user.is_staff:
+            for com in comments:
+                if com.is_removed and com.user == user:
+                    com.is_removed = False
         return comments
 
 

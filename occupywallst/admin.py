@@ -15,8 +15,7 @@ from occupywallst import models as db
 
 
 class GeoAdmin(OSMGeoAdmin):
-    # default to philadelphia rather than freakin' africa
-    default_lat = 39.95
+    default_lat = 39.95  # philadelphia
     default_lon = -75.16
     default_zoom = 2
     map_width = 750
