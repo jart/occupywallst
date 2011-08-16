@@ -46,6 +46,7 @@ Now install the project and install the database schema::
 
     sudo python setup.py develop
     occupywallst-dev syncdb
+    occupywallst-dev loaddata example_data
     occupywallst-dev runserver 127.0.0.1:9001
 
 Set up nginx::
