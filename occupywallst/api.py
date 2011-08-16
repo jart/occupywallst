@@ -18,10 +18,9 @@ r"""
     - I can write xml/zeromq/udp/etc. interfaces to the API if needed
       without changing this code.
 
-    All API functions must do the following:
+    API functions must do the following:
 
-    - Use ``yield`` instead of ``return``.  If the function does not
-      return any data it must ``yield None``.
+    - Return a list.
 
     - Include a ``**kwargs`` argument.
 
@@ -43,7 +42,7 @@ from occupywallst import models as db
 from occupywallst.utils import APIException
 
 
-def str_to_bbox(val):
+def _str_to_bbox(val):
     swlat, swlng, nwlat, nwlng = [float(s) for s in val.split(',')]
     return Polygon.from_bbox([swlng, swlat, nwlng, nwlat])
 
@@ -52,7 +51,26 @@ def attendees(bounds, **kwargs):
     """Find all people going who live within visible map area.
     """
     if bounds:
-        bbox = str_to_bbox(bounds)
+        bbox = _str_to_bbox(bounds)
+        qset = (db.UserInfo.objects
+                .select_related("user")
+                .filter(position__isnull=False,
+                        position__within=bbox))
+    else:
+        qset = (db.UserInfo.objects
+                .select_related("user")
+                .filter(position__isnull=False))
+    for userinfo in qset[:100]:
+        yield {'id': userinfo.user.id,
+               'username': userinfo.user.username,
+               'position': userinfo.position_latlng}
+
+
+def attendees(bounds, **kwargs):
+    """Find all people going who live within visible map area.
+    """
+    if bounds:
+        bbox = _str_to_bbox(bounds)
         qset = (db.UserInfo.objects
                 .select_related("user")
                 .filter(position__isnull=False,
@@ -75,12 +93,12 @@ def attendee_info(username, **kwargs):
             .get(username=username))
     html = render_to_string('occupywallst/attendee_info.html',
                             {'user': user})
-    yield {'id': user.id,
-           'username': user.username,
-           'info': user.userinfo.info,
-           'need_ride': user.userinfo.need_ride,
-           'location': user.userinfo.position_latlng,
-           'html': html}
+    return [{'id': user.id,
+             'username': user.username,
+             'info': user.userinfo.info,
+             'need_ride': user.userinfo.need_ride,
+             'location': user.userinfo.position_latlng,
+             'html': html}]
 
 
 def _render_comment(comment, user):
@@ -129,7 +147,7 @@ def thread_new(user, title, content, **kwargs):
     thread.slug = slug
     thread.content = content
     thread.save()
-    yield thread.as_dict()
+    return [thread.as_dict()]
 
 
 def comment_new(user, article_slug, parent_id, content, **kwargs):
@@ -178,7 +196,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
                              '%s replied to your comment: %s'
                              % (user.username,
                                 truncate_words(parent.content, 7)))
-    yield com.as_dict({'html': _render_comment(com, user)})
+    return [com.as_dict({'html': _render_comment(com, user)})]
 
 
 def comment_get(user, comment_id, **kwargs):
@@ -188,7 +206,7 @@ def comment_get(user, comment_id, **kwargs):
         com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    yield com.as_dict({'html': _render_comment(com, user)})
+    return [com.as_dict({'html': _render_comment(com, user)})]
 
 
 def comment_edit(user, comment_id, content, **kwargs):
@@ -207,7 +225,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         raise APIException("you didn't post that comment")
     com.content = content
     com.save()
-    yield com.as_dict({'html': _render_comment(com, user)})
+    return [com.as_dict({'html': _render_comment(com, user)})]
 
 
 def comment_remove(user, comment_id, action, **kwargs):
@@ -231,7 +249,7 @@ def comment_remove(user, comment_id, action, **kwargs):
         raise APIException("invalid action")
     com.save()
     com.article.save()
-    yield None
+    return []
 
 
 def comment_delete(user, comment_id, **kwargs):
@@ -250,7 +268,7 @@ def comment_delete(user, comment_id, **kwargs):
     com.article.comment_count -= 1
     com.article.save()
     com.delete()
-    yield None
+    return []
 
 
 def comment_vote(user, comment_id, vote, **kwargs):
@@ -268,7 +286,7 @@ def comment_vote(user, comment_id, vote, **kwargs):
         com.downvote(user)
     else:
         raise APIException("invalid vote")
-    yield None
+    return []
 
 
 def message_send(user, to_username, content, **kwargs):
@@ -295,8 +313,9 @@ def message_send(user, to_username, content, **kwargs):
                                     content=content)
     db.Notification.send(to_user, user.get_absolute_url(),
                          '%s sent you a message' % (user.username))
-    yield msg.as_dict({'html': render_to_string('occupywallst/message.html',
-                                                {'message': msg})})
+    html = render_to_string('occupywallst/message.html',
+                            {'message': msg})
+    return [msg.as_dict({'html': html})]
 
 
 def message_delete(user, message_id, **kwargs):
@@ -313,4 +332,4 @@ def message_delete(user, message_id, **kwargs):
     if user != msg.to_user and user != msg.from_user:
         raise APIException("you didn't send or receive that message")
     msg.delete()
-    yield None
+    return []
