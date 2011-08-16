@@ -3,12 +3,31 @@ r"""
     occupywallst.api
     ~~~~~~~~~~~~~~~~
 
-    AJAX Remote Procedure Calls.
+    High-level functions for fetching and manipulating data.  These
+    functions primarily serve as remote procedure calls for the
+    website's javascript code.
 
-    They just return plain old python data and have nothing to do with
-    the HTTP request/response logic.  To make these functions return
-    something like JSON we use middleware decorators (such as
-    ``api_view()``) which are specified in the ``urls.py`` file.
+    Unlike ``views.py``, the API is designed to be decoupled from the
+    HTTP request/response mechanism.  All the HTTP/JSON stuff is
+    applied by decorators which are specified in ``urls.py``.  If you
+    want to see how the HTTP request/response logic is applied, check
+    out ``utils.py``.  I designed things this way so:
+
+    - These functions can be called internally by other Python code.
+
+    - I can write xml/zeromq/udp/etc. interfaces to the API if needed
+      without changing this code.
+
+    All API functions must do the following:
+
+    - Use ``yield`` instead of ``return``.  If the function does not
+      return any data it must ``yield None``.
+
+    - Include a ``**kwargs`` argument.
+
+    - Cope with string-only arguments.
+
+    - Raise :py:class:`APIException` if anything goes wrong.
 
 """
 
