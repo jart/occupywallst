@@ -66,25 +66,6 @@ def attendees(bounds, **kwargs):
                'position': userinfo.position_latlng}
 
 
-def attendees(bounds, **kwargs):
-    """Find all people going who live within visible map area.
-    """
-    if bounds:
-        bbox = _str_to_bbox(bounds)
-        qset = (db.UserInfo.objects
-                .select_related("user")
-                .filter(position__isnull=False,
-                        position__within=bbox))
-    else:
-        qset = (db.UserInfo.objects
-                .select_related("user")
-                .filter(position__isnull=False))
-    for userinfo in qset[:100]:
-        yield {'id': userinfo.user.id,
-               'username': userinfo.user.username,
-               'position': userinfo.position_latlng}
-
-
 def attendee_info(username, **kwargs):
     """Get information about a user
     """
