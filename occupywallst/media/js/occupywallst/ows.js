@@ -2,6 +2,7 @@
 var ows_init;
 var ows_timesince;
 var ows_sockio_url;
+var ows_inactivity_delay;
 
 (function() {
     "use strict";
@@ -110,9 +111,35 @@ var ows_sockio_url;
         });
     };
 
+    /**
+     * Defer function until it hasn't been called for delay milliseconds
+     *
+     * This is useful for decorating event functions that get called a
+     * zillion times and you want to wait until things cool off before
+     * actually doing something.
+     *
+     * Arguments and return values are eaten up in the process.
+     */
+    function inactivity_delay(delay, funk) {
+        var timer = null;
+        var last = Date.now();
+        function invoke() {
+            last = Date.now();
+            if (timer)
+                clearTimeout(timer);
+            timer = setTimeout(function() {
+                // console.log("firing for effect");
+                timer = null;
+                funk();
+            }, delay);
+        }
+        return invoke;
+    }
+
     // export stuff
     ows_init = init;
     ows_timesince = timesince;
     ows_sockio_url = sockio_url;
+    ows_inactivity_delay = inactivity_delay;
 
 })();

@@ -11,13 +11,14 @@ import logging
 from datetime import datetime, timedelta
 
 from django.db.models import Q
-from django.contrib import auth
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
-from occupywallst.forms import SignupForm
+from occupywallst.forms import ProfileForm, SignupForm
+from occupywallst import api
 from occupywallst import models as db
 
 
@@ -210,14 +211,29 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            # this is so stupid!
-            user = auth.authenticate(username=form.cleaned_data['username'],
-                                     password=form.cleaned_data['password1'])
-            assert user
-            auth.login(request, user)
-            return HttpResponseRedirect(user.get_absolute_url())
+            api.login(request, form.cleaned_data.get('username'),
+                      form.cleaned_data.get('password'))
+            url = request.user.get_absolute_url()
+            return HttpResponseRedirect(url + '?new=1')
     else:
         form = SignupForm()
     return render_to_response(
         'occupywallst/signup.html', {'form': form},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def edit_profile(request, username):
+    if username != request.user.username:
+        url = request.user.get_absolute_url()
+        return HttpResponseRedirect(url + 'edit/')
+    if request.method == 'POST':
+        form = ProfileForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.user.get_absolute_url())
+    else:
+        form = ProfileForm(request.user)
+    return render_to_response(
+        'occupywallst/edit_profile.html', {'form': form},
         context_instance=RequestContext(request))

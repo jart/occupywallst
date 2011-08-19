@@ -19,9 +19,10 @@ var markfield_clear;
         var center;
         var lat = parseFloat($("#id_position_lat").val());
         var lng = parseFloat($("#id_position_lng").val());
+        var initial_mark = false;
         if (lat && lng) {
             center = new google.maps.LatLng(lat, lng);
-            set_mark(center);
+            initial_mark = true;
         } else {
             /* otherwise just zoom to manhattan */
             lat = 40.717712644386026;
@@ -43,6 +44,10 @@ var markfield_clear;
 
         /* relocate the pin when you click the map */
         google.maps.event.addListener(map, "click", on_map_click);
+
+        if (initial_mark) {
+            set_mark(center);
+        }
     };
 
     function set_mark(latlng) {

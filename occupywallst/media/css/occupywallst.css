@@ -173,6 +173,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .replies { margin-left: 1em; }
 
 .postform label { font-size: small; color: #666; }
+.bigerror { color: red; font-size: big; font-weight: bold; }
 .error { color: red; font-size: small; }
 .loader { display: none; }
 
@@ -184,6 +185,9 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .yes { font-weight: bold; color: #0a0; }
 .no { font-weight: bold; color: #a00; }
 .maybe { font-weight: bold; color: #cd950c; }
+
+.good { color: #0a0; font-size: small; font-weight: bold; }
+.bad { color: #a00; font-size: small; font-weight: bold; }
 
 .tinygray { font-size: small; color: #666; }
 

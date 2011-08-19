@@ -7,6 +7,7 @@ r"""
 
 """
 
+import re
 import os
 import sys
 from os.path import abspath, dirname, join, exists
@@ -33,6 +34,7 @@ OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
 ADMINS = (
     ('', 'errors@occupywallst.org'),
 )
+DEFAULT_FROM_EMAIL = 'webmaster@occupywallst.org'
 
 MANAGERS = ADMINS
 

@@ -14,6 +14,7 @@ r"""
 
 import socket
 import logging
+import functools
 from datetime import date, timedelta
 
 from django.conf import settings
@@ -22,7 +23,7 @@ from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 
-from occupywallst.utils import jsonify, timesince
+from occupywallst.utils import jsonify
 
 
 logger = logging.getLogger(__name__)
@@ -97,11 +98,20 @@ class UserInfo(models.Model):
     def get_absolute_url(self):
         return ('occupywallst.views.user_page', [self.user.username])
 
-    position_lat = property(lambda s: s.position.y)
-    position_lng = property(lambda s: s.position.x)
+    position_lat = property(lambda s: s.position.y if s.position else None)
+    position_lng = property(lambda s: s.position.x if s.position else None)
     position_latlng = property(
-        lambda s: (s.position.y, s.position.x),
+        lambda s: (s.position.y, s.position.x) if s.position else None,
         lambda s, v: setattr(s, 'position', Point(v[1], v[0])))
+
+    def as_dict(self, moar={}):
+        res = {'id': self.user.id,
+               'username': self.user.username,
+               'date_joined': self.user.date_joined,
+               'url': self.user.get_absolute_url(),
+               'info': self.info}
+        res.update(moar)
+        return res
 
 
 class Notification(models.Model):

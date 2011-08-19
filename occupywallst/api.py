@@ -7,11 +7,11 @@ r"""
     functions primarily serve as remote procedure calls for the
     website's javascript code.
 
-    Unlike ``views.py``, the API is designed to be decoupled from the
-    HTTP request/response mechanism.  All the HTTP/JSON stuff is
-    applied by decorators which are specified in ``urls.py``.  If you
-    want to see how the HTTP request/response logic is applied, check
-    out ``utils.py``.  I designed things this way so:
+    Unlike ``views.py``, the API is designed to be (mostly) decoupled
+    from the HTTP request/response mechanism.  All the HTTP/JSON stuff
+    is applied by decorators which are specified in ``urls.py``.  If
+    you want to see how the HTTP request/response logic is applied,
+    check out ``utils.py``.  I designed things this way so:
 
     - These functions can be called internally by other Python code.
 
@@ -30,10 +30,13 @@ r"""
 
 """
 
+import re
 from datetime import datetime
 
 from django.conf import settings
+from django.contrib import auth
 from django.utils.text import truncate_words
+from django.core.validators import email_re
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -313,4 +316,71 @@ def message_delete(user, message_id, **kwargs):
     if user != msg.to_user and user != msg.from_user:
         raise APIException("you didn't send or receive that message")
     msg.delete()
+    return []
+
+
+def check_username(username, check_if_taken=True, **kwargs):
+    """Check if a username is valid and available
+    """
+    if len(username) < 3:
+        raise APIException("Username is too short")
+    if len(username) > 30:
+        raise APIException("Username is too long")
+    if not re.match(r'[a-zA-Z0-9]{3,30}', username):
+        raise APIException("Bad username, use only letters/numbers")
+    if check_if_taken:
+        if db.User.objects.filter(username=username).count():
+            raise APIException("Username is taken")
+    return []
+
+
+def signup(request, username, password, email, **kwargs):
+    """Create a new account
+
+    - Username must have only letters/numbers and be 3-30 chars
+    - Password must be 6-128 chars
+    - Email is optional
+    """
+    if request.user.is_authenticated():
+        raise APIException("you're already logged in")
+    check_username(username=username)
+    if len(password) < 6:
+        raise APIException("password must be at least six characters")
+    if len(password) > 128:
+        raise APIException("password too long")
+    if email:
+        if not email_re.match(email):
+            raise APIException("invalid email address")
+    user = db.User()
+    user.username = username
+    user.set_password(password)
+    user.email = email
+    user.save()
+    userinfo = db.UserInfo()
+    userinfo.user = user
+    userinfo.attendance = 'maybe'
+    userinfo.save()
+    user.userinfo = userinfo
+    user.save()
+    res = login(request, username, password)
+    res[0]['conversion'] = render_to_string('occupywallst/conversion.html')
+    return res
+
+
+def login(request, username, password, **kwargs):
+    """Login user
+    """
+    if request.user.is_authenticated():
+        raise APIException("you're already logged in")
+    user = auth.authenticate(username=username, password=password)
+    if not user:
+        raise APIException("invalid username or password")
+    auth.login(request, user)
+    return [user.userinfo.as_dict()]
+
+
+def logout(request, **kwargs):
+    """Logout user
+    """
+    auth.logout(request)
     return []

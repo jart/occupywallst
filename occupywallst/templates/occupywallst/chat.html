@@ -18,7 +18,7 @@
   {{ block.super }}
   chat_init({
     url: ows_sockio_url() + "chat",
-    room: {{ room|jsonify|safe }}
+    room: {{ room|jsonify }}
   });
 {% endblock js_init %}
 

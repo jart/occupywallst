@@ -5,6 +5,9 @@
 {% block scripts %}
   <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
   <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+  {% if request.GET.new %}
+    {% include "occupywallst/conversion.html" %}
+  {% endif %}
 {% endblock scripts %}
 
 {% block js_init %}
@@ -50,7 +53,12 @@
 
   </td><td id="right">
 
-    <h2 style="margin-top:0">Information</h2>
+    <h2 style="margin-top:0">
+      Information
+      {% if obj.username == user.username %}
+        [<a href="edit/">Edit</a>]
+      {% endif %}
+    </h2>
     <section id="user-info">
       <p>
         {{ obj.username }} 

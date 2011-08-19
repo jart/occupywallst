@@ -1,7 +1,7 @@
 {% extends base %}
 {% load ows %}
 
-{% block title %}Signup | OccupyWallSt.org{% endblock title %}
+{% block title %}Edit Profile | OccupyWallSt.org{% endblock title %}
 
 {% block scripts %}
   <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
@@ -16,25 +16,11 @@
 {% endblock js_init %}
 
 {% block content %}
-  <table style="width:100%"><tbody><tr><td id="left">
-    <section id="signup" style="margin: 0 0.5em; max-width: 700px; ">
-      <h1>Signup</h1>
+    <section id="edit-profile" style="margin: 0 0.5em; max-width: 700px; ">
+      <h1>Edit Profile</h1>
       <form action="." method="post">{% csrf_token %}
-        {{ form.non_field_errors }}
         <table class="formtable">
           <tbody>
-            <tr>
-              <td colspan="2">
-                <h3>Required Fields</h3>
-              </td>
-            </tr>
-            {{ form.username|as_tr }}
-            {{ form.password|as_tr }}
-            <tr>
-              <td colspan="2">
-                <h3>Optional Fields</h3>
-              </td>
-            </tr>
             {{ form.email|as_tr }}
             {{ form.attendance|as_tr }}
             {{ form.need_ride|as_tr }}
@@ -64,34 +50,7 @@
             </tr>
           </tbody>
         </table>
-        <p><input type="submit" value="Create Account" /></p>
+        <p><input type="submit" value="Save" /></p>
       </form>
     </section>
-  </td><td id="right">
-    <h3 style="margin-top:0">Be Smart About Your Privacy!</h3>
-    <ul class="funlist">
-      <li>
-        <strong>DON'T</strong> choose a password you've used anywhere
-        else.
-      </li>
-      <li>
-        <strong>DON'T</strong> set your location to exactly where you
-        live.  Try to pick a major intersection or park in the
-        town/city where you live.
-      </li>
-      <li>
-        <strong>DON'T</strong> share any information you wouldn't want
-        the feds to see.
-      </li>
-      <li>
-        <strong>AVOID</strong> choosing a username you use on other
-        websites.
-      </li>
-    </ul>
-    <p>
-      The reason we kindly ask for geographic information is to help
-      you find other activists in your area.  We also use this
-      information to estimate attendance so we can plan accordingly.
-    </p>
-  </td></tr></tbody></table>
 {% endblock content %}

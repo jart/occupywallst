@@ -109,7 +109,7 @@
     $(function() {
       {% block js_init %}
         ows_init({
-          notifications: {{ notifications|jsonify|safe }}
+          notifications: {{ notifications|jsonify }}
         });
       {% endblock js_init %}
     });

@@ -10,17 +10,33 @@ r"""
 import markdown
 from django import template
 from django.utils.safestring import mark_safe
+from django.template import Template, Context
 from django.template.loader import render_to_string
 
 from occupywallst import utils
 
 
 register = template.Library()
+tr_template = Template(u'''
+  <tr id="row_{{ field.name }}" class="field">
+    <th>{{ field.label_tag }}</th>
+    <td>{% if field.errors %}{{ field.errors }}{% endif %}{{ field }}<br />
+        <span class="helptext">{{ field.help_text|safe }}</span></td>
+  </tr>
+''')
+
+
+@register.filter
+def as_tr(field):
+    if field and field.field:  # should be a BoundField (not a Field)
+        return mark_safe(tr_template.render(Context({'field': field})))
+    else:
+        return ''
 
 
 @register.filter
 def jsonify(value):
-    return utils.jsonify(value)
+    return mark_safe(utils.jsonify(value))
 
 
 @register.filter
