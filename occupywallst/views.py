@@ -25,6 +25,10 @@ from occupywallst import models as db
 logger = logging.getLogger(__name__)
 
 
+def error(request):
+    assert False
+
+
 def index(request):
     articles = (db.Article.objects
                 .select_related("author")
