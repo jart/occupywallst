@@ -23,10 +23,12 @@ class ProfileForm(forms.Form):
         Do you need a lift?  If so check this box to add yourself
         to the map of people looking for a ride.""")
     notify_message = forms.BooleanField(required=False, initial=True,
+                                        label="Message Notifications",
                                         help_text="""
         Do you want to receive an email notification when you receive a
         private message or a comment response?""")
     notify_news = forms.BooleanField(required=False, initial=False,
+                                     label="News Notifications",
                                      help_text="""
         Can we email you notifications about news relating to the protest?""")
     info = forms.CharField(required=False, widget=forms.Textarea,

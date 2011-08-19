@@ -147,9 +147,10 @@ footer { clear: both; }
 footer p { border-top: 1px solid #999; padding-top: 0.5em;
            font-size: 0.7em; text-align: right; }
 
-.formtable th { text-align: right; vertical-align: top; line-height: 2em;
-                white-space: nowrap; font-family: Arial, sans-serif;
+.formtable th { text-align: right; vertical-align: top; padding-top: 0.5em;
+                font-family: Arial, sans-serif; width: 100px;
                 font-size: small; }
+.formtable input[type="checkbox"] { margin-top: 0.6em; }
 .formtable .helptext { font-size: small; color: #666; }
 ul.errorlist { padding: 0; margin: 0; list-style-type: none;
                font-family: Arial, sans-serif; font-size: small; }
