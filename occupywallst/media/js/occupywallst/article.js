@@ -81,6 +81,7 @@ $.fn.numberAdd = function (delta) {
             if ($(".commentform", content).length)
                 return false;
             var form = $("#commentform").clone().attr("id", "");
+            var old_words;
             content.append(form);
             $(".save", form).click(function() {
                 $(".loader", form).show();
@@ -108,6 +109,7 @@ $.fn.numberAdd = function (delta) {
             });
             $(".cancel", form).click(function() {
                 form.slideUp(penguin, function() {
+                    $(".words", content).html(old_words);
                     form.remove();
                 });
                 return false;
@@ -117,7 +119,10 @@ $.fn.numberAdd = function (delta) {
             }, function(data) {
                 if (data.status == "OK") {
                     var res = data.results[0];
+                    var words = $(".words", content);
+                    old_words = words.html();
                     $("textarea", form).val(res.content);
+                    $("textarea", form).markdown_preview(words);
                     form.slideDown(penguin, function() {
                         $("textarea", form).focus();
                     });
