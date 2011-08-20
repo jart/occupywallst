@@ -10,19 +10,10 @@
 {% block content %}
   <section id="login">
     <h1>Login</h1>
-    <p class="bigerror" style="display:none"></p>
+    <br />
     <form action="." method="post">{% csrf_token %}
       <table class="formtable">
-        <tbody>
-          <tr>
-            <th>Username</th>
-            <td><input name="username" /></td>
-          </tr>
-          <tr>
-            <th>Password</th>
-            <td><input name="password" type="password" /></td>
-          </tr>
-        </tbody>
+        {{ form.as_table }}
       </table>
       <p><input type="submit" value="Login" /></p>
     </form>
