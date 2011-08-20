@@ -190,7 +190,7 @@ class Article(models.Model):
     This table is also used to store threads on the forum when
     is_forum is True.
     """
-    author = models.ForeignKey(User, help_text="""
+    author = models.ForeignKey(User, null=True, help_text="""
         The user who wrote this article.""")
     title = models.CharField(max_length=255, help_text="""
         A one-line title to describe ride.""")
@@ -354,7 +354,7 @@ class Comment(models.Model):
     """
     article = models.ForeignKey(Article, editable=False, help_text="""
         The article to which this comment belongs.""")
-    user = models.ForeignKey(User, editable=False, help_text="""
+    user = models.ForeignKey(User, null=True, editable=False, help_text="""
         Who posted this comment?""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
