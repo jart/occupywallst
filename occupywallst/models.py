@@ -153,6 +153,8 @@ class Notification(models.Model):
 
     @staticmethod
     def send(user, url, message):
+        if not user or not user.id:
+            return
         for notify in user.notification_set.filter(is_read=False):
             if notify.message == message:
                 return  # don't send multiple of same notification
@@ -216,10 +218,11 @@ class Article(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
+        name = self.author.username if self.author else 'anonymous'
         if self.is_forum:
-            return "Thread \"%s\" by %s" % (self.title, self.author.username)
+            return "Thread \"%s\" by %s" % (self.title, name)
         else:
-            return "Article \"%s\" by %s" % (self.title, self.author.username)
+            return "Article \"%s\" by %s" % (self.title, name)
 
     @models.permalink
     def get_absolute_url(self):
@@ -241,6 +244,8 @@ class Article(models.Model):
         return ('occupywallst.views.thread', [self.slug])
 
     def delete(self):
+        self.author = None
+        self.content = "DELETED"
         self.is_deleted = True
         self.save()
 
@@ -250,7 +255,7 @@ class Article(models.Model):
                'slug': self.slug,
                'content': self.content,
                'url': self.get_absolute_url(),
-               'author': self.author.username,
+               'author': self.author.username if self.author else 'anonymous',
                'published': self.published,
                'comment_count': self.comment_count,
                'is_visible': self.is_visible,
@@ -286,10 +291,10 @@ class Article(models.Model):
                     .select_related("user", "user__userinfo")
                     .filter(article=self)
                     .order_by('-karma', '-published'))[:]
-        if user.is_authenticated():
-            for c in comments:
-                c.upvoted = False
-                c.downvoted = False
+        for c in comments:
+            c.upvoted = False
+            c.downvoted = False
+        if user and user.id:
             comhash = dict([(c.id, c) for c in comments])
             blah = (CommentVote.objects
                     .filter(user=user, comment__article=self))
@@ -377,10 +382,12 @@ class Comment(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return "%s's comment on %s" % (self.user.username, self.article.slug)
+        name = self.user.username if self.user else 'anonymous'
+        return "%s's comment on %s" % (name, self.article.slug)
 
     def delete(self):
-        self.content = ""
+        self.user = None
+        self.content = "DELETED"
         self.is_deleted = True
         self.save()
 
@@ -391,38 +398,36 @@ class Comment(models.Model):
         return "%s#comment-%d" % (self.article.get_forum_url(), self.id)
 
     def upvote(self, user):
-        assert user.is_authenticated()
-        try:
-            vote = CommentVote.objects.get(comment=self, user=user)
-        except CommentVote.DoesNotExist:
-            vote = CommentVote(comment=self, user=user)
-        if vote.vote == 1:
-            return vote
-        elif vote.vote == -1:
-            self.downs -= 1
-        vote.vote = 1
-        vote.save()
+        if user and user.id:
+            try:
+                vote = CommentVote.objects.get(comment=self, user=user)
+            except CommentVote.DoesNotExist:
+                vote = CommentVote(comment=self, user=user)
+            if vote.vote == 1:
+                return vote
+            elif vote.vote == -1:
+                self.downs -= 1
+            vote.vote = 1
+            vote.save()
         self.ups += 1
         self.karma = self.ups - self.downs
         self.save()
-        return vote
 
     def downvote(self, user):
-        assert user.is_authenticated()
-        try:
-            vote = CommentVote.objects.get(comment=self, user=user)
-        except CommentVote.DoesNotExist:
-            vote = CommentVote(comment=self, user=user)
-        if vote.vote == 1:
-            self.ups -= 1
-        elif vote.vote == -1:
-            return vote
-        vote.vote = -1
-        vote.save()
+        if user and user.id:
+            try:
+                vote = CommentVote.objects.get(comment=self, user=user)
+            except CommentVote.DoesNotExist:
+                vote = CommentVote(comment=self, user=user)
+            if vote.vote == 1:
+                self.ups -= 1
+            elif vote.vote == -1:
+                return vote
+            vote.vote = -1
+            vote.save()
         self.downs += 1
         self.karma = self.ups - self.downs
         self.save()
-        return vote
 
     @staticmethod
     def recalculate():
@@ -434,7 +439,7 @@ class Comment(models.Model):
 
     def as_dict(self, moar={}):
         res = {'id': self.id,
-               'user': self.user.username,
+               'user': self.user.username if self.user else 'anonymous',
                'published': self.published,
                'parent_id': self.parent_id,
                'content': self.content,

@@ -35,6 +35,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib import auth
+from django.core.cache import cache
 from django.utils.text import truncate_words
 from django.core.validators import email_re
 from django.contrib.gis.geos import Polygon
@@ -88,15 +89,16 @@ def attendee_info(username, **kwargs):
 def _render_comment(comment, user):
     comment.upvoted = False
     comment.downvoted = False
-    try:
-        vote = db.CommentVote.objects.get(comment=comment, user=user)
-    except db.CommentVote.DoesNotExist:
-        vote = None
-    if vote:
-        if vote.vote == 1:
-            comment.upvoted = True
-        elif vote.vote == -1:
-            comment.downvoted = True
+    if user and user.id:
+        try:
+            vote = db.CommentVote.objects.get(comment=comment, user=user)
+        except db.CommentVote.DoesNotExist:
+            vote = None
+        if vote:
+            if vote.vote == 1:
+                comment.upvoted = True
+            elif vote.vote == -1:
+                comment.downvoted = True
     return render_to_string('occupywallst/comment.html',
                             {'comment': comment,
                              'user': user})
@@ -105,8 +107,6 @@ def _render_comment(comment, user):
 def thread_new(user, title, content, **kwargs):
     """Create a new thread on the message board forum.
     """
-    if not user.is_authenticated():
-        raise APIException("you're not logged in")
     if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
@@ -114,7 +114,7 @@ def thread_new(user, title, content, **kwargs):
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title has already been posted")
-    if not settings.DEBUG and not user.is_staff:
+    if not settings.DEBUG and user and user.id and not user.is_staff:
         last = user.article_set.order_by('-published')[:1]
         if last:
             limit = settings.OWS_POST_LIMIT_THREAD
@@ -123,10 +123,11 @@ def thread_new(user, title, content, **kwargs):
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
     thread = db.Article()
+    if user and user.id:
+        thread.author = user
     thread.published = datetime.now()
     thread.is_forum = True
     thread.is_visible = True
-    thread.author = user
     thread.title = title
     thread.slug = slug
     thread.content = content
@@ -141,8 +142,6 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
 
     Also upvotes comment and increments article comment count.
     """
-    if not user.is_authenticated():
-        raise APIException("you're not logged in")
     content = content.strip()
     if len(content) < 3:
         raise APIException("comment too short")
@@ -160,7 +159,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     else:
         parent = None
         parent_id = None
-    if not settings.DEBUG:
+    if not settings.DEBUG and user and user.id and not user.is_staff:
+        last = db.Comment.objects.filter(user=user).order_by('-published')[:1]
         last = user.comment_set.order_by('-published')[:1]
         if last:
             limit = settings.OWS_POST_LIMIT_COMMENT
@@ -168,10 +168,13 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
-    com = db.Comment.objects.create(article=article,
-                                    user=user,
-                                    content=content,
-                                    parent_id=parent_id)
+    com = db.Comment()
+    com.article = article
+    if user and user.id:
+        com.user = user
+    com.content = content
+    com.parent_id = parent_id
+    com.save()
     com.upvote(user)
     article.comment_count += 1
     article.save()
@@ -196,7 +199,7 @@ def comment_get(user, comment_id, **kwargs):
 def comment_edit(user, comment_id, content, **kwargs):
     """Edit a comment's content
     """
-    if not user.is_authenticated():
+    if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
     if len(content) < 3:
@@ -215,7 +218,7 @@ def comment_edit(user, comment_id, content, **kwargs):
 def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment
     """
-    if not user.is_authenticated():
+    if not (user and user.id):
         raise APIException("you're not logged in")
     if not user.is_staff:
         raise APIException("insufficient vespene gas")
@@ -241,7 +244,7 @@ def comment_delete(user, comment_id, **kwargs):
 
     Also decrements article comment count.
     """
-    if not user.is_authenticated():
+    if not (user and user.id):
         raise APIException("you're not logged in")
     try:
         com = db.Comment.objects.get(id=comment_id, is_deleted=False)
@@ -257,13 +260,26 @@ def comment_delete(user, comment_id, **kwargs):
 
 def comment_vote(user, comment_id, vote, **kwargs):
     """Increases comment karma by one
+
+    If a user is logged in, we track their votes in the database.
+
+    If a user is not logged in, we still allow them to vote but to
+    prevent them from clicking the downvote arrow repeatedly we only
+    allow an IP to vote once.  We track these votes in a
+    non-persistant cache because we don't want to log IP addresses.
     """
-    if not user.is_authenticated():
-        raise APIException("you're not logged in")
     try:
         com = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
+    if not (user and user.id):
+        if 'request' in kwargs:
+            ip = kwargs['request'].META['REMOTE_ADDR']
+            key = "vote_comment_%s__%s" % (com.id, ip)
+            if cache.get(key, False):
+                raise APIException("you already voted")
+            else:
+                cache.set(key, True)
     if vote == "up":
         com.upvote(user)
     elif vote == "down":
@@ -276,7 +292,7 @@ def comment_vote(user, comment_id, vote, **kwargs):
 def message_send(user, to_username, content, **kwargs):
     """Send a private message.
     """
-    if not user.is_authenticated():
+    if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
     if len(content) < 3:
@@ -307,7 +323,7 @@ def message_delete(user, message_id, **kwargs):
 
     Both the sender and the receiver are able to delete messages.
     """
-    if not user.is_authenticated():
+    if not (user and user.id):
         raise APIException("you're not logged in")
     try:
         msg = db.Message.objects.get(id=message_id, is_deleted=False)

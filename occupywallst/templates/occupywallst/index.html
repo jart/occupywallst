@@ -16,9 +16,11 @@
               {{ article.title }}</a></h1>
           <p class="info">
             Published {{ article.published|date:"Y-m-d h:i:s T" }}
-            by <a title="View {{ article.author.username }}'s profile"
-                  class="user" href="{{ article.author.get_absolute_url }}">
+            by {% if not article.author %}anonymous{% else %}
+              <a title="View {{ article.author.username }}'s profile"
+                 class="user" href="{{ article.author.get_absolute_url }}">
               {{ article.author.username }}</a>
+            {% endif %}
           </p>
           <div class="article-content">
             {{ article.content|markup }}

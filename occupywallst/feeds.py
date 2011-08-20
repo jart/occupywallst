@@ -43,10 +43,16 @@ class RSSNewsFeed(Feed):
         return article.published
 
     def item_author_name(self, article):
-        return article.author.username
+        if article.author:
+            return article.author.username
+        else:
+            return 'anonymous'
 
     def item_author_link(self, article):
-        return article.author.userinfo.get_absolute_url()
+        if article.author:
+            return article.author.userinfo.get_absolute_url()
+        else:
+            return None
 
 
 class RSSForumFeed(RSSNewsFeed):
@@ -84,7 +90,13 @@ class RSSCommentFeed(Feed):
         return comment.published
 
     def item_author_name(self, comment):
-        return comment.user.username
+        if comment.user:
+            return comment.user.username
+        else:
+            return 'anonymous'
 
     def item_author_link(self, comment):
-        return comment.user.userinfo.get_absolute_url()
+        if comment.user:
+            return comment.user.userinfo.get_absolute_url()
+        else:
+            return None

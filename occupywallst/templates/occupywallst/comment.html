@@ -11,10 +11,12 @@
           <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">↧</a>
         </div>
         <div class="info">
-          <a class="user" href="{{ comment.user.get_absolute_url }}">
-            {{ comment.user.username }}</a>
-          {% if comment.user.userinfo.city and comment.user.userinfo.region %}
-            ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
+          {% if not comment.user %}anonymous{% else %}
+            <a class="user" href="{{ comment.user.get_absolute_url }}">
+              {{ comment.user.username }}</a>
+            {% if comment.user.userinfo.city and comment.user.userinfo.region %}
+              ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
+            {% endif %}
           {% endif %}
           <span class="karma">{{ comment.karma }}</span> points
           <span class="published">{{ comment.published|timesince_short }} ago</span>
@@ -25,7 +27,7 @@
         <div class="links">
           <a class="reply" href="#">reply</a>
           <a class="permalink" href="{{ comment.get_absolute_url }}">permalink</a>
-          {% if comment.user == user %}
+          {% if user.is_authenticated and user == comment.user %}
             <a class="edit" href="#">edit</a>
             <a class="delete" href="#">delete</a>
           {% endif %}

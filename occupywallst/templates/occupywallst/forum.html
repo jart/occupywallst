@@ -28,31 +28,34 @@
           <div class="info">
             {{ article.comment_count }} comments
             {{ article.published|timesince_short }} ago
-            by <a title="View {{ article.author.username }}'s profile"
-                  class="user" href="{{ article.author.get_absolute_url }}">
+            by {% if not article.author %}anonymous{% else %}
+              <a title="View {{ article.author.username }}'s profile"
+                 class="user" href="{{ article.author.get_absolute_url }}">
               {{ article.author.username }}</a>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
     </section>
     <div class="postform">
-      {% if user.is_authenticated %}
-        <div>
-          <label for="title">title</label><br />
-          <input class="title" id="title" maxlength="255" size="60" />
-        </div>
-        <div>
-          <label for="content">content</label><br />
-          <textarea class="content" id="content" rows="7" cols="70"></textarea>
-        </div>
-        <div>
-          <button class="save">post thread</button>
-          <img class="loader" src="/media/img/ajax-loader.gif"
-               width="16" height="16" />
-          <span class="error"></span>
-        </div>
-      {% else %}
-        <p>Must be <a href="/login/">logged in</a> to post.</p>
+      <div>
+        <label for="title">title</label><br />
+        <input class="title" id="title" maxlength="255" size="60" />
+      </div>
+      <div>
+        <label for="content">content</label><br />
+        <textarea class="content" id="content" rows="7" cols="70"></textarea>
+      </div>
+      <div>
+        <button class="save">post thread</button>
+        <img class="loader" src="/media/img/ajax-loader.gif"
+             width="16" height="16" />
+        <span class="error"></span>
+      </div>
+      {% if not user.is_authenticated %}
+        <p class="warning"><strong>Warning:</strong> When posting anonymously
+          you will not be able to edit/delete your post.  Please consider
+          <a href="/signup/">signing up for account</a>.</p>
       {% endif %}
     </div>
   </td><td id="right">
@@ -70,9 +73,11 @@
           <div class="info">
             {{ best.karma }} points
             {{ best.published|timesince_short }} ago
-            by <a title="View {{ best.user.username }}'s profile"
-                  class="user" href="{{ best.user.get_absolute_url }}">
+            by {% if not best.user %}anonymous{% else %}
+              <a title="View {{ best.user.username }}'s profile"
+                 class="user" href="{{ best.user.get_absolute_url }}">
               {{ best.user.username }}</a>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
@@ -86,9 +91,11 @@
           <div class="info">
             {{ recent.karma }} points
             {{ recent.published|timesince_short }} ago
-            by <a title="View {{ recent.user.username }}'s profile"
-                  class="user" href="{{ recent.user.get_absolute_url }}">
+            by {% if not recent.user %}anonymous{% else %}
+              <a title="View {{ recent.user.username }}'s profile"
+                 class="user" href="{{ recent.user.get_absolute_url }}">
               {{ recent.user.username }}</a>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
