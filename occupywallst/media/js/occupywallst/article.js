@@ -178,7 +178,7 @@ $.fn.numberAdd = function (delta) {
             api("/api/comment/delete/", {
                 "comment_id": comment_id
             }, function(data) {
-                if (data.status == "OK") {
+                if (data.status != "ERROR") {
                     comment.remove();
                     $("#comment-count").numberAdd(-1);
                 } else {
@@ -194,7 +194,7 @@ $.fn.numberAdd = function (delta) {
                 "comment_id": comment_id,
                 "action": action
             }, function(data) {
-                if (data.status == "OK") {
+                if (data.status != "ERROR") {
                     if (action == "remove") {
                         content.addClass("removed");
                         $(".remove", content).text("unremove");
