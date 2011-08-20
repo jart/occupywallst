@@ -134,9 +134,8 @@ $.fn.numberAdd = function (delta) {
         $(".up", content).click(function() {
             if ($(".up", content).hasClass("upvoted"))
                 return false;
-            api("/api/comment/vote/", {
-                "comment_id": comment_id,
-                "vote": "up"
+            api("/api/comment/upvote/", {
+                "comment": comment_id
             }, function(data) {
             });
             if ($(".down", content).hasClass("downvoted")) {
@@ -155,9 +154,8 @@ $.fn.numberAdd = function (delta) {
         $(".down", content).click(function() {
             if ($(".up", content).hasClass("downvoted"))
                 return false;
-            api("/api/comment/vote/", {
-                "comment_id": comment_id,
-                "vote": "down"
+            api("/api/comment/downvote/", {
+                "comment": comment_id
             }, function(data) {
             });
             if ($(".up", content).hasClass("upvoted")) {

@@ -168,14 +168,14 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
-    com = db.Comment()
-    com.article = article
+    comment = db.Comment()
+    comment.article = article
     if user and user.id:
-        com.user = user
-    com.content = content
-    com.parent_id = parent_id
-    com.save()
-    com.upvote(user)
+        comment.user = user
+    comment.content = content
+    comment.parent_id = parent_id
+    comment.save()
+    comment_vote(user, comment, "up", **kwargs)
     article.comment_count += 1
     article.save()
     if parent:
@@ -183,7 +183,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
                              '%s replied to your comment: %s'
                              % (user.username,
                                 truncate_words(parent.content, 7)))
-    return [com.as_dict({'html': _render_comment(com, user)})]
+    return [comment.as_dict({'html': _render_comment(comment, user)})]
 
 
 def comment_get(user, comment_id, **kwargs):
@@ -258,7 +258,7 @@ def comment_delete(user, comment_id, **kwargs):
     return []
 
 
-def comment_vote(user, comment_id, vote, **kwargs):
+def comment_vote(user, comment, vote, **kwargs):
     """Increases comment karma by one
 
     If a user is logged in, we track their votes in the database.
@@ -268,25 +268,38 @@ def comment_vote(user, comment_id, vote, **kwargs):
     allow an IP to vote once.  We track these votes in a
     non-persistant cache because we don't want to log IP addresses.
     """
-    try:
-        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
-    except db.Comment.DoesNotExist:
-        raise APIException("comment not found")
+    if not isinstance(comment, db.Comment):
+        try:
+            comment = db.Comment.objects.get(id=comment, is_deleted=False)
+        except db.Comment.DoesNotExist:
+            raise APIException("comment not found")
     if not (user and user.id):
         if 'request' in kwargs:
             ip = kwargs['request'].META['REMOTE_ADDR']
-            key = "vote_comment_%s__%s" % (com.id, ip)
+            key = "vote_comment_%s__%s" % (comment.id, ip)
             if cache.get(key, False):
                 raise APIException("you already voted")
             else:
                 cache.set(key, True)
     if vote == "up":
-        com.upvote(user)
+        comment.upvote(user)
     elif vote == "down":
-        com.downvote(user)
+        comment.downvote(user)
     else:
         raise APIException("invalid vote")
     return []
+
+
+def comment_upvote(user, comment, **kwargs):
+    """Upvotes a comment
+    """
+    return comment_vote(user, comment, "up", **kwargs)
+
+
+def comment_downvote(user, comment, **kwargs):
+    """Downvotes a comment
+    """
+    return comment_vote(user, comment, "down", **kwargs)
 
 
 def message_send(user, to_username, content, **kwargs):
