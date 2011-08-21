@@ -171,7 +171,10 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     comment = db.Comment()
     comment.article = article
     if user and user.id:
+        username = user.username
         comment.user = user
+    else:
+        username = 'anonymous'
     comment.content = content
     comment.parent_id = parent_id
     comment.save()
@@ -179,10 +182,13 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     article.comment_count += 1
     article.save()
     if parent:
-        db.Notification.send(parent.user, parent.get_absolute_url(),
+        db.Notification.send(parent.user, comment.get_absolute_url(),
                              '%s replied to your comment: %s'
-                             % (user.username,
-                                truncate_words(parent.content, 7)))
+                             % (username, truncate_words(parent.content, 7)))
+    else:
+        db.Notification.send(article.author, comment.get_absolute_url(),
+                             '%s replied to your post: %s'
+                             % (username, truncate_words(article.content, 7)))
     return [comment.as_dict({'html': _render_comment(comment, user)})]
 
 
