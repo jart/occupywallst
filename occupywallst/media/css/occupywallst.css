@@ -169,7 +169,8 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .arrows a.downvoted { color: blue; }
 .comment .deleted { margin-left: -1em; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
-.comment p { margin: 0.5em 0; }
+.comment p, .comment blockquote { margin: 0.5em 0; }
+.comment blockquote { margin-left: 0.2em; padding-left: 0.5em; border-left: 2px solid #aaa; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
 .replies { margin-left: 1em; }
