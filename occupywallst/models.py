@@ -61,7 +61,7 @@ class UserInfo(models.Model):
         Do they currently need a ride?  If so, display their position
         on the need a ride map.""")
     attendance = models.CharField(max_length=32, choices=ATTENDANCE_CHOICES,
-                                  help_text="""
+                                  default="maybe", help_text="""
         Whether or not user is attending protest.""")
     notify_message = models.BooleanField(default=True, help_text="""
         Does user want an email when they message or comment response.""")

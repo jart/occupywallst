@@ -43,7 +43,7 @@ class GeoAdmin(OSMGeoAdmin):
 class UserAdmin(BaseUserAdmin):
     def save_model(self, request, user, form, change):
         user.save()
-        if not user.userinfo:
+        if db.UserInfo.objects.filter(user=user).count() == 0:
             userinfo = db.UserInfo()
             userinfo.user = user
             userinfo.save()
