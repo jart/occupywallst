@@ -30,7 +30,7 @@ setup(
     scripts              = ['scripts/' + f for f in os.listdir('scripts')
                             if not f.startswith('.')],
     classifiers = [
-        "Development Status :: 1 - Planning",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python",
         "Framework :: Django",
