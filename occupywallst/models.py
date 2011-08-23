@@ -201,7 +201,7 @@ class Article(models.Model):
         this once the article has been published.""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
-    content = models.TextField(help_text="""
+    content = models.TextField(blank=True, help_text="""
         The contents of the article in Markdown.""")
     comment_count = models.IntegerField(default=0, editable=False,
                                         help_text="""
@@ -503,7 +503,7 @@ class Message(models.Model):
         The user who received the message.""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was this message sent?""")
-    content = models.TextField(help_text="""
+    content = models.TextField(blank=True, help_text="""
         The contents of the message.""")
     is_read = models.BooleanField(default=False, help_text="""
         Has the user seen this message yet?""")
