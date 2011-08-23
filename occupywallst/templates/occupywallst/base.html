@@ -25,8 +25,11 @@
       <header>
         <div id="userbox">
           {% if user.is_authenticated %}
-            Welcome <a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
-            &mdash; <a href="/logout/">logout</a>
+            Welcome <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
+            {% if user.is_staff %}
+              <a href="/admin/">admin</a> |
+            {% endif %}
+            <a href="/logout/">logout</a>
           {% else %}
             Welcome!
             <a href="/login/">login</a> |
