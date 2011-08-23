@@ -59,7 +59,12 @@ class ArticleAdmin(GeoAdmin):
 
 
 def comment_content(comment):
-    return truncate_words(comment.content, 7) or '!BLANK!'
+    if not comment.content:
+        return '!BLANK!'
+    elif len(comment.content) < 30:
+        return comment.content
+    else:
+        return comment.content[:30] + "..."
 comment_content.short_description = 'Content'
 
 
