@@ -245,7 +245,7 @@ class Article(models.Model):
 
     def delete(self):
         self.author = None
-        self.content = "DELETED"
+        self.content = ""
         self.is_deleted = True
         self.save()
 
@@ -388,7 +388,7 @@ class Comment(models.Model):
 
     def delete(self):
         self.user = None
-        self.content = "DELETED"
+        self.content = ""
         self.is_deleted = True
         self.save()
 

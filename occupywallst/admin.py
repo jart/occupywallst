@@ -40,6 +40,16 @@ class GeoAdmin(OSMGeoAdmin):
     map_height = 500
 
 
+def content_field(obj):
+    if not obj.content:
+        return '!BLANK!'
+    elif len(obj.content) < 30:
+        return obj.content
+    else:
+        return obj.content[:30] + "..."
+content_field.short_description = 'Content'
+
+
 class UserAdmin(BaseUserAdmin):
     def save_model(self, request, user, form, change):
         user.save()
@@ -58,19 +68,9 @@ class ArticleAdmin(GeoAdmin):
     ordering = ('-published',)
 
 
-def comment_content(comment):
-    if not comment.content:
-        return '!BLANK!'
-    elif len(comment.content) < 30:
-        return comment.content
-    else:
-        return comment.content[:30] + "..."
-comment_content.short_description = 'Content'
-
-
 class CommentAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = (comment_content, 'published', 'user', 'karma', 'ups',
+    list_display = (content_field, 'published', 'user', 'karma', 'ups',
                     'downs', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
     search_fields = ('content', 'author__username')
