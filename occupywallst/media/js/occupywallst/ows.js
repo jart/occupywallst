@@ -69,7 +69,7 @@ var ows_inactivity_delay;
         var seconds = (Date.now() - timestamp) / 1000
         var x, s;
         if (seconds <= 60) {
-            x = Math.round(seconds);
+            x = Math.max(0, Math.round(seconds));
             s = ['second', 'seconds'];
         } else if (seconds <= 60 * 60) {
             x = Math.round(seconds / 60);
