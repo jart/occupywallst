@@ -171,6 +171,7 @@ def user_page(request, username):
                                     "to_user", "to_user__userinfo")
                     .filter(Q(from_user=user, to_user=request.user) |
                             Q(from_user=request.user, to_user=user))
+                    .filter(is_deleted=False)
                     .order_by('-published'))
         for message in messages:
             if message.to_user == request.user and message.is_read == False:
