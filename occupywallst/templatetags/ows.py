@@ -46,7 +46,7 @@ def timesince_short(timestamp):
 
 @register.filter
 def markup(text):
-    return mark_safe(markdown.markdown(text, safe_mode=True))
+    return mark_safe(markdown.markdown(text, safe_mode='escape'))
 
 
 @register.simple_tag
