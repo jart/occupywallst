@@ -99,13 +99,13 @@ var ows_inactivity_delay;
         return this.each(function() {
             var primary = $("a.primary", this).attr('href');
             $(this).click(function(ev) {
-                var url = ($(ev.target).attr('href') || primary);
-                if (ev.which == MOUSE_LEFT) {
-                    window.location.href = url;
-                    return false;
-                } else if (ev.which == MOUSE_MIDDLE) {
-                    window.open(url);
-                    return false;
+                if (!$(ev.target).is("a")) {
+                    ev.preventDefault();
+                    if (ev.metaKey || ev.which == MOUSE_MIDDLE) {
+                        window.open(primary);
+                    } else {
+                        window.location.href = primary;
+                    }
                 }
             });
         });
