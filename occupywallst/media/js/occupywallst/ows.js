@@ -99,7 +99,7 @@ var ows_inactivity_delay;
         return this.each(function() {
             var primary = $("a.primary", this).attr('href');
             $(this).click(function(ev) {
-                if (!$(ev.target).is("a")) {
+                if (!jQuery(ev.target).is("a")) {
                     ev.preventDefault();
                     if (ev.metaKey || ev.which == MOUSE_MIDDLE) {
                         window.open(primary);
