@@ -7,7 +7,9 @@ r"""
 
 """
 
+import re
 import markdown
+
 from django import template
 from django.utils.safestring import mark_safe
 from django.template import Template, Context
@@ -15,8 +17,8 @@ from django.template.loader import render_to_string
 
 from occupywallst import utils
 
-
 register = template.Library()
+
 tr_template = Template(u'''
   <tr id="row_{{ field.name }}" class="field">
     <th>{{ field.label_tag }}</th>
@@ -24,6 +26,11 @@ tr_template = Template(u'''
         <span class="helptext">{{ field.help_text|safe }}</span></td>
   </tr>
 ''')
+
+pat_url = re.compile(r'(?<![<\(\[])(https?://[^\s\'\"\]\)]+)', re.I)
+pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
+markdown_safe = markdown.Markdown(safe_mode='escape')
+markdown_unsafe = markdown.Markdown()
 
 
 @register.filter
@@ -46,7 +53,9 @@ def timesince_short(timestamp):
 
 @register.filter
 def markup(text):
-    return mark_safe(markdown.markdown(text, safe_mode='escape'))
+    text = pat_url.sub(r'<\1>', text)
+    text = pat_url_www.sub(r'[\1](http://\1)', text)
+    return mark_safe(markdown_safe.convert(' %s ' % text))
 
 
 @register.simple_tag
