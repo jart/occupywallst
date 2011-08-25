@@ -9,8 +9,6 @@ r"""
 
 from django.conf import settings
 
-from occupywallst import models as db
-
 
 def goodies(request):
     if 'content_only' in request.REQUEST:

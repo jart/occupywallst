@@ -7,7 +7,6 @@ r"""
 
 """
 
-import re
 import os
 import sys
 from os.path import abspath, dirname, join, exists
@@ -129,6 +128,7 @@ try:
 except ImportError:
     pass
 
+
 def minify():
     import subprocess
     minifier = join(project_root, "../chat/minify.js")
@@ -142,6 +142,7 @@ def minify():
     proc = subprocess.Popen([minifier, outfile] + infiles)
     assert proc.wait() == 0, "minifier exited non-zero"
     assert exists(outfile), "minifier didn't produce output"
+
 
 try:
     minify()
