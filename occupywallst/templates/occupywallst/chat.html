@@ -38,7 +38,7 @@
   <p id="explain">
     Tested on Google Chrome, Mozilla Firefox, and Oprah<br />
     If you want a non-anonymous nickname, you have
-    to <a href="/signup/">sign up</a> for an account or <a href="/login/">log in</a>.<br />
+    to <a href="{% url signup %}">sign up</a> for an account or <a href="/login/">log in</a>.<br />
     {% if room == "pub" %}
       <form id="privateroom" style="text-align:center">
         <input class="room" />

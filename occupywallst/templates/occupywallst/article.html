@@ -28,9 +28,7 @@
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <article id="{{ article.slug }}">
-      <h1>
-        <a href="{{ article.get_forum_url }}">{{ article.title }}</a>
-      </h1>
+      <h1>{{ article.title }}</h1>
       <p class="info">
         {% if forum %}
           Posted {{ article.published|timesince_short }} ago
@@ -69,7 +67,7 @@
       {% if not user.is_authenticated %}
         <p class="warning"><strong>Warning:</strong> When posting anonymously
           you will not be able to edit/delete your post.  Please consider
-          <a href="/signup/">signing up for account</a>.</p>
+          <a href="{% url signup %}">signing up for account</a>.</p>
       {% endif %}
     </div>
     <section id="comment-list">

@@ -142,7 +142,7 @@ class Notification(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('occupywallst.views.notification', [self.id])
+        return ('notification', [self.id])
 
     def as_dict(self):
         return {'id': self.id,
@@ -229,19 +229,15 @@ class Article(models.Model):
         """Returns absolute canonical path for article
         """
         if self.is_forum:
-            return ('occupywallst.views.thread', [self.slug])
+            return ('forum-post', [self.slug])
         else:
-            return ('occupywallst.views.article', [self.slug])
+            return ('article', [self.slug])
 
     @models.permalink
     def get_forum_url(self):
-        """Returns path to display article with forum design
-
-        This is important because news articles are also forum threads
-        and sometimes we want to display the article with all the
-        design elements of the forum.
+        """Returns non-canonical url to view article on forum
         """
-        return ('occupywallst.views.thread', [self.slug])
+        return ('forum-post', [self.slug])
 
     def delete(self):
         self.author = None

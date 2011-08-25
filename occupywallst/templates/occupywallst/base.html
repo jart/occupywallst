@@ -9,9 +9,9 @@
   {% block canonical %}
     <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
   {% endblock canonical %}
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="/rss/news/" />
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="/rss/forum/" />
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="/rss/comments/" />
+  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="{% url rss-news %}" />
+  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="{% url rss-forum %}" />
+  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="{% url rss-comments %}" />
   <link rel="stylesheet" href="/media/css/occupywallst.css?v=15" type="text/css" media="all" />
   <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
@@ -27,16 +27,16 @@
           {% if user.is_authenticated %}
             Welcome <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
             {% if user.is_staff %}
-              <a href="/admin/">admin</a> |
+              <a href="{% url admin:index %}">admin</a> |
             {% endif %}
-            <a href="/logout/">logout</a>
+            <a href="{% url logout %}">logout</a>
           {% else %}
             Welcome!
-            <a href="/login/">login</a> |
-            <a href="/signup/">signup</a>
+            <a href="{% url login %}">login</a> |
+            <a href="{% url signup %}">signup</a>
           {% endif %}
         </div>
-        <div id="brand"><a href="/"><span class="red">Occupy</span>WallStreet</a></div>
+        <div id="brand"><a href="{% url index %}"><span class="red">Occupy</span>WallStreet</a></div>
         <div id="slogan">News and Logistics for September 17th</div>
       </header>
     {% endblock header %}
@@ -44,14 +44,14 @@
       <nav>
         <div id="navbar">
           <ul>
-            <li class="item nav-news first"><a class="fast" title="News Articles" href="/">News</a></li>
-            <li class="item nav-forum"><a title="Public discussion board" href="/forum/">Forum</a></li>
-            <li class="item nav-attendees"><a class="fast" title="Map of people involved" href="/attendees/">Map</a></li>
-            <li class="item nav-rides"><a class="fast" title="Free Bus/Carpool Rides" href="/rides/">Rides</a></li>
-            <li class="item nav-calendar"><a class="fast" title="Google Calendar" href="/calendar/">Calendar</a></li>
-            <li class="item nav-chat"><a class="fast" title="Web-based chatroom" href="/chat/">Chat</a></li>
-            <li class="item nav-conf"><a class="fast" title="Telephone Conference Bridges" href="/conference/">Conference</a></li>
-            <li class="item nav-about"><a class="fast" title="About Us" href="/about/">About</a></li>
+            <li class="item nav-news first"><a class="fast" title="News Articles" href="{% url index %}">News</a></li>
+            <li class="item nav-forum"><a title="Public discussion board" href="{% url forum %}">Forum</a></li>
+            <li class="item nav-attendees"><a class="fast" title="Map of people involved" href="{% url attendees %}">Map</a></li>
+            <li class="item nav-rides"><a class="fast" title="Free Bus/Carpool Rides" href="{% url rides %}">Rides</a></li>
+            <li class="item nav-calendar"><a class="fast" title="Google Calendar" href="{% url calendar %}">Calendar</a></li>
+            <li class="item nav-chat"><a class="fast" title="Web-based chatroom" href="{% url chat %}">Chat</a></li>
+            <li class="item nav-conf"><a class="fast" title="Telephone Conference Bridges" href="{% url conference %}">Conference</a></li>
+            <li class="item nav-about"><a class="fast" title="About Us" href="{% url about %}">About</a></li>
             <li class="last">
               <a title="Facebook Event" href="http://www.facebook.com/event.php?eid=144937025580428"><img width="24" height="24" src="/media/img/facebook.png" /></a>
               <a title="Our Twitter Page" href="https://twitter.com/#!/OccupyWallSt"><img width="24" height="24" src="/media/img/twitter.png" /></a>

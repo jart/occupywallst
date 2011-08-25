@@ -48,7 +48,7 @@
         {% endfor %}
       </div>
     {% else %}
-      <p>Must be <a href="/login/">logged in</a> to send messages.</p>
+      <p>Must be <a href="{% url login %}">logged in</a> to send messages.</p>
     {% endif %}
 
   </td><td id="right">
