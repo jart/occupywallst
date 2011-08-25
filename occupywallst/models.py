@@ -206,6 +206,9 @@ class Article(models.Model):
     comment_count = models.IntegerField(default=0, editable=False,
                                         help_text="""
         Comment counter to optimize listing page.""")
+    allow_html = models.BooleanField(default=False, help_text="""
+        Should the markdown parser allow HTML?  If a non-staff user
+        posted this, they will lose the ability to edit.""")
     is_visible = models.BooleanField(default=False, help_text="""
         Should it show up on the main page listing and rss feeds?
         Set this to true once you're done editing the article and
