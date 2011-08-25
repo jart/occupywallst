@@ -1,5 +1,9 @@
 {# this generates the html for the article description in an rss feed #}
 {% load ows %}
 <div class="article-feed">
-  {{ obj.content|markup }}
+  {% if obj.allow_html %}
+    {{ obj.content|markup_unsafe }}
+  {% else %}
+    {{ obj.content|markup }}
+  {% endif %}
 </div>

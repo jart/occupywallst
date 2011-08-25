@@ -23,7 +23,11 @@
             {% endif %}
           </p>
           <div class="article-content">
-            {{ article.content|markup }}
+            {% if article.allow_html %}
+              {{ article.content|markup_unsafe }}
+            {% else %}
+              {{ article.content|markup }}
+            {% endif %}
           </div>
           <p>
             <a title="View Comments" href="{{ article.get_absolute_url }}#comments">

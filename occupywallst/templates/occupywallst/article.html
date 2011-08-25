@@ -53,7 +53,11 @@
           {% endif %}
         {% endif %}
       </p>
-      {{ article.content|markup }}
+      {% if article.allow_html %}
+        {{ article.content|markup_unsafe }}
+      {% else %}
+        {{ article.content|markup }}
+      {% endif %}
     </article>
     <h3 id="comments">
       <span id="comment-count">{{ article.comment_count }}</span> Comments

@@ -55,7 +55,14 @@ def timesince_short(timestamp):
 def markup(text):
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
-    return mark_safe(markdown_safe.convert(' %s ' % text))
+    return mark_safe(markdown_safe.convert(text))
+
+
+@register.filter
+def markup_unsafe(text):
+    text = pat_url.sub(r'<\1>', text)
+    text = pat_url_www.sub(r'[\1](http://\1)', text)
+    return mark_safe(markdown_unsafe.convert(text))
 
 
 @register.simple_tag
