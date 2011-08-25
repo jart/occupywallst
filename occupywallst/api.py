@@ -4,8 +4,8 @@ r"""
     ~~~~~~~~~~~~~~~~
 
     High-level functions for fetching and manipulating data.  These
-    functions primarily serve as remote procedure calls for the
-    website's javascript code.
+    functions primarily serve as remote procedure calls (not CRUD or
+    REST) for the website's javascript code.
 
     Unlike ``views.py``, the API is designed to be (mostly) decoupled
     from the HTTP request/response mechanism.  All the HTTP/JSON stuff
@@ -71,7 +71,7 @@ def attendees(bounds, **kwargs):
 
 
 def attendee_info(username, **kwargs):
-    """Get information about a user
+    """Get information for displaying attendee bubble
     """
     user = (db.User.objects
             .select_related("userinfo")
@@ -104,8 +104,8 @@ def _render_comment(comment, user):
                              'user': user})
 
 
-def thread_new(user, title, content, **kwargs):
-    """Create a new thread on the message board forum.
+def forumpost_new(user, title, content, **kwargs):
+    """Create a new thread on the forum.
     """
     if len(title) < 3:
         raise APIException("title too short")
@@ -113,7 +113,7 @@ def thread_new(user, title, content, **kwargs):
         raise APIException("title too long")
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
-        raise APIException("a thread with this title has already been posted")
+        raise APIException("a thread with this title exists")
     if not settings.DEBUG and user and user.id and not user.is_staff:
         last = user.article_set.order_by('-published')[:1]
         if last:
@@ -122,11 +122,10 @@ def thread_new(user, title, content, **kwargs):
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
-    thread = db.Article()
+    thread = db.ForumPost()
     if user and user.id:
         thread.author = user
     thread.published = datetime.now()
-    thread.is_forum = True
     thread.is_visible = True
     thread.title = title
     thread.slug = slug

@@ -9,6 +9,7 @@ r"""
 
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
+from django.views.decorators.http import require_GET, require_POST
 
 from occupywallst import admin, api, utils, feeds
 
@@ -38,23 +39,22 @@ urlpatterns = patterns('',
     url(r'^error/$', 'occupywallst.views.error', name='error'),
     url(r'^users/(?P<username>[-_\d\w]+)/$', 'occupywallst.views.user_page', name='user'),
     url(r'^users/(?P<username>[-_\d\w]+)/edit/$', 'occupywallst.views.edit_profile', name='user-edit'),
-    url(r'^api/attendees/$', utils.api_view(api.attendees)),
-    url(r'^api/attendee/info/$', utils.api_view(api.attendee_info)),
-    url(r'^api/thread/new/$', utils.api_view(api.thread_new)),
-    url(r'^api/comment/get/$', utils.api_view(api.comment_get)),
-    url(r'^api/comment/new/$', utils.api_view(api.comment_new)),
-    url(r'^api/comment/edit/$', utils.api_view(api.comment_edit)),
-    url(r'^api/comment/remove/$', utils.api_view(api.comment_remove)),
-    url(r'^api/comment/delete/$', utils.api_view(api.comment_delete)),
-    url(r'^api/comment/upvote/$', utils.api_view(api.comment_upvote)),
-    url(r'^api/comment/downvote/$', utils.api_view(api.comment_downvote)),
-    url(r'^api/message/send/$', utils.api_view(api.message_send)),
-    url(r'^api/message/delete/$', utils.api_view(api.message_delete)),
-    url(r'^api/check_username/$', utils.api_view(api.check_username)),
-    url(r'^api/signup/$', utils.api_view(api.signup)),
-    url(r'^api/login/$', utils.api_view(api.login)),
-    url(r'^api/logout/$', utils.api_view(api.logout)),
-    url(r'^comments/', include('django.contrib.comments.urls')),
+    url(r'^api/safe/attendees/$', require_GET(utils.api_view(api.attendees))),
+    url(r'^api/safe/attendee_info/$', require_GET(utils.api_view(api.attendee_info))),
+    url(r'^api/forumpost_new/$', require_POST(utils.api_view(api.forumpost_new))),
+    url(r'^api/safe/comment_get/$', utils.api_view(api.comment_get)),
+    url(r'^api/comment_new/$', require_POST(utils.api_view(api.comment_new))),
+    url(r'^api/comment_edit/$', require_POST(utils.api_view(api.comment_edit))),
+    url(r'^api/comment_remove/$', require_POST(utils.api_view(api.comment_remove))),
+    url(r'^api/comment_delete/$', require_POST(utils.api_view(api.comment_delete))),
+    url(r'^api/comment_upvote/$', require_POST(utils.api_view(api.comment_upvote))),
+    url(r'^api/comment_downvote/$', require_POST(utils.api_view(api.comment_downvote))),
+    url(r'^api/message_send/$', require_POST(utils.api_view(api.message_send))),
+    url(r'^api/message_delete/$', require_POST(utils.api_view(api.message_delete))),
+    url(r'^api/check_username/$', require_POST(utils.api_view(api.check_username))),
+    url(r'^api/signup/$', require_POST(utils.api_view(api.signup))),
+    url(r'^api/login/$', require_POST(utils.api_view(api.login))),
+    url(r'^api/logout/$', require_POST(utils.api_view(api.logout))),
     url(r'^admin/', include(adminsite.urls)),
 )
 

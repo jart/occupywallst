@@ -71,7 +71,7 @@ var attendees_init;
     function fetch() {
         $("#loader").show();
         is_fetching = true;
-        api("/api/attendees/", {
+        api("/api/safe/attendees/", {
             "bounds": bounds_to_string(map.getBounds())
         }, function(data) {
             if (data.status == "OK") {
@@ -142,10 +142,11 @@ var attendees_init;
     }
 
     function init_msgform(form, to_username) {
-        $(".save", form).click(function() {
+        $(".save", form).click(function(ev) {
+            ev.preventDefault();
             $(".loader", form).show();
             $(".error", form).text("");
-            api("/api/message/send/", {
+            api("/api/message_send/", {
                 "to_username": to_username,
                 "content": $("textarea", form).val()
             }, function(data) {
@@ -162,7 +163,6 @@ var attendees_init;
                 $(".loader", form).hide();
                 $(".error", form).text(err.status + ' ' + err.statusText);
             });
-            return false;
         });
     }
 
@@ -176,7 +176,7 @@ var attendees_init;
         google.maps.event.addListener(marker, "click", function() {
             $("#loader").show();
             is_fetching = true;
-            api("/api/attendee/info/", {
+            api("/api/safe/attendee_info/", {
                 "username": username
             }, function(data) {
                 if (pin.flag_remove)

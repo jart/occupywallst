@@ -31,10 +31,11 @@ var userpage_init;
     }
 
     function init_postform(form) {
-        $(".save", form).click(function() {
+        $(".save", form).click(function(ev) {
+            ev.preventDefault();
             $(".loader", form).show();
             $(".error", form).text("");
-            api("/api/message/send/", {
+            api("/api/message_send/", {
                 "to_username": $(".username").attr("id"),
                 "content": $("textarea", form).val()
             }, function(data) {
@@ -54,25 +55,24 @@ var userpage_init;
                 $(".loader", form).hide();
                 $(".error", form).text(err.status + ' ' + err.statusText);
             });
-            return false;
         });
     }
 
     function init_message(message) {
         var message_id = message.attr("id").split("-")[1];
-        $(".delete", message).click(function() {
+        $(".delete", message).click(function(ev) {
+            ev.preventDefault();
             if (!confirm("Sure you want to delete this message?"))
-                return false;
-            api("/api/message/delete/", {
+                return;
+            api("/api/message_delete/", {
                 "message_id": message_id
             }, function(data) {
-                if (data.status == "OK") {
+                if (data.status != "ERROR") {
                     message.remove();
                 } else {
                     alert(data.message);
                 }
             });
-            return false;
         });
     }
 

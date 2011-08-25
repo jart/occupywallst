@@ -13,10 +13,11 @@ var forum_init;
     }
 
     function init_postform(form) {
-        $(".save", form).click(function() {
+        $(".save", form).click(function(ev) {
+            ev.preventDefault();
             $(".loader", form).show();
             $(".error", form).text("");
-            api("/api/thread/new/", {
+            api("/api/forumpost_new/", {
                 "title": $(".title", form).val(),
                 "content": $(".content", form).val()
             }, function(data) {
@@ -31,7 +32,6 @@ var forum_init;
                 $(".loader", form).hide();
                 $(".error", form).text(err.status + ' ' + err.statusText);
             });
-            return false;
         });
     }
 

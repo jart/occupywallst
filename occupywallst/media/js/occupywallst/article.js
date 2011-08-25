@@ -24,10 +24,11 @@ $.fn.numberAdd = function (delta) {
     }
 
     function init_comment_form(form, container, parent_id) {
-        $(".save", form).click(function() {
+        $(".save", form).click(function(ev) {
+            ev.preventDefault();
             $(".loader", form).show();
             $(".error", form).text("");
-            api("/api/comment/new/", {
+            api("/api/comment_new/", {
                 "article_slug": $("article").attr("id"),
                 "parent_id": parent_id,
                 "content": $("textarea", form).val()
@@ -50,13 +51,12 @@ $.fn.numberAdd = function (delta) {
                 $(".loader", form).hide();
                 $(".error", form).text(err.status + ' ' + err.statusText);
             });
-            return false;
         });
-        $(".cancel", form).click(function() {
+        $(".cancel", form).click(function(ev) {
+            ev.preventDefault();
             form.slideUp(penguin, function() {
                 form.remove();
             });
-            return false;
         });
     }
 
@@ -65,28 +65,30 @@ $.fn.numberAdd = function (delta) {
         var content = $("> .content", comment);
         var replies = $("> .replies", comment);
 
-        $(".reply", content).click(function() {
+        $(".reply", content).click(function(ev) {
+            ev.preventDefault();
             if ($(".commentform", content).length)
-                return false;
+                return;
             var form = $("#commentform").clone().attr("id", "");
             content.append(form);
             init_comment_form(form, replies, comment_id);
             form.slideDown(penguin, function() {
                 $("textarea", form).focus();
             });
-            return false;
         });
 
-        $(".edit", content).click(function() {
+        $(".edit", content).click(function(ev) {
+            ev.preventDefault();
             if ($(".commentform", content).length)
-                return false;
+                return;
             var form = $("#commentform").clone().attr("id", "");
             var old_words;
             content.append(form);
-            $(".save", form).click(function() {
+            $(".save", form).click(function(ev) {
+                ev.preventDefault();
                 $(".loader", form).show();
                 $(".error", form).text("");
-                api("/api/comment/edit/", {
+                api("/api/comment_edit/", {
                     "comment_id": comment_id,
                     "content": $("textarea", form).val()
                 }, function(data) {
@@ -105,16 +107,15 @@ $.fn.numberAdd = function (delta) {
                     $(".loader", form).hide();
                     $(".error", form).text(err.status + ' ' + err.statusText);
                 });
-                return false;
             });
-            $(".cancel", form).click(function() {
+            $(".cancel", form).click(function(ev) {
+                ev.preventDefault();
                 form.slideUp(penguin, function() {
                     $(".words", content).html(old_words);
                     form.remove();
                 });
-                return false;
             });
-            api("/api/comment/get/", {
+            api("/api/safe/comment_get/", {
                 comment_id: comment_id
             }, function(data) {
                 if (data.status == "OK") {
@@ -131,10 +132,11 @@ $.fn.numberAdd = function (delta) {
             return false;
         });
 
-        $(".up", content).click(function() {
+        $(".up", content).click(function(ev) {
+            ev.preventDefault();
             if ($(".up", content).hasClass("upvoted"))
-                return false;
-            api("/api/comment/upvote/", {
+                return;
+            api("/api/comment_upvote/", {
                 "comment": comment_id
             }, function(data) {
             });
@@ -148,13 +150,13 @@ $.fn.numberAdd = function (delta) {
             }
             $(".up", content).addClass("upvoted");
             $(".down", content).removeClass("downvoted");
-            return false;
         });
 
-        $(".down", content).click(function() {
+        $(".down", content).click(function(ev) {
+            ev.preventDefault();
             if ($(".up", content).hasClass("downvoted"))
-                return false;
-            api("/api/comment/downvote/", {
+                return;
+            api("/api/comment_downvote/", {
                 "comment": comment_id
             }, function(data) {
             });
@@ -168,17 +170,17 @@ $.fn.numberAdd = function (delta) {
             }
             $(".up", content).removeClass("upvoted");
             $(".down", content).addClass("downvoted");
-            return false;
         });
 
-        $(".permalink", content).click(function() {
+        $(".permalink", content).click(function(ev) {
             content.addClass("highlight");
         });
 
-        $(".delete", content).click(function() {
+        $(".delete", content).click(function(ev) {
+            ev.preventDefault();
             if (!confirm("Sure you want to delete this comment?"))
-                return false;
-            api("/api/comment/delete/", {
+                return;
+            api("/api/comment_delete/", {
                 "comment_id": comment_id
             }, function(data) {
                 if (data.status != "ERROR") {
@@ -188,12 +190,12 @@ $.fn.numberAdd = function (delta) {
                     alert(data.message);
                 }
             });
-            return false;
         });
 
-        $(".remove", content).click(function() {
+        $(".remove", content).click(function(ev) {
+            ev.preventDefault();
             var action = $(".remove", content).text();
-            api("/api/comment/remove/", {
+            api("/api/comment_remove/", {
                 "comment_id": comment_id,
                 "action": action
             }, function(data) {
@@ -211,7 +213,6 @@ $.fn.numberAdd = function (delta) {
                     alert(data.message);
                 }
             });
-            return false;
         });
     }
 

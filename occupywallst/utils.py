@@ -16,7 +16,6 @@ from datetime import datetime
 
 from django.db import transaction
 from django.http import HttpResponse
-from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
@@ -45,14 +44,16 @@ def api_view(function):
 
     This function also catches general exceptions to ensure the client
     always receives data in JSON format.
+
+    API functions that have side-effects should be wrapped in a
+    ``require_POST`` decorator in your ``url.py`` file to ensure CSRF
+    protection, otherwise they should be wrapped in ``require_GET``.
     """
     @wraps(function)
-    @require_POST
     @transaction.commit_manually
     def _api_view(request):
         args = {}
-        for key in request.POST:
-            args[key] = request.POST[key]
+        args.update(request.REQUEST)
         args['request'] = request
         args['user'] = request.user
         try:

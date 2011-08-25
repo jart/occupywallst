@@ -26,9 +26,9 @@ var rides_init;
         show_route(["danbury ct", "new york ny"]);
         show_route(["toronto ca", "new york ny"]);
 
-        // $("#addroute").click(function () {
+        // $("#addroute").click(function() {
+        //     ev.preventDefault();
         //     show_route($("textarea").val().split('\n'));
-        //     return false;
         // });
 
     };

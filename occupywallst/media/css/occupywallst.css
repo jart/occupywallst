@@ -1,6 +1,6 @@
 
 body { padding: 0 50px; min-width: 750px; font: 16px Arial, sans-serif; }
-body p { text-align: justify; }
+body p { /* text-align: justify; */ }
 header, nav, h1, h2, h3, h4 { font-family: Arial,sans-serif; }
 a { text-decoration: none; }
 img { border: none; }
@@ -182,7 +182,8 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .loader { display: none; }
 
 .message .on { background: #f2f2f2; }
-.message .info { font-size: small; font-weight: bold; color: #777; }
+.message .info { font-size: small; color: #777; margin-bottom: 0; }
+.message .words p { margin: 0.5em 0; }
 
 .attendee-info .links { margin-bottom: 0; }
 .attendee-info .info { margin-top: 0; }

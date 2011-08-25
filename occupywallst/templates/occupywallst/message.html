@@ -1,14 +1,12 @@
 {% load ows %}
 
-<div id="message-{{ message.id }}">
-  <div class="{% cycle off,on %}">
-    <p class="info tinygray">
-      {{ message.from_user }} said
-      {{ message.published|timesince_short }} ago
-      (<a class="delete" href="#">delete</a>)
-    </p>
-    <div class="content">
-      {{ message.content|markup }}
-    </div>
+<div id="message-{{ message.id }}" class="message {% cycle off,on %}">
+  <p class="info tinygray">
+    {{ message.from_user }} said
+    {{ message.published|timesince_short }} ago
+    (<a class="delete" href="#">delete</a>)
+  </p>
+  <div class="words">
+    {{ message.content|markup }}
   </div>
 </div>

@@ -106,8 +106,12 @@
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
     function api(path, data, callback) {
-        data.csrfmiddlewaretoken = "{{ csrf_token }}";
-        return $.post(path, data, callback, "json");
+        if (path.match(/^\/api\/safe\//)) {
+            return $.get(path, data, callback, "json");
+        } else {
+            data.csrfmiddlewaretoken = "{{ csrf_token }}";
+            return $.post(path, data, callback, "json");
+        }
     }
     $(function() {
       {% block js_init %}
