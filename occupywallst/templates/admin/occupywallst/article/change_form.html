@@ -1,0 +1,9 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block object-tools-items %}{{ block.super }}
+  {% if original.is_forum %}
+    <li><a href="convert/" class="historylink">{% trans "Convert to News Article" %}</a></li>
+  {% else %}
+    <li><a href="convert/" class="historylink">{% trans "Convert to Forum Post" %}</a></li>
+  {% endif %}
+{% endblock object-tools-items %}

@@ -7,8 +7,11 @@ r"""
 
 """
 
-from django.utils.html import escape
-from django.utils.text import truncate_words
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.conf.urls.defaults import patterns
+from django.core.exceptions import PermissionDenied
 from django.contrib.admin import AdminSite as BaseAdminSite
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
@@ -66,6 +69,33 @@ class ArticleAdmin(GeoAdmin):
     list_filter = ('is_visible', 'is_deleted')
     search_fields = ('title', 'content', 'author__username')
     ordering = ('-published',)
+
+    def get_urls(self):
+        urls = super(ArticleAdmin, self).get_urls()
+        admin_view = self.admin_site.admin_view
+        my_urls = patterns('',
+            (r'^(\d+)/convert/$', admin_view(self.view_convert)),
+        )
+        return my_urls + urls
+
+    def view_convert(self, request, id_):
+        """Convert forum posts to news article and vice versa
+
+        This is not as simple as it sounds.
+        """
+        if not self.has_change_permission(request):
+            raise PermissionDenied()
+        id_ = int(id_)
+        article = get_object_or_404(db.Article, pk=id_)
+        article.is_forum = not article.is_forum
+        article.save()
+        model = db.ForumPost if article.is_forum else db.NewsArticle
+        msg = 'Coverted to ' + model._meta.verbose_name
+        url = "../../../%s/%d/" % (model._meta.module_name, id_)
+        obj = get_object_or_404(model, pk=id_)
+        self.log_change(request, obj, msg)
+        messages.success(request, msg)
+        return HttpResponseRedirect(url)
 
 
 class CommentAdmin(GeoAdmin):
