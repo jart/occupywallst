@@ -56,9 +56,9 @@ class RSSNewsFeed(Feed):
 
 
 class RSSForumFeed(RSSNewsFeed):
-    title = "OccupyWallSt Forum Threads"
+    title = "OccupyWallSt Forum"
     link = settings.OWS_CANONICAL_URL
-    description = "User-submitted discussion pertaining to the occupation"
+    description = "Public discussion pertaining to the occupation"
     delay = timedelta(seconds=60 * 5)
 
     def items(self):
@@ -73,7 +73,7 @@ class RSSForumFeed(RSSNewsFeed):
 class RSSCommentFeed(Feed):
     title = "OccupyWallSt Comments"
     link = settings.OWS_CANONICAL_URL
-    description = "Comments users posted on news articles"
+    description = "All comments submitted to the website"
     description_template = 'occupywallst/feed-comment.html'
     delay = timedelta(seconds=60 * 5)
 
