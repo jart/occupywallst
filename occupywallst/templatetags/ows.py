@@ -11,6 +11,7 @@ import re
 import markdown
 
 from django import template
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.template import Template, Context
 from django.template.loader import render_to_string
@@ -58,16 +59,18 @@ timesince_short.is_safe = True
 def synopsis(text, max_words=10, max_chars=40):
     """Creates a shortened version of content
 
-    If text begins with a markdown quotation, it will be excluded
-    unless the whole thing is a quote.
+    We only care about the first line.  If the text begins with a
+    markdown quotation, it will be excluded unless the whole thing is
+    a quote.
 
-    The result is not markdown parsed and may contain html.
+    To get rid of markup, we start by stripping html tags.  Then we
+    run the result through markup and strip the html tags again.  The
+    result is still unsafe of course.
     """
     lines = text.split('\n')
     no_quotes = [s for s in lines if s and not s.startswith('>')]
-    words = no_quotes[0].split()
-    if not words:
-        words = text.split()
+    first_line = unicode(strip_tags(markup(strip_tags(no_quotes[0]))))
+    words = first_line.split()
     return " ".join(words[:max_words])[:max_chars]
 
 
