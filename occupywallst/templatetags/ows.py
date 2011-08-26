@@ -27,7 +27,7 @@ tr_template = Template(u'''
   </tr>
 ''')
 
-pat_url = re.compile(r'(?<![<\(\[])(https?://[^\s\'\"\]\)]+)', re.I)
+pat_url = re.compile(r'(?<!\S)(https?://[^\s\'\"\]\)]+)', re.I)
 pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
 markdown_safe = markdown.Markdown(safe_mode='escape')
 markdown_unsafe = markdown.Markdown()
