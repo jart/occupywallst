@@ -55,8 +55,8 @@ def forum(request, sort):
                .order_by('-published'))
     return render_to_response(
         'occupywallst/forum.html', {'articles': articles,
-                                    'bests': bests[:10],
-                                    'recents': recents[:10]},
+                                    'bests': bests[:5],
+                                    'recents': recents[:20]},
         context_instance=RequestContext(request))
 
 
