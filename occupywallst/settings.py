@@ -33,6 +33,8 @@ OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
 ADMINS = (
     ('', 'errors@occupywallst.org'),
 )
+
+SERVER_EMAIL = 'webmaster@occupywallst.org'
 DEFAULT_FROM_EMAIL = 'webmaster@occupywallst.org'
 
 MANAGERS = ADMINS
