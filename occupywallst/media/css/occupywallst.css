@@ -236,3 +236,15 @@ a.button:active {
 .threadtype {  color: #a00; }
 
 #new-thread { margin-top: 1em; margin-bottom: 0.25em; }
+
+#sql-info { position: absolute; top: 0; left: 0; background: #f6f6f6;
+            width: 50%; border-right: 1px solid #ddd;
+            border-left: 1px solid #ddd; }
+#sql-info .info { background: #ffc; border-bottom: 1px solid #ddd;
+                  cursor: pointer; padding: 0.25em; }
+#sql-info .info span { color: #666; font-size: 0.8em; }
+#sql-info .hidden { display: none; }
+#sql-info .item { border-top: 2px solid #ddd; padding: 0.5em; }
+#sql-info .item:first-child { border-top: none; }
+#sql-info .item p { margin: 0; padding: 0; text-indent: -3em; margin-left: 3em;
+                    font: 8pt "DeJavu Sans Mono", monospace; }

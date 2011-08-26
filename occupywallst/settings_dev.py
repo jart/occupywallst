@@ -13,6 +13,7 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
+MIDDLEWARE_CLASSES += ['occupywallst.middleware.SQLInfoMiddleware']
 
 LOGGING = {
     'version': 1,

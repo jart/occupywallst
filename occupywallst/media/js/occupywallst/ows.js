@@ -21,6 +21,7 @@ var ows_inactivity_delay;
             $("#notifications").slideDown();
         }
         $(".clickdiv").clickdiv();
+        $(".hider").hider();
         subscriber();
         setInterval(function() {
             $("#notifications .item span").each(function() {
@@ -106,6 +107,19 @@ var ows_inactivity_delay;
                     } else {
                         window.location.href = primary;
                     }
+                }
+            });
+        });
+    };
+
+    jQuery.fn.hider = function() {
+        return this.each(function() {
+            var hidden = jQuery(".hidden", this);
+            jQuery(".toggle", this).click(function(ev) {
+                if (!hidden.is(":visible")) {
+                    hidden.slideDown();
+                } else {
+                    hidden.slideUp();
                 }
             });
         });
