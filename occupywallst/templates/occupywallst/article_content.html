@@ -1,0 +1,40 @@
+{% load ows %}
+
+<article id="{{ article.slug }}">
+  <h1>{{ article.title }}</h1>
+  <p class="info">
+    {% if forum %}
+      Posted {{ article.published|timesince_short }} ago
+    {% else %}
+      Posted {{ article.published|date:"Y-m-d h:i:s T" }}
+    {% endif %}
+    by {% if not article.author %}anonymous{% else %}
+      <a rel="author" title="View {{ article.author.username }}'s profile"
+         class="user" href="{{ article.author.get_absolute_url }}">
+      {{ article.author.username }}</a>
+      {% if article.is_forum %}
+        {% if article.author.userinfo.city and article.author.userinfo.region %}
+          ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if user.is_authenticated and user == article.author %}
+      | <a class="edit" href="#">edit</a>
+      | <a class="delete" href="#">delete</a>
+    {% endif %}
+    {% if user.is_staff %}
+      {% if article.is_forum %}
+        | <a href="/admin/occupywallst/forumpost/{{ article.id }}/">admin</a>
+      {% else %}
+        | <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">admin</a>
+      {% endif %}
+    {% endif %}
+  </p>
+  <div class="words">
+    {% if article.allow_html %}
+      {{ article.content|markup_unsafe }}
+    {% else %}
+      {{ article.content|markup }}
+    {% endif %}
+  </div>
+</article>

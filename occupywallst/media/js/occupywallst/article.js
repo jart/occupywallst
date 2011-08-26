@@ -1,9 +1,9 @@
 
 var article_init;
 
-$.fn.numberAdd = function (delta) {
-    this.each(function () {
-        $(this).text(parseInt($(this).text()) + delta);
+jQuery.fn.numberAdd = function(delta) {
+    this.each(function() {
+        jQuery(this).text(parseInt(jQuery(this).text()) + delta);
     });
 };
 
@@ -13,6 +13,7 @@ $.fn.numberAdd = function (delta) {
     var penguin = 50;
 
     function init() {
+        init_article($("article"));
         init_comment_form($("#postform"), $("#comment-list"), "");
         $(".comment").each(function(i) {
             init_comment($(this));
@@ -21,6 +22,76 @@ $.fn.numberAdd = function (delta) {
         if (anchor.hasClass("comment")) {
             $("> .content", anchor).addClass("highlight");
         }
+    }
+
+    function init_article(article) {
+        var slug = article.attr("id");
+
+        $(".edit", article).click(function(ev) {
+            ev.preventDefault();
+            if ($(".editform", article).length)
+                return;
+            var form = $("#editform").clone().attr("id", "");
+            var old_words;
+            form.insertBefore($(".words", article));
+            $(".save", form).click(function(ev) {
+                ev.preventDefault();
+                $(".loader", form).show();
+                $(".error", form).text("");
+                api("/api/article_edit/", {
+                    "article_slug": slug,
+                    "content": $("textarea", form).val()
+                }, function(data) {
+                    $(".loader", form).hide();
+                    if (data.status == "OK") {
+                        var elem = $(data.results[0].html);
+                        article.replaceWith(elem);
+                        init_article(elem);
+                    } else {
+                        $(".error", form).text(data.message);
+                    }
+                }).error(function(err) {
+                    $(".loader", form).hide();
+                    $(".error", form).text(err.status + ' ' + err.statusText);
+                });
+            });
+            $(".cancel", form).click(function(ev) {
+                ev.preventDefault();
+                form.slideUp(penguin, function() {
+                    $(".words", article).html(old_words);
+                    form.remove();
+                });
+            });
+            api("/api/safe/article_get/", {
+                article_slug: slug
+            }, function(data) {
+                if (data.status == "OK") {
+                    var res = data.results[0];
+                    var words = $(".words", article);
+                    old_words = words.html();
+                    $("textarea", form).val(res.content);
+                    $("textarea", form).markdown_preview(words);
+                    form.slideDown(penguin, function() {
+                        $("textarea", form).focus();
+                    });
+                }
+            });
+        });
+
+        $(".delete", article).click(function(ev) {
+            ev.preventDefault();
+            if (!confirm("Sure you want to delete this article?"))
+                return;
+            api("/api/article_delete/", {
+                "article_slug": slug
+            }, function(data) {
+                if (data.status != "ERROR") {
+                    window.location.href = "..";
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
     }
 
     function init_comment_form(form, container, parent_id) {
@@ -42,7 +113,7 @@ $.fn.numberAdd = function (delta) {
                     comment.fadeIn();
                     $("#comment-count").numberAdd(+1);
                     $("textarea", form).val("");
-                    if (form.is(".commentform"))
+                    if (form.is(".editform"))
                         form.remove();
                 } else {
                     $(".error", form).text(data.message);
@@ -67,9 +138,9 @@ $.fn.numberAdd = function (delta) {
 
         $(".reply", content).click(function(ev) {
             ev.preventDefault();
-            if ($(".commentform", content).length)
+            if ($(".editform", content).length)
                 return;
-            var form = $("#commentform").clone().attr("id", "");
+            var form = $("#editform").clone().attr("id", "");
             content.append(form);
             init_comment_form(form, replies, comment_id);
             form.slideDown(penguin, function() {
@@ -79,9 +150,9 @@ $.fn.numberAdd = function (delta) {
 
         $(".edit", content).click(function(ev) {
             ev.preventDefault();
-            if ($(".commentform", content).length)
+            if ($(".editform", content).length)
                 return;
-            var form = $("#commentform").clone().attr("id", "");
+            var form = $("#editform").clone().attr("id", "");
             var old_words;
             content.append(form);
             $(".save", form).click(function(ev) {
@@ -95,8 +166,6 @@ $.fn.numberAdd = function (delta) {
                     $(".loader", form).hide();
                     if (data.status == "OK") {
                         var elem = $(data.results[0].html);
-                        console.log(elem);
-                        console.log($("> .content", elem));
                         comment.prepend($("> .content", elem));
                         content.remove();
                         init_comment(comment);
@@ -129,7 +198,6 @@ $.fn.numberAdd = function (delta) {
                     });
                 }
             });
-            return false;
         });
 
         $(".up", content).click(function(ev) {

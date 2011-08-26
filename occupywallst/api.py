@@ -18,6 +18,8 @@ r"""
     - I can write xml/zeromq/udp/etc. interfaces to the API if needed
       without changing this code.
 
+    - Unit testability.
+
     API functions must do the following:
 
     - Return a list.
@@ -49,6 +51,14 @@ from occupywallst.utils import APIException
 def _str_to_bbox(val):
     swlat, swlng, nwlat, nwlng = [float(s) for s in val.split(',')]
     return Polygon.from_bbox([swlng, swlat, nwlng, nwlat])
+
+
+def _to_bool(val):
+    if type(val) is bool:
+        return val
+    else:
+        return (str(val) == "1" or
+                str(val).lower() == "true")
 
 
 def attendees(bounds, **kwargs):
@@ -86,27 +96,16 @@ def attendee_info(username, **kwargs):
              'html': html}]
 
 
-def _render_comment(comment, user):
-    comment.upvoted = False
-    comment.downvoted = False
-    if user and user.id:
-        try:
-            vote = db.CommentVote.objects.get(comment=comment, user=user)
-        except db.CommentVote.DoesNotExist:
-            vote = None
-        if vote:
-            if vote.vote == 1:
-                comment.upvoted = True
-            elif vote.vote == -1:
-                comment.downvoted = True
-    return render_to_string('occupywallst/comment.html',
-                            {'comment': comment,
-                             'user': user})
+def article_new(user, title, content, is_forum, **kwargs):
+    """Create a news article or forum thread
 
-
-def forumpost_new(user, title, content, **kwargs):
-    """Create a new thread on the forum.
+    We mustn't allow users without staff privileges to post news
+    articles.
     """
+    is_forum = _to_bool(is_forum)
+    if not is_forum:
+        if not (user and user.id) or not user.is_staff:
+            raise APIException("insufficient privileges")
     if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
@@ -122,16 +121,113 @@ def forumpost_new(user, title, content, **kwargs):
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
-    thread = db.ForumPost()
+    article = db.Article()
     if user and user.id:
-        thread.author = user
-    thread.published = datetime.now()
-    thread.is_visible = True
-    thread.title = title
-    thread.slug = slug
-    thread.content = content
-    thread.save()
-    return [thread.as_dict()]
+        article.author = user
+    article.published = datetime.now()
+    article.is_visible = True
+    article.title = title
+    article.slug = slug
+    article.content = content
+    article.is_forum = is_forum
+    article.save()
+    return article_get(user, slug)
+
+
+def article_edit(user, article_slug, content, **kwargs):
+    """Edit an article or forum post
+
+    We mustn't allow users without staff privileges to edit an article
+    once it's been flagged to allow HTML or converted to a news
+    article.
+    """
+    if not (user and user.id):
+        raise APIException("you're not logged in")
+    content = content.strip()
+    if len(content) < 3:
+        raise APIException("article too short")
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException("article not found")
+    if article.author != user:
+        raise APIException("you didn't post that")
+    if not user.is_staff:
+        if article.allow_html or not article.is_forum:
+            raise APIException("insufficient privileges")
+    article.content = content
+    article.save()
+    return article_get(user, article_slug)
+
+
+def article_delete(user, article_slug, **kwargs):
+    """Delete an article or forum post
+
+    This doesn't actually delete but rather clears the auther, title
+    and content fields and sets is_visible to False.  It isn't
+    possible to clear the slug field because it'd break hyperlinks.
+    Commenting is still possible if you have the hyperlink to the
+    article saved.  To fully delete an article you must go in the
+    backend.
+
+    We mustn't allow users without staff privileges to edit an article
+    once it's been converted to a news article.
+    """
+    if not (user and user.id):
+        raise APIException("you're not logged in")
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_visible=True,
+                                         is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException("article not found")
+    if article.author != user:
+        raise APIException("you didn't post that")
+    if not user.is_staff:
+        if not article.is_forum:
+            raise APIException("insufficient privileges")
+    article.author = None
+    article.title = "[DELETED]"
+    article.content = "[DELETED]"
+    article.is_visible = False
+    article.save()
+    return []
+
+
+def article_get(user, article_slug, **kwargs):
+    """Get article information
+    """
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException("article not found")
+    html = render_to_string('occupywallst/article_content.html',
+                            {'article': article,
+                             'user': user})
+    return [article.as_dict({'html': html})]
+
+
+def article_edit(user, article_slug, content, **kwargs):
+    """Edit an article or forum post
+
+    We mustn't allow users without staff privileges to edit an article
+    once it's been flagged to allow HTML.
+    """
+    if not (user and user.id):
+        raise APIException("you're not logged in")
+    content = content.strip()
+    if len(content) < 3:
+        raise APIException("article too short")
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException("article not found")
+    if article.author != user:
+        raise APIException("you didn't post that")
+    if article.allow_html and not user.is_staff:
+        raise APIException("insufficient privileges")
+    article.content = content
+    article.save()
+    return article_get(user, article_slug)
 
 
 def comment_new(user, article_slug, parent_id, content, **kwargs):
@@ -188,17 +284,32 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         db.Notification.send(article.author, comment.get_absolute_url(),
                              '%s replied to your post: %s'
                              % (username, truncate_words(article.content, 7)))
-    return [comment.as_dict({'html': _render_comment(comment, user)})]
+    return comment_get(user, comment.id)
 
 
 def comment_get(user, comment_id, **kwargs):
     """Fetch a single comment information
     """
     try:
-        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
+        comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    return [com.as_dict({'html': _render_comment(com, user)})]
+    comment.upvoted = False
+    comment.downvoted = False
+    if user and user.id:
+        try:
+            vote = db.CommentVote.objects.get(comment=comment, user=user)
+        except db.CommentVote.DoesNotExist:
+            vote = None
+        if vote:
+            if vote.vote == 1:
+                comment.upvoted = True
+            elif vote.vote == -1:
+                comment.downvoted = True
+    html = render_to_string('occupywallst/comment.html',
+                            {'comment': comment,
+                             'user': user})
+    return [comment.as_dict({'html': html})]
 
 
 def comment_edit(user, comment_id, content, **kwargs):
@@ -210,14 +321,14 @@ def comment_edit(user, comment_id, content, **kwargs):
     if len(content) < 3:
         raise APIException("comment too short")
     try:
-        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
+        comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if com.user != user:
+    if comment.user != user:
         raise APIException("you didn't post that comment")
-    com.content = content
-    com.save()
-    return [com.as_dict({'html': _render_comment(com, user)})]
+    comment.content = content
+    comment.save()
+    return comment_get(user, comment.id)
 
 
 def comment_remove(user, comment_id, action, **kwargs):
@@ -228,19 +339,19 @@ def comment_remove(user, comment_id, action, **kwargs):
     if not user.is_staff:
         raise APIException("insufficient vespene gas")
     try:
-        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
+        comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if action == 'remove' and not com.is_removed:
-        com.is_removed = True
-        com.article.comment_count -= 1
-    elif action == 'unremove' and com.is_removed:
-        com.is_removed = False
-        com.article.comment_count += 1
+    if action == 'remove' and not comment.is_removed:
+        comment.is_removed = True
+        comment.article.comment_count -= 1
+    elif action == 'unremove' and comment.is_removed:
+        comment.is_removed = False
+        comment.article.comment_count += 1
     else:
         raise APIException("invalid action")
-    com.save()
-    com.article.save()
+    comment.save()
+    comment.article.save()
     return []
 
 
@@ -252,14 +363,14 @@ def comment_delete(user, comment_id, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     try:
-        com = db.Comment.objects.get(id=comment_id, is_deleted=False)
+        comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if com.user != user:
+    if comment.user != user:
         raise APIException("you didn't post that comment")
-    com.article.comment_count -= 1
-    com.article.save()
-    com.delete()
+    comment.article.comment_count -= 1
+    comment.article.save()
+    comment.delete()
     return []
 
 

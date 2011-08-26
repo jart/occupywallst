@@ -17,9 +17,10 @@ var forum_init;
             ev.preventDefault();
             $(".loader", form).show();
             $(".error", form).text("");
-            api("/api/forumpost_new/", {
+            api("/api/article_new/", {
                 "title": $(".title", form).val(),
-                "content": $(".content", form).val()
+                "content": $(".content", form).val(),
+                "is_forum": "true"
             }, function(data) {
                 $(".loader", form).hide();
                 if (data.status == "OK") {

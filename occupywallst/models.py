@@ -216,7 +216,7 @@ class Article(models.Model):
     is_forum = models.BooleanField(default=False, editable=False, help_text="""
         Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, help_text="""
-        Flag to indicate should no longer be listed on site.""")
+        Flag to indicate should no longer be shown on site.""")
 
     objects = models.GeoManager()
 
@@ -244,7 +244,8 @@ class Article(models.Model):
 
     def delete(self):
         self.author = None
-        self.content = ""
+        self.title = "[DELETED]"
+        self.content = "[DELETED]"
         self.is_deleted = True
         self.save()
 

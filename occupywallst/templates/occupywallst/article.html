@@ -27,38 +27,7 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <article id="{{ article.slug }}">
-      <h1>{{ article.title }}</h1>
-      <p class="info">
-        {% if forum %}
-          Posted {{ article.published|timesince_short }} ago
-        {% else %}
-          Posted {{ article.published|date:"Y-m-d h:i:s T" }}
-        {% endif %}
-        by {% if not article.author %}anonymous{% else %}
-          <a rel="author" title="View {{ article.author.username }}'s profile"
-             class="user" href="{{ article.author.get_absolute_url }}">
-          {{ article.author.username }}</a>
-          {% if article.is_forum %}
-            {% if article.author.userinfo.city and article.author.userinfo.region %}
-              ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
-            {% endif %}
-          {% endif %}
-        {% endif %}
-        {% if user.is_staff %}
-          {% if article.is_forum %}
-            [<a href="/admin/occupywallst/forumpost/{{ article.id }}/">Admin</a>]
-          {% else %}
-            [<a href="/admin/occupywallst/newsarticle/{{ article.id }}/">Admin</a>]
-          {% endif %}
-        {% endif %}
-      </p>
-      {% if article.allow_html %}
-        {{ article.content|markup_unsafe }}
-      {% else %}
-        {{ article.content|markup }}
-      {% endif %}
-    </article>
+    {% include "occupywallst/article_content.html" %}
     <h3 id="comments">
       <span id="comment-count">{{ article.comment_count }}</span> Comments
     </h3>
@@ -106,7 +75,7 @@
     </section>
   </td></tr></tbody></table>
 
-  <div style="display:none" id="commentform" class="commentform">
+  <div style="display:none" id="editform" class="editform">
     <textarea rows="5" cols="70"></textarea><br />
     <button class="save">save</button>
     <button class="cancel">cancel</button>
