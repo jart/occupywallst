@@ -117,9 +117,9 @@ var ows_inactivity_delay;
             var hidden = jQuery(".hidden", this);
             jQuery(".toggle", this).click(function(ev) {
                 if (!hidden.is(":visible")) {
-                    hidden.slideDown();
+                    hidden.slideDown(250);
                 } else {
-                    hidden.slideUp();
+                    hidden.slideUp(250);
                 }
             });
         });

@@ -68,7 +68,7 @@
         <div class="item clickdiv recent-comment">
           <div class="title">
             <a class="primary" title="View Comment Thread"
-               href="{{ best.get_forum_url }}">{{ best.content|truncatewords:10 }}</a>
+               href="{{ best.get_forum_url }}">{{ best.content|synopsis }}</a>
           </div>
           <div class="info">
             {{ best.karma }} points
@@ -86,7 +86,7 @@
         <div class="item clickdiv recent-comment">
           <div class="title">
             <a class="primary" title="View Comment Thread"
-               href="{{ recent.get_forum_url }}">{{ recent.content|truncatewords:10 }}</a>
+               href="{{ recent.get_forum_url }}">{{ recent.content|synopsis }}</a>
           </div>
           <div class="info">
             {{ recent.karma }} points

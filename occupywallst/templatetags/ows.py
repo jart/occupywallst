@@ -39,30 +39,56 @@ def as_tr(field):
         return mark_safe(tr_template.render(Context({'field': field})))
     else:
         return ''
+as_tr.is_safe = True
 
 
 @register.filter
 def jsonify(value):
     return mark_safe(utils.jsonify(value))
+jsonify.is_safe = True
 
 
 @register.filter
 def timesince_short(timestamp):
     return utils.timesince(timestamp)
+timesince_short.is_safe = True
+
+
+@register.filter
+def synopsis(text, max_words=10, max_chars=40):
+    """Creates a shortened version of content
+
+    If text begins with a markdown quotation, it will be excluded
+    unless the whole thing is a quote.
+
+    The result is not markdown parsed and may contain html.
+    """
+    lines = text.split('\n')
+    no_quotes = [s for s in lines if s and not s.startswith('>')]
+    words = no_quotes[0].split()
+    if not words:
+        words = text.split()
+    return " ".join(words[:max_words])[:max_chars]
 
 
 @register.filter
 def markup(text):
+    """Runs text through markdown, no html allowed
+    """
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
     return mark_safe(markdown_safe.convert(text))
+markup.is_safe = True
 
 
 @register.filter
 def markup_unsafe(text):
+    """Runs text through markdown allowing custom html
+    """
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
     return mark_safe(markdown_unsafe.convert(text))
+markup_unsafe.is_safe = True  # lol
 
 
 @register.simple_tag

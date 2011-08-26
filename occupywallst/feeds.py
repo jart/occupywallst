@@ -15,10 +15,10 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.utils.html import escape
-from django.utils.text import truncate_words
 from django.contrib.syndication.views import Feed
 
 from occupywallst import models as db
+from occupywallst.templatetags.ows import synopsis
 
 
 class RSSNewsFeed(Feed):
@@ -84,7 +84,7 @@ class RSSCommentFeed(Feed):
                 .order_by('-published'))[:50]
 
     def item_title(self, comment):
-        return escape(truncate_words(comment.content, 7))
+        return escape(synopsis(comment.content))
 
     def item_pubdate(self, comment):
         return comment.published

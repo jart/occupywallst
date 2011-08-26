@@ -287,7 +287,7 @@ class Article(models.Model):
         render them!
         """
         comments = (Comment.objects
-                    .select_related("user", "user__userinfo")
+                    .select_related("article", "user", "user__userinfo")
                     .filter(article=self)
                     .order_by('-karma', '-published'))[:]
         for c in comments:

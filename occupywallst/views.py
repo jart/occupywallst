@@ -45,12 +45,12 @@ def forum(request, sort):
                 .filter(is_visible=True, is_deleted=False)
                 .order_by('-published'))
     bests = (db.Comment.objects
-             .select_related("user")
+             .select_related("article", "user")
              .filter(is_removed=False, is_deleted=False)
              .filter(published__gt=datetime.now() - timedelta(days=1))
              .order_by('-karma'))
     recents = (db.Comment.objects
-               .select_related("user")
+               .select_related("article", "user")
                .filter(is_removed=False, is_deleted=False)
                .order_by('-published'))
     return render_to_response(
@@ -160,6 +160,7 @@ def user_page(request, username):
         raise Http404()
     if user.userinfo.position is not None:
         nearby_users = (db.UserInfo.objects
+                        .select_related("user")
                         .filter(position__isnull=False)
                         .distance(user.userinfo.position)
                         .order_by('distance'))[1:10]
