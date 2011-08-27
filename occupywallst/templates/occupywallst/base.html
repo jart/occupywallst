@@ -48,6 +48,7 @@
             <li class="item nav-forum"><a title="Public discussion board" href="{% url forum %}">Forum</a></li>
             <li class="item nav-attendees"><a class="fast" title="Map of people involved" href="{% url attendees %}">Map</a></li>
             <li class="item nav-rides"><a class="fast" title="Free Bus/Carpool Rides" href="{% url rides %}">Rides</a></li>
+            <li class="item nav-art"><a title="OccupyWallStreet Propaganda" href="https://imgur.com/a/IX2F2#FeUJ2">Art</a></li>
             <li class="item nav-calendar"><a class="fast" title="Google Calendar" href="{% url calendar %}">Calendar</a></li>
             <li class="item nav-chat"><a class="fast" title="Web-based chatroom" href="{% url chat %}">Chat</a></li>
             <li class="item nav-conf"><a class="fast" title="Telephone Conference Bridges" href="{% url conference %}">Conference</a></li>
@@ -87,10 +88,10 @@
   {% endblock body %}
   <script src="/media/js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
   {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
-    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=16" type="text/javascript"></script>
+    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=18" type="text/javascript"></script>
   {% else %}
     {% for script in OWS_SCRIPTS %}
-      <script src="{{ MEDIA_URL }}{{ script }}?v=16" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}{{ script }}?v=18" type="text/javascript"></script>
     {% endfor %}
   {% endif %}
   <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script>
