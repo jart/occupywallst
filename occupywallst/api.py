@@ -254,9 +254,13 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     else:
         parent = None
         parent_id = None
-    if not settings.DEBUG and user and user.id and not user.is_staff:
-        last = db.Comment.objects.filter(user=user).order_by('-published')[:1]
-        last = user.comment_set.order_by('-published')[:1]
+    if not settings.DEBUG:
+        last = None
+        if user and user.id:
+            if not user.is_staff:
+                last = user.comment_set.order_by('-published')[1]
+        else:
+            last = db.Comment.objects.order_by('-published')[:1]
         if last:
             limit = settings.OWS_POST_LIMIT_COMMENT
             since = (datetime.now() - last[0].published).seconds
