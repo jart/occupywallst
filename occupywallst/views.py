@@ -41,7 +41,6 @@ def index(request):
         context_instance=RequestContext(request))
 
 
-@cache_page(15, cache="fast")
 def forum(request, sort):
     articles = (db.Article.objects
                 .select_related("author")
@@ -95,7 +94,6 @@ def _instate_hierarchy(comments):
     return res
 
 
-@cache_page(15, cache="fast")
 def article(request, slug, forum=False):
     try:
         article = (db.Article.objects
