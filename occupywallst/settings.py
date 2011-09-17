@@ -115,11 +115,13 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 MIDDLEWARE_CLASSES = [
     'occupywallst.middleware.XForwardedForMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'occupywallst.middleware.NeverCache',
 ]

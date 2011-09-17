@@ -14,7 +14,6 @@ from django.db.models import Q
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.views.decorators.cache import cache_page
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
@@ -30,7 +29,6 @@ def error(request):
     assert False
 
 
-@cache_page(60, cache="fast")
 def index(request):
     articles = (db.Article.objects
                 .select_related("author")
@@ -62,14 +60,12 @@ def forum(request, sort):
         context_instance=RequestContext(request))
 
 
-@cache_page(60, cache="fast")
 def calendar(request):
     return render_to_response(
         'occupywallst/calendar.html', {},
         context_instance=RequestContext(request))
 
 
-@cache_page(60, cache="fast")
 def chat(request, room="pub"):
     return render_to_response(
         'occupywallst/chat.html', {'room': room},
@@ -123,7 +119,6 @@ def thread(request, slug):
     return article(request, slug, forum=True)
 
 
-@cache_page(60, cache="fast")
 def attendees(request):
     response = render_to_response(
         'occupywallst/attendees.html', {},
@@ -143,14 +138,12 @@ def housing(request):
         context_instance=RequestContext(request))
 
 
-@cache_page(60, cache="fast")
 def conference(request):
     return render_to_response(
         'occupywallst/conference.html', {},
         context_instance=RequestContext(request))
 
 
-@cache_page(60, cache="fast")
 def about(request):
     return render_to_response(
         'occupywallst/about.html', {},
