@@ -59,6 +59,7 @@
       {% endif %}
     </div>
   </td><td id="right">
+    {% cache 60 forum_sidebar %}
     <section id="recents">
       <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
       {% if not bests %}
@@ -100,5 +101,6 @@
         </div>
       {% endfor %}
     </section>
+    {% endcache %}
   </td></tr></tbody></table>
 {% endblock content %}
