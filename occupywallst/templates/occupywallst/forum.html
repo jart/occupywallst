@@ -19,6 +19,7 @@
   <table style="width:100%"><tbody><tr><td id="left">
     <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum</h2>
     <section id="thread-list" style="margin-top:0">
+      {% cache 60 forum_articles %}
       {% for article in articles %}
         <div class="item clickdiv">
           <h3>
@@ -37,6 +38,7 @@
           </div>
         </div>
       {% endfor %}
+      {% endcache %}
     </section>
     <div class="postform">
       <div>
