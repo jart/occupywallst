@@ -1,5 +1,6 @@
 {% extends base %}
 {% load ows %}
+{% load cache %}
 
 {% block stylesheets %}
   <style type="text/css">
@@ -8,6 +9,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
+{% cache 60 index %}
   <table style="width:100%"><tbody><tr><td id="left">
     <section id="articles">
       {% for article in articles %}
@@ -84,4 +86,5 @@
       </p>
     </section>
   </td></tr></tbody></table>
+{% endcache %}
 {% endblock content %}

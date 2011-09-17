@@ -50,14 +50,14 @@ DATABASES = {
 # need no goofy key prefixes
 CACHES = {
     'default': {
-        'BACKEND': 'occupywallst.memcachedjson.MemcachedCacheJSON',
-        'KEY_FUNCTION': lambda key, key_prefix, version: key,
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': [
             '127.0.0.1:11211',
         ],
     },
-    'fast': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+    'json': {
+        'BACKEND': 'occupywallst.memcachedjson.MemcachedCacheJSON',
+        'KEY_FUNCTION': lambda key, key_prefix, version: key,
         'LOCATION': [
             '127.0.0.1:11211',
         ],
@@ -88,7 +88,8 @@ LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'occupywallst.memcachedjson'
 
 # change me in production
 SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
@@ -115,12 +116,10 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 MIDDLEWARE_CLASSES = [
     'occupywallst.middleware.XForwardedForMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'occupywallst.middleware.NeverCache',

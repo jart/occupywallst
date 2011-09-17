@@ -12,7 +12,15 @@ try:
 except ImportError:
     import json
 
+from django.core.cache import get_cache
 from django.core.cache.backends.memcached import MemcachedCache
+from django.contrib.sessions.backends import cache as session_cache
+
+
+class SessionStore(session_cache.SessionStore):
+    def __init__(self, session_key=None):
+        self._cache = get_cache('json')
+        super(SessionStore, self).__init__(session_key)
 
 
 class MemcachedCacheJSON(MemcachedCache):
