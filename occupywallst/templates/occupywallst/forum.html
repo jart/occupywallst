@@ -18,6 +18,7 @@
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum</h2>
+    <p><strong>Notice:</strong> Recent bugs in the forum have been fixed.  You must now sign up <a href="/signup/">sign up</a> for an account before posting.</p>
     <section id="thread-list" style="margin-top:0">
       {% cache 60 forum_articles %}
       {% for article in articles %}
