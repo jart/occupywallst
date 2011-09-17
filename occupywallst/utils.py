@@ -10,6 +10,7 @@ r"""
 import json
 import time
 import logging
+import traceback
 from decimal import Decimal
 from functools import wraps
 from datetime import datetime
@@ -64,6 +65,7 @@ def api_view(function):
                    'results': list(getattr(exc, 'results', None))}
             transaction.rollback()
         except Exception, exc:
+            traceback.print_exc()
             logger.exception('api request failed')
             res = {'status': 'ERROR',
                    'message': 'system malfunction',
