@@ -68,3 +68,9 @@ LOGGING['loggers']['occupywallst']['level'] = 'DEBUG'
 LOGGING['handlers']['console']['formatter'] = 'verbose'
 LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
                                       'class': 'django.utils.log.NullHandler'}
+
+
+try:
+    from occupywallst.settings_dev_local import *
+except ImportError:
+    pass
