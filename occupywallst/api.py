@@ -208,30 +208,6 @@ def article_get(user, article_slug, **kwargs):
     return [article.as_dict({'html': html})]
 
 
-def article_edit(user, article_slug, content, **kwargs):
-    """Edit an article or forum post
-
-    We mustn't allow users without staff privileges to edit an article
-    once it's been flagged to allow HTML.
-    """
-    if not (user and user.id):
-        raise APIException("you're not logged in")
-    content = content.strip()
-    if len(content) < 3:
-        raise APIException("article too short")
-    try:
-        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
-    except db.Article.DoesNotExist:
-        raise APIException("article not found")
-    if article.author != user:
-        raise APIException("you didn't post that")
-    if article.allow_html and not user.is_staff:
-        raise APIException("insufficient privileges")
-    article.content = content
-    article.save()
-    return article_get(user, article_slug)
-
-
 def comment_new(user, article_slug, parent_id, content, **kwargs):
     """Leave a comment on an article
 
