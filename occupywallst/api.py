@@ -74,7 +74,7 @@ def attendees(bounds, **kwargs):
         qset = (db.UserInfo.objects
                 .select_related("user")
                 .filter(position__isnull=False))
-    for userinfo in qset[:100]:
+    for userinfo in qset:
         yield {'id': userinfo.user.id,
                'username': userinfo.user.username,
                'position': userinfo.position_latlng}
