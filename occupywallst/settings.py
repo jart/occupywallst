@@ -64,6 +64,8 @@ CACHES = {
     },
 }
 
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+
 BOLD = '\x1b[1m'
 GREEN = '\x1b[32m'
 RESET = '\x1b[0m'
