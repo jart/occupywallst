@@ -262,7 +262,11 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         last = None
         if user and user.id:
             if not user.is_staff:
-                last = user.comment_set.order_by('-published')[1]
+                qset = user.comment_set.order_by('-published')
+                try:
+                    last = qset[1]
+                except IndexError:
+                    pass
         else:
             last = db.Comment.objects.order_by('-published')[:1]
         if last:
