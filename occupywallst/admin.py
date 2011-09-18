@@ -103,7 +103,7 @@ class CommentAdmin(GeoAdmin):
     list_display = (content_field, 'published', 'user', 'karma', 'ups',
                     'downs', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
-    search_fields = ('content', 'author__username')
+    search_fields = ('content', 'user__username')
     ordering = ('-published',)
 
     def has_add_permission(self, request):
