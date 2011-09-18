@@ -103,8 +103,8 @@ def article_new(user, title, content, is_forum, **kwargs):
     articles.
     """
     is_forum = _to_bool(is_forum)
-    # if not (user and user.id):
-    #     raise APIException("anonymous posts disabled. please sign up for an account")
+    if not (user and user.id):
+        raise APIException("anonymous posts disabled. please sign up for an account")
     if not is_forum:
         if not (user and user.id) or not user.is_staff:
             raise APIException("insufficient privileges")
@@ -215,8 +215,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
 
     Also upvotes comment and increments article comment count.
     """
-    # if not (user and user.id):
-    #     raise APIException("anonymous posts disabled. please sign up for an account")
+    if not (user and user.id):
+        raise APIException("anonymous posts disabled. please sign up for an account")
     content = content.strip()
     if len(content) < 3:
         raise APIException("comment too short")
