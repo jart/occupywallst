@@ -12,7 +12,7 @@
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="{% url rss-news %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="{% url rss-forum %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="{% url rss-comments %}" />
-  <link rel="stylesheet" href="/media/css/occupywallst.css?v=19" type="text/css" media="all" />
+  <link rel="stylesheet" href="/media/css/occupywallst.css?v=20" type="text/css" media="all" />
   <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
   {% endblock extra_head %}
@@ -51,6 +51,7 @@
             <li class="item nav-chat"><a class="fast" title="Web-based chatroom" href="{% url chat %}">Chat</a></li>
             <li class="item nav-attendees"><a class="fast" title="Map of people involved" href="{% url attendees %}">User Map</a></li>
             <!-- <li class="item nav-calendar"><a class="fast" title="Google Calendar" href="{% url calendar %}">Calendar</a></li> -->
+            <li class="item nav-photos"><a title="Protest Photos on Flickr" href="http://www.flickr.com/search/?w=all&q=occupywallstreet+&m=tags">Photos</a></li>
             <li class="item nav-conf"><a class="fast" title="Telephone Conference Bridges" href="{% url conference %}">Conference</a></li>
             <li class="item nav-about"><a class="fast" title="About Us / Contact" href="{% url about %}">Contact</a></li>
             <li class="last">
