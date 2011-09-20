@@ -247,7 +247,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             last = db.Comment.objects.order_by('-published')[:1]
         if last:
             limit = settings.OWS_POST_LIMIT_COMMENT
-            since = (datetime.now() - last[0].published).seconds
+            since = (datetime.now() - last.published).seconds
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
