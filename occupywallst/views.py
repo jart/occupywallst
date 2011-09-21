@@ -33,9 +33,9 @@ def index(request):
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_forum=False, is_deleted=False)
-                .order_by('-published'))[:25]
+                .order_by('-published'))
     return render_to_response(
-        'occupywallst/index.html', {'articles': articles},
+        'occupywallst/index.html', {'articles': articles[:8]},
         context_instance=RequestContext(request))
 
 
