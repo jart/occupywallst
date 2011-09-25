@@ -56,11 +56,6 @@
              width="16" height="16" />
         <span class="error"></span>
       </div>
-      {% if not user.is_authenticated %}
-        <p class="warning"><strong>Warning:</strong> When posting anonymously
-          you will not be able to edit/delete your post.  Please consider
-          <a href="{% url signup %}">signing up for account</a>.</p>
-      {% endif %}
     </div>
   </td><td id="right">
     {% cache 60 forum_sidebar %}
