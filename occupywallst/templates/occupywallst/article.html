@@ -1,5 +1,6 @@
 {% extends base %}
 {% load ows %}
+{% load cache %}
 
 {% block title %}{{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}{% endblock title %}
 
@@ -26,6 +27,7 @@
 {% endblock js_init %}
 
 {% block content %}
+{% cache 60 article article.id %}
   <table style="width:100%"><tbody><tr><td id="left">
     {% include "occupywallst/article_content.html" %}
     <h3 id="comments">
@@ -83,4 +85,5 @@
     <span class="error"></span>
   </div>
 
+{% endcache %}
 {% endblock content %}
