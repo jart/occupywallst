@@ -128,6 +128,21 @@ pre { margin: 0 1em; }
     padding-left: 0.2em;
 }
 
+#navbar li.nav-donate a { 
+    background: #c60;
+    border-top: 1px solid #666;
+    border-left: 1px solid #666;
+    border-bottom: 1px solid #333;
+    border-right: 1px solid #333;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#e82), to(#c60));
+    background: -moz-linear-gradient(top,  #e82,  #c60);
+}
+#navbar li.nav-donate a:hover { background: #e82; }
 
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
