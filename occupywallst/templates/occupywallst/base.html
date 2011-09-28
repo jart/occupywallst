@@ -4,7 +4,7 @@
   {% load ows %}
   <meta charset="utf-8" />
   <title>{% block title %}Occupy Wall Street | NYC Protest for American Revolution{% endblock title %}</title>
-  <link rel="shortcut icon" href="/media/img/bull16.png" />
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}img/bull16.png" />
   <meta name="description" content="News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption" />
   {% block canonical %}
     <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
@@ -12,8 +12,8 @@
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="{% url rss-news %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="{% url rss-forum %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="{% url rss-comments %}" />
-  <link rel="stylesheet" href="/media/css/occupywallst.css?v=21" type="text/css" media="all" />
-  <link rel="stylesheet" href="/media/css/occupywallst_print.css?v=9" type="text/css" media="print" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=21" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
   {% endblock extra_head %}
   {% block stylesheets %}
@@ -55,9 +55,9 @@
             <li class="item nav-nycga"><a title="NYC General Assembly" href="http://nycga.cc/">NYCGA</a></li>
             <li class="item nav-about"><a class="fast" title="About Us / Contact" href="{% url about %}">About</a></li>
             <li class="last">
-              <a title="Facebook Event" href="http://www.facebook.com/event.php?eid=144937025580428"><img width="24" height="24" src="/media/img/facebook.png" /></a>
-              <a title="Our Twitter Page" href="https://twitter.com/#!/OccupyWallSt"><img width="24" height="24" src="/media/img/twitter.png" /></a>
-              <a title="Reddit" href="http://www.reddit.com/r/occupywallstreet/"><img width="24" height="23" style="padding-bottom:3px" src="/media/img/reddit.png" /></a>
+              <a title="Facebook Event" href="http://www.facebook.com/event.php?eid=144937025580428"><img width="24" height="24" src="{{ MEDIA_URL }}img/facebook.png" /></a>
+              <a title="Our Twitter Page" href="https://twitter.com/#!/OccupyWallSt"><img width="24" height="24" src="{{ MEDIA_URL }}img/twitter.png" /></a>
+              <a title="Reddit" href="http://www.reddit.com/r/occupywallstreet/"><img width="24" height="23" style="padding-bottom:3px" src="{{ MEDIA_URL }}img/reddit.png" /></a>
             </li>
           </ul>
         </div>
@@ -87,7 +87,7 @@
       </div>
     </div>
   {% endblock body %}
-  <script src="/media/js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
+  <script src="{{ MEDIA_URL }}js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
   {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
     <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=18" type="text/javascript"></script>
   {% else %}

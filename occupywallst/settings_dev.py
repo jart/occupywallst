@@ -4,6 +4,9 @@ from occupywallst.settings import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+MEDIA_URL = '/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
+
 SESSION_COOKIE_DOMAIN = '.dev.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.dev.occupywallst.org'
 
