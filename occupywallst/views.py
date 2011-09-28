@@ -17,9 +17,9 @@ from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
-from occupywallst.forms import ProfileForm, SignupForm
 from occupywallst import api
 from occupywallst import models as db
+from occupywallst.forms import ProfileForm, SignupForm
 
 
 logger = logging.getLogger(__name__)

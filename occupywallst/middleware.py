@@ -38,3 +38,18 @@ class XForwardedForMiddleware(object):
         if 'HTTP_X_FORWARDED_FOR' in request.META:
             request.META['REMOTE_ADDR'] = request.META['HTTP_X_FORWARDED_FOR']
             request.META['REMOTE_HOST'] = None
+
+
+class CsrfCookieWhenLoggedIn(object):
+    """Tell Django to set CSRF cookie on all pages when logged in
+
+    Normally Django only sets the CSRF cookie when you use the CSRF
+    protection template tag.  Because we use Ajax for just about
+    everything, we need to ensure this cookie is always set once the
+    user logs in.
+    """
+
+    def process_response(self, request, response):
+        if request.user.is_authenticated():
+            request.META["CSRF_COOKIE_USED"] = True
+        return response

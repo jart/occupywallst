@@ -121,9 +121,9 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'occupywallst.middleware.NeverCache',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'occupywallst.middleware.CsrfCookieWhenLoggedIn',
 ]
 
 INSTALLED_APPS = [

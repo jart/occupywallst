@@ -112,7 +112,6 @@
         if (path.match(/^\/api\/safe\//)) {
             return $.get(path, data, callback, "json");
         } else {
-            data.csrfmiddlewaretoken = "{{ csrf_token }}";
             return $.post(path, data, callback, "json");
         }
     }
