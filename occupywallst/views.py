@@ -94,7 +94,7 @@ def calendar(request):
         context_instance=RequestContext(request))
 
 
-@my_cache(lambda r: 'chat')
+@my_cache(lambda r, room="pub": 'chat:' + room)
 def chat(request, room="pub"):
     return render_to_response(
         'occupywallst/chat.html', {'room': room},
@@ -119,7 +119,7 @@ def _instate_hierarchy(comments):
     return res
 
 
-@my_cache(lambda r, slug, forum: ('artforum:' if forum else 'artnews:') + slug)
+@my_cache(lambda r, slug, forum=False: ('artfrm:' if forum else 'artnwz:') + slug)
 def article(request, slug, forum=False):
     try:
         article = (db.Article.objects
