@@ -12,7 +12,7 @@
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="{% url rss-news %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="{% url rss-forum %}" />
   <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="{% url rss-comments %}" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=22" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=23" type="text/css" media="all" />
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
   {% endblock extra_head %}
@@ -36,6 +36,7 @@
             <a href="{% url signup %}">signup</a>
           {% endif %}
         </div>
+        <img alt="Raised Fist" title="Raised Fist" id="fist" src="{{ MEDIA_URL }}img/fist.png" width="59" height="94" />
         <div id="brand"><a href="{% url index %}"><span class="red">Occupy</span>WallStreet</a></div>
         <div id="slogan">
           The resistance continues at <a href="http://nycga.cc/?page_id=399">Liberty Square</a>, with free pizza ;)
