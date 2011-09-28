@@ -222,6 +222,7 @@ def user_page(request, username):
         context_instance=RequestContext(request))
 
 
+@login_required
 def notification(request, id):
     try:
         notify = db.Notification.objects.get(id=id, user=request.user)
