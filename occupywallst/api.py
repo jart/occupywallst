@@ -61,7 +61,7 @@ def _to_bool(val):
                 str(val).lower() == "true")
 
 
-def attendees(bounds, **kwargs):
+def attendees(bounds=None, **kwargs):
     """Find all people going who live within visible map area.
     """
     if bounds:
@@ -78,6 +78,21 @@ def attendees(bounds, **kwargs):
         yield {'id': userinfo.user.id,
                'username': userinfo.user.username,
                'position': userinfo.position_latlng}
+
+def rides(bounds=None, **kwargs):
+    """Find all rides within visible map area.
+    """
+    if bounds:
+        bbox = _str_to_bbox(bounds)
+        qset = (db.Ride.objects
+                .filter(route__isnull=False,
+                        route__bboverlaps=bbox))
+    else:
+        qset = (db.Ride.objects
+                .filter(route__isnull=False))
+    for ride in qset:
+        yield {'id': ride.user.id,
+               'route': ride.route}
 
 
 def attendee_info(username, **kwargs):

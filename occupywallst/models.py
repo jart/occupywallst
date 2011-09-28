@@ -19,11 +19,15 @@ from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
+from django.db.models import F
+from django.db import transaction
 
 from occupywallst.utils import jsonify
+from occupywallst import geo
+from occupywallst.model_update import update
 
 
 logger = logging.getLogger(__name__)
@@ -555,14 +559,14 @@ class Ride(models.Model):
     seats_total = models.IntegerField(default=0, help_text="""
         How many seats in vehicle does the user wish to fill?  This does
         not change when ride requests are accepted.""")
-    seats_avail = models.IntegerField(default=0, help_text="""
+    seats_used = models.IntegerField(default=0, help_text="""
         Counter for total number of seats currently available.  This changes
         when user accepts requests for a ride from other users.""")
     waypoints = models.TextField(help_text="""
         List of addresses intersected by driving route separated by newlines.
         Must contain at least two lines for origin and destination.  This may
         be updated to include people who will be picked up.""")
-    route = models.MultiPointField(null=True, default=None, help_text="""
+    route = models.LineStringField(null=True, default=None, help_text="""
         The driving route coords Google gave us from waypoints.""")
     route_data = models.TextField(blank=True, help_text="""
         Google's goofy compressed version of route coords.""")
@@ -591,9 +595,21 @@ class Ride(models.Model):
         if len(self.waypoint_list) < 2:
             raise ValidationError('Must have at least two waypoints')
 
+    def update_from_maps(self):
+        route = geo.directions(self.waypoint_list)
+        points = []
+        for waypoint in route:
+            points += \
+                    [ p[::-1] for p in waypoint['overview_polyline']['points']]
+        self.route = LineString(points)
+
     @property
     def waypoint_list(self):
         return [s.strip() for s in self.waypoints.split('\n') if s.strip()]
+
+    @property
+    def seats_avail(self):
+        return self.seats_total - self.seats_used
 
 
 class RideRequest(models.Model):

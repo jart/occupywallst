@@ -137,3 +137,9 @@ class SignupForm(ProfileForm):
         user.save()
         self.user = user
         return super(SignupForm, self).save()
+
+class RideForm(forms.ModelForm):
+    class Meta:
+        model = db.Ride
+        exclude = ['seats_used', 'route', 'route_data',]
+

@@ -20,6 +20,7 @@
     "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
     "zoom": 8
   });
+
 {% endblock js_init %}
 
 {% block content %}
@@ -30,10 +31,37 @@
     </h1>
     <p><strong>This feature is still in progress!</strong></p>
     <div style="width: 100%; height: 500px; " id="map"></div>
-<!--     <p> -->
-<!--       <textarea cols="30" rows="5">phila pa -->
-<!-- new york ny</textarea><br /> -->
-<!--       <button id="addroute">add route</button> -->
-<!--     </p> -->
-  </section>
+    <div id="add_ride" style="display:none">
+    <form method="POST" action=".">{% csrf_token %}
+        <table class="formtable">
+            <tbody>
+                {{ form.as_table }}
+            </tbody>
+        </table>
+        <input type="submit" value="Add ride"/>
+    </form>
+    </div>
+    <table id="ridetable">
+        <thead>
+            <tr>
+                <td>Ride type</td>
+                <td>Ride name</td>
+                <td>Depart time</td>
+                <td>Available seats</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ride in rides %}
+            <tr>
+                <td>{{ ride.ridetype }}</td>
+                <td>{{ ride.title }} </td>
+                <td>{{ ride.depart_time }}</td>
+                <td>{{ ride.seats_avail }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="#" id="add_link">Add a ride</a>
+            </section>
 {% endblock content %}

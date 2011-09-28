@@ -9,6 +9,11 @@ var rides_init;
     var markers = [];
     var philadelphia;
 
+    $("#add_link").click(function() { 
+        $("#add_ride").toggle(100);
+            return false;
+    });
+
     function init(args) {
         dserv = new google.maps.DirectionsService();
         map = new google.maps.Map(args.map, {
@@ -20,18 +25,27 @@ var rides_init;
             zoomControl: true,
             scaleControl: true
         });
-
-        show_route(["phila pa", "new york ny"]);
-        show_route(["washington dc", "new york ny"]);
-        show_route(["danbury ct", "new york ny"]);
-        show_route(["toronto ca", "new york ny"]);
-
+        google.maps.event.addListener(map, "idle", update_rides);
         // $("#addroute").click(function() {
         //     ev.preventDefault();
         //     show_route($("textarea").val().split('\n'));
         // });
 
     };
+
+    function update_rides() {
+        var bounds = { bounds: map.getBounds().toUrlValue() };
+
+        $.getJSON("/api/safe/rides/", bounds, function(rides) {
+            rides.results.forEach(function(ride, i) {
+                console.log(ride) ;
+                happy_line(ride.route.map(function(p) {
+                    var point = new google.maps.LatLng(p[1],p[0]);
+                    return point;
+                }));
+            });
+        });
+    }
 
     function happy_line(path) {
         var line = new google.maps.Polyline({

@@ -17,7 +17,7 @@ from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
-from occupywallst.forms import ProfileForm, SignupForm
+from occupywallst.forms import ProfileForm, SignupForm, RideForm
 from occupywallst import api
 from occupywallst import models as db
 
@@ -127,8 +127,24 @@ def attendees(request):
 
 
 def rides(request):
+    if request.method == "POST":
+        if request.user.is_authenticated():
+            form = RideForm(request.POST)
+            if form.is_valid():
+                ride = form.save(commit=False)
+                ride.user = request.user
+                ride.update_from_maps()
+                ride.save()
+        else:
+            return HttpResponseRedirect("/signup")
+    else:
+        form = RideForm()
+    rides = db.Ride.objects.all()
     return render_to_response(
-        'occupywallst/rides.html', {},
+        'occupywallst/rides.html', {
+            "form" : form,
+            "rides" : rides,
+            },
         context_instance=RequestContext(request))
 
 
