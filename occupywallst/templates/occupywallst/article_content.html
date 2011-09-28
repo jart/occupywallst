@@ -1,7 +1,7 @@
 {% load ows %}
 
 <article id="{{ article.slug }}">
-  <h1>{{ article.title }}</h1>
+  <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
   <p class="info">
     {% if forum %}
       Posted {{ article.published|timesince_short }} ago
