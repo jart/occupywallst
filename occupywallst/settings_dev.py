@@ -16,7 +16,9 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
-MIDDLEWARE_CLASSES += ['occupywallst.middleware.SQLInfoMiddleware']
+MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+INSTALLED_APPS += ['debug_toolbar']
 
 LOGGING = {
     'version': 1,
