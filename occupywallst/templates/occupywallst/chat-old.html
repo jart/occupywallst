@@ -10,7 +10,11 @@
 {% block stylesheets %}
   <link rel="stylesheet" href="/media/css/chat.css?v=11" type="text/css" media="all" />
   <style type="text/css">
-    #navbar .nav-chat { background: #900; }
+    #navbar .nav-chat {
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
   </style>
 {% endblock stylesheets %}
 

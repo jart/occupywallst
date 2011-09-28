@@ -4,7 +4,11 @@
 
 {% block stylesheets %}
   <style type="text/css">
-    #navbar .nav-news { background: #900; }
+    #navbar .nav-news {
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
   </style>
 {% endblock stylesheets %}
 
@@ -47,11 +51,9 @@
         <!-- </div> -->
       {% endif %}
       <p style="margin-top:0">
-        <strong>Where:</strong>
+        <strong>Where</strong>
         Liberty Square <small>(<a href="http://nycga.cc/?page_id=399">How to get there</a>)</small><br />
-        <strong>Donations:</strong>
-        <a href="http://nycga.cc/?page_id=377">NYCGA Donation Page</a><br />
-        <strong>Help & Directions:</strong>
+        <strong>Help & Directions</strong>
         +1 (877) 881-3020<br />
         <strong>General Inquiries</strong>
         <a href="mailto:general@occupywallst.org">general@occupywallst.org</a><br />
