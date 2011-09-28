@@ -1,4 +1,5 @@
 {% load ows %}
+{% load l10n %}
 
 <article id="{{ article.slug }}">
   <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
@@ -24,9 +25,9 @@
     {% endif %}
     {% if user.is_staff %}
       {% if article.is_forum %}
-        | <a href="/admin/occupywallst/forumpost/{{ article.id }}/">admin</a>
+        | <a href="/admin/occupywallst/forumpost/{{ article.id|unlocalize }}/">admin</a>
       {% else %}
-        | <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">admin</a>
+        | <a href="/admin/occupywallst/newsarticle/{{ article.id|unlocalize }}/">admin</a>
       {% endif %}
     {% endif %}
   </p>
