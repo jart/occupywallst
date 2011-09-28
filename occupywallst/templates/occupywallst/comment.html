@@ -2,7 +2,7 @@
 {% load l10n %}
 
 {% if not comment.is_deleted or comment.replies %}
-  <div class="comment" id="comment-{{ comment.id|unlocalize }}">
+  <div class="comment" id="comment-{{ comment.id }}">
     <div class="content {% if comment.is_removed %}removed{% endif %}">
       {% if comment.is_deleted %}
         <p class="deleted"><span>This comment was deleted D:</span></p>

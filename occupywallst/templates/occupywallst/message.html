@@ -1,7 +1,7 @@
 {% load ows %}
 {% load l10n %}
 
-<div id="message-{{ message.id|unlocalize }}" class="message {% cycle off,on %}">
+<div id="message-{{ message.id }}" class="message {% cycle off,on %}">
   <p class="info tinygray">
     {{ message.from_user }} said
     {{ message.published|timesince_short }} ago

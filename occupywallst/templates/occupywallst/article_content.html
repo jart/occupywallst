@@ -25,9 +25,9 @@
     {% endif %}
     {% if user.is_staff %}
       {% if article.is_forum %}
-        | <a href="/admin/occupywallst/forumpost/{{ article.id|unlocalize }}/">admin</a>
+        | <a href="/admin/occupywallst/forumpost/{{ article.id }}/">admin</a>
       {% else %}
-        | <a href="/admin/occupywallst/newsarticle/{{ article.id|unlocalize }}/">admin</a>
+        | <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">admin</a>
       {% endif %}
     {% endif %}
   </p>
