@@ -6,7 +6,7 @@
     {% if forum %}
       Posted {{ article.published|timesince_short }} ago
     {% else %}
-      Posted {{ article.published|date:"Y-m-d h:i:s T" }}
+      Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
     {% endif %}
     by {% if not article.author %}anonymous{% else %}
       <a rel="author" title="View {{ article.author.username }}'s profile"

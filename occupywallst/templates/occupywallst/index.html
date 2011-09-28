@@ -21,7 +21,7 @@
           <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
               {{ article.title }}</a></h1>
           <p class="info">
-            Published {{ article.published|date:"Y-m-d h:i:s T" }}
+            Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
             by {% if not article.author %}anonymous{% else %}
               <a title="View {{ article.author.username }}'s profile"
                  class="user" href="{{ article.author.get_absolute_url }}">

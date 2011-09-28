@@ -8,6 +8,8 @@ r"""
 """
 
 import re
+import pytz
+import datetime
 import markdown
 
 from django import template
@@ -17,6 +19,7 @@ from django.template import Template, Context
 from django.template.loader import render_to_string
 
 from occupywallst import utils
+
 
 register = template.Library()
 
@@ -32,6 +35,14 @@ pat_url = re.compile(r'(?<!\S)(https?://[^\s\'\"\]\)]+)', re.I)
 pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
 markdown_safe = markdown.Markdown(safe_mode='escape')
 markdown_unsafe = markdown.Markdown()
+
+
+@register.filter
+def as_timezone(ts, zone):
+    if not isinstance(ts, datetime.datetime):
+        return ts
+    return ts.replace(tzinfo=pytz.UTC).astimezone(pytz.timezone(zone))
+as_timezone.is_safe = True
 
 
 @register.filter
