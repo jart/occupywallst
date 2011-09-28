@@ -23,6 +23,7 @@ TEMPLATE_DEBUG = DEBUG
 
 OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
 OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
+OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 

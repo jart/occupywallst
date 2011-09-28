@@ -33,7 +33,7 @@ r"""
 """
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import auth
@@ -425,6 +425,14 @@ def message_send(user, to_username, content, **kwargs):
         if last:
             if (datetime.now() - last[0].published).seconds < 30:
                 raise APIException("hey slow down a little!")
+    if not user.is_staff:
+        hours24 = datetime.now() - timedelta(hours=24)
+        rec = db.Message.objects.filter(from_user=user, published__gt=hours24)
+        sentusers = set(m.to_user.username for m in rec)
+        max_ = settings.OWS_MAX_PRIVMSG_USER_DAY
+        if len(sentusers) > max_:
+            raise APIException("you can't private message more than %d users "
+                               "in one day" % (max_))
     msg = db.Message.objects.create(from_user=user,
                                     to_user=to_user,
                                     content=content)
