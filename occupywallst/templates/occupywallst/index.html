@@ -17,29 +17,11 @@
   <table style="width:100%"><tbody><tr><td id="left">
     <section id="articles">
       {% for article in articles %}
-        <article id="article-{{ article.id }}">
-          <h1><a title="View Full Article" href="{{ article.get_absolute_url }}">
-              {{ article.title }}</a></h1>
-          <p class="info">
-            Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
-            by {% if not article.author %}anonymous{% else %}
-              <a title="View {{ article.author.username }}'s profile"
-                 class="user" href="{{ article.author.get_absolute_url }}">
-              {{ article.author.username }}</a>
-            {% endif %}
-          </p>
-          <div class="article-content">
-            {% if article.allow_html %}
-              {{ article.content|markup_unsafe }}
-            {% else %}
-              {{ article.content|markup }}
-            {% endif %}
-          </div>
-          <p>
-            <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
-              {{ article.comment_count }} Comments</a>
-          </p>
-        </article>
+        {% include "occupywallst/article_content.html" %}
+        <p>
+          <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
+            {{ article.comment_count }} Comments</a>
+        </p>
       {% endfor %}
     </section>
   </td><td id="right350">
