@@ -13,6 +13,7 @@ import datetime
 import markdown
 
 from django import template
+from django.conf import settings
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.template import Template, Context
@@ -85,13 +86,20 @@ def synopsis(text, max_words=10, max_chars=40):
     return " ".join(words[:max_words])[:max_chars]
 
 
+def _markup(text, transform):
+    text = pat_url.sub(r'<\1>', text)
+    text = pat_url_www.sub(r'[\1](http://\1)', text)
+    html = transform(text)
+    # temporary hack to content distribution network
+    html = html.replace('src="/media/', 'src="' + settings.MEDIA_URL)
+    return mark_safe(html)
+
+
 @register.filter
 def markup(text):
     """Runs text through markdown, no html allowed
     """
-    text = pat_url.sub(r'<\1>', text)
-    text = pat_url_www.sub(r'[\1](http://\1)', text)
-    return mark_safe(markdown_safe.convert(text))
+    return _markup(text, markdown_safe.convert)
 markup.is_safe = True
 
 
@@ -99,9 +107,7 @@ markup.is_safe = True
 def markup_unsafe(text):
     """Runs text through markdown allowing custom html
     """
-    text = pat_url.sub(r'<\1>', text)
-    text = pat_url_www.sub(r'[\1](http://\1)', text)
-    return mark_safe(markdown_unsafe.convert(text))
+    return _markup(text, markdown_unsafe.convert)
 markup_unsafe.is_safe = True  # lol
 
 
