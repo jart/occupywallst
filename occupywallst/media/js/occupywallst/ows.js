@@ -22,7 +22,7 @@ var ows_inactivity_delay;
         }
         $(".clickdiv").clickdiv();
         $(".hider").hider();
-        setTimeout(subscriber, 100);
+        // setTimeout(subscriber, 100);
         setInterval(function() {
             $("#notifications .item span").each(function() {
                 $(this).text(timesince($(this).data('published')) + ' ago');
