@@ -50,7 +50,7 @@ class CsrfCookieWhenLoggedIn(object):
     """
 
     def process_response(self, request, response):
-        if response.status_code == 200:
+        if response.status_code == 200 and request.method == 'GET':
             if request.user.is_authenticated():
                 request.META["CSRF_COOKIE_USED"] = True
         return response
