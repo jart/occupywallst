@@ -8,13 +8,15 @@ r"""
 """
 
 import logging
+from functools import wraps
 from datetime import datetime, timedelta
 
 from django.db.models import Q
-from django.contrib.auth import views as authviews
+from django.core.cache import cache
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.http import Http404, HttpResponseRedirect
+from django.contrib.auth import views as authviews
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
 from occupywallst import api
@@ -29,17 +31,42 @@ def error(request):
     assert False
 
 
+def my_cache(mkkey, seconds=60):
+    def _my_cache(function):
+        @wraps(function)
+        def __my_cache(request, *args, **kwargs):
+            if request.user.is_authenticated():
+                response = function(request, *args, **kwargs)
+            else:
+                key = mkkey(request, *args, **kwargs)
+                response = cache.get(key)
+                if not response:
+                    response = function(request, *args, **kwargs)
+                    cache.set(key, response, seconds)
+            return response
+        return __my_cache
+    return _my_cache
+
+
+
+@my_cache(lambda r: 'index')
 def index(request):
-    articles = (db.Article.objects
-                .select_related("author")
-                .filter(is_visible=True, is_forum=False, is_deleted=False)
-                .order_by('-published'))
-    return render_to_response(
-        'occupywallst/index.html', {'articles': articles[:8]},
-        context_instance=RequestContext(request))
+    from django.core.cache import cache
+    response = cache.get('_index')
+    if not response:
+        articles = (db.Article.objects
+                    .select_related("author")
+                    .filter(is_visible=True, is_forum=False, is_deleted=False)
+                    .order_by('-published'))
+        response = render_to_response(
+            'occupywallst/index.html', {'articles': articles[:8]},
+            context_instance=RequestContext(request))
+        cache.set('_index', response, 5)
+    return response
 
 
-def forum(request, sort):
+@my_cache(lambda r: 'forum')
+def forum(request):
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
@@ -60,12 +87,14 @@ def forum(request, sort):
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'calendar')
 def calendar(request):
     return render_to_response(
         'occupywallst/calendar.html', {},
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'chat')
 def chat(request, room="pub"):
     return render_to_response(
         'occupywallst/chat.html', {'room': room},
@@ -90,6 +119,7 @@ def _instate_hierarchy(comments):
     return res
 
 
+@my_cache(lambda r, slug, forum: ('artforum:' if forum else 'artnews:') + slug)
 def article(request, slug, forum=False):
     try:
         article = (db.Article.objects
@@ -119,6 +149,7 @@ def thread(request, slug):
     return article(request, slug, forum=True)
 
 
+@my_cache(lambda r: 'attendees')
 def attendees(request):
     response = render_to_response(
         'occupywallst/attendees.html', {},
@@ -126,24 +157,28 @@ def attendees(request):
     return response
 
 
+@my_cache(lambda r: 'rides')
 def rides(request):
     return render_to_response(
         'occupywallst/rides.html', {},
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'housing')
 def housing(request):
     return render_to_response(
         'occupywallst/housing.html', {},
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'conference')
 def conference(request):
     return render_to_response(
         'occupywallst/conference.html', {},
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'about')
 def about(request):
     return render_to_response(
         'occupywallst/about.html', {},
