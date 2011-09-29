@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-29 07:25+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2011-09-29 12:43+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 
 #: settings.py:100
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: settings.py:101
 msgid "Spanish"
-msgstr ""
+msgstr "Español"
 
 #: settings.py:102
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: templates/admin/auth/user/change_form.html:4
 msgid "OccupyWallSt User Info"
@@ -57,7 +57,7 @@ msgstr ""
 
 #: templates/occupywallst/base.html:29 templates/occupywallst/base.html:35
 msgid "Welcome"
-msgstr ""
+msgstr "Bienvenido"
 
 #: templates/occupywallst/base.html:31
 msgid "admin"
@@ -73,7 +73,7 @@ msgstr ""
 
 #: templates/occupywallst/base.html:37
 msgid "signup"
-msgstr ""
+msgstr "Inscripción"
 
 #: templates/occupywallst/base.html:43
 msgid ""
@@ -83,7 +83,7 @@ msgstr ""
 
 #: templates/occupywallst/base.html:51
 msgid "News"
-msgstr ""
+msgstr "Noticias"
 
 #: templates/occupywallst/base.html:52
 msgid "LiveStream"
@@ -91,15 +91,15 @@ msgstr ""
 
 #: templates/occupywallst/base.html:53
 msgid "Forum"
-msgstr ""
+msgstr "Foro"
 
 #: templates/occupywallst/base.html:54
 msgid "Chat"
-msgstr ""
+msgstr "Charla"
 
 #: templates/occupywallst/base.html:55
 msgid "User Map"
-msgstr ""
+msgstr "Mapa"
 
 #: templates/occupywallst/base.html:56
 msgid "NYCGA"
@@ -107,11 +107,11 @@ msgstr ""
 
 #: templates/occupywallst/base.html:57
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: templates/occupywallst/base.html:58
 msgid "Donate"
-msgstr ""
+msgstr "Donar"
 
 #: templates/occupywallst/base.html:76
 msgid "this site was brought to you by various radicals"
