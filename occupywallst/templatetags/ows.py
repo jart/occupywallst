@@ -81,6 +81,8 @@ def synopsis(text, max_words=10, max_chars=40):
     """
     lines = text.split('\n')
     no_quotes = [s for s in lines if s and not s.startswith('>')]
+    if not no_quotes:
+        return 'BLANK'
     first_line = unicode(strip_tags(markup(strip_tags(no_quotes[0]))))
     words = first_line.split()
     return " ".join(words[:max_words])[:max_chars]
