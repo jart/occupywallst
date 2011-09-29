@@ -4,14 +4,14 @@
 
 <article id="{{ article.slug }}">
   {% if user.is_authenticated and user == article.author %}
-    <a class="edit" href="#">[Edit]</a>
-    <a class="delete" href="#">[Delete]</a>
+    <a class="edit" href="#">[{% trans "edit" %}]</a>
+    <a class="delete" href="#">[{% trans "delete" %}]</a>
   {% endif %}
   {% if user.is_staff %}
     {% if article.is_forum %}
-      <a href="/admin/occupywallst/forumpost/{{ article.id }}/">[Admin Edit]</a>
+      <a href="/admin/occupywallst/forumpost/{{ article.id }}/">[admin edit]</a>
     {% else %}
-      <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">[Admin Edit]</a>
+      <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">[admin edit]</a>
     {% endif %}
   {% endif %}
 
@@ -20,11 +20,11 @@
     <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
     <p class="info">
       {% if forum %}
-        Posted {{ article.published|timesince_short }} ago
+        {% trans "Posted" %} {{ article.published|timesince_short }} {% trans "ago" %}
       {% else %}
-        Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
+        {% trans "Posted" %} {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
       {% endif %}
-      by {% if not article.author %}anonymous{% else %}
+      {% trans "by" %} {% if not article.author %}anonymous{% else %}
         <a rel="author" title="View {{ article.author.username }}'s profile"
            class="user" href="{{ article.author.get_absolute_url }}">
         {{ article.author.username }}</a>

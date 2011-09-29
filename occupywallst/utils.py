@@ -17,6 +17,7 @@ from datetime import datetime
 
 from django.db import transaction
 from django.http import HttpResponse
+from django.utils.translation import ungettext
 
 
 logger = logging.getLogger(__name__)
@@ -123,20 +124,19 @@ def timesince(timestamp):
     seconds = delta.days * 60 * 60 * 24 + delta.seconds
     if seconds <= 60:
         x = seconds
-        s = ('second', 'seconds')
+        return ungettext('%(x)d second', '%(x)d seconds', x) % {'x': x}
     elif seconds <= 60 * 60:
         x = int(round(seconds / 60.0))
-        s = ('minute', 'minutes')
+        return ungettext('%(x)d minute', '%(x)d minutes', x) % {'x': x}
     elif seconds <= 60 * 60 * 24:
         x = int(round(seconds / 60 / 60))
-        s = ('hour', 'hours')
+        return ungettext('%(x)d hour', '%(x)d hours', x) % {'x': x}
     elif seconds <= 60 * 60 * 24 * 30:
         x = int(round(seconds / 60 / 60 / 24))
-        s = ('day', 'days')
+        return ungettext('%(x)d day', '%(x)d days', x) % {'x': x}
     else:
         x = int(round(seconds / 60 / 60 / 24 / 30))
-        s = ('month', 'months')
-    return "%d %s" % (x, s[x != 1])
+        return ungettext('%(x)d month', '%(x)d months', x) % {'x': x}
 
 
 def jstime(dt):

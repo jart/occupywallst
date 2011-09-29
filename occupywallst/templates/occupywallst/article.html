@@ -1,7 +1,11 @@
 {% extends base %}
 {% load ows %}
+{% load i18n %}
 
-{% block title %}{{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}{% endblock title %}
+{% block title %}
+  {% translate_object article LANGUAGE_CODE %}
+  {{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}
+{% endblock title %}
 
 {# this is ESPECIALLY important for SEO because news articles are
   displayed both on the index page and the forum page.  we don't

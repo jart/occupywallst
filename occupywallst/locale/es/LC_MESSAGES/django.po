@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-29 07:25+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: settings.py:100
+msgid "English"
+msgstr ""
+
+#: settings.py:101
+msgid "Spanish"
+msgstr ""
+
+#: settings.py:102
+msgid "French"
+msgstr ""
+
+#: templates/admin/auth/user/change_form.html:4
+msgid "OccupyWallSt User Info"
+msgstr ""
+
+#: templates/admin/occupywallst/article/change_form.html:5
+msgid "Convert to News Article"
+msgstr ""
+
+#: templates/admin/occupywallst/article/change_form.html:7
+msgid "Convert to Forum Post"
+msgstr ""
+
+#: templates/admin/occupywallst/comment/change_form.html:5
+msgid "Parent Comment"
+msgstr ""
+
+#: templates/occupywallst/base.html:7
+msgid "NYC Protest for American Revolution"
+msgstr ""
+
+#: templates/occupywallst/base.html:9
+msgid ""
+"News and resources for protesters attending the mass demonstration on Wall "
+"Street against financial greed and corruption"
+msgstr ""
+
+#: templates/occupywallst/base.html:29 templates/occupywallst/base.html:35
+msgid "Welcome"
+msgstr ""
+
+#: templates/occupywallst/base.html:31
+msgid "admin"
+msgstr ""
+
+#: templates/occupywallst/base.html:33
+msgid "logout"
+msgstr ""
+
+#: templates/occupywallst/base.html:36
+msgid "login"
+msgstr ""
+
+#: templates/occupywallst/base.html:37
+msgid "signup"
+msgstr ""
+
+#: templates/occupywallst/base.html:43
+msgid ""
+"The resistance continues at Liberty Square and <a href=\"http://"
+"occupytogether.org/\">Nationwide</a>!"
+msgstr ""
+
+#: templates/occupywallst/base.html:51
+msgid "News"
+msgstr ""
+
+#: templates/occupywallst/base.html:52
+msgid "LiveStream"
+msgstr ""
+
+#: templates/occupywallst/base.html:53
+msgid "Forum"
+msgstr ""
+
+#: templates/occupywallst/base.html:54
+msgid "Chat"
+msgstr ""
+
+#: templates/occupywallst/base.html:55
+msgid "User Map"
+msgstr ""
+
+#: templates/occupywallst/base.html:56
+msgid "NYCGA"
+msgstr ""
+
+#: templates/occupywallst/base.html:57
+msgid "About"
+msgstr ""
+
+#: templates/occupywallst/base.html:58
+msgid "Donate"
+msgstr ""
+
+#: templates/occupywallst/base.html:76
+msgid "this site was brought to you by various radicals"
+msgstr ""
+
+#: templates/occupywallst/base.html:77
+msgid "email"
+msgstr ""
+
+#: templates/occupywallst/base.html:77
+msgid "help line"
+msgstr ""
+
+#: templates/occupywallst/base.html:83
+msgid "Notifications"
+msgstr ""
