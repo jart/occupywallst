@@ -15,6 +15,7 @@
     {% endif %}
   {% endif %}
 
+  {% get_current_language as LANGUAGE_CODE %}
   {% cache 60 article_content article.id LANGUAGE_CODE %}
     {% translate_object article LANGUAGE_CODE %}
     <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>

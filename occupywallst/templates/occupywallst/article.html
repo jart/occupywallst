@@ -3,6 +3,7 @@
 {% load i18n %}
 
 {% block title %}
+  {% get_current_language as LANGUAGE_CODE %}
   {% translate_object article LANGUAGE_CODE %}
   {{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}
 {% endblock title %}
