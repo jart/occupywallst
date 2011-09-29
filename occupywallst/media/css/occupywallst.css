@@ -8,7 +8,7 @@ h1 { font-size: 1.8em; margin: 0; }
 h2 { font-size: 1.3em; /* margin: 0 0; */ }
 h1 a { color: black; }
 textarea { font-family: Arial, sans-serif; }
-code, pre { font: 14px "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace; }
+code, pre { font: 11px "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace; }
 pre { margin: 0 1em; }
 
 .amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
@@ -198,6 +198,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
 .comment p, .comment blockquote { margin: 0.5em 0; }
 .comment blockquote { margin-left: 0.2em; padding-left: 0.5em; border-left: 2px solid #aaa; }
+.comment pre { margin: 1em; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
 .replies { margin-left: 1em; }
