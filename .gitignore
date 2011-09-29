@@ -15,7 +15,6 @@ core
 *~
 *.rej
 *.orig
-*.mo
 .figleaf*
 *.egg-info
 *.egg
