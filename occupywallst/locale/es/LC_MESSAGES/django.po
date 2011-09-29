@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 07:25+0000\n"
-"PO-Revision-Date: 2011-09-29 12:43+0000\n"
+"POT-Creation-Date: 2011-09-29 13:43+0000\n"
+"PO-Revision-Date: 2011-09-29 13:48+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,41 @@ msgstr "Español"
 msgid "French"
 msgstr "Francés"
 
+#: utils.py:127
+#, python-format
+msgid "%(x)d second"
+msgid_plural "%(x)d seconds"
+msgstr[0] "%(x)d segundo"
+msgstr[1] "%(x)d segundos"
+
+#: utils.py:130
+#, python-format
+msgid "%(x)d minute"
+msgid_plural "%(x)d minutes"
+msgstr[0] "%(x)d minuto"
+msgstr[1] "%(x)d minutos"
+
+#: utils.py:133
+#, python-format
+msgid "%(x)d hour"
+msgid_plural "%(x)d hours"
+msgstr[0] "%(x)d hora"
+msgstr[1] "%(x)d horas"
+
+#: utils.py:136
+#, python-format
+msgid "%(x)d day"
+msgid_plural "%(x)d days"
+msgstr[0] "%(x)d día"
+msgstr[1] "%(x)d días"
+
+#: utils.py:139
+#, python-format
+msgid "%(x)d month"
+msgid_plural "%(x)d months"
+msgstr[0] "%(x)d mes"
+msgstr[1] "%(x)d meses"
+
 #: templates/admin/auth/user/change_form.html:4
 msgid "OccupyWallSt User Info"
 msgstr ""
@@ -44,6 +79,27 @@ msgstr ""
 #: templates/admin/occupywallst/comment/change_form.html:5
 msgid "Parent Comment"
 msgstr ""
+
+#: templates/occupywallst/article_content.html:7
+msgid "edit"
+msgstr ""
+
+#: templates/occupywallst/article_content.html:8
+msgid "delete"
+msgstr ""
+
+#: templates/occupywallst/article_content.html:23
+#: templates/occupywallst/article_content.html:25
+msgid "Posted"
+msgstr "Publicado"
+
+#: templates/occupywallst/article_content.html:23
+msgid "ago"
+msgstr "antes"
+
+#: templates/occupywallst/article_content.html:27
+msgid "by"
+msgstr "por"
 
 #: templates/occupywallst/base.html:7
 msgid "NYC Protest for American Revolution"
@@ -85,10 +141,6 @@ msgstr ""
 msgid "News"
 msgstr "Noticias"
 
-#: templates/occupywallst/base.html:52
-msgid "LiveStream"
-msgstr ""
-
 #: templates/occupywallst/base.html:53
 msgid "Forum"
 msgstr "Foro"
@@ -100,10 +152,6 @@ msgstr "Charla"
 #: templates/occupywallst/base.html:55
 msgid "User Map"
 msgstr "Mapa"
-
-#: templates/occupywallst/base.html:56
-msgid "NYCGA"
-msgstr ""
 
 #: templates/occupywallst/base.html:57
 msgid "About"
