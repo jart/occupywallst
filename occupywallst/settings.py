@@ -81,7 +81,6 @@ SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_SECURE = False
 TIME_ZONE = 'UTC'
-LANGUAGE_CODE = 'en-us'
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'
@@ -94,6 +93,14 @@ SESSION_ENGINE = 'occupywallst.memcachedjson'
 
 # change me in production
 SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
+
+gettext_noop = lambda s: s
+LANGUAGE_CODE = 'en-us'
+LANGUAGES = (
+    ('en', gettext_noop('English')),
+    ('es', gettext_noop('Spanish')),
+    ('fr', gettext_noop('French')),
+)
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (

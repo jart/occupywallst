@@ -1,41 +1,47 @@
 {% load ows %}
-{% load l10n %}
+{% load i18n %}
+{% load cache %}
 
 <article id="{{ article.slug }}">
-  <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
-  <p class="info">
-    {% if forum %}
-      Posted {{ article.published|timesince_short }} ago
+  {% if user.is_authenticated and user == article.author %}
+    <a class="edit" href="#">[Edit]</a>
+    <a class="delete" href="#">[Delete]</a>
+  {% endif %}
+  {% if user.is_staff %}
+    {% if article.is_forum %}
+      <a href="/admin/occupywallst/forumpost/{{ article.id }}/">[Admin Edit]</a>
     {% else %}
-      Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
+      <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">[Admin Edit]</a>
     {% endif %}
-    by {% if not article.author %}anonymous{% else %}
-      <a rel="author" title="View {{ article.author.username }}'s profile"
-         class="user" href="{{ article.author.get_absolute_url }}">
-      {{ article.author.username }}</a>
-      {% if article.is_forum %}
-        {% if article.author.userinfo.city and article.author.userinfo.region %}
-          ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
+  {% endif %}
+
+  {% cache 60 article_content article.id LANGUAGE_CODE %}
+    {% translate_object article LANGUAGE_CODE %}
+    <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
+    <p class="info">
+      {% if forum %}
+        Posted {{ article.published|timesince_short }} ago
+      {% else %}
+        Posted {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
+      {% endif %}
+      by {% if not article.author %}anonymous{% else %}
+        <a rel="author" title="View {{ article.author.username }}'s profile"
+           class="user" href="{{ article.author.get_absolute_url }}">
+        {{ article.author.username }}</a>
+        {% if article.is_forum %}
+          {% if article.author.userinfo.city and article.author.userinfo.region %}
+            ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
+          {% endif %}
         {% endif %}
       {% endif %}
-    {% endif %}
-    {% if user.is_authenticated and user == article.author %}
-      | <a class="edit" href="#">edit</a>
-      | <a class="delete" href="#">delete</a>
-    {% endif %}
-    {% if user.is_staff %}
-      {% if article.is_forum %}
-        | <a href="/admin/occupywallst/forumpost/{{ article.id }}/">admin</a>
+    </p>
+    <div class="words">
+      {% if article.allow_html %}
+        {{ article.content|markup_unsafe }}
       {% else %}
-        | <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">admin</a>
+        {{ article.content|markup }}
       {% endif %}
-    {% endif %}
-  </p>
-  <div class="words">
-    {% if article.allow_html %}
-      {{ article.content|markup_unsafe }}
-    {% else %}
-      {{ article.content|markup }}
-    {% endif %}
-  </div>
+    </div>
+  {% endcache %}
+
 </article>

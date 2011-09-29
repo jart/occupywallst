@@ -195,7 +195,7 @@ class Article(models.Model):
     author = models.ForeignKey(User, null=True, blank=True, help_text="""
         The user who wrote this article.""")
     title = models.CharField(max_length=255, help_text="""
-        A one-line title to describe ride.""")
+        A one-line title to describe article.""")
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.  DO NOT change
         this once the article has been published.""")
@@ -310,6 +310,35 @@ class Article(models.Model):
                 if com.is_removed and com.user == user:
                     com.is_removed = False
         return comments
+
+    def translate(self, lang):
+        """Mangles title and content with translated text if available
+
+        Destroys save method so you can't shoot yourself in the foot.
+        """
+        if getattr(self, '__translated', False):
+            return
+        self.save = None
+        try:
+            trans = ArticleTranslation.objects.get(article=self, language=lang)
+        except ArticleTranslation.DoesNotExist:
+            pass
+        else:
+            self.content = trans.content
+            self.title = trans.title
+        self.__translated = True
+
+
+class ArticleTranslation(models.Model):
+    LANGUAGE_CHOICES = [(lang, lang) for lang, name in settings.LANGUAGES]
+
+    article = models.ForeignKey(Article)
+    language = models.CharField(max_length=255, choices=LANGUAGE_CHOICES)
+    title = models.CharField(max_length=255)
+    content = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ("article", "language")
 
 
 class NewsArticleManager(models.GeoManager):

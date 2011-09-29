@@ -39,6 +39,7 @@ def my_cache(mkkey, seconds=60):
                 response = function(request, *args, **kwargs)
             else:
                 key = mkkey(request, *args, **kwargs)
+                key += ':' + request.LANGUAGE_CODE
                 response = cache.get(key)
                 if not response:
                     response = function(request, *args, **kwargs)
@@ -48,21 +49,15 @@ def my_cache(mkkey, seconds=60):
     return _my_cache
 
 
-
 @my_cache(lambda r: 'index')
 def index(request):
-    from django.core.cache import cache
-    response = cache.get('_index')
-    if not response:
-        articles = (db.Article.objects
-                    .select_related("author")
-                    .filter(is_visible=True, is_forum=False, is_deleted=False)
-                    .order_by('-published'))
-        response = render_to_response(
-            'occupywallst/index.html', {'articles': articles[:8]},
-            context_instance=RequestContext(request))
-        cache.set('_index', response, 5)
-    return response
+    articles = (db.Article.objects
+                .select_related("author")
+                .filter(is_visible=True, is_forum=False, is_deleted=False)
+                .order_by('-published'))
+    return render_to_response(
+        'occupywallst/index.html', {'articles': articles[:8]},
+        context_instance=RequestContext(request))
 
 
 @my_cache(lambda r: 'forum')

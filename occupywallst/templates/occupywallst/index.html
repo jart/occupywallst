@@ -1,6 +1,7 @@
 {% extends base %}
 {% load ows %}
 {% load cache %}
+{% load l10n %}
 
 {% block stylesheets %}
   <style type="text/css">
@@ -20,7 +21,7 @@
         {% include "occupywallst/article_content.html" %}
         <p>
           <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
-            {{ article.comment_count }} Comments</a>
+            {{ article.comment_count|localize }} Comments</a>
         </p>
       {% endfor %}
     </section>

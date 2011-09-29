@@ -7,7 +7,7 @@ r"""
 
 """
 
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.conf.urls.defaults import patterns
@@ -62,6 +62,11 @@ class UserAdmin(BaseUserAdmin):
             userinfo.save()
 
 
+class ArticleTranslationInline(admin.StackedInline):
+    model = db.ArticleTranslation
+    extra = 1
+
+
 class ArticleAdmin(GeoAdmin):
     date_hierarchy = 'published'
     list_display = ('title', 'author', 'published', 'comment_count',
@@ -69,6 +74,8 @@ class ArticleAdmin(GeoAdmin):
     list_filter = ('is_visible', 'is_deleted')
     search_fields = ('title', 'content', 'author__username')
     ordering = ('-published',)
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
         urls = super(ArticleAdmin, self).get_urls()

@@ -15,8 +15,8 @@ import markdown
 from django import template
 from django.conf import settings
 from django.utils.html import strip_tags
-from django.utils.safestring import mark_safe
 from django.template import Template, Context
+from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
 from occupywallst import utils
@@ -111,6 +111,15 @@ def markup_unsafe(text):
     """
     return _markup(text, markdown_unsafe.convert)
 markup_unsafe.is_safe = True  # lol
+
+
+@register.simple_tag
+def translate_object(obj, lang):
+    """If possible, replaces certain fields with translated text
+    """
+    if obj:
+        obj.translate(lang)
+    return ''
 
 
 @register.simple_tag
