@@ -124,8 +124,11 @@ def article(request, slug, forum=False):
             raise db.Article.DoesNotExist()
     except db.Article.DoesNotExist:
         raise Http404()
-    comments = article.comments_as_user(request.user)
-    comments = _instate_hierarchy(comments)
+    def get_comments():
+        comments = article.comments_as_user(request.user)
+        comments = _instate_hierarchy(comments)
+        for comment in comments:
+            yield comment
     recents = (db.Article.objects
                .select_related("author")
                .filter(is_visible=True, is_deleted=False)
@@ -134,7 +137,7 @@ def article(request, slug, forum=False):
         recents = recents.filter(is_forum=False)
     return render_to_response(
         "occupywallst/article.html", {'article': article,
-                                      'comments': comments,
+                                      'comments': get_comments(),
                                       'recents': recents[:25],
                                       'forum': forum},
         context_instance=RequestContext(request))
