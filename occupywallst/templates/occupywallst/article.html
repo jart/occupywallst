@@ -1,6 +1,7 @@
 {% extends base %}
 {% load ows %}
 {% load i18n %}
+{% load cache %}
 
 {% block title %}
   {% get_current_language as LANGUAGE_CODE %}
@@ -35,6 +36,7 @@
 {% endblock js_init %}
 
 {% block content %}
+{% cache article article.id user.is_staff %}
   <table style="width:100%"><tbody><tr><td id="left">
     {% include "occupywallst/article_content.html" %}
     <h3 id="comments">
@@ -87,4 +89,5 @@
     <span class="error"></span>
   </div>
 
+{% endcache %}
 {% endblock content %}

@@ -3,18 +3,6 @@
 {% load cache %}
 
 <article id="{{ article.slug }}">
-  {% if user.is_authenticated and user == article.author %}
-    <a class="edit" href="#">[{% trans "edit" %}]</a>
-    <a class="delete" href="#">[{% trans "delete" %}]</a>
-  {% endif %}
-  {% if user.is_staff %}
-    {% if article.is_forum %}
-      <a href="/admin/occupywallst/forumpost/{{ article.id }}/">[admin edit]</a>
-    {% else %}
-      <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">[admin edit]</a>
-    {% endif %}
-  {% endif %}
-
   {% get_current_language as LANGUAGE_CODE %}
   {% cache 60 article_content article.id LANGUAGE_CODE %}
     {% translate_object article LANGUAGE_CODE %}
