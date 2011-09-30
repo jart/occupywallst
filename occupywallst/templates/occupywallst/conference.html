@@ -20,7 +20,7 @@
 {% block js_init %}
   {{ block.super }}
   conference_init({
-    admin: {% if user.is_staff %}true{% else %}false{% endif %},
+    admin: {% if user and user.is_staff %}true{% else %}false{% endif %},
     url: ows_sockio_url() + "conf",
     confs: {
       'ows.conf': {elem: $('#ows-conf')},

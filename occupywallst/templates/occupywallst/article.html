@@ -36,7 +36,6 @@
 {% endblock js_init %}
 
 {% block content %}
-{% cache 60 article article.id user.is_staff %}
   <table style="width:100%"><tbody><tr><td id="left">
     {% include "occupywallst/article_content.html" %}
     <h3 id="comments">
@@ -89,5 +88,4 @@
     <span class="error"></span>
   </div>
 
-{% endcache %}
 {% endblock content %}

@@ -32,7 +32,7 @@
             <a class="edit" href="#">edit</a>
             <a class="delete" href="#">delete</a>
           {% endif %}
-          {% if user.is_staff %}
+          {% if user and user.is_staff %}
             <a class="remove" href="#">{% if comment.is_removed %}un{% endif %}remove</a>
           {% endif %}
         </div>

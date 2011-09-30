@@ -35,15 +35,15 @@ def my_cache(mkkey, seconds=60):
     def _my_cache(function):
         @wraps(function)
         def __my_cache(request, *args, **kwargs):
-            if request.user.is_authenticated():
+            # if request.user.is_authenticated():
+            #     response = function(request, *args, **kwargs)
+            # else:
+            key = mkkey(request, *args, **kwargs)
+            key += ':' + request.LANGUAGE_CODE
+            response = cache.get(key)
+            if not response:
                 response = function(request, *args, **kwargs)
-            else:
-                key = mkkey(request, *args, **kwargs)
-                key += ':' + request.LANGUAGE_CODE
-                response = cache.get(key)
-                if not response:
-                    response = function(request, *args, **kwargs)
-                    cache.set(key, response, seconds)
+                cache.set(key, response, seconds)
             return response
         return __my_cache
     return _my_cache
@@ -125,7 +125,8 @@ def article(request, slug, forum=False):
     except db.Article.DoesNotExist:
         raise Http404()
     def get_comments():
-        comments = article.comments_as_user(request.user)
+        comments = article.comments_as_user(None)
+        # comments = article.comments_as_user(request.user)
         comments = _instate_hierarchy(comments)
         for comment in comments:
             yield comment

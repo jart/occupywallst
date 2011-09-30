@@ -305,10 +305,11 @@ class Article(models.Model):
                         comhash[comid].upvoted = True
                     elif vote.vote == -1:
                         comhash[comid].downvoted = True
-        if not user.is_staff:
-            for com in comments:
-                if com.is_removed and com.user == user:
-                    com.is_removed = False
+        if user:
+            if not user.is_staff:
+                for com in comments:
+                    if com.is_removed and com.user == user:
+                        com.is_removed = False
         return comments
 
     def translate(self, lang):
