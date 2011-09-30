@@ -32,7 +32,7 @@ OWS_SCRIPTS = ['js/occupywallst/' + fname
 OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
 
 ADMINS = (
-    ('', 'errors@occupywallst.org'),
+    # ('', 'errors@occupywallst.org'),
 )
 
 SERVER_EMAIL = 'webmaster@occupywallst.org'
