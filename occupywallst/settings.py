@@ -98,8 +98,8 @@ gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = (
     ('en', gettext_noop('English')),
-    ('es', gettext_noop('Spanish')),
-    ('fr', gettext_noop('French')),
+    # ('es', gettext_noop('Spanish')),
+    # ('fr', gettext_noop('French')),
 )
 
 TEMPLATE_LOADERS = (
