@@ -123,6 +123,10 @@ def article_new(user, title, content, is_forum, **kwargs):
     if not is_forum:
         if not (user and user.id) or not user.is_staff:
             raise APIException("insufficient privileges")
+    else:
+        if len(content) > 5 * 1024:
+            raise APIException("article too long, jerk.")
+
     if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
@@ -235,6 +239,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     content = content.strip()
     if len(content) < 3:
         raise APIException("comment too short")
+    if len(content) > 5 * 1024:
+        raise APIException("comment too long, jerk.")
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
