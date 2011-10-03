@@ -35,15 +35,15 @@ def my_cache(mkkey, seconds=60):
     def _my_cache(function):
         @wraps(function)
         def __my_cache(request, *args, **kwargs):
-            # if request.user.is_authenticated():
-            #     response = function(request, *args, **kwargs)
-            # else:
-            key = mkkey(request, *args, **kwargs)
-            key += ':' + request.LANGUAGE_CODE
-            response = cache.get(key)
-            if not response:
+            if request.user.is_authenticated():
                 response = function(request, *args, **kwargs)
-                cache.set(key, response, seconds)
+            else:
+                key = mkkey(request, *args, **kwargs)
+                key += ':' + request.LANGUAGE_CODE
+                response = cache.get(key)
+                if not response:
+                    response = function(request, *args, **kwargs)
+                    cache.set(key, response, seconds)
             return response
         return __my_cache
     return _my_cache
@@ -125,8 +125,7 @@ def article(request, slug, forum=False):
     except db.Article.DoesNotExist:
         raise Http404()
     def get_comments():
-        comments = article.comments_as_user(None)
-        # comments = article.comments_as_user(request.user)
+        comments = article.comments_as_user(request.user)
         comments = _instate_hierarchy(comments)
         for comment in comments:
             yield comment
@@ -200,21 +199,20 @@ def user_page(request, username):
                         .order_by('distance'))[1:10]
     else:
         nearby_users = []
-    # if request.user.is_authenticated():
-    #     messages = (db.Message.objects
-    #                 .select_related("from_user", "from_user__userinfo",
-    #                                 "to_user", "to_user__userinfo")
-    #                 .filter(Q(from_user=user, to_user=request.user) |
-    #                         Q(from_user=request.user, to_user=user))
-    #                 .filter(is_deleted=False)
-    #                 .order_by('-published'))
-    #     for message in messages:
-    #         if message.to_user == request.user and message.is_read == False:
-    #             message.is_read = True
-    #             message.save()
-    # else:
-    #     messages = []
-    messages = []
+    if request.user.is_authenticated():
+        messages = (db.Message.objects
+                    .select_related("from_user", "from_user__userinfo",
+                                    "to_user", "to_user__userinfo")
+                    .filter(Q(from_user=user, to_user=request.user) |
+                            Q(from_user=request.user, to_user=user))
+                    .filter(is_deleted=False)
+                    .order_by('-published'))
+        for message in messages:
+            if message.to_user == request.user and message.is_read == False:
+                message.is_read = True
+                message.save()
+    else:
+        messages = []
     return render_to_response(
         'occupywallst/user.html', {'obj': user,
                                    'messages': messages,

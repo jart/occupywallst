@@ -25,7 +25,17 @@
     {% block header %}
       <header>
         <div id="userbox">
-          EMERGENCY READ ONLY MODE
+          {% if user.is_authenticated %}
+            {% trans "Welcome" %} <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
+            {% if user.is_staff %}
+              <a href="{% url admin:index %}">{% trans "admin" %}</a> |
+            {% endif %}
+            <a href="{% url logout %}">{% trans "logout" %}</a>
+          {% else %}
+            {% trans "Welcome" %}
+            <a href="{% url login %}">{% trans "login" %}</a> |
+            <a href="{% url signup %}">{% trans "signup" %}</a>
+          {% endif %}
         </div>
         <img alt="Raised Fist" title="Raised Fist" id="fist" src="{{ MEDIA_URL }}img/fist.png" width="59" height="94" />
         <div id="brand"><a href="{% url index %}"><span class="red">Occupy</span>WallStreet</a></div>

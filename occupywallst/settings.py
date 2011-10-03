@@ -32,7 +32,7 @@ OWS_SCRIPTS = ['js/occupywallst/' + fname
 OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
 
 ADMINS = (
-    # ('', 'errors@occupywallst.org'),
+    ('', 'errors@occupywallst.org'),
 )
 
 SERVER_EMAIL = 'webmaster@occupywallst.org'
@@ -98,8 +98,8 @@ gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = (
     ('en', gettext_noop('English')),
-    # ('es', gettext_noop('Spanish')),
-    # ('fr', gettext_noop('French')),
+    ('es', gettext_noop('Spanish')),
+    ('fr', gettext_noop('French')),
 )
 
 TEMPLATE_LOADERS = (
@@ -127,12 +127,12 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'occupywallst.middleware.CsrfCookieWhenLoggedIn',
-    # 'occupywallst.middleware.NeverCache',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'occupywallst.middleware.CsrfCookieWhenLoggedIn',
+    'occupywallst.middleware.NeverCache',
 ]
 
 INSTALLED_APPS = [
