@@ -24,7 +24,7 @@ TEMPLATE_DEBUG = DEBUG
 OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
 OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
 OWS_MAX_PRIVMSG_USER_DAY = 7
-OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
+OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
@@ -86,8 +86,8 @@ ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
-MEDIA_URL = 'https://2439-occupywallst-com.voxcdn.com/media/'
-ADMIN_MEDIA_PREFIX = 'https://2439-occupywallst-com.voxcdn.com/media/admin/'
+MEDIA_URL = 'http://2439-occupywallst-com.voxcdn.com/media/'
+ADMIN_MEDIA_PREFIX = 'http://2439-occupywallst-com.voxcdn.com/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
 
