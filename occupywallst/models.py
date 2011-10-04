@@ -614,9 +614,9 @@ class Ride(models.Model):
         route = geo.directions(self.waypoint_list)
         points = []
         for waypoint in route:
-            points += \
-                    [ (x,y) for y,x in waypoint['overview_polyline']['points']]
-        self.route = LineString(points)
+            points += [ (x,y) # YAY!PEP!8!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    for y,x in waypoint['overview_polyline']['points']]#!!!!!!
+        self.route = LineString(points)#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     @property
     def waypoint_list(self):
