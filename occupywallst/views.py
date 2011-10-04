@@ -11,13 +11,14 @@ import logging
 from datetime import datetime, timedelta
 
 from django.db.models import Q
+from django.forms import ValidationError
 from django.contrib.auth import views as authviews
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
-from occupywallst.forms import ProfileForm, SignupForm, RideForm
+from occupywallst.forms import ProfileForm, SignupForm, RideForm, RideRequestForm
 from occupywallst import api
 from occupywallst import models as db
 
@@ -127,25 +128,95 @@ def attendees(request):
 
 
 def rides(request):
-    if request.method == "POST":
-        if request.user.is_authenticated():
-            form = RideForm(request.POST)
-            if form.is_valid():
-                ride = form.save(commit=False)
-                ride.user = request.user
-                ride.update_from_maps()
-                ride.save()
-        else:
-            return HttpResponseRedirect("/signup")
-    else:
-        form = RideForm()
     rides = db.Ride.objects.all()
     return render_to_response(
         'occupywallst/rides.html', {
-            "form" : form,
             "rides" : rides,
             },
         context_instance=RequestContext(request))
+
+@login_required
+def ride_create(request):
+    return ride_create_or_update(request)
+
+@login_required
+def ride_edit(request, ride_id):
+    ride = get_object_or_404(db.Ride, pk=int(ride_id))
+    return ride_create_or_update(request, ride)
+
+@login_required
+def ride_create_or_update(request, instance=None):
+    if request.method == "POST":
+        form = RideForm(request.POST, instance=instance)
+        if form.is_valid():
+            ride = form.save(commit=False)
+            ride.user = request.user
+            try:
+# this should maybe go into some work queue instead of being run sync
+                ride.retrieve_route_from_google()
+                ride.full_clean()
+                ride.save()
+                return HttpResponseRedirect(ride.get_absolute_url())
+            except ValidationError as v:
+                # stupid hack
+                from django.forms.util import ErrorList
+                form._errors["title"] = ErrorList(
+                        [u"""You have already created a ride with
+                        that title."""])
+
+    else:
+        form = RideForm(instance=instance)
+    return render_to_response(
+        'occupywallst/ride_update.html', {
+            "form" : form,
+            "ride" : instance,},
+        context_instance=RequestContext(request))
+
+
+def ride_info(request, ride_id):
+    ride = get_object_or_404(db.Ride, pk=int(ride_id))
+    ride_request = None
+    requests = None
+    comments = ride.forum_post.comments_as_user(request.user)
+    comments = _instate_hierarchy(comments)
+    if request.user.is_authenticated():
+        if request.user == ride.user:
+            requests = ride.requests.order_by('status').select_related("user")
+        else:
+            requests = None
+            try:
+                ride_request = ride.requests.get(
+                        user=request.user,is_deleted=False)
+            except db.RideRequest.DoesNotExist:
+                ride_request = None
+    form = RideRequestForm()
+    return render_to_response(
+        'occupywallst/ride_info.html', {
+            "ride" : ride,
+            "form" : form,
+            "requests" : requests,
+            "ride_request" : ride_request,
+            "comments" : comments,
+            },
+        context_instance=RequestContext(request))
+
+@login_required
+def ride_request_add(request, ride_id):
+    ride = get_object_or_404(db.Ride, pk=int(ride_id))
+    request_form = RideRequestForm(request.POST)
+    request_exists = db.RideRequest.objects.filter(
+            user=request.user, ride=ride)
+    if request_form.is_valid() and not request_exists:
+        request_form.save(request.user, ride)
+    return HttpResponseRedirect(ride.get_absolute_url())
+
+@login_required
+def ride_request_delete(request, ride_id):
+    if request.method == "POST":
+        ride = get_object_or_404(db.Ride, pk=int(ride_id))
+        db.RideRequest.objects.filter(ride=ride, user=request.user).update(
+                is_deleted=True)
+    return HttpResponseRedirect(ride.get_absolute_url())
 
 
 def housing(request):

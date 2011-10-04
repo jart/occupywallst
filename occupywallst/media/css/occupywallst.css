@@ -250,3 +250,4 @@ a.button:active {
 #sql-info .item:first-child { border-top: none; }
 #sql-info .item p { margin: 0; padding: 0; text-indent: -3em; margin-left: 3em;
                     font: 8pt "DeJavu Sans Mono", monospace; }
+#mapright { width: 600px; font-size: 0.9em; vertical-align: top; }

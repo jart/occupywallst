@@ -1,0 +1,49 @@
+{% extends base %}
+
+{% block title %}Free Bus/Carpool Route Map | OccupyWallSt.org{% endblock title %}
+
+{% block stylesheets %}
+  <style type="text/css">
+    #navbar .nav-rides { background: #900; }
+  </style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  rides_init({
+    "map": document.getElementById("map"),
+    "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
+    "zoom": 8
+  });
+
+{% endblock js_init %}
+
+{% block content %}
+{% if ride %}
+<h1>Update {{ride.title}}</h1>
+{% else %}
+<h1>Add a ride</h1>
+{% endif %}
+<table style="width:100%"><tbody><tr><td id="left">
+    <form method="POST" action=".">{% csrf_token %}
+        <table class="formtable">
+            <tbody>
+                {{ form.as_table }}
+                <tr><th></th><td><input type="submit" value="{% if ride %}Update{% else %}Add{%endif%} ride"/></td></tr>
+            </tbody>
+        </table>
+    </form>
+    </td><td id="mapright">
+    <div style="height: 500px" id="map">
+
+    </div>
+</td></tr>
+</tbody>
+</table>
+
+{% endblock content %}

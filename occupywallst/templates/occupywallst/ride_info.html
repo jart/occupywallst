@@ -1,0 +1,118 @@
+{% extends base %}
+{% load ows %}
+
+{% block title %}Free Bus/Carpool Route Map | OccupyWallSt.org{% endblock title %}
+
+{% block stylesheets %}
+  <style type="text/css">
+    #navbar .nav-rides { background: #900; }
+  </style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+  <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  rides_init({
+    "map": document.getElementById("map"),
+    "center": new google.maps.LatLng(40.717712644386026, -74.00913921356198),
+    "zoom": 8,
+    "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}]
+  });
+  article_init();
+
+{% endblock js_init %}
+
+{% block content %}
+<table><tbody><tr><td id="left">
+    <h1>Info for {{ ride.title }}</h1>
+    {% if user == ride.user %}
+    <a href="{% url ride_edit ride.id %}">edit</a>
+    {% endif %}
+    <h2>{{ ride.get_ridetype_display }} leaving {{ ride.depart_time }}</h2>
+    {{ ride.info|markup }}
+    <h3>Destinations</h3>
+    <ol>
+        {% for waypoint in ride.waypoint_list %}
+        <li>{{waypoint}}</li>
+        {% endfor %}
+    </ol>
+    <p>{{ ride.seats_avail }} seats available</p>
+    {% if ride.user == request.user %}
+    <p>Ride requests</p>
+    <table><tbody>
+    {% for req in requests %}
+    <tr>
+        <td><a href="{{req.user.get_absolute_url}}">{{req.user.username}}:</a></td>
+        <td>{{req.info}}</td>
+        <td>
+            <form class="request_accept_form" method="POST" action="{% url ride_request_update %}">
+                {% csrf_token %}
+                <input type="hidden" name="request_id" value="{{req.id}}"/>
+                <select name="status">
+                    <option value="pending" {% if req.status = "pending" %}selected{% endif %}>Pending</option>
+                    <option value="accepted"{% if req.status = "accepted" %}selected{% endif %}>Accept</option>
+                    <option value="declined"{% if req.status = "declined" %}selected{% endif %}>Decline</option>
+                </select>
+            </form>
+        </td>
+        <td><div class="req-status">{% if req.accepted %}☺{%else%}{%if req.declined %}☹{%endif%}{%endif%}</div></td>
+        </tr>
+    {% empty %}
+    No pending requests
+
+    {% endfor %}
+</tbody></table>
+    {% else %}
+    {% if ride_request %}
+    <div id="requeststatus">
+        {% if ride_request.status = "pending" %}
+        You have requested a seat.
+        {% else %}
+        {% if ride_request.status == "accepted" %}
+        You have a seat on this ride.
+        {% else %}
+        {% if ride_request.status == "reject" %}
+        Your ride request has been rejected.
+        {% endif %}
+        {% endif %}
+        {% endif %}
+    </div>
+    {% else %}
+    <div id="request">
+        <form method="POST" action="request/">{%csrf_token%}
+            <p>{{ form.info.help_text }}</p>
+            <p>{{ form.info }}</p>
+            <input type="submit" value="Request a seat"/>
+        </form>
+    </div>
+    {% endif %}
+    {% endif %}
+    <article id="{{ride.forum_post.slug}}"/>
+    <h2>Comments</h2>
+    <div id="postform">
+      <textarea rows="5" cols="70"></textarea><br />
+      <button class="save">post comment</button>
+      <img class="loader" src="/media/img/ajax-loader.gif"
+           width="16" height="16" />
+      <span class="error"></span>
+      {% if not user.is_authenticated %}
+        <p class="warning"><strong>Warning:</strong> When posting anonymously
+          you will not be able to edit/delete your post.  Please consider
+          <a href="{% url signup %}">signing up for account</a>.</p>
+      {% endif %}
+    </div>
+    <section id="comment-list">
+      {% show_comments user comments %}
+    </section>
+    </td><td id="mapright">
+    <div style="width: 100%; height: 500px" id="map">
+
+    </div>
+</td></tr>
+</tbody></table>
+
+{% endblock content %}

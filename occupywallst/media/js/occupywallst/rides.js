@@ -7,11 +7,40 @@ var rides_init;
     var map;
     var dserv;
     var markers = [];
+    var lines = {}
+    var current_line = null;
     var philadelphia;
 
-    $("#add_link").click(function() { 
-        $("#add_ride").toggle(100);
-            return false;
+    function clear_map() {
+        $.each(lines, function(i, e) {
+            console.log(e);
+            e.setMap(null);
+        });
+        $.each(markers, function(i, e) {
+            e.setMap(null);
+        });
+        if (current_line) {
+            current_line.setMap(null);
+        }
+        markers = [];
+        lines = {}
+
+    }
+
+    $("form select[name='status']").change(function() {
+        var option = $(this).val();
+        var form = $(this).parent();
+        $.post(form.attr('action'), form.serialize(), function() {
+            var status = form.parent().parent().find(".req-status");
+        });
+    });
+
+    $("#id_waypoints").change(function() {
+        clear_map();
+        var waypoints = $(this).val().split("\n");
+        if (waypoints.length > 1) {
+            show_route(waypoints);
+        }
     });
 
     function init(args) {
@@ -25,7 +54,20 @@ var rides_init;
             zoomControl: true,
             scaleControl: true
         });
-        google.maps.event.addListener(map, "idle", update_rides);
+        if (args.update_rides) {
+            google.maps.event.addListener(map, "idle", update_rides);
+        }
+        if (args.initial_polyline) {
+            var bounds = new google.maps.LatLngBounds();
+            var polyline_arr = args.initial_polyline.map(function(e) {
+                var latlng = new google.maps.LatLng(e[0],e[1]);
+                bounds.extend(latlng);
+                return latlng;
+            })
+            var polyline = happy_line(polyline_arr);
+            map.fitBounds(bounds);
+
+        }
         // $("#addroute").click(function() {
         //     ev.preventDefault();
         //     show_route($("textarea").val().split('\n'));
@@ -37,12 +79,17 @@ var rides_init;
         var bounds = { bounds: map.getBounds().toUrlValue() };
 
         $.getJSON("/api/safe/rides/", bounds, function(rides) {
+            clear_map();
             rides.results.forEach(function(ride, i) {
-                console.log(ride) ;
-                happy_line(ride.route.map(function(p) {
+                var line = happy_line(ride.route.map(function(p) {
                     var point = new google.maps.LatLng(p[1],p[0]);
                     return point;
                 }));
+                google.maps.event.addListener(line, 'click', function(e) {
+                    window.location = "/rides/"+ride.id+"/";
+                });
+                lines[ride.id]=line;
+                console.log(line);
             });
         });
     }
@@ -75,7 +122,7 @@ var rides_init;
         return line;
     }
 
-    function show_route(waypoints) {
+    function show_route(waypoints, info) {
         var i;
         var from = waypoints[0];
         var to = waypoints[waypoints.length - 1];
@@ -99,8 +146,9 @@ var rides_init;
                 return;
             }
             var line = happy_line(result.routes[0].overview_path);
+            current_line = line;
             google.maps.event.addListener(line, 'click', function(e) {
-                var balloon = new google.maps.InfoWindow({content: 'we\'re driving from ' + from + '<br /> so you should carpool with us :3'});
+                var balloon = new google.maps.InfoWindow({content: info});
                 balloon.open(map, new google.maps.Marker({position: e.latLng}));
             });
             // if (glob.bounds) {

@@ -22,8 +22,9 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, LineString
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
-from django.db.models import F
-from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.template.defaultfilters import slugify
 
 from occupywallst.utils import jsonify
 from occupywallst import geo
@@ -572,6 +573,7 @@ class Ride(models.Model):
         Google's goofy compressed version of route coords.""")
     info = models.TextField(blank=True, help_text="""
         A long description written by user in markup.""")
+    forum_post = models.ForeignKey(ForumPost, null=True, blank=True)
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate should no longer be listed on site.""")
@@ -595,12 +597,25 @@ class Ride(models.Model):
         if len(self.waypoint_list) < 2:
             raise ValidationError('Must have at least two waypoints')
 
-    def update_from_maps(self):
+    @property
+    def pending_requests(self):
+        return self.requests.filter(status="pending")
+
+    @property
+    def accepted_requests(self):
+        return self.requests.filter(status="accepted")
+
+    def forum_title(self):
+        waypoints = self.waypoint_list
+        return "%s to %s on %s" % (
+                waypoints[0], waypoints[-1], self.depart_time.date())
+
+    def retrieve_route_from_google(self):
         route = geo.directions(self.waypoint_list)
         points = []
         for waypoint in route:
             points += \
-                    [ p[::-1] for p in waypoint['overview_polyline']['points']]
+                    [ (x,y) for y,x in waypoint['overview_polyline']['points']]
         self.route = LineString(points)
 
     @property
@@ -609,7 +624,22 @@ class Ride(models.Model):
 
     @property
     def seats_avail(self):
-        return self.seats_total - self.seats_used
+        return self.seats_total - self.accepted_requests.count()
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('occupywallst.views.ride_info', [self.id])
+
+
+@receiver(post_save, sender=Ride)
+def ride_save_callback(sender, instance, created, *args, **kwargs):
+    if created:
+        post = ForumPost(title=instance.forum_title(), author=instance.user)
+        post.slug = ("ride-%s-%s"
+                % (instance.user.username, slugify(instance.title)))
+        post.save()
+        instance.forum_post = post
+        instance.save()
 
 
 class RideRequest(models.Model):
@@ -623,13 +653,13 @@ class RideRequest(models.Model):
         ('rejected', 'Rejected'),
     )
 
-    ride = models.ForeignKey(Ride, editable=False, unique=True,
+    ride = models.ForeignKey(Ride, editable=False,
                              related_name="requests", help_text="""
         The ride the user wants to get in on.""")
-    user = models.ForeignKey(User, editable=False, unique=True, help_text="""
+    user = models.ForeignKey(User, help_text="""
         The user who needs a ride to the event.""")
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
-                              help_text="""
+            default="pending", help_text="""
         Current acceptance status of request.""")
     info = models.TextField(blank=True, help_text="""
         User explains why they think they deserve a ride.""")
@@ -638,6 +668,13 @@ class RideRequest(models.Model):
         Flag to indicate should no longer be listed on site.""")
 
     objects = models.GeoManager()
+
+    @property
+    def accepted(self):
+        return self.status=="accepted"
+    @property
+    def declined(self):
+        return self.status=="declined"
 
     class Meta:
         unique_together = ("ride", "user")
