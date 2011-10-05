@@ -52,6 +52,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'KEY_PREFIX': os.getenv('VIRTUAL_ENV'),
         'LOCATION': [
             '127.0.0.1:11211',
         ],
