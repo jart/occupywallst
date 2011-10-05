@@ -56,8 +56,8 @@ def index(request):
                 .filter(is_visible=True, is_forum=False, is_deleted=False)
                 .order_by('-published'))
     return render_to_response(
-        'occupywallst/index.html', {'articles': articles[:8],
-                                    'archives': articles[8:]},
+        'occupywallst/index.html', {'articles': articles[:4],
+                                    'archives': articles[4:]},
         context_instance=RequestContext(request))
 
 
