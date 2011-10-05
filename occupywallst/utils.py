@@ -15,6 +15,7 @@ from decimal import Decimal
 from functools import wraps
 from datetime import datetime
 
+from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponse
 from django.utils.translation import ungettext
@@ -92,12 +93,16 @@ def _as_json(data):
     """Turns API result into JSON data
     """
     data['results'] = sanitize_json(data['results'])
-    response = HttpResponse(json.dumps(data), mimetype="application/json")
+    if settings.DEBUG:
+        content = json.dumps(data, indent=2) + '\n'
+    else:
+        content = json.dumps(data)
+    response = HttpResponse(content, mimetype="application/json")
     return response
 
 
-def jsonify(value, **json_argv):
-    return json.dumps(sanitize_json(value), **json_argv)
+def jsonify(value, **argv):
+    return json.dumps(sanitize_json(value), **argv)
 
 
 def sanitize_json(value):
