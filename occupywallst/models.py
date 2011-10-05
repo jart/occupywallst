@@ -18,6 +18,7 @@ import functools
 from datetime import date, timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User, Group
@@ -42,6 +43,60 @@ def memoize(method):
             res = getattr(instance, key)
         return res
     return _memoize
+
+
+class Verbiage(models.Model):
+    """Stores arbitrary website content fragments in Markdown
+    """
+    name = models.CharField(max_length=255, unique=True)
+    content = models.TextField(blank=True)
+    rendered = models.TextField(blank=True, editable=False)
+
+    @staticmethod
+    def get(name, lang=None):
+        verbs = cache.get('verbiage') or Verbiage._invalidate()
+        if name not in verbs:
+            return "[Verbiage '%s' not configured!]" % (name)
+        elif lang in verbs[name]:
+            return verbs[name][lang]
+        else:
+            return verbs[name]['default']
+
+    @staticmethod
+    def _invalidate():
+        verbs = {}
+        for obj in Verbiage.objects.all():
+            verb = {'default': obj.rendered}
+            for tran in VerbiageTranslation.objects.filter(verbiage=obj):
+                verb[tran.language] = tran.rendered
+            verbs[obj.name] = verb
+        cache.set('verbiage', verbs)
+        return verbs
+
+    def save(self):
+        from occupywallst.templatetags.ows import markup_unsafe
+        self.rendered = markup_unsafe(self.content)
+        super(Verbiage, self).save()
+        Verbiage._invalidate()
+
+    class Meta:
+        verbose_name_plural = "Verbiage"
+
+
+class VerbiageTranslation(models.Model):
+    verbiage = models.ForeignKey(Verbiage)
+    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
+    content = models.TextField(blank=True)
+    rendered = models.TextField(blank=True, editable=False)
+
+    def save(self):
+        from occupywallst.templatetags.ows import markup_unsafe
+        self.rendered = markup_unsafe(self.content)
+        super(VerbiageTranslation, self).save()
+        Verbiage._invalidate()
+
+    class Meta:
+        unique_together = ("verbiage", "language")
 
 
 class UserInfo(models.Model):
@@ -331,10 +386,8 @@ class Article(models.Model):
 
 
 class ArticleTranslation(models.Model):
-    LANGUAGE_CHOICES = [(lang, lang) for lang, name in settings.LANGUAGES]
-
     article = models.ForeignKey(Article)
-    language = models.CharField(max_length=255, choices=LANGUAGE_CHOICES)
+    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
 

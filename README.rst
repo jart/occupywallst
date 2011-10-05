@@ -46,6 +46,7 @@ Now install the project and the database schema::
 
     sudo python setup.py develop
     occupywallst-dev syncdb --noinput
+    occupywallst-dev loaddata verbiage
     occupywallst-dev loaddata example_data
     occupywallst-dev runserver 127.0.0.1:9001
 

@@ -20,6 +20,7 @@ from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
 from occupywallst import utils
+from occupywallst import models as db
 
 
 register = template.Library()
@@ -120,6 +121,13 @@ def translate_object(obj, lang):
     if obj:
         obj.translate(lang)
     return ''
+
+
+@register.simple_tag
+def verbiage(name, lang):
+    """Grabs an html content fragment in a given language
+    """
+    return db.Verbiage.get(name, lang)
 
 
 @register.simple_tag

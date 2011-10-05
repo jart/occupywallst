@@ -1,4 +1,5 @@
 {% extends base %}
+{% load ows %}
 
 {% block title %}About Us | OccupyWallSt.org{% endblock title %}
 
@@ -15,95 +16,9 @@
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="about">
-      <h1>About</h1>
-      <p>
-        OccupyWallSt.org is the <strong>unofficial</strong> <em>de
-        facto</em> online resource for the ongoing protests happening
-        on Wall Street.  We are an affinity group committed to doing
-        technical support work for resistance movements.  We are not
-        affiliated with Adbusters, anonymous or any other
-        organization.
-      </p>
-      <p>
-        The leaders of this movement are the everyday people
-        participating in the occupation.  We use a tool called the
-        "General Assembly" to facilitate open, participatory and
-        horizontal organizing between members of the public.  We
-        welcome people from all colors, genders and beliefs to
-        participate in our daily assemblies.  Visit the
-        <a title="New York City General Assembly Website"
-           href="http://nycga.cc/">NYC General Assembly</a> website to
-        learn how you can become involved, read updates/minutes, or
-        find out how you can adopt NYCGA processes to organize your
-        own community.
-      </p>
-      <h3>July Press Release</h3>
-      <p>
-        On 13 Jul 2011, the group Adbusters released this
-        call: <a href="http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html">Occupy
-        Wall Street!</a>
-      </p>
-      <p>
-        In Solidarity, and as a response to this call, a planning
-        group was formed
-        [<a href="/">occupywallst.org</a>], and
-        an info sharing site established.  The participation of every
-        person, and every organization, that has an interest in
-        returning the US back into the hands of it's individual
-        citizens is required.
-      </p>
-      <p>
-        Our nation, our species and our world are in crisis. The US has
-        an important role to play in the solution, but we can no longer
-        afford to let corporate greed and corrupt politics set the
-        policies if our nation.
-      </p>
-      <p>
-        We, the people of the United States of America, considering the
-        crisis at hand, now reassert our sovereign control of our land.
-      </p>
-      <p>
-        Solidarity Forever!
-      </p>
+      {% verbiage 'about' LANGUAGE_CODE %}
     </div>
   </td><td id="right">
-    <h2 style="margin-top:0">Contact</h2>
-    <p>
-      <strong>Help & Directions</strong><br />
-      +1 (877) 881-3020
-    </p>
-    <p>
-      <strong>General Inquiries</strong><br />
-      <a href="mailto:general@occupywallst.org">general@occupywallst.org</a>
-    </p>
-    <p>
-      <strong>Press Inquiries</strong><br />
-      <a href="mailto:press@occupywallst.org">press@occupywallst.org</a>
-    </p>
-    <p>
-      <strong>Inquiries Re: OccupyWallSt.org</strong><br />
-      <a href="mailto:info@occupywallst.org">info@occupywallst.org</a><br />
-      +1 (516) 708-4777
-    </p>
-    <h2>Links</h2>
-    <ul class="linklist">
-      <li><a href="http://www.nycga.cc/">NYC General Assembly</a></li>
-      <li><a href="http://www.occupytogether.org/">Occupy Together</a></li>
-      <li><a href="http://wearethe99percent.tumblr.com/">We Are The 99%</a></li>
-      <li><a href="http://www.flickr.com/search/?w=all&q=occupywallstreet+&m=tags">Photos on Flickr</a></li>
-      <li><a href="http://www.adbusters.org/campaigns/occupywallstreet">Adbusters #OccupyWallStreet</a></li>
-      <li><a href="http://takethesquare.net/">Take The Square</a></li>
-      <li><a href="http://www.usdayofrage.org/">US Day of Rage</a></li>
-    </ul>
-    <div style="margin-left:1em">
-      <a href="http://october2011.org/"><img width="150" height="108" src="{{ MEDIA_URL }}img/october2011_plug.jpg" /></a>
-    </div>
-    <h2>Source Code</h2>
-    <ul>
-      <li>
-        <a href="https://github.com/jart/occupywallst/">OccupyWallSt</a>
-        (GitHub)
-      </li>
-    </ul>
+    {% verbiage 'about-sidebar' LANGUAGE_CODE %}
   </td></tr></tbody></table>
 {% endblock content %}

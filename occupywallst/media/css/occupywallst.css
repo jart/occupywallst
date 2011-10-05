@@ -22,6 +22,9 @@ pre { margin: 0 1em; }
 #brand .red { color: #a00; }
 #slogan { margin: 0; font-size: 1.5em; }
 
+#right h2:first-child { margin-top: 0; }
+#right p:first-child { margin-top: 0; }
+
 #userbox {
     position: absolute;
     top: 0px;

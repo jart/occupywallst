@@ -3,6 +3,7 @@
 <head>
   {% load ows %}
   {% load i18n %}
+  {% get_current_language as LANGUAGE_CODE %}
   <meta charset="utf-8" />
   <title>{% block title %}Occupy Wall Street | {% trans "NYC Protest for American Revolution" %}{% endblock title %}</title>
   <link rel="shortcut icon" href="{{ MEDIA_URL }}img/bull16.png" />
@@ -37,32 +38,12 @@
             <a href="{% url signup %}">{% trans "signup" %}</a>
           {% endif %}
         </div>
-        <img alt="Raised Fist" title="Raised Fist" id="fist" src="{{ MEDIA_URL }}img/fist.png" width="59" height="94" />
-        <div id="brand"><a href="{% url index %}"><span class="red">Occupy</span>WallStreet</a></div>
-        <div id="slogan">
-          {% trans 'The resistance continues at Liberty Square and <a href="http://occupytogether.org/">Nationwide</a>!' %}
-        </div>
+        {% verbiage 'header' LANGUAGE_CODE %}
       </header>
     {% endblock header %}
     {% block nav %}
       <nav>
-        <div id="navbar">
-          <ul>
-            <li class="item nav-news first"><a class="fast" title="News Articles" href="{% url index %}">{% trans "News" %}</a></li>
-            <li class="item nav-livestream"><a title="Watch the Protest Live" href="http://www.livestream.com/globalrevolution">LiveStream</a></li>
-            <li class="item nav-forum"><a title="Public discussion board" href="{% url forum %}">{% trans "Forum" %}</a></li>
-            <li class="item nav-chat"><a class="fast" title="Web-based chatroom" href="{% url chat %}">{% trans "Chat" %}</a></li>
-            <li class="item nav-attendees"><a class="fast" title="Map of people involved" href="{% url attendees %}">{% trans "User Map" %}</a></li>
-            <li class="item nav-nycga"><a title="NYC General Assembly" href="http://nycga.cc/">NYCGA</a></li>
-            <li class="item nav-about"><a class="fast" title="About Us / Contact" href="{% url about %}">{% trans "About" %}</a></li>
-            <li class="item nav-donate"><a class="fast" title="Solidarity Forever!" href="http://nycga.cc/?page_id=377">{% trans "Donate" %}</a></li>
-            <li class="last">
-              <a title="Facebook Event" href="http://www.facebook.com/OccupyWallSt"><img width="24" height="24" src="{{ MEDIA_URL }}img/facebook.png" /></a>
-              <a title="Our Twitter Page" href="https://twitter.com/#!/OccupyWallSt"><img width="24" height="24" src="{{ MEDIA_URL }}img/twitter.png" /></a>
-              <a title="Reddit" href="http://www.reddit.com/r/occupywallstreet/"><img width="24" height="23" style="padding-bottom:3px" src="{{ MEDIA_URL }}img/reddit.png" /></a>
-            </li>
-          </ul>
-        </div>
+       {% verbiage 'navbar' LANGUAGE_CODE %}
       </nav>
       <div style="clear:both"></div>
     {% endblock nav %}
@@ -72,11 +53,7 @@
     </div>
     {% block footer %}
       <footer>
-        <p>
-          {% trans "this site was brought to you by various radicals" %}<br />
-          {% trans 'hosting for this site generously donated by <a href="http://www.alternet.org/">alternet</a> &lt;3' %}<br />
-          {% trans "email" %}: <a href="mailto:general@occupywallst.org">general@occupywallst.org</a> | {% trans "help line" %}: +1 (877) 881-3020<br />
-        </p>
+       {% verbiage 'footer' LANGUAGE_CODE %}
       </footer>
     {% endblock footer %}
     <div id="notifications" style="display:none">
