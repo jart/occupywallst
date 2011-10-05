@@ -61,6 +61,21 @@ def _to_bool(val):
                 str(val).lower() == "true")
 
 
+def forumlinks(after, count, **kwargs):
+    """Used for continuous stream of forum post links
+    """
+    after, count = int(after), int(count)
+    if after < 0 or count <= 0:
+        raise APIException("bad arguments")
+    articles = (db.Article.objects
+                .select_related("author")
+                .filter(is_visible=True, is_deleted=False)
+                .order_by('-published'))
+    for article in articles[after:after + count]:
+        yield render_to_string('occupywallst/forumpost_synopsis.html',
+                               {'article': article})
+
+
 def attendees(bounds, **kwargs):
     """Find all people going who live within visible map area.
     """

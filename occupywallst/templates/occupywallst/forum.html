@@ -11,40 +11,23 @@
       background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
       background: -moz-linear-gradient(top,  #a11,  #900);
     }
+    #newlink { float: right; }
+    .postform { margin-bottom: 1em; }
   </style>
 {% endblock stylesheets %}
 
 {% block js_init %}
   {{ block.super }}
-  forum_init();
+  forum_init({
+    per_page: {{ per_page }},
+  });
 {% endblock js_init %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum</h2>
-    <section id="thread-list" style="margin-top:0">
-      {% cache 60 forum_articles %}
-      {% for article in articles %}
-        <div class="item clickdiv">
-          <h3>
-            {% if not article.is_forum %}News Article:{% endif %}
-            <a class="primary" title="View Thread"
-               href="{{ article.get_forum_url }}">{{ article.title }}</a>
-          </h3>
-          <div class="info">
-            {{ article.comment_count }} comments
-            {{ article.published|timesince_short }} ago
-            by {% if not article.author %}anonymous{% else %}
-              <a title="View {{ article.author.username }}'s profile"
-                 class="user" href="{{ article.author.get_absolute_url }}">
-              {{ article.author.username }}</a>
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %}
-      {% endcache %}
-    </section>
-    <div class="postform">
+    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum    <a href="#" id="newlink">post</a>
+</h2>
+    <div class="postform" style="display:none">
       <div>
         <label for="title">title</label><br />
         <input class="title" id="title" maxlength="255" size="60" />
@@ -60,6 +43,16 @@
         <span class="error"></span>
       </div>
     </div>
+    <section id="thread-list" style="margin-top:0">
+      {% cache 60 forum_articles %}
+        {% for article in articles %}
+          {% include "occupywallst/forumpost_synopsis.html" %}
+        {% endfor %}
+      {% endcache %}
+    </section>
+    <p style="text-align:center">
+      <img alt="loading..." id="loady" src="/media/img/ajax-loader-32.gif" width="32" height="32" />
+    </p>
   </td><td id="right">
     {% cache 60 forum_sidebar %}
     <section id="recents">

@@ -1,0 +1,17 @@
+{% load ows %}
+<div class="item clickdiv" id="{{ article.slug }}">
+  <h3>
+    {% if not article.is_forum %}News Article:{% endif %}
+    <a class="primary" title="View Thread"
+       href="{{ article.get_forum_url }}">{{ article.title }}</a>
+  </h3>
+  <div class="info">
+    {{ article.comment_count }} comments
+    {{ article.published|timesince_short }} ago
+    by {% if not article.author %}anonymous{% else %}
+      <a title="View {{ article.author.username }}'s profile"
+         class="user" href="{{ article.author.get_absolute_url }}">
+      {{ article.author.username }}</a>
+    {% endif %}
+  </div>
+</div>

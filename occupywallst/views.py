@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import views as authviews
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
 from occupywallst import api
@@ -56,12 +56,14 @@ def index(request):
                 .filter(is_visible=True, is_forum=False, is_deleted=False)
                 .order_by('-published'))
     return render_to_response(
-        'occupywallst/index.html', {'articles': articles[:8]},
+        'occupywallst/index.html', {'articles': articles[:8],
+                                    'archives': articles[8:]},
         context_instance=RequestContext(request))
 
 
 @my_cache(lambda r: 'forum')
 def forum(request):
+    per_page = 25
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
@@ -76,9 +78,10 @@ def forum(request):
                .filter(is_removed=False, is_deleted=False)
                .order_by('-published'))
     return render_to_response(
-        'occupywallst/forum.html', {'articles': articles,
-                                    'bests': bests[:5],
-                                    'recents': recents[:20]},
+        'occupywallst/forum.html', {'articles': articles[:per_page],
+                                    'bests': bests[:7],
+                                    'recents': recents[:20],
+                                    'per_page': 50},
         context_instance=RequestContext(request))
 
 

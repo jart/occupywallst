@@ -126,6 +126,22 @@ var ows_inactivity_delay;
     };
 
     /**
+     * Is page scrolled to make element visible?
+     */
+    jQuery.fn.scrolledToShow = function(expand) {
+        if (!this)
+            return;
+        if (!expand)
+            expand = 0;
+        var wtop = $(window).scrollTop() - expand;
+        var wbot = wtop + $(window).height() + expand;
+        var etop = this.offset().top;
+        var ebot = top + this.height();
+        return ((etop >= wtop && etop <= wbot) ||
+                (ebot >= wtop && ebot <= wbot));
+    };
+
+    /**
      * Defer function until it hasn't been called for delay milliseconds
      *
      * This is useful for decorating event functions that get called a
