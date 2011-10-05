@@ -44,7 +44,7 @@
       </div>
     </div>
     <section id="thread-list" style="margin-top:0">
-      {% cache 60 forum_articles %}
+      {% cache 20 forum_articles %}
         {% for article in articles %}
           {% include "occupywallst/forumpost_synopsis.html" %}
         {% endfor %}
@@ -54,7 +54,7 @@
       <img alt="loading..." id="loady" src="/media/img/ajax-loader-32.gif" width="32" height="32" />
     </p>
   </td><td id="right">
-    {% cache 60 forum_sidebar %}
+    {% cache 20 forum_sidebar %}
     <section id="recents">
       <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
       {% if not bests %}
