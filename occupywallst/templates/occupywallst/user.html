@@ -1,4 +1,6 @@
 {% extends base %}
+{% load ows %}
+{% load i18n %}
 
 {% block title %}{{ obj.username }}'s User Profile | OccupyWallSt.org{% endblock title %}
 
@@ -38,7 +40,7 @@
       <p class="postform">
         <textarea rows="5" cols="50"></textarea><br />
         <button class="save">send message</button>
-        <img class="loader" src="/media/img/ajax-loader.gif"
+        <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif"
              width="16" height="16" />
         <span class="error"></span>
       </p>
@@ -61,33 +63,19 @@
     </h2>
     <section id="user-info">
       <p>
-        {{ obj.username }} 
         {% if obj.userinfo.city and obj.userinfo.region %}
-          is from
-          <strong>{{ obj.userinfo.city }}, {{ obj.userinfo.region }}</strong>
-          and
+          <strong>{% trans "From" %}</strong>
+          {{ obj.userinfo.city }}, {{ obj.userinfo.region }}<br />
         {% endif %}
-      {% if obj.userinfo.attendance == "yes" %}
-        <span class="attendance yes">will attend</span>
-      {% endif %}
-      {% if obj.userinfo.attendance == "no" %}
-        <span class="attendance no">can't make it</span> to
-      {% endif %}
-      {% if obj.userinfo.attendance == "maybe" %}
-        <span class="attendance maybe">might be able to attend</span>
-      {% endif %}
-      the occupation.
-      {% if obj.userinfo.need_ride %}
-        They also <strong>need a ride</strong>!
-      {% endif %}
+        <strong>{% trans "Joined" %}</strong>
+        {{ obj.date_joined|as_timezone:"US/Eastern"|date:"DATE_FORMAT" }}<br />
+      </p>
       {% if obj.userinfo.position %}
         <div id="map" style="width: 250px; height: 200px;"></div>
-      {% else %}
-        <p>They also didn't specify their location.</p>
       {% endif %}
     </section>
 
-    {% if obj.userinfo.position %}
+    {% if nearby and obj.userinfo.position %}
       <h2>Nearby Users</h2>
       <section id="nearby-users">
         <ul>

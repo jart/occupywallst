@@ -4,6 +4,9 @@ from occupywallst.settings import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+MEDIA_URL = '/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
+
 SESSION_COOKIE_DOMAIN = '.dev.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.dev.occupywallst.org'
 
@@ -13,7 +16,9 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
-MIDDLEWARE_CLASSES += ['occupywallst.middleware.SQLInfoMiddleware']
+MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+INSTALLED_APPS += ['debug_toolbar']
 
 LOGGING = {
     'version': 1,
@@ -73,4 +78,6 @@ LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
 try:
     from occupywallst.settings_dev_local import *
 except ImportError:
-    pass
+    print "not found: occupywallst/settings_dev_local.py"
+else:
+    print "loaded: occupywallst/settings_dev_local.py"

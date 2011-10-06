@@ -23,7 +23,8 @@ TEMPLATE_DEBUG = DEBUG
 
 OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
 OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
-OWS_CANONICAL_URL = 'https://occupywallst.org'  # no path or trailing slash
+OWS_MAX_PRIVMSG_USER_DAY = 7
+OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
@@ -51,6 +52,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'KEY_PREFIX': os.getenv('VIRTUAL_ENV'),
         'LOCATION': [
             '127.0.0.1:11211',
         ],
@@ -80,19 +82,26 @@ SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_SECURE = False
 TIME_ZONE = 'UTC'
-LANGUAGE_CODE = 'en-us'
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
-MEDIA_URL = '/media/'
-ADMIN_MEDIA_PREFIX = '/media/admin/'
+MEDIA_URL = 'http://2439-occupywallst-com.voxcdn.com/media/'
+ADMIN_MEDIA_PREFIX = 'http://2439-occupywallst-com.voxcdn.com/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
 
 # change me in production
 SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
+
+gettext_noop = lambda s: s
+LANGUAGE_CODE = 'en-us'
+LANGUAGES = (
+    ('en', gettext_noop('English')),
+    ('es', gettext_noop('Spanish')),
+    ('fr', gettext_noop('French')),
+)
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
@@ -118,10 +127,12 @@ MIDDLEWARE_CLASSES = [
     'occupywallst.middleware.XForwardedForMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'occupywallst.middleware.CsrfCookieWhenLoggedIn',
     'occupywallst.middleware.NeverCache',
 ]
 
@@ -137,7 +148,9 @@ INSTALLED_APPS = [
 try:
     from occupywallst.settings_local import *
 except ImportError:
-    pass
+    print "not found: occupywallst/settings_local.py"
+else:
+    print "loaded: occupywallst/settings_local.py"
 
 
 def minify():

@@ -22,7 +22,7 @@ var ows_inactivity_delay;
         }
         $(".clickdiv").clickdiv();
         $(".hider").hider();
-        setTimeout(subscriber, 100);
+        // setTimeout(subscriber, 100);
         setInterval(function() {
             $("#notifications .item span").each(function() {
                 $(this).text(timesince($(this).data('published')) + ' ago');
@@ -123,6 +123,22 @@ var ows_inactivity_delay;
                 }
             });
         });
+    };
+
+    /**
+     * Is page scrolled to make element visible?
+     */
+    jQuery.fn.scrolledToShow = function(expand) {
+        if (!this)
+            return;
+        if (!expand)
+            expand = 0;
+        var wtop = $(window).scrollTop() - expand;
+        var wbot = wtop + $(window).height() + expand;
+        var etop = this.offset().top;
+        var ebot = top + this.height();
+        return ((etop >= wtop && etop <= wbot) ||
+                (ebot >= wtop && ebot <= wbot));
     };
 
     /**

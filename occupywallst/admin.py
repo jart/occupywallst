@@ -7,7 +7,7 @@ r"""
 
 """
 
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.conf.urls.defaults import patterns
@@ -24,6 +24,7 @@ class AdminSite(BaseAdminSite):
         BaseAdminSite.__init__(self, *args, **kwargs)
         self.register(db.User, UserAdmin)
         self.register(db.Group, GroupAdmin)
+        self.register(db.Verbiage, VerbiageAdmin)
         self.register(db.NewsArticle, ArticleAdmin)
         self.register(db.ForumPost, ArticleAdmin)
         self.register(db.UserInfo, UserInfoAdmin)
@@ -43,14 +44,28 @@ class GeoAdmin(OSMGeoAdmin):
     map_height = 500
 
 
-def content_field(obj):
-    if not obj.content:
-        return '!BLANK!'
-    elif len(obj.content) < 30:
-        return obj.content
-    else:
-        return obj.content[:30] + "..."
-content_field.short_description = 'Content'
+def content_field(maxlen):
+    def _content_field(obj):
+        if not obj.content:
+            return '!BLANK!'
+        elif len(obj.content) < maxlen:
+            return obj.content
+        else:
+            return obj.content[:maxlen] + "..."
+    _content_field.short_description = 'Content'
+    return _content_field
+
+
+class VerbiageTranslationInline(admin.StackedInline):
+    model = db.VerbiageTranslation
+    extra = 1
+
+
+class VerbiageAdmin(GeoAdmin):
+    inlines = (VerbiageTranslationInline,)
+    ordering = ('name',)
+    search_fields = ('name', 'content')
+    list_display = ('name', content_field(100))
 
 
 class UserAdmin(BaseUserAdmin):
@@ -62,6 +77,11 @@ class UserAdmin(BaseUserAdmin):
             userinfo.save()
 
 
+class ArticleTranslationInline(admin.StackedInline):
+    model = db.ArticleTranslation
+    extra = 1
+
+
 class ArticleAdmin(GeoAdmin):
     date_hierarchy = 'published'
     list_display = ('title', 'author', 'published', 'comment_count',
@@ -69,6 +89,8 @@ class ArticleAdmin(GeoAdmin):
     list_filter = ('is_visible', 'is_deleted')
     search_fields = ('title', 'content', 'author__username')
     ordering = ('-published',)
+    prepopulated_fields = {"slug": ("title",)}
+    inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
         urls = super(ArticleAdmin, self).get_urls()
@@ -100,7 +122,7 @@ class ArticleAdmin(GeoAdmin):
 
 class CommentAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = (content_field, 'published', 'user', 'karma', 'ups',
+    list_display = (content_field(30), 'published', 'user', 'karma', 'ups',
                     'downs', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
     search_fields = ('content', 'user__username')

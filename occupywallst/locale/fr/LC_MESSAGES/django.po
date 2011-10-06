@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-29 08:06+0000\n"
+"PO-Revision-Date: 2011-09-29 08:15+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: settings.py:100
+msgid "English"
+msgstr "Anglaise"
+
+#: settings.py:101
+msgid "Spanish"
+msgstr "Espagnole"
+
+#: settings.py:102
+msgid "French"
+msgstr "Française"
+
+#: utils.py:127
+#, python-format
+msgid "%(x)d second"
+msgid_plural "%(x)d seconds"
+msgstr[0] "%(x)d seconde"
+msgstr[1] "%(x)d secondes"
+
+#: utils.py:130
+#, python-format
+msgid "%(x)d minute"
+msgid_plural "%(x)d minutes"
+msgstr[0] "%(x)d minute"
+msgstr[1] "%(x)d minutes"
+
+#: utils.py:133
+#, python-format
+msgid "%(x)d hour"
+msgid_plural "%(x)d hours"
+msgstr[0] "%(x)d heure"
+msgstr[1] "%(x)d heures"
+
+#: utils.py:136
+#, python-format
+msgid "%(x)d day"
+msgid_plural "%(x)d days"
+msgstr[0] "%(x)d jour"
+msgstr[1] "%(x)d jours"
+
+#: utils.py:139
+#, python-format
+msgid "%(x)d month"
+msgid_plural "%(x)d months"
+msgstr[0] "%(x)d mois"
+msgstr[1] "%(x)d mois"
+
+#: templates/admin/auth/user/change_form.html:4
+msgid "OccupyWallSt User Info"
+msgstr "Infos utilisateurs de OccupyWallSt"
+
+#: templates/admin/occupywallst/article/change_form.html:5
+msgid "Convert to News Article"
+msgstr ""
+
+#: templates/admin/occupywallst/article/change_form.html:7
+msgid "Convert to Forum Post"
+msgstr ""
+
+#: templates/admin/occupywallst/comment/change_form.html:5
+msgid "Parent Comment"
+msgstr ""
+
+#: templates/occupywallst/article_content.html:7
+msgid "edit"
+msgstr "modifier"
+
+#: templates/occupywallst/article_content.html:8
+msgid "delete"
+msgstr "supprimer"
+
+#: templates/occupywallst/article_content.html:23
+#: templates/occupywallst/article_content.html:25
+msgid "Posted"
+msgstr "Publié"
+
+#: templates/occupywallst/article_content.html:23
+msgid "ago"
+msgstr "auparavant"
+
+#: templates/occupywallst/article_content.html:27
+msgid "by"
+msgstr "par"
+
+#: templates/occupywallst/base.html:7
+msgid "NYC Protest for American Revolution"
+msgstr "Protest New York pour la Révolution américaine"
+
+#: templates/occupywallst/base.html:9
+msgid ""
+"News and resources for protesters attending the mass demonstration on Wall "
+"Street against financial greed and corruption"
+msgstr ""
+"Nouvelles et ressources pour les manifestants présents à la manifestation\n"
+"de masse à Wall Street contre l'avidité financière et la corruption"
+
+#: templates/occupywallst/base.html:29 templates/occupywallst/base.html:35
+msgid "Welcome"
+msgstr "Bienvenue"
+
+#: templates/occupywallst/base.html:31
+msgid "admin"
+msgstr "administrateur"
+
+#: templates/occupywallst/base.html:33
+msgid "logout"
+msgstr "déconnexion"
+
+#: templates/occupywallst/base.html:36
+msgid "login"
+msgstr "connexion"
+
+#: templates/occupywallst/base.html:37
+msgid "signup"
+msgstr "s'inscrire"
+
+#: templates/occupywallst/base.html:43
+msgid ""
+"The resistance continues at Liberty Square and <a href=\"http://"
+"occupytogether.org/\">Nationwide</a>!"
+msgstr ""
+"La résistance persévère au Liberty Square et\n"
+"<a href=\"http://occupytogether.org/\">nationale</a>!"
+
+#: templates/occupywallst/base.html:51
+msgid "News"
+msgstr "Nouvelles"
+
+#: templates/occupywallst/base.html:53
+msgid "Forum"
+msgstr "Forum"
+
+#: templates/occupywallst/base.html:54
+msgid "Chat"
+msgstr "Chat"
+
+#: templates/occupywallst/base.html:55
+msgid "User Map"
+msgstr "Carte"
+
+#: templates/occupywallst/base.html:57
+msgid "About"
+msgstr "À propos"
+
+#: templates/occupywallst/base.html:58
+msgid "Donate"
+msgstr "Don"
+
+#: templates/occupywallst/base.html:76
+msgid "this site was brought to you by various radicals"
+msgstr "ce site a été présenté par différents radicaux"
+
+#: templates/occupywallst/base.html:77
+msgid "email"
+msgstr "email"
+
+#: templates/occupywallst/base.html:77
+msgid "help line"
+msgstr "Aide téléphone"
+
+#: templates/occupywallst/base.html:83
+msgid "Notifications"
+msgstr "Notifications"

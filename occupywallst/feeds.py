@@ -59,7 +59,7 @@ class RSSForumFeed(RSSNewsFeed):
     title = "OccupyWallSt Forum"
     link = settings.OWS_CANONICAL_URL
     description = "Public discussion pertaining to the occupation"
-    delay = timedelta(seconds=60 * 5)
+    delay = timedelta(seconds=60 * 60 * 2)
 
     def items(self):
         return (db.Article.objects
@@ -75,7 +75,7 @@ class RSSCommentFeed(Feed):
     link = settings.OWS_CANONICAL_URL
     description = "All comments submitted to the website"
     description_template = 'occupywallst/feed-comment.html'
-    delay = timedelta(seconds=60 * 5)
+    delay = timedelta(seconds=60 * 60 * 2)
 
     def items(self):
         return (db.Comment.objects

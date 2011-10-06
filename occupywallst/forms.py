@@ -28,7 +28,7 @@ class ProfileForm(forms.Form):
                                         help_text="""
         Do you want to receive an email notification when you receive a
         private message or a comment response?""")
-    notify_news = forms.BooleanField(required=False, initial=False,
+    notify_news = forms.BooleanField(required=False, initial=True,
                                      label="News Notifications",
                                      help_text="""
         Can we email you notifications about news relating to the protest?""")

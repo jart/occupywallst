@@ -33,7 +33,7 @@ r"""
 """
 
 import re
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from django.conf import settings
 from django.contrib import auth
@@ -61,7 +61,22 @@ def _to_bool(val):
                 str(val).lower() == "true")
 
 
-def attendees(bounds=None, **kwargs):
+def forumlinks(after, count, **kwargs):
+    """Used for continuous stream of forum post links
+    """
+    after, count = int(after), int(count)
+    if after < 0 or count <= 0:
+        raise APIException("bad arguments")
+    articles = (db.Article.objects
+                .select_related("author")
+                .filter(is_visible=True, is_deleted=False)
+                .order_by('-published'))
+    for article in articles[after:after + count]:
+        yield render_to_string('occupywallst/forumpost_synopsis.html',
+                               {'article': article})
+
+
+def attendees(bounds, **kwargs):
     """Find all people going who live within visible map area.
     """
     if bounds:
@@ -463,6 +478,14 @@ def message_send(user, to_username, content, **kwargs):
         if last:
             if (datetime.now() - last[0].published).seconds < 30:
                 raise APIException("hey slow down a little!")
+    if not user.is_staff:
+        hours24 = datetime.now() - timedelta(hours=24)
+        rec = db.Message.objects.filter(from_user=user, published__gt=hours24)
+        sentusers = set(m.to_user.username for m in rec)
+        max_ = settings.OWS_MAX_PRIVMSG_USER_DAY
+        if len(sentusers) > max_:
+            raise APIException("you can't private message more than %d users "
+                               "in one day" % (max_))
     msg = db.Message.objects.create(from_user=user,
                                     to_user=to_user,
                                     content=content)

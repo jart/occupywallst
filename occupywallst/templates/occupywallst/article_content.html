@@ -1,14 +1,23 @@
 {% load ows %}
+{% load i18n %}
+{% load l10n %}
 
 <article id="{{ article.slug }}">
-  <h1>{{ article.title }}</h1>
+  {% get_current_language as LANGUAGE_CODE %}
+  {% translate_object article LANGUAGE_CODE %}
+  <h1><a href="{{ article.get_absolute_url }}">
+    {{ article.title }}
+    {% if article.is_forum and not article.author.is_staff %}(User Submitted){% endif %}
+  </a></h1>
   <p class="info">
+    {% trans "Posted" %} {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
     {% if forum %}
-      Posted {{ article.published|timesince_short }} ago
-    {% else %}
-      Posted {{ article.published|date:"Y-m-d h:i:s T" }}
+      ({{ article.published|timesince_short }} {% trans "ago" %})
     {% endif %}
-    by {% if not article.author %}anonymous{% else %}
+    {% trans "by" %}
+    {% if not article.author %}
+      anonymous
+    {% else %}
       <a rel="author" title="View {{ article.author.username }}'s profile"
          class="user" href="{{ article.author.get_absolute_url }}">
       {{ article.author.username }}</a>
@@ -16,17 +25,6 @@
         {% if article.author.userinfo.city and article.author.userinfo.region %}
           ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
         {% endif %}
-      {% endif %}
-    {% endif %}
-    {% if user.is_authenticated and user == article.author %}
-      | <a class="edit" href="#">edit</a>
-      | <a class="delete" href="#">delete</a>
-    {% endif %}
-    {% if user.is_staff %}
-      {% if article.is_forum %}
-        | <a href="/admin/occupywallst/forumpost/{{ article.id }}/">admin</a>
-      {% else %}
-        | <a href="/admin/occupywallst/newsarticle/{{ article.id }}/">admin</a>
       {% endif %}
     {% endif %}
   </p>
@@ -37,4 +35,8 @@
       {{ article.content|markup }}
     {% endif %}
   </div>
+  <p class="view-comments">
+    <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
+      {{ article.comment_count|localize }} Comments</a>
+  </p>
 </article>

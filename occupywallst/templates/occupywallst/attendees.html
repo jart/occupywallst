@@ -4,7 +4,11 @@
 
 {% block stylesheets %}
   <style type="text/css">
-    #navbar .nav-attendees { background: #900; }
+    #navbar .nav-attendees {
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
   </style>
 {% endblock stylesheets %}
 
@@ -26,7 +30,7 @@
   <section id="attendees">
     <h1 style="margin-bottom: 0.5em; ">
       User Map
-      <img id="loader" class="loader" src="/media/img/ajax-loader.gif" width="16" height="16" />
+      <img id="loader" class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
     </h1>
     <div style="width: 100%; height: 500px; " id="map"></div>
   </section>

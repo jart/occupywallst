@@ -3,9 +3,13 @@
 {% block title %}Conference Bridges | OccupyWallSt.org{% endblock title %}
 
 {% block stylesheets %}
-  <link rel="stylesheet" href="/media/css/conference.css?v=10" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/conference.css?v=10" type="text/css" media="all" />
   <style type="text/css">
-    #navbar .nav-conf { background: #900; }
+    #navbar .nav-conf {
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
   </style>
 {% endblock stylesheets %}
 
@@ -16,7 +20,7 @@
 {% block js_init %}
   {{ block.super }}
   conference_init({
-    admin: {% if user.is_staff %}true{% else %}false{% endif %},
+    admin: {% if user and user.is_staff %}true{% else %}false{% endif %},
     url: ows_sockio_url() + "conf",
     confs: {
       'ows.conf': {elem: $('#ows-conf')},

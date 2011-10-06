@@ -18,6 +18,7 @@ import functools
 from datetime import date, timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, LineString
 from django.contrib.auth.models import User, Group
@@ -47,6 +48,60 @@ def memoize(method):
             res = getattr(instance, key)
         return res
     return _memoize
+
+
+class Verbiage(models.Model):
+    """Stores arbitrary website content fragments in Markdown
+    """
+    name = models.CharField(max_length=255, unique=True)
+    content = models.TextField(blank=True)
+    rendered = models.TextField(blank=True, editable=False)
+
+    @staticmethod
+    def get(name, lang=None):
+        verbs = cache.get('verbiage') or Verbiage._invalidate()
+        if name not in verbs:
+            return "[Verbiage '%s' not configured!]" % (name)
+        elif lang in verbs[name]:
+            return verbs[name][lang]
+        else:
+            return verbs[name]['default']
+
+    @staticmethod
+    def _invalidate():
+        verbs = {}
+        for obj in Verbiage.objects.all():
+            verb = {'default': obj.rendered}
+            for tran in VerbiageTranslation.objects.filter(verbiage=obj):
+                verb[tran.language] = tran.rendered
+            verbs[obj.name] = verb
+        cache.set('verbiage', verbs)
+        return verbs
+
+    def save(self):
+        from occupywallst.templatetags.ows import markup_unsafe
+        self.rendered = markup_unsafe(self.content)
+        super(Verbiage, self).save()
+        Verbiage._invalidate()
+
+    class Meta:
+        verbose_name_plural = "Verbiage"
+
+
+class VerbiageTranslation(models.Model):
+    verbiage = models.ForeignKey(Verbiage)
+    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
+    content = models.TextField(blank=True)
+    rendered = models.TextField(blank=True, editable=False)
+
+    def save(self):
+        from occupywallst.templatetags.ows import markup_unsafe
+        self.rendered = markup_unsafe(self.content)
+        super(VerbiageTranslation, self).save()
+        Verbiage._invalidate()
+
+    class Meta:
+        unique_together = ("verbiage", "language")
 
 
 class UserInfo(models.Model):
@@ -200,7 +255,7 @@ class Article(models.Model):
     author = models.ForeignKey(User, null=True, blank=True, help_text="""
         The user who wrote this article.""")
     title = models.CharField(max_length=255, help_text="""
-        A one-line title to describe ride.""")
+        A one-line title to describe article.""")
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.  DO NOT change
         this once the article has been published.""")
@@ -310,11 +365,39 @@ class Article(models.Model):
                         comhash[comid].upvoted = True
                     elif vote.vote == -1:
                         comhash[comid].downvoted = True
-        if not user.is_staff:
-            for com in comments:
-                if com.is_removed and com.user == user:
-                    com.is_removed = False
+        if user:
+            if not user.is_staff:
+                for com in comments:
+                    if com.is_removed and com.user == user:
+                        com.is_removed = False
         return comments
+
+    def translate(self, lang):
+        """Mangles title and content with translated text if available
+
+        Destroys save method so you can't shoot yourself in the foot.
+        """
+        if getattr(self, '__translated', False):
+            return
+        self.save = None
+        try:
+            trans = ArticleTranslation.objects.get(article=self, language=lang)
+        except ArticleTranslation.DoesNotExist:
+            pass
+        else:
+            self.content = trans.content
+            self.title = trans.title
+        self.__translated = True
+
+
+class ArticleTranslation(models.Model):
+    article = models.ForeignKey(Article)
+    language = models.CharField(max_length=255, choices=settings.LANGUAGES)
+    title = models.CharField(max_length=255)
+    content = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ("article", "language")
 
 
 class NewsArticleManager(models.GeoManager):

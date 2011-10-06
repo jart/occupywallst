@@ -40,45 +40,17 @@ class XForwardedForMiddleware(object):
             request.META['REMOTE_HOST'] = None
 
 
-class SQLInfoMiddleware(object):
-    """Add query statistics to end of HTML responses
+class CsrfCookieWhenLoggedIn(object):
+    """Tell Django to set CSRF cookie on all pages when logged in
+
+    Normally Django only sets the CSRF cookie when you use the CSRF
+    protection template tag.  Because we use Ajax for just about
+    everything, we need to ensure this cookie is always set once the
+    user logs in.
     """
 
     def process_response(self, request, response):
-        if not response['Content-Type'].startswith('text/html'):
-            print response['Content-Type']
-            return response
-        toto = 0.0
-        queries = []
-        for query in connection.queries:
-            toto += float(query['time'])
-            sql = (query['sql']
-                   .replace(' FROM ', '\n\nFROM ')
-                   .replace(' WHERE ', '\n\nWHERE ')
-                   .replace(' ORDER ', '\n\nORDER ')
-                   .replace(' INNER JOIN ', '\n\nINNER JOIN ')
-                   .replace(' LEFT OUTER JOIN ', '\n\nLEFT OUTER JOIN ')
-                   .replace('; args=( ', ';\n\nargs=(')
-                   .strip())
-            queries.append({'time': query['time'], 'sql': sql})
-        tpl = Template(r'''
-          <div id="sql-info" class="hider">
-            <div class="info toggle">
-              <span>Query Count</span> <strong>{{ count }}</strong>
-              <span>Total Time</span> <strong>{{ time }}</strong>
-            </div>
-            <div class="hidden">
-              {% for query in queries %}
-                <div class="item">
-                  <p><strong>{{ query.time }}</strong></p>
-                  {{ query.sql|linebreaks }}
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-        ''')
-        ctx = Context({'queries': queries,
-                       'count': len(queries),
-                       'time': toto})
-        response.content = response.content + tpl.render(ctx).encode('utf8')
+        if response.status_code == 200 and request.method == 'GET':
+            if request.user.is_authenticated():
+                request.META["CSRF_COOKIE_USED"] = True
         return response

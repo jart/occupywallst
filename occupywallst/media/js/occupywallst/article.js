@@ -222,7 +222,7 @@ jQuery.fn.numberAdd = function(delta) {
 
         $(".down", content).click(function(ev) {
             ev.preventDefault();
-            if ($(".up", content).hasClass("downvoted"))
+            if ($(".down", content).hasClass("downvoted"))
                 return;
             api("/api/comment_downvote/", {
                 "comment": comment_id

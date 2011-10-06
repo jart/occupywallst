@@ -8,7 +8,7 @@ h1 { font-size: 1.8em; margin: 0; }
 h2 { font-size: 1.3em; /* margin: 0 0; */ }
 h1 a { color: black; }
 textarea { font-family: Arial, sans-serif; }
-code, pre { font: 14px "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace; }
+code, pre { font: 11px "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace; }
 pre { margin: 0 1em; }
 
 .amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
@@ -21,6 +21,9 @@ pre { margin: 0 1em; }
 #brand a { color: black; }
 #brand .red { color: #a00; }
 #slogan { margin: 0; font-size: 1.5em; }
+
+#right h2:first-child { margin-top: 0; }
+#right p:first-child { margin-top: 0; }
 
 #userbox {
     position: absolute;
@@ -74,12 +77,16 @@ pre { margin: 0 1em; }
 #notifications .item a { display: block; }
 #notifications .item span { display: block; font-size: 0.8em; color: #ccc; }
 
+#fist { float: left; margin-top: 1em; margin-right: 5px; }
+
 #navbar ul {
     font-size: 0.90em;
     padding: 0;
     width: 100%;
     float: left;
     background: #333;
+    background: -webkit-gradient(linear, left top, left bottom, from(#363636), to(#262626));
+    background: -moz-linear-gradient(top,  #363636,  #262626);
     box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
     -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
     -webkit-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
@@ -111,6 +118,8 @@ pre { margin: 0 1em; }
 
 #navbar li.item a:hover {
     background: #900;
+    background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+    background: -moz-linear-gradient(top,  #a11,  #900);
 }
 
 #navbar li.last { padding-left: 0.5em; }
@@ -124,6 +133,27 @@ pre { margin: 0 1em; }
     padding-left: 0.2em;
 }
 
+#navbar li.nav-donate a { 
+    background: #c60;
+    border-top: 1px solid #777;
+    border-left: 1px solid #777;
+    border-bottom: 1px solid #555;
+    border-right: 1px solid #555;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#e82), to(#c60));
+    background: -moz-linear-gradient(top,  #e82,  #c60);
+}
+#navbar li.nav-donate a:hover {
+    background: #f93;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f93), to(#e82));
+    background: -moz-linear-gradient(top,  #e82,  #c60);
+}
+#navbar li.last { border-left: none; }
+#navbar li.nav-donate { border-right: none; }
 
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
@@ -141,7 +171,6 @@ article p, article blockquote { }
 article blockquote { color: #333; }
 article p.info { color: #777; font-family: Arial, sans-serif; font-size: 0.9em;
                  margin-top: 0; }
-#articles article { border-bottom: 2px solid #eee; margin-bottom: 1em; }
 #articles article:last-child { border-bottom: none; margin-bottom: 0; }
 
 footer { clear: both; }
@@ -161,6 +190,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 
 .editform { margin: 1em 0; }
 .comment .content { margin: 1em 1em; font-size: small; }
+.comment .words { overflow: auto; width: 600px; }
 .comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
 .comment .info { color: #666; font-size: 0.9em; }
 .comment .links { font-size: 0.9em; }
@@ -172,6 +202,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
 .comment p, .comment blockquote { margin: 0.5em 0; }
 .comment blockquote { margin-left: 0.2em; padding-left: 0.5em; border-left: 2px solid #aaa; }
+.comment pre { margin: 1em; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
 .replies { margin-left: 1em; }

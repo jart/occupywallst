@@ -1,87 +1,24 @@
 {% extends base %}
+{% load ows %}
 
 {% block title %}About Us | OccupyWallSt.org{% endblock title %}
 
 {% block stylesheets %}
   <style type="text/css">
-    #navbar .nav-about { background: #900; }
+    #navbar .nav-about {
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
   </style>
 {% endblock stylesheets %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="about">
-      <h1>About</h1>
-      <p>
-        OccupyWallSt.org is a free / open source social networking
-        tool for activists.  This website is <em>unofficial</em> and
-        not affiliated with Adbusters or Anonymous.  We, the
-        maintainers of this website, are an independent group of
-        organizers committed to doing technical support work for
-        resistance movements.
-      </p>
-      <h3>July Press Release</h3>
-      <p>
-        On 13 Jul 2011, the group Adbusters released this
-        call: <a href="http://www.adbusters.org/blogs/adbusters-blog/occupywallstreet.html">Occupy
-        Wall Street!</a>
-      </p>
-      <p>
-        In Solidarity, and as a response to this call, a planning
-        group was formed
-        [<a href="/">occupywallst.org</a>], and
-        an info sharing site established.  The participation of every
-        person, and every organization, that has an interest in
-        returning the US back into the hands of it's individual
-        citizens is required.
-      </p>
-      <p>
-        Our nation, our species and our world are in crisis. The US has
-        an important role to play in the solution, but we can no longer
-        afford to let corporate greed and corrupt politics set the
-        policies if our nation.
-      </p>
-      <p>
-        We, the people of the United States of America, considering the
-        crisis at hand, now reassert our sovereign control of our land.
-      </p>
-      <p>
-        Solidarity Forever!
-      </p>
+      {% verbiage 'about' LANGUAGE_CODE %}
     </div>
   </td><td id="right">
-    <h2 style="margin-top:0">Contact</h2>
-    <p>
-      <strong>Help & Directions</strong><br />
-      +1 (877) 881-3020
-    </p>
-    <p>
-      <strong>General Inquiries</strong><br />
-      <a href="mailto:9.17occupywallstreet@gmail.com">9.17occupywallstreet@gmail.com</a>
-    </p>
-    <p>
-      <strong>Inquiries Re: OccupyWallSt.org</strong><br />
-      <a href="mailto:info@occupywallst.org">info@occupywallst.org</a><br />
-      +1 (516) 708-4777
-    </p>
-    <h2>Links</h2>
-    <div style="margin-left:1em">
-      <a href="http://october2011.org/"><img width="150" height="108" src="/media/img/october2011_plug.jpg" /></a>
-    </div>
-    <ul class="linklist">
-      <li><a href="https://twitter.com/#!/search?q=%23OccupyWallStreet">Twitter #TakeWallStreet</a></li>
-      <li><a href="http://takethesquare.net/">Take The Square</a></li>
-      <li><a href="http://www.usdayofrage.org/">US Day of Rage</a></li>
-      <li><a href="http://www.facebook.com/event.php?eid=181396025266998">＃occupycanarywharf</a></li>
-      <li><a href="http://occupywallstreet.com/">OccupyWallStreet.com</a></li>
-      <li><a href="https://twitter.com/#!/search?q=%23OccupyWallStreet">Twitter #OccupyWallStreet</a></li>
-    </ul>
-    <h2>Source Code</h2>
-    <ul>
-      <li>
-        <a href="https://github.com/jart/occupywallst/">OccupyWallSt</a>
-        (GitHub)
-      </li>
-    </ul>
+    {% verbiage 'about-sidebar' LANGUAGE_CODE %}
   </td></tr></tbody></table>
 {% endblock content %}

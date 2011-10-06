@@ -1,7 +1,13 @@
 {% extends base %}
 {% load ows %}
+{% load i18n %}
+{% load cache %}
 
-{% block title %}{{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}{% endblock title %}
+{% block title %}
+  {% get_current_language as LANGUAGE_CODE %}
+  {% translate_object article LANGUAGE_CODE %}
+  {{ article.title }} | OccupyWallSt.org {% if forum %}Forum{% endif %}
+{% endblock title %}
 
 {# this is ESPECIALLY important for SEO because news articles are
   displayed both on the index page and the forum page.  we don't
@@ -13,10 +19,15 @@
 {% block stylesheets %}
   <style type="text/css">
     {% if forum %}
-      #navbar .nav-forum { background: #900; }
+      #navbar .nav-forum {
     {% else %}
-      #navbar .nav-news { background: #900; }
+      #navbar .nav-news {
     {% endif %}
+      background: #900;
+      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
+      background: -moz-linear-gradient(top,  #a11,  #900);
+    }
+    .view-comments { display: none; }
   </style>
 {% endblock stylesheets %}
 
@@ -34,14 +45,9 @@
     <div id="postform">
       <textarea rows="5" cols="70"></textarea><br />
       <button class="save">post comment</button>
-      <img class="loader" src="/media/img/ajax-loader.gif"
+      <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif"
            width="16" height="16" />
       <span class="error"></span>
-      {% if not user.is_authenticated %}
-        <p class="warning"><strong>Warning:</strong> When posting anonymously
-          you will not be able to edit/delete your post.  Please consider
-          <a href="{% url signup %}">signing up for account</a>.</p>
-      {% endif %}
     </div>
     <section id="comment-list">
       {% show_comments user comments %}
@@ -79,7 +85,7 @@
     <textarea rows="5" cols="70"></textarea><br />
     <button class="save">save</button>
     <button class="cancel">cancel</button>
-    <img class="loader" src="/media/img/ajax-loader.gif" width="16" height="16" />
+    <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
     <span class="error"></span>
   </div>
 
