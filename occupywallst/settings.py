@@ -82,6 +82,7 @@ SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_SECURE = False
 TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en-us'
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'

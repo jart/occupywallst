@@ -16,13 +16,6 @@ from occupywallst import models as db
 class ProfileForm(forms.Form):
     email = forms.EmailField(required=False, help_text="""
         We won't show it on the site or share it with anyone""")
-    attendance = forms.ChoiceField(choices=db.UserInfo.ATTENDANCE_CHOICES,
-                                   required=True, initial="maybe",
-                                   help_text="""
-        Are you going to occupy wall street?""")
-    need_ride = forms.BooleanField(required=False, help_text="""
-        Do you need a lift?  If so check this box to add yourself
-        to the map of people looking for a ride.""")
     notify_message = forms.BooleanField(required=False, initial=True,
                                         label="Message Notifications",
                                         help_text="""
@@ -51,8 +44,6 @@ class ProfileForm(forms.Form):
         if user:
             initial = {'email': user.email,
                        'info': user.userinfo.info,
-                       'need_ride': user.userinfo.need_ride,
-                       'attendance': user.userinfo.attendance,
                        'notify_news': user.userinfo.notify_news,
                        'notify_message': user.userinfo.notify_message,
                        'position_lat': user.userinfo.position_lat,
@@ -70,19 +61,12 @@ class ProfileForm(forms.Form):
 
     def clean(self):
         super(ProfileForm, self).clean()
-        need_ride = self.cleaned_data.get('need_ride')
-        position_lat = self.cleaned_data.get('position_lat')
-        position_lng = self.cleaned_data.get('position_lng')
-        if need_ride and not (position_lat and position_lng):
-            raise forms.ValidationError("You can't ask for a ride if you " +
-                                        "don't tell us where you're from.")
         return self.cleaned_data
 
     def save(self):
         user = self.user
         ui = user.userinfo
         ui.info = self.cleaned_data.get('info')
-        ui.attendance = self.cleaned_data.get('attendance')
         ui.notify_message = self.cleaned_data.get('notify_message')
         ui.notify_news = self.cleaned_data.get('notify_news')
         position_lat = self.cleaned_data.get('position_lat')
@@ -97,7 +81,6 @@ class ProfileForm(forms.Form):
         ui.city = self.cleaned_data.get('city')
         ui.address = self.cleaned_data.get('address')
         ui.zipcode = self.cleaned_data.get('zipcode')
-        ui.need_ride = self.cleaned_data.get('need_ride')
         ui.save()
         user.email = self.cleaned_data.get('email')
         user.save()
