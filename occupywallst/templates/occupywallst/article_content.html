@@ -5,7 +5,10 @@
 <article id="{{ article.slug }}">
   {% get_current_language as LANGUAGE_CODE %}
   {% translate_object article LANGUAGE_CODE %}
-  <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
+  <h1><a href="{{ article.get_absolute_url }}">
+    {{ article.title }}
+    {% if article.is_forum and not article.author.is_staff %}(User Submitted){% endif %}
+  </a></h1>
   <p class="info">
     {% trans "Posted" %} {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
     {% if forum %}
