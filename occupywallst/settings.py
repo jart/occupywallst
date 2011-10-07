@@ -95,6 +95,8 @@ SESSION_ENGINE = 'occupywallst.memcachedjson'
 # change me in production
 SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
 
+RECAPTCHA_PUBLIC_KEY =  "6LfY3MgSAAAAADIhMkYgbMIRXheetdYfv2zGE8uH"
+
 gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = (
