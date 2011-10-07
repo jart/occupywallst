@@ -340,7 +340,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     return comment_get(user, comment.id)
 
 
-def comment_get(user, comment_id, **kwargs):
+def comment_get(user, comment_id=None, **kwargs):
     """Fetch a single comment information
     """
     try:
