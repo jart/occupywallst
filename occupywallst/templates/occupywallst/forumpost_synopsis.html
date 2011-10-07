@@ -13,5 +13,6 @@
          class="user" href="{{ article.author.get_absolute_url }}">
       {{ article.author.username }}</a>
     {% endif %}
+    last comment {{ article.killed|timesince_short }} ago
   </div>
 </div>
