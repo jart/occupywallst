@@ -260,7 +260,7 @@ def article_delete(user, article_slug, **kwargs):
     return []
 
 
-def article_get(user, article_slug, **kwargs):
+def article_get(user, article_slug=None, **kwargs):
     """Get article information
     """
     try:
