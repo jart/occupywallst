@@ -94,6 +94,7 @@ def attendees(bounds, **kwargs):
                'username': userinfo.user.username,
                'position': userinfo.position_latlng}
 
+
 def rides(bounds=None, **kwargs):
     """Find all rides within visible map area.
     """
@@ -110,21 +111,20 @@ def rides(bounds=None, **kwargs):
         yield {'id': ride.id,
                'route': ride.route}
 
+
 def ride_request_update(request_id, status, user=None, **kwargs):
     ride_request = (db.RideRequest.objects.filter(id=request_id)
-                    .select_related("ride","ride__user"))
+                    .select_related("ride", "ride__user"))
     try:
         req = ride_request[0]
     except IndexError:
         raise APIException("Request not found.")
     if req.ride.user == user:
-        req.status=status
+        req.status = status
         req.save()
-        return [{"id": req.id, "status": req.status }]
+        return [{"id": req.id, "status": req.status}]
     else:
-        raise APIException("You do not have permission to update this request.")
-
-
+        raise APIException("You do not have permission to update this request")
 
 
 def attendee_info(username, **kwargs):
@@ -151,14 +151,13 @@ def article_new(user, title, content, is_forum, **kwargs):
     """
     is_forum = _to_bool(is_forum)
     if not (user and user.id):
-        raise APIException("anonymous posts disabled. please sign up for an account")
+        raise APIException("you're not logged in")
     if not is_forum:
-        if not (user and user.id) or not user.is_staff:
+        if not user.is_staff:
             raise APIException("insufficient privileges")
     else:
         if len(content) > 5 * 1024:
             raise APIException("article too long, jerk.")
-
     if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
@@ -166,7 +165,7 @@ def article_new(user, title, content, is_forum, **kwargs):
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
-    if not settings.DEBUG and user and user.id and not user.is_staff:
+    if not settings.DEBUG and not user.is_staff:
         last = user.article_set.order_by('-published')[:1]
         if last:
             limit = settings.OWS_POST_LIMIT_THREAD
@@ -175,8 +174,7 @@ def article_new(user, title, content, is_forum, **kwargs):
                 raise APIException("please wait %d seconds before making "
                                    "another post" % (limit - since))
     article = db.Article()
-    if user and user.id:
-        article.author = user
+    article.author = user
     article.published = datetime.now()
     article.is_visible = True
     article.title = title
@@ -267,7 +265,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     Also upvotes comment and increments article comment count.
     """
     if not (user and user.id):
-        raise APIException("anonymous posts disabled. please sign up for an account")
+        raise APIException("you're not logged in")
     content = content.strip()
     if len(content) < 3:
         raise APIException("comment too short")
@@ -289,15 +287,12 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         parent_id = None
     if not settings.DEBUG:
         last = None
-        if user and user.id:
-            if not user.is_staff:
-                qset = user.comment_set.order_by('-published')
-                try:
-                    last = qset[1]
-                except IndexError:
-                    pass
-        else:
-            last = db.Comment.objects.order_by('-published')[:1]
+        if not user.is_staff:
+            qset = user.comment_set.order_by('-published')
+            try:
+                last = qset[1]
+            except IndexError:
+                pass
         if last:
             limit = settings.OWS_POST_LIMIT_COMMENT
             since = (datetime.now() - last.published).seconds
@@ -306,11 +301,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
                                    "another post" % (limit - since))
     comment = db.Comment()
     comment.article = article
-    if user and user.id:
-        username = user.username
-        comment.user = user
-    else:
-        username = 'anonymous'
+    username = user.username
+    comment.user = user
     comment.content = content
     comment.parent_id = parent_id
     comment.save()
