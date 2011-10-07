@@ -61,6 +61,19 @@ def _to_bool(val):
                 str(val).lower() == "true")
 
 
+def _try_to_get_ip(args):
+    if 'request' in args:
+        return args['request'].META.get('REMOTE_ADDR', '')
+    else:
+        return ''
+
+
+def _too_many_caps(text):
+    caps = len(re.sub(r'[^A-Z]', '', text))
+    lows = len(re.sub(r'[^a-z]', '', text))
+    return (caps + lows >= 8 and caps > lows)
+
+
 def forumlinks(after, count, **kwargs):
     """Used for continuous stream of forum post links
     """
@@ -70,7 +83,7 @@ def forumlinks(after, count, **kwargs):
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
-                .order_by('-published'))
+                .order_by('-killed'))
     for article in articles[after:after + count]:
         yield render_to_string('occupywallst/forumpost_synopsis.html',
                                {'article': article})
@@ -89,7 +102,7 @@ def attendees(bounds, **kwargs):
         qset = (db.UserInfo.objects
                 .select_related("user")
                 .filter(position__isnull=False))
-    for userinfo in qset:
+    for userinfo in qset[:200]:
         yield {'id': userinfo.user.id,
                'username': userinfo.user.username,
                'position': userinfo.position_latlng}
@@ -162,6 +175,8 @@ def article_new(user, title, content, is_forum, **kwargs):
         raise APIException("title too short")
     if len(title) > 255:
         raise APIException("title too long")
+    if _too_many_caps(title) or _too_many_caps(content):
+        raise APIException("turn off bloody caps lock")
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
@@ -172,7 +187,7 @@ def article_new(user, title, content, is_forum, **kwargs):
             since = (datetime.now() - last[0].published).seconds
             if since < limit:
                 raise APIException("please wait %d seconds before making "
-                                   "another post" % (limit - since))
+                                   "another forum thread" % (limit - since))
     article = db.Article()
     article.author = user
     article.published = datetime.now()
@@ -181,6 +196,7 @@ def article_new(user, title, content, is_forum, **kwargs):
     article.slug = slug
     article.content = content
     article.is_forum = is_forum
+    article.ip = _try_to_get_ip(kwargs)
     article.save()
     return article_get(user, slug)
 
@@ -271,6 +287,8 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         raise APIException("comment too short")
     if len(content) > 5 * 1024:
         raise APIException("comment too long, jerk.")
+    if _too_many_caps(content):
+        raise APIException("turn off bloody caps lock")
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
@@ -298,16 +316,18 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             since = (datetime.now() - last.published).seconds
             if since < limit:
                 raise APIException("please wait %d seconds before making "
-                                   "another post" % (limit - since))
+                                   "another comment" % (limit - since))
     comment = db.Comment()
     comment.article = article
     username = user.username
     comment.user = user
     comment.content = content
     comment.parent_id = parent_id
+    comment.ip = _try_to_get_ip(kwargs)
     comment.save()
     comment_vote(user, comment, "up", **kwargs)
     article.comment_count += 1
+    article.killed = datetime.now()
     article.save()
     if parent:
         db.Notification.send(parent.user, comment.get_absolute_url(),
@@ -423,8 +443,8 @@ def comment_vote(user, comment, vote, **kwargs):
         except db.Comment.DoesNotExist:
             raise APIException("comment not found")
     if not (user and user.id):
-        if 'request' in kwargs:
-            ip = kwargs['request'].META['REMOTE_ADDR']
+        ip = _try_to_get_ip(kwargs)
+        if ip:
             key = "vote_comment_%s__%s" % (comment.id, ip)
             if cache.get(key, False):
                 raise APIException("you already voted")

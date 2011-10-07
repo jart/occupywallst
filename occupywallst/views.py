@@ -69,7 +69,7 @@ def forum(request):
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
-                .order_by('-published'))
+                .order_by('-killed'))
     bests = (db.Comment.objects
              .select_related("article", "user")
              .filter(is_removed=False, is_deleted=False)

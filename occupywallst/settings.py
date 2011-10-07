@@ -21,8 +21,8 @@ PAYPAL_DEBUG = DEBUG
 AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
-OWS_POST_LIMIT_THREAD = 60 * 5  # five minutes
-OWS_POST_LIMIT_COMMENT = 30  # 30 seconds
+OWS_POST_LIMIT_THREAD = 60 * 10  # ten minutes
+OWS_POST_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
