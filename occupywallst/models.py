@@ -29,7 +29,6 @@ from django.template.defaultfilters import slugify
 
 from occupywallst.utils import jsonify
 from occupywallst import geo
-from occupywallst.model_update import update
 
 
 logger = logging.getLogger(__name__)
@@ -643,9 +642,6 @@ class Ride(models.Model):
     seats_total = models.IntegerField(default=0, help_text="""
         How many seats in vehicle does the user wish to fill?  This does
         not change when ride requests are accepted.""")
-    seats_used = models.IntegerField(default=0, help_text="""
-        Counter for total number of seats currently available.  This changes
-        when user accepts requests for a ride from other users.""")
     waypoints = models.TextField(help_text="""
         List of addresses intersected by driving route separated by newlines.
         Must contain at least two lines for origin and destination.  This may
@@ -656,7 +652,7 @@ class Ride(models.Model):
         Google's goofy compressed version of route coords.""")
     info = models.TextField(blank=True, help_text="""
         A long description written by user in markup.""")
-    forum_post = models.ForeignKey(ForumPost, null=True, blank=True)
+    #forum_post = models.ForeignKey(ForumPost, null=True, blank=True)
     is_deleted = models.BooleanField(default=False, editable=False,
                                      help_text="""
         Flag to indicate should no longer be listed on site.""")
