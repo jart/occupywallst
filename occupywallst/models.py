@@ -260,6 +260,8 @@ class Article(models.Model):
         this once the article has been published.""")
     published = models.DateTimeField(auto_now_add=True, help_text="""
         When was article was published?""")
+    killed = models.DateTimeField(auto_now_add=True, help_text="""
+        When was the last comment made?""")
     content = models.TextField(blank=True, help_text="""
         The contents of the article in Markdown.""")
     comment_count = models.IntegerField(default=0, editable=False,
@@ -269,13 +271,12 @@ class Article(models.Model):
         Should the markdown parser allow HTML?  If a non-staff user
         posted this, they will lose the ability to edit.""")
     is_visible = models.BooleanField(default=False, help_text="""
-        Should it show up on the main page listing and rss feeds?
-        Set this to true once you're done editing the article and
-        want it published.  This does not apply if is_forum is True.""")
+        Should it be listed on the website and syndicated?""")
     is_forum = models.BooleanField(default=False, editable=False, help_text="""
         Indicates this a thread on the message board forum.""")
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be shown on site.""")
+    ip = models.CharField(max_length=255, blank=True)
 
     objects = models.GeoManager()
 
@@ -464,6 +465,7 @@ class Comment(models.Model):
         Flag to indicate a moderator removed the comment.""")
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate user deleted thier comment.""")
+    ip = models.CharField(max_length=255, blank=True)
 
     replies = ()
 
