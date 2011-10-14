@@ -68,7 +68,7 @@ class Verbiage(models.Model):
         verbs = cache.get('verbiage') or Verbiage._invalidate()
         def _getter(name, lang=None):
             if name not in verbs:
-                return "Verbiage '%s' not configured" % (name)
+                return ""
             elif lang and lang in verbs[name]:
                 return verbs[name][lang]
             else:
