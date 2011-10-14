@@ -51,6 +51,8 @@ def memoize(method):
 
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown
+
+    See also: :py:func:`occupywallst.context_processors.verbiage`
     """
     name = models.CharField(max_length=255, unique=True)
     content = models.TextField(blank=True)
@@ -58,13 +60,19 @@ class Verbiage(models.Model):
 
     @staticmethod
     def get(name, lang=None):
+        return Verbiage.getter()(name, lang)
+
+    @staticmethod
+    def getter():
         verbs = cache.get('verbiage') or Verbiage._invalidate()
-        if name not in verbs:
-            return "Verbiage '%s' not configured" % (name)
-        elif lang in verbs[name]:
-            return verbs[name][lang]
-        else:
-            return verbs[name]['default']
+        def _getter(name, lang=None):
+            if name not in verbs:
+                return "Verbiage '%s' not configured" % (name)
+            elif lang and lang in verbs[name]:
+                return verbs[name][lang]
+            else:
+                return verbs[name]['default']
+        return _getter
 
     @staticmethod
     def _invalidate():
