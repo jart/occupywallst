@@ -156,14 +156,21 @@ def attendee_info(username, **kwargs):
              'html': html}]
 
 
-def _article_validate(title, content):
-    if len(content) > 5 * 1024:
-        raise APIException("article too long, jerk.")
+def _title_validate(title):
     if len(title) < 3:
         raise APIException("title too short")
     if len(title) > 255:
         raise APIException("title too long")
-    if _too_many_caps(title) or _too_many_caps(content):
+    if _too_many_caps(title):
+        raise APIException("turn off bloody caps lock")
+
+
+def _content_validate(content):
+    if len(content) < 3:
+        raise APIException("content too short")
+    if len(content) > 5 * 1024:
+        raise APIException("content too long, jerk.")
+    if _too_many_caps(content):
         raise APIException("turn off bloody caps lock")
 
 
@@ -179,7 +186,10 @@ def article_new(user, title, content, is_forum, **kwargs):
     if not is_forum:
         if not user.is_staff:
             raise APIException("insufficient privileges")
-    _article_validate(title, content)
+    title = title.strip()
+    content = content.strip()
+    _title_validate(title)
+    _content_validate(content)
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
@@ -213,7 +223,10 @@ def article_edit(user, article_slug, title, content, **kwargs):
     """
     if not (user and user.id):
         raise APIException("you're not logged in")
-    _article_validate(title, content)
+    title = title.strip()
+    content = content.strip()
+    _title_validate(title)
+    _content_validate(content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
@@ -393,14 +406,16 @@ def comment_edit(user, comment_id, content, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
+    _content_validate(content)
     if len(content) < 3:
         raise APIException("comment too short")
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if comment.user != user:
-        raise APIException("you didn't post that comment")
+    if not user.is_staff:
+        if comment.user != user:
+            raise APIException("you didn't post that comment")
     comment.content = content
     comment.save()
     return comment_get(user, comment.id)
