@@ -32,6 +32,7 @@ jQuery.fn.numberAdd = function(delta) {
             if ($(".editform", article).length)
                 return;
             var form = $("#editform").clone().attr("id", "");
+            $("textarea", form).before($('<div><input size="70"/></div>'));
             var old_words;
             form.insertBefore($(".words", article));
             $(".save", form).click(function(ev) {
@@ -40,6 +41,7 @@ jQuery.fn.numberAdd = function(delta) {
                 $(".error", form).text("");
                 api("/api/article_edit/", {
                     "article_slug": slug,
+                    "title": $("input", form).val(),
                     "content": $("textarea", form).val()
                 }, function(data) {
                     $(".loader", form).hide();
@@ -69,6 +71,7 @@ jQuery.fn.numberAdd = function(delta) {
                     var res = data.results[0];
                     var words = $(".words", article);
                     old_words = words.html();
+                    $("input", form).val(res.title);
                     $("textarea", form).val(res.content);
                     $("textarea", form).markdown_preview(words);
                     form.slideDown(penguin, function() {
@@ -92,6 +95,26 @@ jQuery.fn.numberAdd = function(delta) {
                 }
             });
         });
+
+        $(".remove", article).click(function(ev) {
+            ev.preventDefault();
+            var action = $(".remove", article).text();
+            api("/api/article_remove/", {
+                "article_slug": slug,
+                "action": action
+            }, function(data) {
+                if (data.status != "ERROR") {
+                    if (action == "remove") {
+                        $(".remove", article).text("unremove");
+                    } else {
+                        $(".remove", article).text("remove");
+                    }
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+
     }
 
     function init_comment_form(form, container, parent_id) {

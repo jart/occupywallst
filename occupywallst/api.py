@@ -156,6 +156,17 @@ def attendee_info(username, **kwargs):
              'html': html}]
 
 
+def _article_validate(title, content):
+    if len(content) > 5 * 1024:
+        raise APIException("article too long, jerk.")
+    if len(title) < 3:
+        raise APIException("title too short")
+    if len(title) > 255:
+        raise APIException("title too long")
+    if _too_many_caps(title) or _too_many_caps(content):
+        raise APIException("turn off bloody caps lock")
+
+
 def article_new(user, title, content, is_forum, **kwargs):
     """Create a news article or forum thread
 
@@ -168,15 +179,7 @@ def article_new(user, title, content, is_forum, **kwargs):
     if not is_forum:
         if not user.is_staff:
             raise APIException("insufficient privileges")
-    else:
-        if len(content) > 5 * 1024:
-            raise APIException("article too long, jerk.")
-    if len(title) < 3:
-        raise APIException("title too short")
-    if len(title) > 255:
-        raise APIException("title too long")
-    if _too_many_caps(title) or _too_many_caps(content):
-        raise APIException("turn off bloody caps lock")
+    _article_validate(title, content)
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
@@ -201,7 +204,7 @@ def article_new(user, title, content, is_forum, **kwargs):
     return article_get(user, slug)
 
 
-def article_edit(user, article_slug, content, **kwargs):
+def article_edit(user, article_slug, title, content, **kwargs):
     """Edit an article or forum post
 
     We mustn't allow users without staff privileges to edit an article
@@ -210,16 +213,14 @@ def article_edit(user, article_slug, content, **kwargs):
     """
     if not (user and user.id):
         raise APIException("you're not logged in")
-    content = content.strip()
-    if len(content) < 3:
-        raise APIException("article too short")
+    _article_validate(title, content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException("article not found")
-    if article.author != user:
-        raise APIException("you didn't post that")
     if not user.is_staff:
+        if article.author != user:
+            raise APIException("you didn't post that")
         if article.allow_html or not article.is_forum:
             raise APIException("insufficient privileges")
     article.content = content
@@ -256,6 +257,27 @@ def article_delete(user, article_slug, **kwargs):
     article.title = "[DELETED]"
     article.content = "[DELETED]"
     article.is_visible = False
+    article.save()
+    return []
+
+
+def article_remove(user, article_slug, action, **kwargs):
+    """Makes an article unlisted and invisible to search engines
+    """
+    if not (user and user.id):
+        raise APIException("you're not logged in")
+    if not user.is_staff:
+        raise APIException("insufficient permissions")
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+    except db.Article.DoesNotExist:
+        raise APIException("article not found")
+    if action == 'remove':
+        article.is_visible = False
+    elif action == 'unremove':
+        article.is_visible = True
+    else:
+        raise APIException("invalid action")
     article.save()
     return []
 
@@ -419,8 +441,9 @@ def comment_delete(user, comment_id, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if comment.user != user:
-        raise APIException("you didn't post that comment")
+    if not user.is_staff:
+        if comment.user != user:
+            raise APIException("you didn't post that comment")
     comment.article.comment_count -= 1
     comment.article.save()
     comment.delete()

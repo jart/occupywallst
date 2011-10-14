@@ -28,12 +28,15 @@
         <div class="links">
           <a class="reply" href="#">reply</a>
           <a class="permalink" href="{{ comment.get_absolute_url }}">permalink</a>
-          {% if user.is_authenticated and user == comment.user %}
-            <a class="edit" href="#">edit</a>
-            <a class="delete" href="#">delete</a>
-          {% endif %}
           {% if user and user.is_staff %}
             <a class="remove" href="#">{% if comment.is_removed %}un{% endif %}remove</a>
+            <a class="edit" href="#">edit</a>
+            <a class="delete" href="#">delete</a>
+          {% else %}
+            {% if user and user.is_authenticated and user == comment.user %}
+              <a class="edit" href="#">edit</a>
+              <a class="delete" href="#">delete</a>
+            {% endif %}
           {% endif %}
         </div>
       {% endif %}

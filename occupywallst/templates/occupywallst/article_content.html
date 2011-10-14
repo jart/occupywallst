@@ -26,6 +26,16 @@
           ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
         {% endif %}
       {% endif %}
+      {% if user and user.is_staff %}
+        | <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">admin</a>
+        | <a class="edit" href="#">edit</a>
+        | <a class="remove" href="#">{% if not article.is_visible %}un{% endif %}remove</a>
+      {% else %}
+        {% if user and user.is_authenticated and user == article.author %}
+          | <a class="edit" href="#">edit</a>
+          | <a class="delete" href="#">delete</a>
+        {% endif %}
+      {% endif %}
     {% endif %}
   </p>
   <div class="words">
