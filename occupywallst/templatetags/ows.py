@@ -123,14 +123,19 @@ def translate_object(obj, lang):
     return ''
 
 
-@register.simple_tag
-def show_comments(user, comments):
+@register.simple_tag(takes_context=True)
+def show_comments(context, user, comments):
     """I wrote this because template includes don't recurse properly
     """
     res = []
+    depth = context.get('depth', -1)+1
+    can_reply = depth+1 < settings.OWS_MAX_COMMENT_DEPTH
+
     for comment in comments:
         if not comment.is_removed or user.is_staff:
             res.append(render_to_string('occupywallst/comment.html',
                                         {'comment': comment,
-                                         'user': user}))
+                                         'user': user,
+                                         'depth': depth,
+                                         'can_reply' : can_reply}))
     return "".join(res)
