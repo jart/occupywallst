@@ -26,7 +26,7 @@
     {% block header %}
       <header>
         <div id="userbox">
-          {% trans "Welcome:" %}
+          {% trans "Welcome" %}
           {% if user.is_authenticated %}
             <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
             {% if user.is_staff %}
@@ -41,7 +41,7 @@
           <form id="setlanguage" action="/i18n/setlang/" method="post">
             <input name="next" type="hidden" value="{{ request.path }}" />
             <input name="language" type="hidden" value="" />
-            {% trans "Language:" %}
+            {% trans "Language" %}
             {% for language in languages %}
               {% if language.code == LANGUAGE_CODE %}
                 <strong>{{ language.code }}</strong>
