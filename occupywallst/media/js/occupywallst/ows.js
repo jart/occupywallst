@@ -36,7 +36,7 @@ var ows_inactivity_delay;
         $("a", langform).each(function() {
             $(this).click(function(ev) {
                 ev.preventDefault();
-                $("input", langform).val($(this).text());
+                $('input[name="language"]', langform).val($(this).text());
                 langform.submit();
             });
         });
