@@ -318,26 +318,33 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
-    if len(content) < 3:
-        raise APIException("comment too short")
-    if len(content) > 5 * 1024:
-        raise APIException("comment too long, jerk.")
-    if _too_many_caps(content):
-        raise APIException("turn off bloody caps lock")
+    _content_validate(content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException('article not found')
+    def comment_depth(id):
+        depth = 0
+        current = id
+        while current:
+            current = comhash.get(current, 0).parent_id
+            depth += 1
+        return depth
+
     if parent_id:
-        try:
-            parent = db.Comment.objects.get(id=parent_id,
-                                            is_deleted=False,
-                                            article=article)
-        except db.Comment.DoesNotExist:
+        other_comments = (db.Comment.objects
+                    .select_related("article")
+                    .filter(article=article, is_deleted=False))
+        comhash = dict((c.id, c) for c in other_comments)
+        parent = comhash[int(parent_id)]
+        if int(parent_id) not in comhash:
             raise APIException("parent comment not found")
+        if comment_depth(int(parent_id))+1 > settings.OWS_MAX_COMMENT_DEPTH:
+            raise APIException("comment nested too deep")
     else:
         parent = None
         parent_id = None
+
     if not settings.DEBUG:
         last = None
         if not user.is_staff:
@@ -352,6 +359,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             if since < limit:
                 raise APIException("please wait %d seconds before making "
                                    "another comment" % (limit - since))
+
     comment = db.Comment()
     comment.article = article
     username = user.username
