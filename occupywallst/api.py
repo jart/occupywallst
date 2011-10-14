@@ -318,12 +318,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
-    if len(content) < 3:
-        raise APIException("comment too short")
-    if len(content) > 5 * 1024:
-        raise APIException("comment too long, jerk.")
-    if _too_many_caps(content):
-        raise APIException("turn off bloody caps lock")
+    _content_validate(content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
