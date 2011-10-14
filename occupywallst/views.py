@@ -88,6 +88,13 @@ def forum(request):
 
 
 @my_cache(lambda r: 'calendar')
+def oct15(request):
+    return render_to_response(
+        'occupywallst/oct15.html', {},
+        context_instance=RequestContext(request))
+
+
+@my_cache(lambda r: 'calendar')
 def calendar(request):
     return render_to_response(
         'occupywallst/calendar.html', {},
