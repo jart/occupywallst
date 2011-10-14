@@ -90,6 +90,7 @@ class ArticleAdmin(GeoAdmin):
     search_fields = ('title', 'content', 'author__username')
     ordering = ('-published',)
     prepopulated_fields = {"slug": ("title",)}
+    raw_id_fields = ('author',)
     inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
