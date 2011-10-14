@@ -57,6 +57,7 @@ class Verbiage(models.Model):
     name = models.CharField(max_length=255, unique=True)
     content = models.TextField(blank=True)
     rendered = models.TextField(blank=True, editable=False)
+    use_markdown = models.BooleanField(default=True)
 
     @staticmethod
     def get(name, lang=None):
@@ -87,7 +88,10 @@ class Verbiage(models.Model):
 
     def save(self):
         from occupywallst.templatetags.ows import markup_unsafe
-        self.rendered = markup_unsafe(self.content)
+        if self.use_markdown:
+            self.rendered = markup_unsafe(self.content)
+        else:
+            self.rendered = self.content
         super(Verbiage, self).save()
         Verbiage._invalidate()
 
@@ -106,7 +110,10 @@ class VerbiageTranslation(models.Model):
 
     def save(self):
         from occupywallst.templatetags.ows import markup_unsafe
-        self.rendered = markup_unsafe(self.content)
+        if self.verbiage.use_markdown:
+            self.rendered = markup_unsafe(self.content)
+        else:
+            self.rendered = self.content
         super(VerbiageTranslation, self).save()
         Verbiage._invalidate()
 

@@ -5,9 +5,9 @@
   {% load i18n %}
   {% get_current_language as LANGUAGE_CODE %}
   <meta charset="utf-8" />
-  <title>{% block title %}{{ verbiage.title|striptags }}{% endblock title %}</title>
+  <title>{% block title %}{{ verbiage.title }}{% endblock title %}</title>
   <link rel="shortcut icon" href="{{ MEDIA_URL }}img/bull16.png" />
-  <meta name="description" content="{% block description %}{{ verbiage.description|striptags }}{% endblock description %}</title>" />
+  <meta name="description" content="{% block description %}{{ verbiage.description }}{% endblock description %}</title>" />
   {% block canonical %}
     <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
   {% endblock canonical %}
@@ -42,7 +42,11 @@
             <input name="language" type="hidden" value="" />
             {% trans "Language:" %}
             {% for language in languages %}
-              <a href="#">{{ language.code }}</a>
+              {% if language.code == LANGUAGE_CODE %}
+                <strong>{{ language.code }}</strong>
+              {% else %}
+                <a href="#">{{ language.code }}</a>
+              {% endif %}
             {% endfor %}
           </form>
         </div>
