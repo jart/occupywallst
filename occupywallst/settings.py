@@ -22,12 +22,14 @@ AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 # please change these values in occupywallst/settings_local.py
-SECRET_KEY = 'please change me'
-RECAPTCHA_PUBLIC_KEY =  "please change me"
-RECAPTCHA_PRIVATE_KEY =  "please change me"
-
 OWS_SITE_NAME = 'OccupyWallSt.org'
 OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
+SECRET_KEY = 'please change me to some wacky random value'
+RECAPTCHA_PUBLIC_KEY =  'please change me'
+RECAPTCHA_PRIVATE_KEY =  'please change me'
+SESSION_COOKIE_DOMAIN = '.occupywallst.org'
+CSRF_COOKIE_DOMAIN = '.occupywallst.org'
+
 OWS_POST_LIMIT_THREAD = 60 * 10  # ten minutes
 OWS_POST_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_PRIVMSG_USER_DAY = 7
@@ -84,8 +86,6 @@ USE_L10N = False
 USE_THOUSAND_SEPARATOR = True
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_DOMAIN = '.occupywallst.org'
-CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_SECURE = False
 TIME_ZONE = 'UTC'
 DEFAULT_CHARSET = 'utf-8'
