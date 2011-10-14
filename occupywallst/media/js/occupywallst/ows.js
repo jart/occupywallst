@@ -28,6 +28,18 @@ var ows_inactivity_delay;
                 $(this).text(timesince($(this).data('published')) + ' ago');
             });
         }, 1000);
+        init_setlang();
+    }
+
+    function init_setlang() {
+        var langform = $("#setlanguage");
+        $("a", langform).each(function() {
+            $(this).click(function(ev) {
+                ev.preventDefault();
+                $("input", langform).val($(this).text());
+                langform.submit();
+            });
+        });
     }
 
     function notify_to_elem(notify) {

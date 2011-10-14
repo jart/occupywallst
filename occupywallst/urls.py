@@ -68,6 +68,7 @@ urlpatterns = patterns('',
     url(r'^api/signup/$', require_POST(utils.api_view(api.signup))),
     url(r'^api/login/$', require_POST(utils.api_view(api.login))),
     url(r'^api/logout/$', require_POST(utils.api_view(api.logout))),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(adminsite.urls)),
 )
 

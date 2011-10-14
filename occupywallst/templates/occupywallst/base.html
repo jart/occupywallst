@@ -26,17 +26,25 @@
     {% block header %}
       <header>
         <div id="userbox">
+          {% trans "Welcome:" %}
           {% if user.is_authenticated %}
-            {% trans "Welcome" %} <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
+            <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> |
             {% if user.is_staff %}
               <a href="{% url admin:index %}">{% trans "admin" %}</a> |
             {% endif %}
             <a href="{% url logout %}">{% trans "logout" %}</a>
           {% else %}
-            {% trans "Welcome" %}
             <a href="{% url login %}">{% trans "login" %}</a> |
             <a href="{% url signup %}">{% trans "signup" %}</a>
           {% endif %}
+          {% get_language_info_list for LANGUAGES as languages %}
+          <form id="setlanguage" action="/i18n/setlang/" method="post">
+            <input name="language" type="hidden" value="" />
+            {% trans "Language:" %}
+            {% for language in languages %}
+              <a href="#">{{ language.code }}</a>
+            {% endfor %}
+          </form>
         </div>
         {{ verbiage.header }}
       </header>
