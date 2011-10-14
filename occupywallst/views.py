@@ -94,6 +94,13 @@ def calendar(request):
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'donate')
+def donate(request):
+    return render_to_response(
+        'occupywallst/donate.html', {},
+        context_instance=RequestContext(request))
+
+
 @my_cache(lambda r, room="pub": 'chat:' + room)
 def chat(request, room="pub"):
     return render_to_response(
