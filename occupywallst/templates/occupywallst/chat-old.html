@@ -1,7 +1,7 @@
 {% extends base %}
 {% load ows %}
 
-{% block title %}Chatroom | OccupyWallSt.org{% endblock title %}
+{% block title %}Chatroom | {{ OWS_SITE_NAME }}{% endblock title %}
 
 {% block extra_head %}
   {% if room != "pub" %}<meta name="robots" content="noindex" />{% endif %}

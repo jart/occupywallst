@@ -1,7 +1,7 @@
 {% extends base %}
 {% load ows %}
 
-{% block title %}About Us | OccupyWallSt.org{% endblock title %}
+{% block title %}About Us | {{ OWS_SITE_NAME }}{% endblock title %}
 
 {% block stylesheets %}
   <style type="text/css">
@@ -16,9 +16,9 @@
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="about">
-      {% verbiage 'about' LANGUAGE_CODE %}
+      {{ verbiage.about }}
     </div>
   </td><td id="right">
-    {% verbiage 'about-sidebar' LANGUAGE_CODE %}
+    {{ verbiage.about_sidebar }}
   </td></tr></tbody></table>
 {% endblock content %}

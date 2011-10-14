@@ -82,7 +82,7 @@ class Verbiage(models.Model):
             for tran in VerbiageTranslation.objects.filter(verbiage=obj):
                 verb[tran.language] = tran.rendered
             verbs[obj.name] = verb
-        cache.set('verbiage', verbs)
+        cache.set('verbiage', verbs, timeout=0)
         return verbs
 
     def save(self):
@@ -101,14 +101,14 @@ class VerbiageTranslation(models.Model):
     content = models.TextField(blank=True)
     rendered = models.TextField(blank=True, editable=False)
 
+    class Meta:
+        unique_together = ("verbiage", "language")
+
     def save(self):
         from occupywallst.templatetags.ows import markup_unsafe
         self.rendered = markup_unsafe(self.content)
         super(VerbiageTranslation, self).save()
         Verbiage._invalidate()
-
-    class Meta:
-        unique_together = ("verbiage", "language")
 
 
 class UserInfo(models.Model):

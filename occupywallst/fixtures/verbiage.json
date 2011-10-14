@@ -9,15 +9,6 @@
     }
   }, 
   {
-    "pk": 2, 
-    "model": "occupywallst.verbiage", 
-    "fields": {
-      "content": "<div id=\"navbar\">\r\n  <ul>\r\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\r\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.livestream.com/globalrevolution\">LiveStream</a></li>\r\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\r\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\r\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\r\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://nycga.cc/\">NYCGA</a></li>\r\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\r\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"http://nycga.cc/?page_id=377\">Donate</a></li>\r\n    <li class=\"last\">\r\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\r\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\r\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\r\n    </li>\r\n  </ul>\r\n</div>  \r\n", 
-      "rendered": "<div id=\"navbar\">\n  <ul>\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.livestream.com/globalrevolution\">LiveStream</a></li>\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://nycga.cc/\">NYCGA</a></li>\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"http://nycga.cc/?page_id=377\">Donate</a></li>\n    <li class=\"last\">\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\n    </li>\n  </ul>\n</div>", 
-      "name": "navbar"
-    }
-  }, 
-  {
     "pk": 1, 
     "model": "occupywallst.verbiage", 
     "fields": {
@@ -45,12 +36,66 @@
     }
   }, 
   {
+    "pk": 2, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "<div id=\"navbar\">\r\n  <ul>\r\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\r\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.livestream.com/globalrevolution\">LiveStream</a></li>\r\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\r\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\r\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\r\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://nycga.cc/\">NYCGA</a></li>\r\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\r\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"/donate/\">Donate</a></li>\r\n    <li class=\"last\">\r\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\r\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\r\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\r\n    </li>\r\n  </ul>\r\n</div>  \r\n", 
+      "rendered": "<div id=\"navbar\">\n  <ul>\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.livestream.com/globalrevolution\">LiveStream</a></li>\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://nycga.cc/\">NYCGA</a></li>\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"/donate/\">Donate</a></li>\n    <li class=\"last\">\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\n    </li>\n  </ul>\n</div>", 
+      "name": "navbar"
+    }
+  }, 
+  {
     "pk": 6, 
     "model": "occupywallst.verbiage", 
     "fields": {
       "content": "**Where:** Liberty Square <small>([How to get there](http://nycga.cc/?page_id=399))</small>  \r\n**Help & Directions:** +1 (877) 881-3020  \r\n**General Inquiries:** <general@occupywallst.org>  \r\n**Press Inquiries:** <press@occupywallst.org>  \r\n**Watch:** This 10-Min Documentary  \r\n**Read:** Latest NYCGA Minutes\r\n\r\n**Mail**  \r\nThe UPS Store  \r\nRe: Occupy Wall Street  \r\n118A Fulton St. #205  \r\nNew York, NY 10038  \r\n<small>Money orders only please, cannot cash checks yet. Non-perishable goods only. We can accept packages of any size. We're currently low on food.</small>\r\n\r\n**Occupy Wall Street** is leaderless resistance movement with people of many colors, genders and political persuasions. The one thing we all have in common is that [We Are The 99%](http://wearethe99percent.tumblr.com/) that will no longer tolerate the greed and corruption of the 1%. We are using the revolutionary [Arab Spring](http://en.wikipedia.org/wiki/Arab_Spring) tactic to achieve our ends and encourage the use of nonviolence to maximize the safety of all participants.\r\n\r\n<iframe src=\"https://www.google.com/calendar/embed?title=Occupy%20Wall%20Street%20Agenda&amp;showNav=0&amp;showTabs=0&amp;showCalendars=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=9a24srhq8ugb2l5ovamo723i0g%40group.calendar.google.com&amp;color=%23856508&amp;ctz=America%2FNew_York\" style=\" border-width:0 \" width=\"300\" height=\"400\" frameborder=\"0\" scrolling=\"no\"></iframe>\r\n\r\n[Click here](http://nycga.cc/calendar/) for NYCGA committee meeting times.", 
       "rendered": "<p><strong>Where:</strong> Liberty Square <small>(<a href=\"http://nycga.cc/?page_id=399\">How to get there</a>)</small><br />\n<strong>Help &amp; Directions:</strong> +1 (877) 881-3020<br />\n<strong>General Inquiries:</strong> <a href=\"&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#103;&#101;&#110;&#101;&#114;&#97;&#108;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;\">&#103;&#101;&#110;&#101;&#114;&#97;&#108;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;</a><br />\n<strong>Press Inquiries:</strong> <a href=\"&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#112;&#114;&#101;&#115;&#115;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;\">&#112;&#114;&#101;&#115;&#115;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;</a><br />\n<strong>Watch:</strong> This 10-Min Documentary<br />\n<strong>Read:</strong> Latest NYCGA Minutes</p>\n<p><strong>Mail</strong><br />\nThe UPS Store<br />\nRe: Occupy Wall Street<br />\n118A Fulton St. #205<br />\nNew York, NY 10038<br />\n<small>Money orders only please, cannot cash checks yet. Non-perishable goods only. We can accept packages of any size. We're currently low on food.</small></p>\n<p><strong>Occupy Wall Street</strong> is leaderless resistance movement with people of many colors, genders and political persuasions. The one thing we all have in common is that <a href=\"http://wearethe99percent.tumblr.com/\">We Are The 99%</a> that will no longer tolerate the greed and corruption of the 1%. We are using the revolutionary <a href=\"http://en.wikipedia.org/wiki/Arab_Spring\">Arab Spring</a> tactic to achieve our ends and encourage the use of nonviolence to maximize the safety of all participants.</p>\n<iframe src=\"https://www.google.com/calendar/embed?title=Occupy%20Wall%20Street%20Agenda&amp;showNav=0&amp;showTabs=0&amp;showCalendars=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=9a24srhq8ugb2l5ovamo723i0g%40group.calendar.google.com&amp;color=%23856508&amp;ctz=America%2FNew_York\" style=\" border-width:0 \" width=\"300\" height=\"400\" frameborder=\"0\" scrolling=\"no\"></iframe>\n\n<p><a href=\"http://nycga.cc/calendar/\">Click here</a> for NYCGA committee meeting times.</p>", 
       "name": "index-sidebar"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "# Donations\r\n\r\nThe support we receive in the form of donations plays a crucial role in helping the #OWS movement succeed.  Below is a list of places to send money and/or supplies that we believe are legitimate.\r\n\r\n## Occupy Wall Street\r\n\r\n- **[NYCGA General Fund & Material Donations](http://nycga.cc/donate/) (~$150,000 raised, Recommended)**\r\n- [OccupyWallSt.org Fund](https://www.wepay.com/donate/ows) (~$4,500 raised, not accepting currently)\r\n- [OWSJ Print Newspaper Fund](http://www.kickstarter.com/projects/610964639/occupy-wall-street-media) (~$75,000 raised, currently overfunded)\r\n- [LiveStreaming Team](http://tinyurl.com/occupywslive) (unknown amount raised)\r\n\r\nThe public relations team is looking for an apartment in Manhattan's financial district with modest furnishings (like bunk beds) that can shelter/shower 6+ full-time members.  If you have the means to donate such a space, please email: <apartment@occupywallst.org>.\r\n\r\n## Other Occupations\r\n\r\n- [Occupy Boston](https://www.wepay.com/donate/needsofboston) (~$16,000 raised)\r\n- [Occupy DC](http://occupydc.org/donate/) (~$3,000 raised)\r\n- [Occupy Philly](http://occupyphilly.org/donations/) (unknown amount raised)", 
+      "rendered": "<h1>Donations</h1>\n<p>The support we receive in the form of donations plays a crucial role in helping the #OWS movement succeed.  Below is a list of places to send money and/or supplies that we believe are legitimate.</p>\n<h2>Occupy Wall Street</h2>\n<ul>\n<li><strong><a href=\"http://nycga.cc/donate/\">NYCGA General Fund &amp; Material Donations</a> (~$150,000 raised, Recommended)</strong></li>\n<li><a href=\"https://www.wepay.com/donate/ows\">OccupyWallSt.org Fund</a> (~$4,500 raised, not accepting currently)</li>\n<li><a href=\"http://www.kickstarter.com/projects/610964639/occupy-wall-street-media\">OWSJ Print Newspaper Fund</a> (~$75,000 raised, currently overfunded)</li>\n<li><a href=\"http://tinyurl.com/occupywslive\">LiveStreaming Team</a> (unknown amount raised)</li>\n</ul>\n<p>The public relations team is looking for an apartment in Manhattan's financial district with modest furnishings (like bunk beds) that can shelter/shower 6+ full-time members.  If you have the means to donate such a space, please email: <a href=\"&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#112;&#97;&#114;&#116;&#109;&#101;&#110;&#116;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;\">&#97;&#112;&#97;&#114;&#116;&#109;&#101;&#110;&#116;&#64;&#111;&#99;&#99;&#117;&#112;&#121;&#119;&#97;&#108;&#108;&#115;&#116;&#46;&#111;&#114;&#103;</a>.</p>\n<h2>Other Occupations</h2>\n<ul>\n<li><a href=\"https://www.wepay.com/donate/needsofboston\">Occupy Boston</a> (~$16,000 raised)</li>\n<li><a href=\"http://occupydc.org/donate/\">Occupy DC</a> (~$3,000 raised)</li>\n<li><a href=\"http://occupyphilly.org/donations/\">Occupy Philly</a> (unknown amount raised)</li>\n</ul>", 
+      "name": "donate"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "", 
+      "rendered": "", 
+      "name": "donate-sidebar"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "Occupy Wall Street | NYC Protest for American Revolution", 
+      "rendered": "<p>Occupy Wall Street | NYC Protest for American Revolution</p>", 
+      "name": "title"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption", 
+      "rendered": "<p>News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption</p>", 
+      "name": "description"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "occupywallst.verbiage", 
+    "fields": {
+      "content": "<iframe style=\"border:none\" src=\"http://webchat.freenode.net/?channels=#occupywallst\" width=\"100%\" height=\"400\"></iframe>", 
+      "rendered": "<iframe style=\"border:none\" src=\"http://webchat.freenode.net/?channels=#occupywallst\" width=\"100%\" height=\"400\"></iframe>", 
+      "name": "chat"
     }
   }, 
   {

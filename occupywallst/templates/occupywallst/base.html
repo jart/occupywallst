@@ -5,15 +5,15 @@
   {% load i18n %}
   {% get_current_language as LANGUAGE_CODE %}
   <meta charset="utf-8" />
-  <title>{% block title %}Occupy Wall Street | {% trans "NYC Protest for American Revolution" %}{% endblock title %}</title>
+  <title>{% block title %}{{ verbiage.title|striptags }}{% endblock title %}</title>
   <link rel="shortcut icon" href="{{ MEDIA_URL }}img/bull16.png" />
-  <meta name="description" content="{% trans 'News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption' %}" />
+  <meta name="description" content="{% block description %}{{ verbiage.description|striptags }}{% endblock description %}</title>" />
   {% block canonical %}
     <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ request.path }}" />
   {% endblock canonical %}
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News" href="{% url rss-news %}" />
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt Forum Threads" href="{% url rss-forum %}" />
-  <link rel="alternate" type="application/rss+xml" title="OccupyWallSt News/Forum Comments" href="{% url rss-comments %}" />
+  <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} News" href="{% url rss-news %}" />
+  <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Forum" href="{% url rss-forum %}" />
+  <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Comments" href="{% url rss-comments %}" />
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=26" type="text/css" media="all" />
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
@@ -38,12 +38,12 @@
             <a href="{% url signup %}">{% trans "signup" %}</a>
           {% endif %}
         </div>
-        {% verbiage 'header' LANGUAGE_CODE %}
+        {{ verbiage.header }}
       </header>
     {% endblock header %}
     {% block nav %}
       <nav>
-       {% verbiage 'navbar' LANGUAGE_CODE %}
+       {{ verbiage.navbar }}
       </nav>
       <div style="clear:both"></div>
     {% endblock nav %}
@@ -53,7 +53,7 @@
     </div>
     {% block footer %}
       <footer>
-       {% verbiage 'footer' LANGUAGE_CODE %}
+       {{ verbiage.footer }}
       </footer>
     {% endblock footer %}
     <div id="notifications" style="display:none">

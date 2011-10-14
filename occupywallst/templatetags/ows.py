@@ -124,13 +124,6 @@ def translate_object(obj, lang):
 
 
 @register.simple_tag
-def verbiage(name, lang):
-    """Grabs an html content fragment in a given language
-    """
-    return db.Verbiage.get(name, lang)
-
-
-@register.simple_tag
 def show_comments(user, comments):
     """I wrote this because template includes don't recurse properly
     """

@@ -8,6 +8,21 @@ r"""
 """
 
 from django.conf import settings
+from occupywallst import models as db
+from django.utils.safestring import mark_safe
+
+
+class VerbiageGetter(object):
+    def __init__(self, request):
+        self.request = request
+        self.get = db.Verbiage.getter()
+
+    def __getitem__(self, key):
+        return mark_safe(self.get(key, self.request.LANGUAGE_CODE))
+
+
+def verbiage(request):
+    return {'verbiage': VerbiageGetter(request)}
 
 
 def goodies(request):
@@ -18,6 +33,7 @@ def goodies(request):
     return {'OWS_CANONICAL_URL': settings.OWS_CANONICAL_URL,
             'OWS_SCRIPTS': settings.OWS_SCRIPTS,
             'OWS_SCRIPTS_MINIFIED': settings.OWS_SCRIPTS_MINIFIED,
+            'OWS_SITE_NAME': settings.OWS_SITE_NAME,
             'DEBUG': settings.DEBUG,
             'base': base}
 

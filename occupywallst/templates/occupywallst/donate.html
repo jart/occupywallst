@@ -1,24 +1,14 @@
 {% extends base %}
 {% load ows %}
 
-{% block title %}Donations | OccupyWallSt.org{% endblock title %}
-
-{% block stylesheets %}
-  <style type="text/css">
-    #navbar .nav-donate {
-      background: #900;
-      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
-      background: -moz-linear-gradient(top,  #a11,  #900);
-    }
-  </style>
-{% endblock stylesheets %}
+{% block title %}Donations | {{ OWS_SITE_NAME }}{% endblock title %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
     <div id="donate">
-      {% verbiage 'donate' LANGUAGE_CODE %}
+      {{ verbiage.donate }}
     </div>
   </td><td id="right">
-    {% verbiage 'donate-sidebar' LANGUAGE_CODE %}
+    {{ verbiage.donate_sidebar }}
   </td></tr></tbody></table>
 {% endblock content %}

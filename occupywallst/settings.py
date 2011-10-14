@@ -21,10 +21,16 @@ PAYPAL_DEBUG = DEBUG
 AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
+# please change these values in occupywallst/settings_local.py
+SECRET_KEY = 'please change me'
+RECAPTCHA_PUBLIC_KEY =  "please change me"
+RECAPTCHA_PRIVATE_KEY =  "please change me"
+
+OWS_SITE_NAME = 'OccupyWallSt.org'
+OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
 OWS_POST_LIMIT_THREAD = 60 * 10  # ten minutes
 OWS_POST_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_PRIVMSG_USER_DAY = 7
-OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
@@ -87,15 +93,10 @@ ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
-MEDIA_URL = 'http://2439-occupywallst-com.voxcdn.com/media/'
-ADMIN_MEDIA_PREFIX = 'http://2439-occupywallst-com.voxcdn.com/media/admin/'
+MEDIA_URL = '/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
-
-# change me in production
-SECRET_KEY = 'oek(taazh36*h939oau#$%()dhueha39h(3zhc3##ev_jpfyd2'
-
-RECAPTCHA_PUBLIC_KEY =  "6LfY3MgSAAAAADIhMkYgbMIRXheetdYfv2zGE8uH"
 
 gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
@@ -123,6 +124,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.messages.context_processors.messages",
     "occupywallst.context_processors.goodies",
     "occupywallst.context_processors.notifications",
+    "occupywallst.context_processors.verbiage",
 ]
 
 MIDDLEWARE_CLASSES = [
