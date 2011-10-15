@@ -20,7 +20,6 @@
 {% endblock js_init %}
 
 {% block content %}
-{% cache 60 index %}
   <div style="text-align:center;margin-top:0.25em;margin-bottom:1em;padding:0.2em;padding-bottom:1em;border-bottom:3px solid #ddd">
     <a href="/oct15/"><img alt="Click Here October 15 Global Day Of Action" src="{{ MEDIA_URL }}img/oct15dayofaction.png" width="704" height="66" /></a>
   </div>
@@ -31,7 +30,6 @@
       {% endfor %}
     </section>
     <section id="archives">
-      {% get_current_language as LANGUAGE_CODE %}
       {% for article in archives %}
         <article id="{{ article.slug }}" class="unloaded">
           {% translate_object article LANGUAGE_CODE %}
@@ -55,5 +53,4 @@
       {{ verbiage.index_sidebar }}
     </section>
   </td></tr></tbody></table>
-{% endcache %}
 {% endblock content %}
