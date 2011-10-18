@@ -205,7 +205,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment pre { margin: 1em; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
-.replies { margin-left: 1em; }
+.replies { margin-left: 0.75em; }
 
 .postform label { font-size: small; color: #666; }
 .bigerror { color: red; font-size: big; font-weight: bold; }
