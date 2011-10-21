@@ -174,6 +174,10 @@ def _content_validate(content):
         raise APIException("turn off bloody caps lock")
 
 
+def _trololol(text):
+    return re.compile(r'ron paul', re.I).sub('Ron Lawl', text)
+
+
 def article_new(user, title, content, is_forum, **kwargs):
     """Create a news article or forum thread
 
@@ -190,6 +194,8 @@ def article_new(user, title, content, is_forum, **kwargs):
     content = content.strip()
     _title_validate(title)
     _content_validate(content)
+    title = _trololol(title)
+    content = _trololol(content)
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
