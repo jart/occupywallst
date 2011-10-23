@@ -17,7 +17,15 @@ This project has been tested on Ubuntu 10.04 LTS and Ubuntu 10.10.  If
 you're not using Ubuntu >= 10.04 or a recent Debian then spare your
 sanity and set up a virtual machine.
 
-Here's how you get started!
+Right now you can ignore most of the chat/real-time related stuff
+because I couldn't figure out how to make node.js/socket.io *not* leak
+a ridiculous amount of memory.  When the website was getting only
+25,000 visitors a day it would leak about 300 megs of memory an hour.
+I'm pretty confident this wasn't my fault because most of those
+requests were being plugged into the 10 lines of code in the
+notifications section in ``chat/app.js``.
+
+Anyway here's how you get started!
 
 Put this to ``/etc/hosts``::
 
@@ -119,14 +127,25 @@ needs to run.  Now you have more leeway to performance tune
 PostgreSQL's settings.  These settings are *very conservative* in
 Debian by default, even more so than the default PostgreSQL sources.
 
+Query optimizations for forum::
+
+    -- optimize: recent comments on forum page
+    create index occupywallst_comment_published
+      on occupywallst_comment (published desc)
+      where (is_removed = false and is_deleted = false);
+
+    -- optimize: forum thread list
+    create index occupywallst_article_killed
+      on occupywallst_article (killed desc)
+      where (is_visible = true and is_deleted = false);
+
 
 Network Topology
 ================
 
-OccupyWallSt is NOT a simple web application.  It consists of many
-network programs all working together and talking to each other.  This
-should hopefully give you a better understanding of the system design
-in production::
+When you run the kitchen sink, there are many network programs all
+working together and talking to each other.  This should hopefully
+give you a better understanding of the system design in production::
 
     tcp:occupywallst.org:80       nginx redirects browser to https
     tcp:occupywallst.org:443      nginx load balancing proxy / media server
