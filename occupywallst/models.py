@@ -58,11 +58,19 @@ class Verbiage(models.Model):
     content = models.TextField(blank=True)
     use_markdown = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name_plural = "Verbiage"
+
+    def save(self):
+        super(Verbiage, self).save()
+        for language in [None] + [a for a, b in settings.LANGUAGES]:
+            cache.delete('verbiage_%s_%s' % (self.name, language))
+
     @staticmethod
     def get(name, language=None):
         key = 'verbiage_%s_%s' % (name, language)
         res = cache.get(key)
-        if not res:
+        if res is None:
             try:
                 verb = Verbiage.objects.get(name=name)
             except ObjectDoesNotExist:
@@ -78,14 +86,6 @@ class Verbiage(models.Model):
                 res = verb.content
             cache.set(key, res)
         return res
-
-    def save(self):
-        super(Verbiage, self).save()
-        for language in [None] + [a for a, b in settings.LANGUAGES]:
-            cache.delete('verbiage_%s_%s' % (self.name, language))
-
-    class Meta:
-        verbose_name_plural = "Verbiage"
 
 
 class VerbiageTranslation(models.Model):
