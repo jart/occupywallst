@@ -88,10 +88,22 @@ def synopsis(text, max_words=10, max_chars=40):
     words = first_line.split()
     return " ".join(words[:max_words])[:max_chars]
 
+@register.filter
+def not_more(text):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
+    text = parts[0]
+    #if len(parts) > 1:
+    #    text += article.get_absolute_url  # TODO: include link to full content (requires a custom template tag?)
+    return markup(text)
+not_more.is_safe = True
 
 def _markup(text, transform):
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
+    text = text.replace('<!-- more -->', '')   # remove "more" tag, if present
     html = transform(text)
     # temporary hack to content distribution network
     html = html.replace('src="/media/', 'src="' + settings.MEDIA_URL)
