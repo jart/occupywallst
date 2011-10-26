@@ -3,8 +3,8 @@
     "pk": 3, 
     "model": "occupywallst.verbiage", 
     "fields": {
-      "content": "this site was brought to you by various radicals  \r\nhosting for this site generously donated by [alternet](http://www.alternet.org/) <3  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020", 
-      "rendered": "<p>this site was brought to you by various radicals<br />\nhosting for this site generously donated by <a href=\"http://www.alternet.org/\">alternet</a> &lt;3<br />\nemail: <a href=\"mailto:general@occupywallst.org\">general@occupywallst.org</a> | help line: +1 (877) 881-3020</p>", 
+      "content": "this site was brought to you by various radicals  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020", 
+      "rendered": "<p>this site was brought to you by various radicals<br />\nemail: <a href=\"mailto:general@occupywallst.org\">general@occupywallst.org</a> | help line: +1 (877) 881-3020</p>", 
       "name": "footer"
     }
   }, 
