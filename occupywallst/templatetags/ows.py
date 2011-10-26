@@ -100,6 +100,18 @@ def not_more(text, arg):
     return markup(text)
 not_more.is_safe = True
 
+@register.filter
+def not_more_unsafe(text, arg):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
+    text = parts[0]
+    if len(parts) > 1:
+        text += '([more](%s))' % arg
+    return markup_unsafe(text)
+not_more_unsafe.is_safe = True
+
 def _markup(text, transform):
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
