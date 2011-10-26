@@ -1,1 +1,10 @@
-<h1>four oh four - page not found</h1>
+{% extends base %}
+{% load ows %}
+{% load cache %}
+
+{% block title %}Page Not Found | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block content %}
+  <h1>four oh four - page not found</h1>
+  <p>The page you're looking for isn't here.  Sorry ._.</p>
+{% endblock %}

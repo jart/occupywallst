@@ -34,11 +34,20 @@ echo '                 INSTALLING GEOGRAPHY DATABASE STUFF                  '
 echo '----------------------------------------------------------------------'
 echo
 
-doit apt-get install --assume-yes \
-    postgresql-8.4-postgis postgresql-contrib postgresql-contrib-8.4 \
-    libpq-dev python-psycopg2 \
-    gdal-bin proj libgeos-dev \
-    libgeoip-dev
+if apt-cache search ^postgresql | grep ^postgresql-9.1 >/dev/null 2>&1; then
+    # tested on ubuntu 11.10
+    doit apt-get install --assume-yes \
+        postgresql postgresql-9.1-postgis postgresql-contrib \
+        libpq-dev python-psycopg2 gdal-bin proj libgeos-dev \
+        libgeoip-dev
+else
+    # tested on debian 6, ubuntu 10.04, and ubuntu 10.10
+    doit apt-get install --assume-yes \
+        postgresql-8.4-postgis postgresql-contrib postgresql-contrib-8.4 \
+        libpq-dev python-psycopg2 \
+        gdal-bin proj libgeos-dev \
+        libgeoip-dev
+fi
 
 echo
 echo '----------------------------------------------------------------------'
@@ -56,7 +65,9 @@ echo '                          INSTALLING NODE.JS                          '
 echo '----------------------------------------------------------------------'
 echo
 
-if [[ ! -f /usr/bin/node && ! -f /usr/local/bin/node ]]; then
+apt-get install -q=666 -y nodejs nodejs-dev npm
+
+if ! node -v >/dev/null 2>&1; then
     doit cd /tmp
     doit wget http://nodejs.org/dist/node-v0.4.9.tar.gz
     doit tar -xvzf node-v0.4.9.tar.gz
@@ -65,6 +76,15 @@ if [[ ! -f /usr/bin/node && ! -f /usr/local/bin/node ]]; then
     doit make -j4
     doit make install
     doit rm -rf node-v0.4.9.tar.gz node-v0.4.9
+else
+    echo 'node.js already installed'
+fi
+
+if ! npm -v >/dev/null 2>&1; then
+    echo 'curl http://npmjs.org/install.sh | sudo sh'
+    curl http://npmjs.org/install.sh | sudo sh
+else
+    echo 'node package manager (npm) already installed'
 fi
 
 echo

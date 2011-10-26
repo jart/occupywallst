@@ -153,9 +153,9 @@ INSTALLED_APPS = [
 try:
     from occupywallst.settings_local import *
 except ImportError:
-    print "not found: occupywallst/settings_local.py"
+    print >>sys.stderr, "not found: occupywallst/settings_local.py"
 else:
-    print "loaded: occupywallst/settings_local.py"
+    print >>sys.stderr, "loaded: occupywallst/settings_local.py"
 
 
 def minify():

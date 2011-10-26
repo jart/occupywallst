@@ -24,9 +24,6 @@
 {% endblock js_init %}
 
 {% block content %}
-  <div style="text-align:center;margin-top:0.25em;margin-bottom:1em;padding:0.2em;padding-bottom:1em;border-bottom:2px solid #ddd">
-    <a href="/oct15/"><img alt="Click Here October 15 Global Day Of Action" src="{{ MEDIA_URL }}img/oct15dayofaction.png" width="704" height="66" /></a>
-  </div>
   <table style="width:100%"><tbody><tr><td id="left">
     <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum    <a href="#" id="newlink">post</a>
 </h2>
@@ -47,17 +44,14 @@
       </div>
     </div>
     <section id="thread-list" style="margin-top:0">
-      {% cache 20 forum_articles %}
         {% for article in articles %}
           {% include "occupywallst/forumpost_synopsis.html" %}
         {% endfor %}
-      {% endcache %}
     </section>
     <p style="text-align:center">
       <img alt="loading..." id="loady" src="/media/img/ajax-loader-32.gif" width="32" height="32" />
     </p>
   </td><td id="right">
-    {% cache 20 forum_sidebar %}
     <section id="recents">
       <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
       {% if not bests %}
@@ -99,6 +93,5 @@
         </div>
       {% endfor %}
     </section>
-    {% endcache %}
   </td></tr></tbody></table>
 {% endblock content %}
