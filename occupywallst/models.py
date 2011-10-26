@@ -22,7 +22,7 @@ from django.core.cache import cache
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, LineString
 from django.contrib.auth.models import User, Group
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
@@ -56,66 +56,51 @@ class Verbiage(models.Model):
     """
     name = models.CharField(max_length=255, unique=True)
     content = models.TextField(blank=True)
-    rendered = models.TextField(blank=True, editable=False)
     use_markdown = models.BooleanField(default=True)
 
     @staticmethod
-    def get(name, lang=None):
-        return Verbiage.getter()(name, lang)
-
-    @staticmethod
-    def getter():
-        verbs = cache.get('verbiage') or Verbiage._invalidate()
-        def _getter(name, lang=None):
-            if name not in verbs:
-                return ""
-            elif lang and lang in verbs[name]:
-                return verbs[name][lang]
+    def get(name, language=None):
+        key = 'verbiage_%s_%s' % (name, language)
+        res = cache.get(key)
+        if not res:
+            try:
+                verb = Verbiage.objects.get(name=name)
+            except ObjectDoesNotExist:
+                return ''
+            try:
+                verb = verb.translations.get(language=language)
+            except ObjectDoesNotExist:
+                pass
+            if verb.use_markdown:
+                from occupywallst.templatetags.ows import markup_unsafe
+                res = markup_unsafe(verb.content)
             else:
-                return verbs[name]['default']
-        return _getter
-
-    @staticmethod
-    def _invalidate():
-        verbs = {}
-        for obj in Verbiage.objects.all():
-            verb = {'default': obj.rendered}
-            for tran in VerbiageTranslation.objects.filter(verbiage=obj):
-                verb[tran.language] = tran.rendered
-            verbs[obj.name] = verb
-        cache.set('verbiage', verbs, timeout=0)
-        return verbs
+                res = verb.content
+            cache.set(key, res)
+        return res
 
     def save(self):
-        from occupywallst.templatetags.ows import markup_unsafe
-        if self.use_markdown:
-            self.rendered = markup_unsafe(self.content)
-        else:
-            self.rendered = self.content
         super(Verbiage, self).save()
-        Verbiage._invalidate()
+        for language in [None] + [a for a, b in settings.LANGUAGES]:
+            cache.delete('verbiage_%s_%s' % (self.name, language))
 
     class Meta:
         verbose_name_plural = "Verbiage"
 
 
 class VerbiageTranslation(models.Model):
-    verbiage = models.ForeignKey(Verbiage)
+    verbiage = models.ForeignKey(Verbiage, related_name='translations')
     language = models.CharField(max_length=255, choices=settings.LANGUAGES)
     content = models.TextField(blank=True)
-    rendered = models.TextField(blank=True, editable=False)
+    name = property(lambda self: self.verbiage.name)
+    use_markdown = property(lambda self: self.verbiage.use_markdown)
 
     class Meta:
         unique_together = ("verbiage", "language")
 
     def save(self):
-        from occupywallst.templatetags.ows import markup_unsafe
-        if self.verbiage.use_markdown:
-            self.rendered = markup_unsafe(self.content)
-        else:
-            self.rendered = self.content
         super(VerbiageTranslation, self).save()
-        Verbiage._invalidate()
+        cache.delete('verbiage_%s_%s' % (self.name, self.language))
 
 
 class UserInfo(models.Model):
@@ -397,7 +382,7 @@ class Article(models.Model):
         self.save = None
         try:
             trans = ArticleTranslation.objects.get(article=self, language=lang)
-        except ArticleTranslation.DoesNotExist:
+        except ObjectDoesNotExist:
             pass
         else:
             self.content = trans.content
@@ -506,7 +491,7 @@ class Comment(models.Model):
         if user and user.id:
             try:
                 vote = CommentVote.objects.get(comment=self, user=user)
-            except CommentVote.DoesNotExist:
+            except ObjectDoesNotExist:
                 vote = CommentVote(comment=self, user=user)
             if vote.vote == 1:
                 return vote
@@ -522,7 +507,7 @@ class Comment(models.Model):
         if user and user.id:
             try:
                 vote = CommentVote.objects.get(comment=self, user=user)
-            except CommentVote.DoesNotExist:
+            except ObjectDoesNotExist:
                 vote = CommentVote(comment=self, user=user)
             if vote.vote == 1:
                 self.ups -= 1
@@ -583,7 +568,7 @@ class CommentVote(models.Model):
             return None
         try:
             return cls.objects.get(comment=comment, user=user)
-        except cls.DoesNotExist:
+        except ObjectDoesNotExist:
             return None
 
     @staticmethod
@@ -710,9 +695,9 @@ class Ride(models.Model):
         route = geo.directions(self.waypoint_list)
         points = []
         for waypoint in route:
-            points += [ (x,y) # YAY!PEP!8!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    for y,x in waypoint['overview_polyline']['points']]#!!!!!!
-        self.route = LineString(points)#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            flip_me = waypoint['overview_polyline']['points']
+            points += [(x, y) for y, x in flip_me]
+        self.route = LineString(points)
 
     @property
     def waypoint_list(self):
@@ -767,10 +752,11 @@ class RideRequest(models.Model):
 
     @property
     def accepted(self):
-        return self.status=="accepted"
+        return (self.status == "accepted")
+
     @property
     def declined(self):
-        return self.status=="declined"
+        return (self.status == "declined")
 
     class Meta:
         unique_together = ("ride", "user")
@@ -788,5 +774,5 @@ class RideRequest(models.Model):
             return None
         try:
             return cls.objects.get(ride=ride, user=user)
-        except cls.DoesNotExist:
+        except ObjectDoesNotExist:
             return None

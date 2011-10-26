@@ -15,6 +15,10 @@ TEMPLATE_LOADERS = [
     'django.template.loaders.app_directories.Loader',
 ]
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
 MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 

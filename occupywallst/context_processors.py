@@ -15,10 +15,9 @@ from django.utils.safestring import mark_safe
 class VerbiageGetter(object):
     def __init__(self, request):
         self.request = request
-        self.get = db.Verbiage.getter()
 
     def __getitem__(self, key):
-        return mark_safe(self.get(key, self.request.LANGUAGE_CODE))
+        return mark_safe(db.Verbiage.get(key, self.request.LANGUAGE_CODE))
 
 
 def verbiage(request):
