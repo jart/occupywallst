@@ -130,7 +130,6 @@ def _markup(text, transform):
 def markup(text):
     """Runs text through markdown, no html allowed
     """
-    text = text.replace('![', '')
     return _markup(text, markdown_safe.convert)
 markup.is_safe = True
 
