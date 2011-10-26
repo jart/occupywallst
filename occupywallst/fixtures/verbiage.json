@@ -76,7 +76,8 @@
     "model": "occupywallst.verbiage", 
     "fields": {
       "content": "Occupy Wall Street | NYC Protest for American Revolution", 
-      "rendered": "<p>Occupy Wall Street | NYC Protest for American Revolution</p>", 
+      "rendered": "Occupy Wall Street | NYC Protest for American Revolution", 
+      "use_markdown": false,
       "name": "title"
     }
   }, 
@@ -85,7 +86,8 @@
     "model": "occupywallst.verbiage", 
     "fields": {
       "content": "News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption", 
-      "rendered": "<p>News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption</p>", 
+      "rendered": "News and resources for protesters attending the mass demonstration on Wall Street against financial greed and corruption", 
+      "use_markdown": false,
       "name": "description"
     }
   }, 
