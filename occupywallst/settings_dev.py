@@ -1,4 +1,5 @@
 
+import sys
 from occupywallst.settings import *
 
 DEBUG = True
@@ -13,6 +14,10 @@ CSRF_COOKIE_DOMAIN = '.dev.occupywallst.org'
 TEMPLATE_LOADERS = [
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 MIDDLEWARE_CLASSES += ['occupywallst.middleware.PrintException']
@@ -78,6 +83,6 @@ LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
 try:
     from occupywallst.settings_dev_local import *
 except ImportError:
-    print "not found: occupywallst/settings_dev_local.py"
+    print >>sys.stderr, "not found: occupywallst/settings_dev_local.py"
 else:
-    print "loaded: occupywallst/settings_dev_local.py"
+    print >>sys.stderr, "loaded: occupywallst/settings_dev_local.py"

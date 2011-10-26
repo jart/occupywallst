@@ -242,6 +242,7 @@ def article_edit(user, article_slug, title, content, **kwargs):
             raise APIException("you didn't post that")
         if article.allow_html or not article.is_forum:
             raise APIException("insufficient privileges")
+    article.title = title
     article.content = content
     _check_post(user, article)
     article.save()

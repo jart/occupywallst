@@ -18,12 +18,12 @@ from django.core.cache import cache
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth import views as authviews
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
-from occupywallst.forms import ProfileForm, SignupForm, RideForm, RideRequestForm
-from occupywallst import api
-from occupywallst import models as db
+from occupywallst import api, forms, models as db
+from occupywallst.context_processors import VerbiageGetter
 
 
 logger = logging.getLogger(__name__)
@@ -58,8 +58,8 @@ def index(request):
                 .filter(is_visible=True, is_forum=False, is_deleted=False)
                 .order_by('-published'))
     return render_to_response(
-        'occupywallst/index.html', {'articles': articles[:4],
-                                    'archives': articles[4:]},
+        'occupywallst/index.html', {'articles': articles[:8],
+                                    'archives': articles[8:]},
         context_instance=RequestContext(request))
 
 
@@ -87,32 +87,16 @@ def forum(request):
         context_instance=RequestContext(request))
 
 
-@my_cache(lambda r: 'calendar')
-def oct15(request):
-    return render_to_response(
-        'occupywallst/oct15.html', {},
-        context_instance=RequestContext(request))
-
-
-@my_cache(lambda r: 'calendar')
-def calendar(request):
-    return render_to_response(
-        'occupywallst/calendar.html', {},
-        context_instance=RequestContext(request))
-
-
-@my_cache(lambda r: 'donate')
-def donate(request):
-    return render_to_response(
-        'occupywallst/donate.html', {},
-        context_instance=RequestContext(request))
-
-
-@my_cache(lambda r, room="pub": 'chat:' + room)
-def chat(request, room="pub"):
-    return render_to_response(
-        'occupywallst/chat.html', {'room': room},
-        context_instance=RequestContext(request))
+def bonus(request, page):
+    """Render page based on Verbiage table entry
+    """
+    try:
+        res = db.Verbiage.get('/' + page, request.LANGUAGE_CODE)
+    except ObjectDoesNotExist:
+        raise Http404()
+    if hasattr(res, 'render'):
+        res = res.render(RequestContext(request))
+    return HttpResponse(res)
 
 
 def _instate_hierarchy(comments):
@@ -166,41 +150,35 @@ def thread(request, slug):
     return article(request, slug, forum=True)
 
 
-@my_cache(lambda r: 'attendees')
-def attendees(request):
-    response = render_to_response(
-        'occupywallst/attendees.html', {},
-        context_instance=RequestContext(request))
-    return response
-
-
 @my_cache(lambda r: 'rides')
 def rides(request):
     rides = db.Ride.objects.all()
     return render_to_response(
-        'occupywallst/rides.html', {
-            "rides" : rides,
-            },
+        'occupywallst/rides.html', {"rides": rides},
         context_instance=RequestContext(request))
+
 
 @login_required
 def ride_create(request):
     return ride_create_or_update(request)
+
 
 @login_required
 def ride_edit(request, ride_id):
     ride = get_object_or_404(db.Ride, pk=int(ride_id))
     return ride_create_or_update(request, ride)
 
+
 @login_required
 def ride_create_or_update(request, instance=None):
     if request.method == "POST":
-        form = RideForm(request.POST, instance=instance)
+        form = forms.RideForm(request.POST, instance=instance)
         if form.is_valid():
             ride = form.save(commit=False)
             ride.user = request.user
             try:
-# this should maybe go into some work queue instead of being run sync
+                # this should maybe go into some work queue instead of
+                # being run sync
                 ride.retrieve_route_from_google()
                 ride.full_clean()
                 ride.save()
@@ -208,16 +186,14 @@ def ride_create_or_update(request, instance=None):
             except ValidationError as v:
                 # stupid hack
                 from django.forms.util import ErrorList
-                form._errors["title"] = ErrorList(
-                        [u"""You have already created a ride with
-                        that title."""])
-
+                form._errors["title"] = ErrorList([
+                    "You have already created a ride with that title",
+                ])
     else:
-        form = RideForm(instance=instance)
+        form = forms.RideForm(instance=instance)
     return render_to_response(
-        'occupywallst/ride_update.html', {
-            "form" : form,
-            "ride" : instance,},
+        'occupywallst/ride_update.html', {"form": form,
+                                          "ride": instance},
         context_instance=RequestContext(request))
 
 
@@ -237,26 +213,26 @@ def ride_info(request, ride_id):
                         user=request.user,is_deleted=False)
             except db.RideRequest.DoesNotExist:
                 ride_request = None
-    form = RideRequestForm()
+    form = forms.RideRequestForm()
     return render_to_response(
-        'occupywallst/ride_info.html', {
-            "ride" : ride,
-            "form" : form,
-            "requests" : requests,
-            "ride_request" : ride_request,
-            "comments" : comments,
-            },
+        'occupywallst/ride_info.html', {"ride": ride,
+                                        "form": form,
+                                        "requests": requests,
+                                        "ride_request": ride_request,
+                                        "comments": comments},
         context_instance=RequestContext(request))
+
 
 @login_required
 def ride_request_add(request, ride_id):
     ride = get_object_or_404(db.Ride, pk=int(ride_id))
-    request_form = RideRequestForm(request.POST)
+    request_form = forms.RideRequestForm(request.POST)
     request_exists = db.RideRequest.objects.filter(
-            user=request.user, ride=ride)
+        user=request.user, ride=ride)
     if request_form.is_valid() and not request_exists:
         request_form.save(request.user, ride)
     return HttpResponseRedirect(ride.get_absolute_url())
+
 
 @login_required
 def ride_request_delete(request, ride_id):
@@ -265,27 +241,6 @@ def ride_request_delete(request, ride_id):
         db.RideRequest.objects.filter(ride=ride, user=request.user).update(
                 is_deleted=True)
     return HttpResponseRedirect(ride.get_absolute_url())
-
-
-@my_cache(lambda r: 'housing')
-def housing(request):
-    return render_to_response(
-        'occupywallst/housing.html', {},
-        context_instance=RequestContext(request))
-
-
-@my_cache(lambda r: 'conference')
-def conference(request):
-    return render_to_response(
-        'occupywallst/conference.html', {},
-        context_instance=RequestContext(request))
-
-
-@my_cache(lambda r: 'about')
-def about(request):
-    return render_to_response(
-        'occupywallst/about.html', {},
-        context_instance=RequestContext(request))
 
 
 def user_page(request, username):
@@ -353,7 +308,7 @@ def signup(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(request.user.get_absolute_url())
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = forms.SignupForm(request.POST)
         if form.is_valid():
             form.save()
             api.login(request, form.cleaned_data.get('username'),
@@ -361,7 +316,7 @@ def signup(request):
             url = request.user.get_absolute_url()
             return HttpResponseRedirect(url + '?new=1')
     else:
-        form = SignupForm()
+        form = forms.SignupForm()
     return render_to_response(
         'occupywallst/signup.html', {'form': form},
         context_instance=RequestContext(request))
@@ -373,12 +328,12 @@ def edit_profile(request, username):
         url = request.user.get_absolute_url()
         return HttpResponseRedirect(url + 'edit/')
     if request.method == 'POST':
-        form = ProfileForm(request.user, request.POST)
+        form = forms.ProfileForm(request.user, request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.user.get_absolute_url())
     else:
-        form = ProfileForm(request.user)
+        form = forms.ProfileForm(request.user)
     return render_to_response(
         'occupywallst/edit_profile.html', {'form': form},
         context_instance=RequestContext(request))

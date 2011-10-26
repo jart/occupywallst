@@ -13,9 +13,11 @@
 Installation
 ============
 
-This project has been tested on Ubuntu 10.04 LTS and Ubuntu 10.10.  If
-you're not using Ubuntu >= 10.04 or a recent Debian then spare your
-sanity and set up a virtual machine.
+This project has been tested on Debian 6, Ubuntu 10.04 LTS and Ubuntu
+10.10.  If you're not using Ubuntu >= 10.04 or a recent Debian then
+spare your sanity and set up a virtual machine.  Read this if you use
+Ubuntu 11.10 with PostgreSQL 9.1:
+http://psycopg.lighthouseapp.com/projects/62710-psycopg/tickets/69
 
 Right now you can ignore most of the chat/real-time related stuff
 because I couldn't figure out how to make node.js/socket.io *not* leak
@@ -42,35 +44,46 @@ Set up a PostgreSQL database with PostGIS::
     sudo -u postgres -i createuser --superuser $USER  # make you a pg admin
     createdb occupywallst
     createlang plpgsql occupywallst
-    if [ -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql ]; then
-        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
-        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+    if [ -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql ]; then
+        psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql
+        psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/spatial_ref_sys.sql
     else
         psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
         psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
     fi
 
-Now install the project and the database schema::
+Now install the project in its own virtualenv, create the database
+schema and load some initial content::
+
+    cd /opt
+    sudo virtualenv ows
+    sudo chown -R $USER ows
+    cd ows
+    source bin/activate
+    git clone git@github.com:$USER/occupywallst.git
 
     sudo python setup.py develop
     occupywallst-dev syncdb --noinput
     occupywallst-dev loaddata verbiage
     occupywallst-dev loaddata example_data
-    occupywallst-dev runserver 127.0.0.1:9001
+    occupywallst-dev runserver 127.0.0.1:9000
 
 Set up nginx.  This is optional (but strongly recommended for
 development) and *mandatory* for production::
 
     sudo apt-get install nginx
     sudo rm /etc/nginx/sites-enabled/default
-    sudo cp conf/occupywallst.org.conf /etc/nginx/sites-enabled
+    sudo cp conf/occupywallst.org.conf /etc/nginx/sites-available/
+    pushd /etc/nginx/sites-enabled/; sudo ln -sf ../sites-available/occupywallst.org.conf; popd
     sudo /etc/init.d/nginx restart
+
+Install dependencies for server-side javascript code::
+
+    cd chat; npm install -d; cd ..
 
 Optional: Run the chat server in a second terminal::
 
     cd chat
-    curl http://npmjs.org/install.sh | sudo sh
-    npm install -d
     sudo NODE_ENV=development node app.js
 
 Then open this url :) http://dev.occupywallst.org/
@@ -109,7 +122,7 @@ Rather than using Django's "runserver" as the backend HTTP server, I
 recommend using gunicorn::
 
     easy_install gunicorn
-    gunicorn_django -b 127.0.0.1:9001 --workers=9 --max-requests=1000 --pid=/tmp/gunicorn-occupywallst.pid occupywallst/settings.py
+    gunicorn_django -b 127.0.0.1:9000 --workers=9 --max-requests=1000 --pid=/tmp/gunicorn-occupywallst.pid occupywallst/settings.py
 
 Use AppArmor to harden security::
 
@@ -153,7 +166,7 @@ give you a better understanding of the system design in production::
     tcp:chat.occupywallst.org:443 chat/app.js: node.js realtime http stuff
     tcp:chat.occupywallst.org:843 chat/app.js: flashsocket policy server
     udp:127.0.0.1:9010            chat/app.js: notification event subscriber
-    tcp:127.0.0.1:9001            gunicorn_django backend http server
+    tcp:127.0.0.1:9000            gunicorn_django backend http server
     tcp:127.0.0.1:9040            icecast2 mp3 streaming
     tcp:127.0.0.1:8040            freeswitch mod_event_socket
     udp:occupywallst.org:5060     freeswitch sip server

@@ -127,20 +127,22 @@ def sanitize_json(value):
 def timesince(timestamp):
     delta = (datetime.now() - timestamp)
     seconds = delta.days * 60 * 60 * 24 + delta.seconds
+    if seconds < 0:
+        seconds = 0
     if seconds <= 60:
         x = seconds
         return ungettext('%(x)d second', '%(x)d seconds', x) % {'x': x}
     elif seconds <= 60 * 60:
-        x = int(round(seconds / 60.0))
+        x = int(seconds / 60)
         return ungettext('%(x)d minute', '%(x)d minutes', x) % {'x': x}
     elif seconds <= 60 * 60 * 24:
-        x = int(round(seconds / 60 / 60))
+        x = int(seconds / 60 / 60)
         return ungettext('%(x)d hour', '%(x)d hours', x) % {'x': x}
     elif seconds <= 60 * 60 * 24 * 30:
-        x = int(round(seconds / 60 / 60 / 24))
+        x = int(seconds / 60 / 60 / 24)
         return ungettext('%(x)d day', '%(x)d days', x) % {'x': x}
     else:
-        x = int(round(seconds / 60 / 60 / 24 / 30))
+        x = int(seconds / 60 / 60 / 24 / 30)
         return ungettext('%(x)d month', '%(x)d months', x) % {'x': x}
 
 

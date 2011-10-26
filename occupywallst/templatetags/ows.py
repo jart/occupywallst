@@ -17,10 +17,10 @@ from django.conf import settings
 from django.utils.html import strip_tags
 from django.template import Template, Context
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
 from django.template.loader import render_to_string
 
 from occupywallst import utils
-from occupywallst import models as db
 
 
 register = template.Library()
@@ -112,10 +112,37 @@ def not_more_unsafe(text, arg):
     return markup_unsafe(text)
 not_more_unsafe.is_safe = True
 
+def mortify(text, url, funk):
+    # TODO: make this more robust, shouldn't need to get spaces just right
+    parts = text.split('<!-- more -->')
+    text = parts[0]
+    if len(parts) > 1:
+        text += _('([Read More...](%(url)s))') % {'url': url}
+    return funk(text)
+
+
+@register.filter
+def not_more(text, arg):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    return mortify(text, arg, markup)
+not_more.is_safe = True
+
+
+@register.filter
+def not_more_unsafe(text, arg):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    return mortify(text, arg, markup_unsafe)
+not_more_unsafe.is_safe = True
+
+
 def _markup(text, transform):
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
-    text = text.replace('<!-- more -->', '')   # remove "more" tag, if present
+    text = text.replace('<!-- more -->', '')
     html = transform(text)
     # temporary hack to content distribution network
     html = html.replace('src="/media/', 'src="' + settings.MEDIA_URL)
@@ -135,7 +162,7 @@ def markup_unsafe(text):
     """Runs text through markdown allowing custom html
     """
     return _markup(text, markdown_unsafe.convert)
-markup_unsafe.is_safe = True  # lol
+markup_unsafe.is_safe = True
 
 
 @register.simple_tag
@@ -152,14 +179,13 @@ def show_comments(context, user, comments):
     """I wrote this because template includes don't recurse properly
     """
     res = []
-    depth = context.get('depth', -1)+1
-    can_reply = depth+1 < settings.OWS_MAX_COMMENT_DEPTH
-
+    depth = context.get('depth', -1) + 1
+    can_reply = depth + 1 < settings.OWS_MAX_COMMENT_DEPTH
     for comment in comments:
         if not comment.is_removed or user.is_staff:
             res.append(render_to_string('occupywallst/comment.html',
                                         {'comment': comment,
                                          'user': user,
                                          'depth': depth,
-                                         'can_reply' : can_reply}))
+                                         'can_reply': can_reply}))
     return "".join(res)
