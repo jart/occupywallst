@@ -76,7 +76,7 @@
     "model": "occupywallst.verbiage", 
     "fields": {
       "content": "Occupy Wall Street | NYC Protest for American Revolution", 
-      "rendered": "<p>Occupy Wall Street | NYC Protest for American Revolution</p>", 
+      "rendered": "Occupy Wall Street | NYC Protest for American Revolution", 
       "name": "title"
     }
   }, 
