@@ -156,26 +156,26 @@ def attendee_info(username, **kwargs):
              'html': html}]
 
 
-def _title_validate(title):
-    if len(title) < 3:
-        raise APIException("title too short")
-    if len(title) > 255:
-        raise APIException("title too long")
-    if _too_many_caps(title):
-        raise APIException("turn off bloody caps lock")
-
-
-def _content_validate(content):
-    if len(content) < 3:
+def _check_post(user, post):
+    if user.is_staff:
+        return
+    if len(post.content) < 3:
         raise APIException("content too short")
-    if len(content) > 5 * 1024:
+    if len(post.content) > 5 * 1024:
         raise APIException("content too long, jerk.")
-    if _too_many_caps(content):
+    if _too_many_caps(post.content):
         raise APIException("turn off bloody caps lock")
-
-
-def _trololol(text):
-    return re.compile(r'ron paul', re.I).sub('Ron Lawl', text)
+    if hasattr(post, 'title'):
+        if len(post.title) < 3:
+            raise APIException("title too short")
+        if len(post.title) > 255:
+            raise APIException("title too long")
+        if _too_many_caps(post.title):
+            raise APIException("turn off bloody caps lock")
+    antifa = re.compile(r'ron paul', re.I)
+    if hasattr(post, 'title'):
+        post.title = antifa.sub('Ron Lawl', post.title)
+    post.content = antifa.sub('Ron Lawl', post.content)
 
 
 def article_new(user, title, content, is_forum, **kwargs):
@@ -192,10 +192,6 @@ def article_new(user, title, content, is_forum, **kwargs):
             raise APIException("insufficient privileges")
     title = title.strip()
     content = content.strip()
-    _title_validate(title)
-    _content_validate(content)
-    title = _trololol(title)
-    content = _trololol(content)
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
         raise APIException("a thread with this title exists")
@@ -216,6 +212,7 @@ def article_new(user, title, content, is_forum, **kwargs):
     article.content = content
     article.is_forum = is_forum
     article.ip = _try_to_get_ip(kwargs)
+    _check_post(user, article)
     article.save()
     return article_get(user, slug)
 
@@ -231,8 +228,6 @@ def article_edit(user, article_slug, title, content, **kwargs):
         raise APIException("you're not logged in")
     title = title.strip()
     content = content.strip()
-    _title_validate(title)
-    _content_validate(content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
@@ -243,6 +238,7 @@ def article_edit(user, article_slug, title, content, **kwargs):
         if article.allow_html or not article.is_forum:
             raise APIException("insufficient privileges")
     article.content = content
+    _check_post(user, article)
     article.save()
     return article_get(user, article_slug)
 
@@ -324,11 +320,11 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
-    _content_validate(content)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException('article not found')
+
     def comment_depth(id):
         depth = 0
         current = id
@@ -345,7 +341,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         parent = comhash[int(parent_id)]
         if int(parent_id) not in comhash:
             raise APIException("parent comment not found")
-        if comment_depth(int(parent_id))+1 > settings.OWS_MAX_COMMENT_DEPTH:
+        if comment_depth(int(parent_id)) + 1 > settings.OWS_MAX_COMMENT_DEPTH:
             raise APIException("comment nested too deep")
     else:
         parent = None
@@ -373,6 +369,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     comment.content = content
     comment.parent_id = parent_id
     comment.ip = _try_to_get_ip(kwargs)
+    _check_post(user, comment)
     comment.save()
     comment_vote(user, comment, "up", **kwargs)
     article.comment_count += 1
@@ -420,7 +417,6 @@ def comment_edit(user, comment_id, content, **kwargs):
     if not (user and user.id):
         raise APIException("you're not logged in")
     content = content.strip()
-    _content_validate(content)
     if len(content) < 3:
         raise APIException("comment too short")
     try:
@@ -431,6 +427,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         if comment.user != user:
             raise APIException("you didn't post that comment")
     comment.content = content
+    _check_post(user, comment)
     comment.save()
     return comment_get(user, comment.id)
 
