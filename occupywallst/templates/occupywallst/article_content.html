@@ -8,7 +8,7 @@
     {% if article.allow_html %}
       {{ article.content|markup_unsafe }}
     {% else %}
-      {{ article.content|markup }} (<a href="{{ article.get_absolute_url }}">more</a>)
+      {{ article.content|markup }}
     {% endif %}
   </div>
   <p class="view-comments">

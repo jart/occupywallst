@@ -89,14 +89,14 @@ def synopsis(text, max_words=10, max_chars=40):
     return " ".join(words[:max_words])[:max_chars]
 
 @register.filter
-def not_more(text):
+def not_more(text, arg):
     """Run portion of text before <!-- more --> through markdown, no
     html allowed
     """
     parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
     text = parts[0]
-    #if len(parts) > 1:
-    #    text += article.get_absolute_url  # TODO: include link to full content (requires a custom template tag?)
+    if len(parts) > 1:
+        text += '([more](%s))' % arg
     return markup(text)
 not_more.is_safe = True
 
