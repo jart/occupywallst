@@ -54,27 +54,45 @@ class Verbiage(models.Model):
 
     See also: :py:func:`occupywallst.context_processors.verbiage`
     """
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, help_text="""
+        Arbitrary name for content fragment.  If this starts with a '/'
+        then it'll be mapped to that URL on the website.""")
     content = models.TextField(blank=True)
-    use_markdown = models.BooleanField(default=True)
+    use_markdown = models.BooleanField(default=True, help_text="""
+        If checked, your content will be parsed as markdown with
+        HTML allowed.""")
+    use_template = models.BooleanField(default=False, help_text="""
+        If checked, your content will be run through the Django
+        template engine.""")
 
     class Meta:
         verbose_name_plural = "Verbiage"
+
+    def clean(self):
+        if self.use_template and not self.name.startswith('/'):
+            raise ValidationError('template content name must start with /')
+        if self.name.startswith('/') and not self.name.endswith('/'):
+            raise ValidationError('names starting with / must end with /')
+        if self.use_markdown and self.use_template:
+            raise ValidationError("you can't use both markdown and template")
 
     def save(self):
         super(Verbiage, self).save()
         for language in [None] + [a for a, b in settings.LANGUAGES]:
             cache.delete('verbiage_%s_%s' % (self.name, language))
 
+    def get_absolute_url(self):
+        if self.name.startswith('/'):
+            return self.name
+        else:
+            return '.'
+
     @staticmethod
     def get(name, language=None):
         key = 'verbiage_%s_%s' % (name, language)
         res = cache.get(key)
         if res is None:
-            try:
-                verb = Verbiage.objects.get(name=name)
-            except ObjectDoesNotExist:
-                return ''
+            verb = Verbiage.objects.get(name=name)
             try:
                 verb = verb.translations.get(language=language)
             except ObjectDoesNotExist:
@@ -82,6 +100,9 @@ class Verbiage(models.Model):
             if verb.use_markdown:
                 from occupywallst.templatetags.ows import markup_unsafe
                 res = markup_unsafe(verb.content)
+            elif verb.use_template:
+                from django.template import Template
+                res = Template(verb.content)
             else:
                 res = verb.content
             cache.set(key, res)
@@ -94,6 +115,7 @@ class VerbiageTranslation(models.Model):
     content = models.TextField(blank=True)
     name = property(lambda self: self.verbiage.name)
     use_markdown = property(lambda self: self.verbiage.use_markdown)
+    use_template = property(lambda self: self.verbiage.use_template)
 
     class Meta:
         unique_together = ("verbiage", "language")
@@ -716,8 +738,8 @@ class Ride(models.Model):
 def ride_save_callback(sender, instance, created, *args, **kwargs):
     if created:
         post = ForumPost(title=instance.forum_title(), author=instance.user)
-        post.slug = ("ride-%s-%s"
-                % (instance.user.username, slugify(instance.title)))
+        post.slug = "ride-%s-%s" % (instance.user.username,
+                                    slugify(instance.title))
         post.save()
         instance.forum_post = post
         instance.save()

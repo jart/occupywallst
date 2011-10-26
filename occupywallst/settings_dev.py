@@ -1,4 +1,5 @@
 
+import sys
 from occupywallst.settings import *
 
 DEBUG = True
@@ -82,6 +83,6 @@ LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
 try:
     from occupywallst.settings_dev_local import *
 except ImportError:
-    print "not found: occupywallst/settings_dev_local.py"
+    print >>sys.stderr, "not found: occupywallst/settings_dev_local.py"
 else:
-    print "loaded: occupywallst/settings_dev_local.py"
+    print >>sys.stderr, "loaded: occupywallst/settings_dev_local.py"

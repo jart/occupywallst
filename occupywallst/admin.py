@@ -56,6 +56,16 @@ def content_field(maxlen):
     return _content_field
 
 
+def verbiage_type(verbiage):
+    vt = 'Page' if verbiage.name.startswith('/') else 'Fragment'
+    if verbiage.use_markdown:
+        return 'Markdown ' + vt
+    elif verbiage.use_template:
+        return 'Template ' + vt
+    else:
+        return 'Plain-Text ' + vt
+
+
 class VerbiageTranslationInline(admin.StackedInline):
     model = db.VerbiageTranslation
     extra = 1
@@ -65,7 +75,7 @@ class VerbiageAdmin(GeoAdmin):
     inlines = (VerbiageTranslationInline,)
     ordering = ('name',)
     search_fields = ('name', 'content')
-    list_display = ('name', content_field(100))
+    list_display = ('name', verbiage_type, content_field(125))
 
 
 class UserAdmin(BaseUserAdmin):
