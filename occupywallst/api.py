@@ -157,12 +157,17 @@ def attendee_info(username, **kwargs):
 
 
 def _check_post(user, post):
+    """Ensure user-submitted forum content is kosher
+    """
     if user.is_staff:
         return
     if len(post.content) < 3:
         raise APIException("content too short")
     if len(post.content) > 5 * 1024:
-        raise APIException("content too long, jerk.")
+        raise APIException("content too long")
+    if ((len(post.content) < 8 and 'bump' in post.content.lower()) or
+        (len(post.content) < 5 and '+1' in post.content.lower())):
+        raise APIException("please don't bump threads")
     if _too_many_caps(post.content):
         raise APIException("turn off bloody caps lock")
     if hasattr(post, 'title'):
