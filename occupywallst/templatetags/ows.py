@@ -94,7 +94,7 @@ def mortify(text, url, funk):
     parts = text.split('<!-- more -->')
     text = parts[0]
     if len(parts) > 1:
-        text += _('([Read More...](%(url)s))') % {'url': url}
+        text += _('[Read More...](%(url)s)') % {'url': url}
     return funk(text)
 
 
