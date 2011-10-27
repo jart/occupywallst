@@ -98,6 +98,7 @@ MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
+USE_X_FORWARDED_HOST = True
 
 gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
