@@ -5,8 +5,8 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% translate_object article LANGUAGE_CODE %}
 <h1><a href="{{ article.get_absolute_url }}">
+  {% if article.is_forum and not article.author.is_staff %}Forum Post:{% endif %}
   {{ article.title }}
-  {% if article.is_forum and not article.author.is_staff %}(User Submitted){% endif %}
 </a></h1>
 <p class="info">
   {% trans "Posted" %} {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
@@ -35,5 +35,9 @@
         | <a class="delete" href="#">delete</a>
       {% endif %}
     {% endif %}
+  {% endif %}
+  {% if article.is_forum and not article.author.is_staff %}
+    <br />
+    This content is user submitted and not an official statement
   {% endif %}
 </p>
