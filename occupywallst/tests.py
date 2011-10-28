@@ -66,3 +66,8 @@ class UrlTest(TestCase):
     def test_signup(self):
         response = self.client.get('/signup/')
         self.assertEquals(response.status_code, 200)
+
+    def test_user_pages(self):
+        for user in db.UserInfo.objects.all():
+            response = self.client.get(user.get_absolute_url())
+            self.assertEquals(response.status_code, 200)
