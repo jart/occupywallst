@@ -39,7 +39,15 @@ class OWS(TestCase):
 
         assert Verbiage.get('scripts') != None, 'should have jscript'
 
+    def test_verbiage_translation(self):
+        v = Verbiage(name='test', content='hello, world')
+        v.save()
 
+        vt = VerbiageTranslation(verbiage=v, language='piglatin',
+                                 content='ello-hay, orld-way')
+        vt.save()
+
+        assert 'ello-hay' in Verbiage.get('test', 'piglatin')
 
 
     # functional tests
