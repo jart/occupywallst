@@ -6,7 +6,8 @@
 {% block title %}
   {% get_current_language as LANGUAGE_CODE %}
   {% translate_object article LANGUAGE_CODE %}
-  {{ article.title }} | {{ OWS_SITE_NAME }} {% if forum %}Forum{% endif %}
+  {% if article.is_forum and not article.author.is_staff %}Forum Post:{% endif %}
+  {{ article.title }} | {{ OWS_SITE_NAME }}
 {% endblock title %}
 
 {# this is ESPECIALLY important for SEO because news articles are
@@ -60,7 +61,7 @@
     </section>
   </td><td id="right">
     {% if forum %}
-      <h3 style="margin-top:0">Recent Posts</h3>
+      <h2 style="margin-top:0">Public Forum</h2>
     {% else %}
       <h3 style="margin-top:0">Other Articles</h3>
     {% endif %}
