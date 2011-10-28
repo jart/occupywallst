@@ -199,7 +199,7 @@ Do the following::
     #psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
     psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
 
-Then you should be able to run tests with::
+Then you should be able to run tests as follows (note that this must be run from the project dir)::
 
     occupywallst-dev test
     occupywallst-dev test occupywallst  # faster
