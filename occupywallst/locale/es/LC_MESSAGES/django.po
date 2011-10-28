@@ -8,56 +8,65 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 13:43+0000\n"
+"POT-Creation-Date: 2011-10-28 11:35+0000\n"
 "PO-Revision-Date: 2011-09-29 13:48+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: settings.py:100
+#: fields.py:12
+msgid "Invalid captcha"
+msgstr ""
+
+#: settings.py:106
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:101
+#: settings.py:107
 msgid "Spanish"
 msgstr "Español"
 
-#: settings.py:102
+#: settings.py:108
 msgid "French"
 msgstr "Francés"
 
-#: utils.py:127
+#: settings.py:109
+msgid "Greek"
+msgstr ""
+
+#: utils.py:134
 #, python-format
 msgid "%(x)d second"
 msgid_plural "%(x)d seconds"
 msgstr[0] "%(x)d segundo"
 msgstr[1] "%(x)d segundos"
 
-#: utils.py:130
+#: utils.py:137
 #, python-format
 msgid "%(x)d minute"
 msgid_plural "%(x)d minutes"
 msgstr[0] "%(x)d minuto"
 msgstr[1] "%(x)d minutos"
 
-#: utils.py:133
+#: utils.py:140
 #, python-format
 msgid "%(x)d hour"
 msgid_plural "%(x)d hours"
 msgstr[0] "%(x)d hora"
 msgstr[1] "%(x)d horas"
 
-#: utils.py:136
+#: utils.py:143
 #, python-format
 msgid "%(x)d day"
 msgid_plural "%(x)d days"
 msgstr[0] "%(x)d día"
 msgstr[1] "%(x)d días"
 
-#: utils.py:139
+#: utils.py:146
 #, python-format
 msgid "%(x)d month"
 msgid_plural "%(x)d months"
@@ -80,99 +89,75 @@ msgstr ""
 msgid "Parent Comment"
 msgstr ""
 
-#: templates/occupywallst/article_content.html:7
-msgid "edit"
-msgstr ""
-
-#: templates/occupywallst/article_content.html:8
-msgid "delete"
-msgstr ""
-
-#: templates/occupywallst/article_content.html:23
-#: templates/occupywallst/article_content.html:25
+#: templates/occupywallst/article_info.html:12
+#: templates/occupywallst/index.html:35
 msgid "Posted"
 msgstr "Publicado"
 
-#: templates/occupywallst/article_content.html:23
+#: templates/occupywallst/article_info.html:14
 msgid "ago"
 msgstr "antes"
 
-#: templates/occupywallst/article_content.html:27
+#: templates/occupywallst/article_info.html:16
+#: templates/occupywallst/index.html:36
 msgid "by"
 msgstr "por"
 
-#: templates/occupywallst/base.html:7
-msgid "NYC Protest for American Revolution"
-msgstr ""
-
-#: templates/occupywallst/base.html:9
-msgid ""
-"News and resources for protesters attending the mass demonstration on Wall "
-"Street against financial greed and corruption"
-msgstr ""
-
-#: templates/occupywallst/base.html:29 templates/occupywallst/base.html:35
+#: templates/occupywallst/base.html:29
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: templates/occupywallst/base.html:31
+#: templates/occupywallst/base.html:33
 msgid "admin"
 msgstr ""
 
-#: templates/occupywallst/base.html:33
+#: templates/occupywallst/base.html:35
 msgid "logout"
 msgstr ""
 
-#: templates/occupywallst/base.html:36
+#: templates/occupywallst/base.html:37
 msgid "login"
 msgstr ""
 
-#: templates/occupywallst/base.html:37
+#: templates/occupywallst/base.html:38
 msgid "signup"
 msgstr "Inscripción"
 
-#: templates/occupywallst/base.html:43
-msgid ""
-"The resistance continues at Liberty Square and <a href=\"http://"
-"occupytogether.org/\">Nationwide</a>!"
+#: templates/occupywallst/base.html:44
+msgid "Language"
 msgstr ""
 
-#: templates/occupywallst/base.html:51
-msgid "News"
-msgstr "Noticias"
-
-#: templates/occupywallst/base.html:53
-msgid "Forum"
-msgstr "Foro"
-
-#: templates/occupywallst/base.html:54
-msgid "Chat"
-msgstr "Charla"
-
-#: templates/occupywallst/base.html:55
-msgid "User Map"
-msgstr "Mapa"
-
-#: templates/occupywallst/base.html:57
-msgid "About"
-msgstr "Sobre"
-
-#: templates/occupywallst/base.html:58
-msgid "Donate"
-msgstr "Donar"
-
-#: templates/occupywallst/base.html:76
-msgid "this site was brought to you by various radicals"
-msgstr ""
-
-#: templates/occupywallst/base.html:77
-msgid "email"
-msgstr ""
-
-#: templates/occupywallst/base.html:77
-msgid "help line"
-msgstr ""
-
-#: templates/occupywallst/base.html:83
+#: templates/occupywallst/base.html:74
 msgid "Notifications"
 msgstr ""
+
+#: templates/occupywallst/user.html:67
+msgid "From"
+msgstr ""
+
+#: templates/occupywallst/user.html:70
+msgid "Joined"
+msgstr ""
+
+#: templatetags/ows.py:97
+#, python-format
+msgid "[Read More...](%(url)s)"
+msgstr ""
+
+#~ msgid "News"
+#~ msgstr "Noticias"
+
+#~ msgid "Forum"
+#~ msgstr "Foro"
+
+#~ msgid "Chat"
+#~ msgstr "Charla"
+
+#~ msgid "User Map"
+#~ msgstr "Mapa"
+
+#~ msgid "About"
+#~ msgstr "Sobre"
+
+#~ msgid "Donate"
+#~ msgstr "Donar"

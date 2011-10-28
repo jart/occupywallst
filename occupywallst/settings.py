@@ -106,6 +106,7 @@ LANGUAGES = (
     ('en', gettext_noop('English')),
     ('es', gettext_noop('Spanish')),
     ('fr', gettext_noop('French')),
+    ('el', gettext_noop('Greek')),
 )
 
 TEMPLATE_LOADERS = (

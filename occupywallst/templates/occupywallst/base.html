@@ -44,9 +44,9 @@
             {% trans "Language" %}
             {% for language in languages %}
               {% if language.code == LANGUAGE_CODE %}
-                <strong>{{ language.code }}</strong>
+                <strong title="{{ language.name_local }}">{{ language.code }}</strong>
               {% else %}
-                <a href="#">{{ language.code }}</a>
+                <a title="{{ language.name_local }}" href="#">{{ language.code }}</a>
               {% endif %}
             {% endfor %}
           </form>
