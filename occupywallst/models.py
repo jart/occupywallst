@@ -348,7 +348,7 @@ class Article(models.Model):
     @staticmethod
     def recalculate():
         for art in Article.objects.all():
-            art.comment_count = (art.comments_set
+            art.comment_count = (art.comment_set
                                  .filter(is_deleted=False,
                                          is_removed=False)
                                  .count())
