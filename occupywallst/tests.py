@@ -3,15 +3,53 @@ from django.test.client import Client
 
 from django.core.urlresolvers import reverse
 from occupywallst import models as db
+from occupywallst import api
 from occupywallst.templatetags import ows
 
 def assert_success(response):
     assert response.status_code == 200, \
         'request should be successful (found "%d")' % response.status_code
 
-class OWS(TestCase):
-    fixtures = ['occupywallst/fixtures/verbiage.json']
+def assert_redirect(response):
+    assert response.status_code == 302, \
+        'request should be redirect (found "%d")' % response.status_code
 
+import random
+def random_words(N):
+    """ choose N random words for content"""
+
+    words = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'.split()
+    return ' '.join(random.choice(words) for n in range(N))
+
+def add_content(N):
+    """ add N articles and comments to the database, for testing
+    etc"""
+    api.settings.DEBUG = True
+    users = [u for u in db.User.objects.all()]
+
+    for i in range(N):
+        a = api.article_new(user=random.choice(users),
+                            title=random_words(5),
+                            content=random_words(50),
+                            is_forum=True)
+
+        comment_ids = []
+        for j in range(N):
+            c = api.comment_new(user=random.choice(users),
+                                article_slug=a[0]['slug'],
+                                parent_id=random.choice([0] + comment_ids),
+                                content=random_words(20))
+            comment_ids.append(c[0]['id'])
+
+            for k in range(N):
+                api.comment_upvote(random.choice(users),
+                                   random.choice(comment_ids))
+                api.comment_downvote(random.choice(users),
+                                   random.choice(comment_ids))
+
+
+class OWS(TestCase):
+    fixtures = ['verbiage', 'example_data']
     def create_users(self):
         """ Create users for functional testing of access control.
 
@@ -30,6 +68,8 @@ class OWS(TestCase):
         self.article = db.Article(author=self.red_user, title='article title', slug='article-slug',
                                   content='exciting article content')
         self.article.save()
+
+        
 
     # unit tests
     def test_verbiage(self):
@@ -229,82 +269,121 @@ class OWS(TestCase):
         pass
 
     # functional tests
+
     def test_index(self):
-        c = Client()
         url = reverse('occupywallst.views.index')
-        response = c.get(url)
+        response = self.client.get(url)
         assert_success(response)
 
-        # repeat request, to test caching code
-        response = c.get(url)
-        assert_success(response)
+    def test_cache_and_translation(self):
+        def get_several_ways(url):
+            """since the app uses fancy caching there are several paths worth
+            testing for each view:
 
-class UrlTest(TestCase):
-    fixtures = ['example_data', 'verbiage']
+              * not logged in
+              * second request when not logged in (uses cache)
+              * using a language other than english
+              * logged in
+            """
+
+            response = self.client.get(url)
+            assert_success(response)
+            assert 'Welcome' in response.content
+
+            # repeat request, to test caching code
+            response = self.client.get(url)
+            assert_success(response)
+
+            # repeat request, in spanish
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='es')
+            assert_success(response)
+            assert 'Bienvenido' in response.content
+            assert 'Welcome' not in response.content
+
+            # repeat request when logged in
+            self.client.login(username='red', password='red')
+            response = self.client.get(url)
+            assert_success(response)
+
+            # repeat request, to test caching code
+            response = self.client.get(url)
+            assert_success(response)
+
+        for url in [reverse('occupywallst.views.index'),
+                    reverse('occupywallst.views.forum'),]:
+            get_several_ways(url)
+
+    def test_forum(self):
+        url = reverse('occupywallst.views.forum')
+        response = self.client.get(url)
+        assert_success(response)
 
     def test_articles(self):
         for article in db.Article.objects.all():
             response = self.client.get(article.get_absolute_url())
-            self.assertEqual(response.status_code, 200)
+            assert_success(response)
             self.assertContains(response, ows.markup(article.content))
-
-    def test_index(self):
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_forum(self):
-        response = self.client.get('/forum/')
-        self.assertEquals(response.status_code, 200)
 
     def test_rss_news(self):
         response = self.client.get('/rss/news/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_rss_forum(self):
         response = self.client.get('/rss/forum/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_rss_comments(self):
         response = self.client.get('/rss/comments/')
-        self.assertEquals(response.status_code, 200)
-
-    def test_forum(self):
-        response = self.client.get('/forum/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_attendees(self):
         response = self.client.get('/attendees/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_rides(self):
         response = self.client.get('/rides/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_calendar(self):
         response = self.client.get('/calendar/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_donate(self):
         response = self.client.get('/donate/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_about(self):
         response = self.client.get('/about/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
 
     def test_login(self):
-        response = self.client.get('/login/')
-        self.assertEquals(response.status_code, 200)
+        url = '/login/'
+        response = self.client.get(url)
+        assert_success(response)
+
+        response = self.client.post(url, dict(username='red', password='wrong'))
+        assert 'Please enter a correct username and password' in response.content
+
+        response = self.client.post(url, dict(username='red', password='red'))
+        assert_redirect(response)
 
     def test_logout(self):
+        self.client.login(username='red', password='red')
         response = self.client.get('/logout/')
-        self.assertEquals(response.status_code, 200)
+        assert_success(response)
+        assert 'login' in response.content
 
     def test_signup(self):
-        response = self.client.get('/signup/')
-        self.assertEquals(response.status_code, 200)
+        url = '/signup/'
+        response = self.client.get(url)
+        assert_success(response)
+
+        response = self.client.post(url, dict(username='purple', password='purple'), follow=True)
+        assert_success(response)
+        assert 'purple' in response.content
 
     def test_user_pages(self):
         for user in db.UserInfo.objects.all():
             response = self.client.get(user.get_absolute_url())
-            self.assertEquals(response.status_code, 200)
+            assert_success(response)
+            
