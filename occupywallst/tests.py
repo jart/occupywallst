@@ -557,7 +557,7 @@ class OWS(TestCase):
         self.client.post('/api/login/', dict(username='red', password='red'))
 
         #  send a message to blue
-        response = self.client.post('/api/message_send/', dict(user=self.red_user, to_username='blue', content=content))
+        response = self.client.post('/api/message_send/', dict(to_username='blue', content=content))
 
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'OK'
@@ -565,7 +565,7 @@ class OWS(TestCase):
         assert m.content == content
 
         # delete the message
-        response = self.client.post('/api/message_delete/', dict(user=self.red_user, message_id=m.id))
+        response = self.client.post('/api/message_delete/', dict(message_id=m.id))
 
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ZERO_RESULTS'
@@ -575,14 +575,14 @@ class OWS(TestCase):
         
         # now again, but delete by blue
         
-        response = self.client.post('/api/message_send/', dict(user=self.red_user, to_username='blue', content=content))
+        response = self.client.post('/api/message_send/', dict(to_username='blue', content=content))
         j = assert_and_get_valid_json(response)
         m = db.Message.objects.get(id=j['results'][0]['id'])
         assert m.content == content
 
         self.client.post('/api/logout/')
         self.client.post('/api/login/', dict(username='blue', password='blue'))
-        response = self.client.post('/api/message_delete/', dict(user=self.blue_user, message_id=m.id))  # TODO: check if the user passed to api must match the user that is auth-ed
+        response = self.client.post('/api/message_delete/', dict(message_id=m.id))
 
         api.settings.DEBUG = 0
 
@@ -595,7 +595,7 @@ class OWS(TestCase):
         self.client.post('/api/login/', dict(username='red', password='red'))
 
         # create a new article
-        response = self.client.post('/api/article_new/', dict(user=self.red_user, title=title, content=content, is_forum=True))
+        response = self.client.post('/api/article_new/', dict(title=title, content=content, is_forum=True))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=j['results'][0]['id'])
         assert a.content == content
@@ -604,7 +604,7 @@ class OWS(TestCase):
         # edit it
         new_title = random_words(2)
         new_content = random_words(25)
-        response = self.client.post('/api/article_edit/', dict(user=self.red_user, article_slug=a.slug,
+        response = self.client.post('/api/article_edit/', dict(article_slug=a.slug,
                                                                title=new_title, content=new_content))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=j['results'][0]['id'])
@@ -612,7 +612,7 @@ class OWS(TestCase):
         assert a.title == new_title
 
         # delete it
-        response = self.client.post('/api/article_delete/', dict(user=self.red_user, article_slug=a.slug))
+        response = self.client.post('/api/article_delete/', dict(article_slug=a.slug))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=a.id)
         assert a.content == '[DELETED]'
@@ -622,7 +622,7 @@ class OWS(TestCase):
         # create a new article
         title = random_words(5)
         content = random_words(20)
-        response = self.client.post('/api/article_new/', dict(user=self.red_user, title=title, content=content, is_forum=True))
+        response = self.client.post('/api/article_new/', dict(title=title, content=content, is_forum=True))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=j['results'][0]['id'])
 
@@ -631,19 +631,19 @@ class OWS(TestCase):
         self.client.post('/api/login/', dict(username='OccupyWallSt', password='anarchy'))
 
         # remove it
-        response = self.client.post('/api/article_remove/', dict(user=self.red_user, article_slug=a.slug, action='remove'))
+        response = self.client.post('/api/article_remove/', dict(article_slug=a.slug, action='remove'))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=a.id)
         assert a.is_visible == False
 
         # unremove it
-        response = self.client.post('/api/article_remove/', dict(user=self.red_user, article_slug=a.slug, action='unremove'))
+        response = self.client.post('/api/article_remove/', dict(article_slug=a.slug, action='unremove'))
         j = assert_and_get_valid_json(response)
         a = db.Article.objects.get(id=a.id)
         assert a.is_visible == True
 
         # delete it
-        response = self.client.post('/api/article_delete/', dict(user=self.red_user, article_slug=a.slug))
+        response = self.client.post('/api/article_delete/', dict(article_slug=a.slug))
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
 
@@ -674,21 +674,21 @@ class OWS(TestCase):
 
         # edit it
         new_content = random_words(25)
-        response = self.client.post('/api/comment_edit/', dict(user=self.red_user, comment_id=c.id,
+        response = self.client.post('/api/comment_edit/', dict(comment_id=c.id,
                                                                content=new_content))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=j['results'][0]['id'])
         assert c.content == new_content
 
         # delete it
-        response = self.client.post('/api/comment_delete/', dict(user=self.red_user, comment_id=c.id))
+        response = self.client.post('/api/comment_delete/', dict(comment_id=c.id))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.content == ''
 
 
         # create a comment
-        response = self.client.post('/api/comment_new/', dict(user=self.red_user, article_slug=self.article.slug,
+        response = self.client.post('/api/comment_new/', dict(article_slug=self.article.slug,
                                                               parent_id='', content=content))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=j['results'][0]['id'])
@@ -698,27 +698,27 @@ class OWS(TestCase):
         self.client.post('/api/login/', dict(username='OccupyWallSt', password='anarchy'))
 
         # remove it
-        response = self.client.post('/api/comment_remove/', dict(user=self.red_user, comment_id=c.id, action='remove'))
+        response = self.client.post('/api/comment_remove/', dict(comment_id=c.id, action='remove'))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.is_removed == True
 
         # unremove it
-        response = self.client.post('/api/comment_remove/', dict(user=self.red_user, comment_id=c.id, action='unremove'))
+        response = self.client.post('/api/comment_remove/', dict(comment_id=c.id, action='unremove'))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.is_removed == False
 
         # upvote it
         ups = c.ups
-        response = self.client.post('/api/comment_upvote/', dict(user=self.red_user, comment=c.id))
+        response = self.client.post('/api/comment_upvote/', dict(comment=c.id))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.ups == ups+1
 
         # downvote it
         downs = c.downs
-        response = self.client.post('/api/comment_downvote/', dict(user=self.red_user, comment=c.id))
+        response = self.client.post('/api/comment_downvote/', dict(comment=c.id))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.downs == downs+1
