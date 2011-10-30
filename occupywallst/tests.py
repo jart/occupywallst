@@ -656,8 +656,17 @@ class OWS(TestCase):
         self.client.post('/api/login/', dict(username='red', password='red'))
 
         # create a comment
-        response = self.client.post('/api/comment_new/', dict(user=self.red_user, article_slug=self.article.slug,
-                                                              parent_id=1, content=content))
+        response = self.client.post('/api/comment_new/', dict(article_slug=self.article.slug,
+                                                              parent_id='', content=content))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.content == content
+
+
+        # create a child of that comment
+        parent_id = c.id
+        response = self.client.post('/api/comment_new/', dict(article_slug=self.article.slug,
+                                                              parent_id=parent_id, content=content))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=j['results'][0]['id'])
         assert c.content == content
@@ -680,7 +689,7 @@ class OWS(TestCase):
 
         # create a comment
         response = self.client.post('/api/comment_new/', dict(user=self.red_user, article_slug=self.article.slug,
-                                                              parent_id=1, content=content))
+                                                              parent_id='', content=content))
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=j['results'][0]['id'])
 
