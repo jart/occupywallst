@@ -144,6 +144,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 INSTALLED_APPS = [
+    'imagekit',
     'occupywallst',
     'django.contrib.auth',
     'django.contrib.contenttypes',
