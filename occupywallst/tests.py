@@ -14,6 +14,14 @@ def assert_redirect(response):
     assert response.status_code == 302, \
         'request should be redirect (found "%d")' % response.status_code
 
+def assert_and_get_valid_json(response):
+    import json
+    j = json.loads(response.content)
+    
+    #raise AssertionError, \
+    #    'request should be valid json (found "%s...")' % response.content[:32]
+    return j
+
 import random
 def random_words(N):
     """ choose N random words for content"""
@@ -62,6 +70,10 @@ class OWS(TestCase):
         self.green_user = User.objects.create_user('green', '', 'green')
         self.blue_user = User.objects.create_user('blue', '', 'blue')
 
+        for u in [self.red_user, self.green_user, self.blue_user]:
+            ui = db.UserInfo(user=u)
+            ui.save()
+
     def setUp(self):
         self.create_users()
 
@@ -69,9 +81,12 @@ class OWS(TestCase):
                                   content='exciting article content')
         self.article.save()
 
+        comment_list = api.comment_new(user=self.blue_user, article_slug=self.article.slug,
+                                       parent_id=0, content=random_words(20))
+        self.comment = db.Comment.objects.get(id=comment_list[0]['id'])
         
 
-    # unit tests
+    # tests of models
     def test_verbiage(self):
         """ Test verbiage model"""
         
@@ -123,9 +138,9 @@ class OWS(TestCase):
         assert self.red_user.notification_set.count() == cnt+1
 
         # now mark it as read, send it again, and it should go
-        n = self.red_user.notification_set.all()[0]
-        n.is_read = True
-        n.save()
+        for n in self.red_user.notification_set.all():
+            n.is_read = True
+            n.save()
 
         db.Notification.send(self.red_user, 'http://dev.occupywallst.org', 'test message')
         assert self.red_user.notification_set.count() == cnt+2
@@ -268,7 +283,7 @@ class OWS(TestCase):
         # TODO: add tests for this model if it is still in use
         pass
 
-    # functional tests
+    # tests of views
 
     def test_index(self):
         url = reverse('occupywallst.views.index')
@@ -324,18 +339,6 @@ class OWS(TestCase):
             assert_success(response)
             self.assertContains(response, ows.markup(article.content))
 
-    def test_rss_news(self):
-        response = self.client.get('/rss/news/')
-        assert_success(response)
-
-    def test_rss_forum(self):
-        response = self.client.get('/rss/forum/')
-        assert_success(response)
-
-    def test_rss_comments(self):
-        response = self.client.get('/rss/comments/')
-        assert_success(response)
-
     def test_attendees(self):
         response = self.client.get('/attendees/')
         assert_success(response)
@@ -386,4 +389,327 @@ class OWS(TestCase):
         for user in db.UserInfo.objects.all():
             response = self.client.get(user.get_absolute_url())
             assert_success(response)
+
+    # test of feeds
+
+    def test_rss_news(self):
+        response = self.client.get('/rss/news/')
+        assert_success(response)
+
+    def test_rss_forum(self):
+        response = self.client.get('/rss/forum/')
+        assert_success(response)
+
+    def test_rss_comments(self):
+        response = self.client.get('/rss/comments/')
+        assert_success(response)
             
+    # tests of apis
+
+    def test_api_attendees(self):
+        response = self.client.get('/api/safe/attendees/')
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        response = self.client.get('/api/safe/attendees/', dict(bounds='10,10,20,20'))
+        assert_success(response)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] != 'ERROR'
+
+        # TODO: test that users appear in bounds when they are supposed to
+
+    def test_api_attendee_info(self):
+        response = self.client.get('/api/safe/attendee_info/')
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        response = self.client.get('/api/safe/attendee_info/', dict(username='not_a_user'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        response = self.client.get('/api/safe/attendee_info/', dict(username='red'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        assert j['results'][0]['username'] == 'red'
+
+    def test_api_rides(self):
+        response = self.client.get('/api/safe/rides/')
+        j = assert_and_get_valid_json(response)
+        assert j['status'] != 'ERROR'
+
+    def test_api_article_get(self):
+        self.client.login(username='red', password='red')
+        response = self.client.get('/api/safe/article_get/', dict(article_slug=self.article.slug))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+
+    def test_api_comment_get(self):
+        response = self.client.get('/api/safe/comment_get/', dict(comment_id=self.comment.id))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+
+    def test_api_forumlinks(self):
+        response = self.client.get('/api/safe/forumlinks/', dict(after=0, count=10))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+
+    def test_api_check_username(self):
+        # already taken
+        response = self.client.post('/api/check_username/', dict(username=self.red_user.username))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # too short
+        response = self.client.post('/api/check_username/', dict(username='r'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # too long
+        response = self.client.post('/api/check_username/', dict(username='r'*31))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # too funky
+        response = self.client.post('/api/check_username/', dict(username='!@#$%'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # just right
+        response = self.client.post('/api/check_username/', dict(username='totally_new_user'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ZERO_RESULTS'  # this means success
+
+    def test_api_signup(self):
+        # already taken
+        response = self.client.post('/api/signup/', dict(username=self.red_user.username, password='123456', email='new@occupywallst.org'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # password too short
+        response = self.client.post('/api/signup/', dict(username='new_user', password='1234', email='new@occupywallst.org'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # email no good
+        response = self.client.post('/api/signup/', dict(username='new_user', password='123456', email='new@occupy'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+
+        # just right
+        response = self.client.post('/api/signup/', dict(username='new_user', password='123456', email='new@occupywallst.org'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+
+        # but trying it again fails, because we're now logged in
+        response = self.client.post('/api/signup/', dict(username='new_user', password='123456', email='new@occupywallst.org'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert 'logged in' in j['message']
+
+        # and even if we log out, it still fails, because the user now exists
+        self.client.post('/api/logout/')
+        response = self.client.post('/api/signup/', dict(username='new_user', password='123456', email='new@occupywallst.org'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert j['message'] == 'Username is taken'
+
+    def test_api_login_and_logout(self):
+        error_str = 'invalid username or password'  # should be same for invalid username and invalid password, for increased security
+        # invalid user
+        response = self.client.post('/api/login/', dict(username='redff', password='red'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert j['message'] == error_str
+
+        # invalid password
+        response = self.client.post('/api/login/', dict(username='red', password='redff'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert j['message'] == error_str
+
+        # correct username/password
+        response = self.client.post('/api/login/', dict(username='red', password='red'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        assert j['results'][0]['username'] == 'red'
+
+        # logging in again should fail
+        response = self.client.post('/api/login/', dict(username='blue', password='blue'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert 'already logged in' in j['message']
+
+        # logging out and in should succeed
+        response = self.client.post('/api/logout/')
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ZERO_RESULTS'
+
+        response = self.client.post('/api/login/', dict(username='blue', password='blue'))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        assert j['results'][0]['username'] == 'blue'
+
+    def test_api_message(self):
+        api.settings.DEBUG = 1
+        content = random_words(10)
+
+        # login as red
+        self.client.post('/api/login/', dict(username='red', password='red'))
+
+        #  send a message to blue
+        response = self.client.post('/api/message_send/', dict(user=self.red_user, to_username='blue', content=content))
+
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        m = db.Message.objects.get(id=j['results'][0]['id'])
+        assert m.content == content
+
+        # delete the message
+        response = self.client.post('/api/message_delete/', dict(user=self.red_user, message_id=m.id))
+
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ZERO_RESULTS'
+        m = db.Message.objects.get(id=m.id)
+        assert m.content == ''
+
+        
+        # now again, but delete by blue
+        
+        response = self.client.post('/api/message_send/', dict(user=self.red_user, to_username='blue', content=content))
+        j = assert_and_get_valid_json(response)
+        m = db.Message.objects.get(id=j['results'][0]['id'])
+        assert m.content == content
+
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', dict(username='blue', password='blue'))
+        response = self.client.post('/api/message_delete/', dict(user=self.blue_user, message_id=m.id))  # TODO: check if the user passed to api must match the user that is auth-ed
+
+        api.settings.DEBUG = 0
+
+    def test_api_article(self):
+        api.settings.OWS_POST_LIMIT_THREAD = -1  # turn off limit for testing
+        title = random_words(5)
+        content = random_words(20)
+
+        # login as red
+        self.client.post('/api/login/', dict(username='red', password='red'))
+
+        # create a new article
+        response = self.client.post('/api/article_new/', dict(user=self.red_user, title=title, content=content, is_forum=True))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=j['results'][0]['id'])
+        assert a.content == content
+
+
+        # edit it
+        new_title = random_words(2)
+        new_content = random_words(25)
+        response = self.client.post('/api/article_edit/', dict(user=self.red_user, article_slug=a.slug,
+                                                               title=new_title, content=new_content))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=j['results'][0]['id'])
+        assert a.content == new_content
+        assert a.title == new_title
+
+        # delete it
+        response = self.client.post('/api/article_delete/', dict(user=self.red_user, article_slug=a.slug))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=a.id)
+        assert a.content == '[DELETED]'
+
+
+
+        # create a new article
+        title = random_words(5)
+        content = random_words(20)
+        response = self.client.post('/api/article_new/', dict(user=self.red_user, title=title, content=content, is_forum=True))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=j['results'][0]['id'])
+
+        # logout and login as an admin
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', dict(username='OccupyWallSt', password='anarchy'))
+
+        # remove it
+        response = self.client.post('/api/article_remove/', dict(user=self.red_user, article_slug=a.slug, action='remove'))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=a.id)
+        assert a.is_visible == False
+
+        # unremove it
+        response = self.client.post('/api/article_remove/', dict(user=self.red_user, article_slug=a.slug, action='unremove'))
+        j = assert_and_get_valid_json(response)
+        a = db.Article.objects.get(id=a.id)
+        assert a.is_visible == True
+
+        # delete it
+        response = self.client.post('/api/article_delete/', dict(user=self.red_user, article_slug=a.slug))
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
+
+
+    def test_api_comment(self):
+        api.settings.OWS_POST_LIMIT_COMMENT = -1  # turn off limit for testing
+        content = random_words(20)
+
+        # login as red
+        self.client.post('/api/login/', dict(username='red', password='red'))
+
+        # create a comment
+        response = self.client.post('/api/comment_new/', dict(user=self.red_user, article_slug=self.article.slug,
+                                                              parent_id=1, content=content))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.content == content
+
+
+        # edit it
+        new_content = random_words(25)
+        response = self.client.post('/api/comment_edit/', dict(user=self.red_user, comment_id=c.id,
+                                                               content=new_content))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.content == new_content
+
+        # delete it
+        response = self.client.post('/api/comment_delete/', dict(user=self.red_user, comment_id=c.id))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.content == ''
+
+
+        # create a comment
+        response = self.client.post('/api/comment_new/', dict(user=self.red_user, article_slug=self.article.slug,
+                                                              parent_id=1, content=content))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+
+        # logout and login as an admin
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', dict(username='OccupyWallSt', password='anarchy'))
+
+        # remove it
+        response = self.client.post('/api/comment_remove/', dict(user=self.red_user, comment_id=c.id, action='remove'))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.is_removed == True
+
+        # unremove it
+        response = self.client.post('/api/comment_remove/', dict(user=self.red_user, comment_id=c.id, action='unremove'))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.is_removed == False
+
+        # upvote it
+        ups = c.ups
+        response = self.client.post('/api/comment_upvote/', dict(user=self.red_user, comment=c.id))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.ups == ups+1
+
+        # downvote it
+        downs = c.downs
+        response = self.client.post('/api/comment_downvote/', dict(user=self.red_user, comment=c.id))
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.downs == downs+1
