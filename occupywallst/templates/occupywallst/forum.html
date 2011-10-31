@@ -1,6 +1,5 @@
 {% extends base %}
 {% load ows %}
-{% load cache %}
 
 {% block title %}Public Forum | {{ OWS_SITE_NAME }}{% endblock title %}
 
@@ -25,8 +24,10 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum    <a href="#" id="newlink">post</a>
-</h2>
+    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum
+      (<a class="primary" href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">Read the Rules Before Posting</a>)
+      <a href="#" id="newlink">post</a>
+    </h2>
     <div class="postform" style="display:none">
       <div>
         <label for="title">title</label><br />
@@ -44,16 +45,16 @@
       </div>
     </div>
     <section id="thread-list" style="margin-top:0">
-        {% for article in articles %}
-          {% include "occupywallst/forumpost_synopsis.html" %}
-        {% endfor %}
+      {% for article in articles %}
+        {% include "occupywallst/forumpost_synopsis.html" %}
+      {% endfor %}
     </section>
     <p style="text-align:center">
       <img alt="loading..." id="loady" src="/media/img/ajax-loader-32.gif" width="32" height="32" />
     </p>
   </td><td id="right">
     <section id="recents">
-      <h2 style="margin-top:0;margin-bottom:0.5em">Best Comments Today</h2>
+      <h2 style="margin-bottom:0.5em">Best Comments Today</h2>
       {% if not bests %}
         <p>None Found :'(</p>
       {% endif %}
