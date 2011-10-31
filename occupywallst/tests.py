@@ -283,6 +283,10 @@ class OWS(TestCase):
         # TODO: add tests for this model if it is still in use
         pass
 
+    def test_photo(self):
+        # TODO: add tests for photo model
+        pass
+
     # tests of views
 
     def test_index(self):

@@ -17,13 +17,14 @@ from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
 
 from occupywallst import models as db
-
+from occupywallst import widgets
 
 class AdminSite(BaseAdminSite):
     def __init__(self, *args, **kwargs):
         BaseAdminSite.__init__(self, *args, **kwargs)
         self.register(db.User, UserAdmin)
         self.register(db.Group, GroupAdmin)
+        self.register(db.Photo, PhotoAdmin)
         self.register(db.Verbiage, VerbiageAdmin)
         self.register(db.NewsArticle, ArticleAdmin)
         self.register(db.ForumPost, ArticleAdmin)
@@ -77,6 +78,24 @@ class VerbiageAdmin(GeoAdmin):
     search_fields = ('name', 'content')
     list_display = ('name', verbiage_type, content_field(125))
 
+
+def thumbnail_field(obj):
+    if not obj.thumbnail_image.url:
+        return '!BLANK!'
+    else:
+        return '<a href="%s"><img src="%s"/></a>' % (obj.display.url, obj.thumbnail_image.url)
+thumbnail_field.short_description = 'Thumbnail'
+thumbnail_field.allow_tags = True
+
+
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ('name', thumbnail_field, 'original_image',)
+    list_display_links = ('name', 'original_image',)
+    search_fields = ('name', 'original_image', )
+    
+    formfield_overrides = {
+        db.models.ImageField: {'widget': widgets.ImageWidget},
+    }
 
 class UserAdmin(BaseUserAdmin):
     def save_model(self, request, user, form, change):

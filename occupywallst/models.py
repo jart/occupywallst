@@ -27,9 +27,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 
+from imagekit.models import ImageModel
+
 from occupywallst.utils import jsonify
 from occupywallst import geo
-
+from occupywallst import widgets
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +51,6 @@ def memoize(method):
     return _memoize
 
 
-
-#from django.db import models
-from imagekit.models import ImageModel
-
 class Photo(ImageModel):
     name = models.CharField(max_length=100)
     original_image = models.ImageField(upload_to='photos')
@@ -63,8 +61,12 @@ class Photo(ImageModel):
         spec_module = 'occupywallst.specs'
         cache_dir = 'photos'
         image_field = 'original_image'
-        save_count_as = 'num_views'
 
+    def __unicode__(self):
+        return unicode(self.name)
+
+    def get_absolute_url(self):
+        return self.display.url
 
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown
