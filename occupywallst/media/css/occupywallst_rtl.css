@@ -1,0 +1,14 @@
+html { direction: rtl; }
+#userbox { float: left; }
+#navbar ul { float: right; }
+#navbar li { float: right; }
+#navbar li.last { padding-right: 0.5em; }
+
+#fist {
+    float: right;
+    margin: 1em 10px 0 10px;
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+}

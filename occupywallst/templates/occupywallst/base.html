@@ -14,7 +14,11 @@
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} News" href="{% url rss-news %}" />
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Forum" href="{% url rss-forum %}" />
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Comments" href="{% url rss-comments %}" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=28" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=30" type="text/css" media="all" />
+  {% get_current_language_bidi as LANGUAGE_BIDI %}
+  {% if LANGUAGE_BIDI %}
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_rtl.css?v=30" type="text/css" media="all" />
+  {% endif %}
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_print.css?v=9" type="text/css" media="print" />
   {% block extra_head %}
   {% endblock extra_head %}
