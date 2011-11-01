@@ -88,6 +88,29 @@ def synopsis(text, max_words=10, max_chars=40):
     words = first_line.split()
     return " ".join(words[:max_words])[:max_chars]
 
+@register.filter
+def not_more(text, arg):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
+    text = parts[0]
+    if len(parts) > 1:
+        text += '([more](%s))' % arg
+    return markup(text)
+not_more.is_safe = True
+
+@register.filter
+def not_more_unsafe(text, arg):
+    """Run portion of text before <!-- more --> through markdown, no
+    html allowed
+    """
+    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
+    text = parts[0]
+    if len(parts) > 1:
+        text += '([more](%s))' % arg
+    return markup_unsafe(text)
+not_more_unsafe.is_safe = True
 
 def mortify(text, url, funk):
     # TODO: make this more robust, shouldn't need to get spaces just right

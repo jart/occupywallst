@@ -175,3 +175,31 @@ give you a better understanding of the system design in production::
     tcp:127.0.0.1:11211           memcached
     tcp:127.0.0.1:5432            postgresql database server
     tcp:127.0.0.1:6432            pgbouncer database connection pooler
+
+Testing
+=======
+
+Getting testing to run requires some work, because of the GIS
+business.  Notes on it here::
+
+    https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/#spatialdb-template
+
+Do the following::
+
+    POSTGIS_SQL_PATH=`pg_config --sharedir`/contrib
+    createdb -E UTF8 template_postgis
+    createlang -d template_postgis plpgsql
+    # Allows non-superusers the ability to create from this template
+    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+    # Loading the PostGIS SQL routines
+    psql -d template_postgis -f $POSTGIS_SQL_PATH/postgis.sql
+    psql -d template_postgis -f $POSTGIS_SQL_PATH/spatial_ref_sys.sql
+    # Enabling users to alter spatial tables.
+    psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+    #psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+    psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+
+Then you should be able to run tests as follows (note that this must be run from the project dir)::
+
+    occupywallst-dev test
+    occupywallst-dev test occupywallst  # faster
