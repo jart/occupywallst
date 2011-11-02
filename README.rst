@@ -16,7 +16,7 @@ Installation
 This project has been tested on Debian 6, Ubuntu 10.04 LTS and Ubuntu
 10.10.  If you're not using Ubuntu >= 10.04 or a recent Debian then
 spare your sanity and set up a virtual machine.  Read this if you use
-Ubuntu 11.10 with PostgreSQL 9.1:
+PostgreSQL 9.1:
 http://psycopg.lighthouseapp.com/projects/62710-psycopg/tickets/69
 
 Right now you can ignore most of the chat/real-time related stuff
@@ -42,15 +42,17 @@ Set up a PostgreSQL database with PostGIS::
 
     sudo -u postgres -i createuser --superuser root   # make root a pg admin
     sudo -u postgres -i createuser --superuser $USER  # make you a pg admin
-    createdb occupywallst
-    createlang plpgsql occupywallst
-    if [ -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql ]; then
-        psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql
-        psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/spatial_ref_sys.sql
-    else
-        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
-        psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
-    fi
+    for DB in occupywallst template_postgis; do
+        createdb occupywallst
+        createlang plpgsql occupywallst
+        if [ -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql ]; then
+            psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql
+            psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/spatial_ref_sys.sql
+        else
+            psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
+            psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+        fi
+    done
 
 Now install the project in its own virtualenv, create the database
 schema and load some initial content::
@@ -95,6 +97,14 @@ articles.  Go to http://dev.occupywallst.org/admin/ and log in as user
 If you need to customize Django settings for your local install, do it
 inside ``occupywallst/settings_local.py`` and
 ``chat/settings_local.json`` because git ignores them.
+
+
+Testing
+=======
+
+To run the regression tests::
+
+    occupywallst test occupywallst
 
 
 Production Tips
