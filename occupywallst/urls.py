@@ -61,6 +61,7 @@ urlpatterns = patterns('',
     url(r'^api/login/$', require_POST(utils.api_view(api.login))),
     url(r'^api/logout/$', require_POST(utils.api_view(api.logout))),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^rosetta/', include('rosetta.urls')),
     url(r'^admin/', include(adminsite.urls)),
     url(r'^(.*)$', 'occupywallst.views.bonus'),
 )
