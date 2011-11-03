@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-28 11:35+0000\n"
+"POT-Creation-Date: 2011-11-02 23:59+0000\n"
 "PO-Revision-Date: 2011-09-29 13:48+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,10 @@ msgstr "Francés"
 
 #: settings.py:109
 msgid "Greek"
+msgstr ""
+
+#: settings.py:110
+msgid "Arabic"
 msgstr ""
 
 #: utils.py:134
@@ -103,31 +107,31 @@ msgstr "antes"
 msgid "by"
 msgstr "por"
 
-#: templates/occupywallst/base.html:29
+#: templates/occupywallst/base.html:33
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: templates/occupywallst/base.html:33
+#: templates/occupywallst/base.html:37
 msgid "admin"
 msgstr ""
 
-#: templates/occupywallst/base.html:35
+#: templates/occupywallst/base.html:39
 msgid "logout"
 msgstr ""
 
-#: templates/occupywallst/base.html:37
+#: templates/occupywallst/base.html:41
 msgid "login"
 msgstr ""
 
-#: templates/occupywallst/base.html:38
+#: templates/occupywallst/base.html:42
 msgid "signup"
 msgstr "Inscripción"
 
-#: templates/occupywallst/base.html:44
+#: templates/occupywallst/base.html:48
 msgid "Language"
 msgstr ""
 
-#: templates/occupywallst/base.html:74
+#: templates/occupywallst/base.html:78
 msgid "Notifications"
 msgstr ""
 
@@ -139,7 +143,7 @@ msgstr ""
 msgid "Joined"
 msgstr ""
 
-#: templatetags/ows.py:97
+#: templatetags/ows.py:120
 #, python-format
 msgid "[Read More...](%(url)s)"
 msgstr ""

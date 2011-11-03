@@ -8,192 +8,142 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-02 23:59+0000\n"
-"PO-Revision-Date: 2011-11-02 19:58-0500\n"
-"Last-Translator: Justine Tunney <jtunney@lobstertech.com>\n"
+"PO-Revision-Date: 2011-11-02 20:15-0400\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
 
 #: fields.py:12
 msgid "Invalid captcha"
-msgstr ""
+msgstr "صالح CAPTCHA"
 
 #: settings.py:106
 msgid "English"
-msgstr "Anglaise"
+msgstr "الإنجليزية"
 
 #: settings.py:107
 msgid "Spanish"
-msgstr "Espagnole"
+msgstr "الأسبانية"
 
 #: settings.py:108
 msgid "French"
-msgstr "Française"
+msgstr "فرنسي"
 
 #: settings.py:109
 msgid "Greek"
-msgstr ""
+msgstr "يوناني"
 
 #: settings.py:110
 msgid "Arabic"
-msgstr ""
+msgstr "العربية"
 
 #: utils.py:134
 #, python-format
 msgid "%(x)d second"
 msgid_plural "%(x)d seconds"
-msgstr[0] "%(x)d seconde"
-msgstr[1] "%(x)d secondes"
+msgstr[0] "%(x)d ثانية"
+msgstr[1] "%(x)d ثانية"
 
 #: utils.py:137
 #, python-format
 msgid "%(x)d minute"
 msgid_plural "%(x)d minutes"
-msgstr[0] "%(x)d minute"
-msgstr[1] "%(x)d minutes"
+msgstr[0] "%(x)d دقيقة"
+msgstr[1] "%(x)d دقيقة"
 
 #: utils.py:140
 #, python-format
 msgid "%(x)d hour"
 msgid_plural "%(x)d hours"
-msgstr[0] "%(x)d heure"
-msgstr[1] "%(x)d heures"
+msgstr[0] "%(x)d ساعة"
+msgstr[1] "%(x)d ساعة"
 
 #: utils.py:143
 #, python-format
 msgid "%(x)d day"
 msgid_plural "%(x)d days"
-msgstr[0] "%(x)d jour"
-msgstr[1] "%(x)d jours"
+msgstr[0] "%(x)d يوم"
+msgstr[1] "%(x)d يوم"
 
 #: utils.py:146
 #, python-format
 msgid "%(x)d month"
 msgid_plural "%(x)d months"
-msgstr[0] "%(x)d mois"
-msgstr[1] "%(x)d mois"
+msgstr[0] "%(x)d شهر"
+msgstr[1] "%(x)d شهر"
 
 #: templates/admin/auth/user/change_form.html:4
 msgid "OccupyWallSt User Info"
-msgstr "Infos utilisateurs de OccupyWallSt"
+msgstr "OccupyWallSt معلومات المستخدم"
 
 #: templates/admin/occupywallst/article/change_form.html:5
 msgid "Convert to News Article"
-msgstr ""
+msgstr "تحويل المادة إلى أخبار"
 
 #: templates/admin/occupywallst/article/change_form.html:7
 msgid "Convert to Forum Post"
-msgstr ""
+msgstr "تحويل المنتدى إلى آخر"
 
 #: templates/admin/occupywallst/comment/change_form.html:5
 msgid "Parent Comment"
-msgstr ""
+msgstr "الوالد التعليق"
 
 #: templates/occupywallst/article_info.html:12
 #: templates/occupywallst/index.html:35
 msgid "Posted"
-msgstr "Publié"
+msgstr "السؤال"
 
 #: templates/occupywallst/article_info.html:14
 msgid "ago"
-msgstr "auparavant"
+msgstr "منذ"
 
 #: templates/occupywallst/article_info.html:16
 #: templates/occupywallst/index.html:36
 msgid "by"
-msgstr "par"
+msgstr "مؤلف"
 
 #: templates/occupywallst/base.html:33
 msgid "Welcome"
-msgstr "Bienvenue"
+msgstr "ترحيب"
 
 #: templates/occupywallst/base.html:37
 msgid "admin"
-msgstr "administrateur"
+msgstr "مشرف"
 
 #: templates/occupywallst/base.html:39
 msgid "logout"
-msgstr "déconnexion"
+msgstr "خروج"
 
 #: templates/occupywallst/base.html:41
 msgid "login"
-msgstr "connexion"
+msgstr "دخول"
 
 #: templates/occupywallst/base.html:42
 msgid "signup"
-msgstr "s'inscrire"
+msgstr "الاشتراك"
 
 #: templates/occupywallst/base.html:48
 msgid "Language"
-msgstr ""
+msgstr "لغة"
 
 #: templates/occupywallst/base.html:78
 msgid "Notifications"
-msgstr "Notifications"
+msgstr "إخطارات"
 
 #: templates/occupywallst/user.html:67
 msgid "From"
-msgstr ""
+msgstr "من"
 
 #: templates/occupywallst/user.html:70
 msgid "Joined"
-msgstr "Inscrit"
+msgstr "انضم"
 
 #: templatetags/ows.py:120
 #, python-format
 msgid "[Read More...](%(url)s)"
-msgstr "[Lire la suite...](%(url)s)"
-
-#~ msgid "edit"
-#~ msgstr "modifier"
-
-#~ msgid "delete"
-#~ msgstr "supprimer"
-
-#~ msgid "NYC Protest for American Revolution"
-#~ msgstr "Protest New York pour la Révolution américaine"
-
-#~ msgid ""
-#~ "News and resources for protesters attending the mass demonstration on "
-#~ "Wall Street against financial greed and corruption"
-#~ msgstr ""
-#~ "Nouvelles et ressources pour les manifestants présents à la "
-#~ "manifestation\n"
-#~ "de masse à Wall Street contre l'avidité financière et la corruption"
-
-#~ msgid ""
-#~ "The resistance continues at Liberty Square and <a href=\"http://"
-#~ "occupytogether.org/\">Nationwide</a>!"
-#~ msgstr ""
-#~ "La résistance persévère au Liberty Square et\n"
-#~ "<a href=\"http://occupytogether.org/\">nationale</a>!"
-
-#~ msgid "News"
-#~ msgstr "Nouvelles"
-
-#~ msgid "Forum"
-#~ msgstr "Forum"
-
-#~ msgid "Chat"
-#~ msgstr "Chat"
-
-#~ msgid "User Map"
-#~ msgstr "Carte"
-
-#~ msgid "About"
-#~ msgstr "À propos"
-
-#~ msgid "Donate"
-#~ msgstr "Don"
-
-#~ msgid "this site was brought to you by various radicals"
-#~ msgstr "ce site a été présenté par différents radicaux"
-
-#~ msgid "email"
-#~ msgstr "email"
-
-#~ msgid "help line"
-#~ msgstr "Aide téléphone"
+msgstr "[قراءة المزيد...](%(url)s)"
