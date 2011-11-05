@@ -17,7 +17,7 @@ from django.conf import settings
 from django.utils.html import strip_tags
 from django.template import Template, Context
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
 from django.template.loader import render_to_string
 
 from occupywallst import utils
@@ -117,7 +117,7 @@ def mortify(text, url, funk):
     parts = text.split('<!-- more -->')
     text = parts[0]
     if len(parts) > 1:
-        text += _('[Read More...](%(url)s)') % {'url': url}
+        text += ugettext('[Read More...](%(url)s)') % {'url': url}
     return funk(text)
 
 
@@ -163,6 +163,20 @@ def markup_unsafe(text):
     """
     return _markup(text, markdown_unsafe.convert)
 markup_unsafe.is_safe = True
+
+
+@register.filter
+def userlink(user):
+    """
+    Display a username in HTML with a link to their profile
+    """
+    if not user or not user.id:
+        return ugettext('anonymous')
+    res = ugettext('<a title="View %(user)s\'s profile" class="user"'
+                   ' href="%(url)s">%(user)s</a>') % {
+        'user': user.username, 'url': user.get_absolute_url()}
+    return mark_safe(res)
+userlink.is_safe = True
 
 
 @register.simple_tag

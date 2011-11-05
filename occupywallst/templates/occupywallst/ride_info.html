@@ -92,10 +92,10 @@
     {% endif %}
     {% endif %}
     <article id="{{ride.forum_post.slug}}"/>
-    <h2>Comments</h2>
+    <h2>{% trans 'Comments' %}</h2>
     <div id="postform">
       <textarea rows="5" cols="70"></textarea><br />
-      <button class="save">post comment</button>
+      <button class="save">{% trans 'post comment' %}</button>
       <img class="loader" src="/media/img/ajax-loader.gif"
            width="16" height="16" />
       <span class="error"></span>

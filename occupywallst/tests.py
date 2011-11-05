@@ -552,7 +552,7 @@ class OWS(TestCase):
                                      'email': 'new@occupywallst.org'})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ERROR'
-        assert j['message'] == 'Username is taken'
+        assert j['message'] == 'username is taken'
 
     def test_api_login_and_logout(self):
         # should be same for invalid username and invalid password,
@@ -603,7 +603,7 @@ class OWS(TestCase):
         assert j['results'][0]['username'] == 'blue'
 
     def test_api_message(self):
-        api.settings.DEBUG = 1
+        api.settings.DEBUG = True
         content = random_words(10)
 
         # login as red
@@ -642,10 +642,10 @@ class OWS(TestCase):
         response = self.client.post('/api/message_delete/',
                                     {'message_id': m.id})
 
-        api.settings.DEBUG = 0
+        api.settings.DEBUG = False
 
     def test_api_article(self):
-        api.settings.OWS_POST_LIMIT_THREAD = -1  # turn off limit for testing
+        api.settings.OWS_LIMIT_THREAD = -1  # turn off limit for testing
         title = random_words(5)
         content = random_words(20)
 
@@ -719,7 +719,7 @@ class OWS(TestCase):
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
 
     def test_api_comment(self):
-        api.settings.OWS_POST_LIMIT_COMMENT = -1  # turn off limit for testing
+        api.settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
         content = random_words(20)
 
         # login as red

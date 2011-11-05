@@ -3,147 +3,599 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-02 23:59+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-11-05 22:21+0000\n"
+"PO-Revision-Date: 2011-11-05 18:50-0400\n"
+"Last-Translator:   <OccupyWallSt@occupywallst.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.2\n"
+
+#: api.py:83
+msgid "bad arguments"
+msgstr ""
+
+#: api.py:135
+msgid "request not found"
+msgstr ""
+
+#: api.py:141 api.py:297 api.py:449
+msgid "insufficient permissions"
+msgstr ""
+
+#: api.py:166
+msgid "content too short"
+msgstr ""
+
+#: api.py:168
+msgid "content too long"
+msgstr ""
+
+#: api.py:171
+msgid "please don't bump threads"
+msgstr ""
+
+#: api.py:173 api.py:180
+msgid "turn off bloody caps lock"
+msgstr ""
+
+#: api.py:176
+msgid "title too short"
+msgstr ""
+
+#: api.py:178
+msgid "title too long"
+msgstr ""
+
+#: api.py:192
+#, python-format
+msgid "please wait %(duration)s before making another post"
+msgstr ""
+
+#: api.py:204 api.py:239 api.py:272 api.py:295 api.py:333 api.py:426
+#: api.py:447 api.py:473 api.py:535 api.py:569
+msgid "you're not logged in"
+msgstr ""
+
+#: api.py:207 api.py:250 api.py:282
+msgid "insufficient privileges"
+msgstr ""
+
+#: api.py:212
+msgid "a thread with this title exists"
+msgstr ""
+
+#: api.py:245 api.py:277 api.py:301 api.py:318 api.py:338
+msgid "article not found"
+msgstr ""
+
+#: api.py:248 api.py:279 api.py:436 api.py:480
+msgid "you didn't post that"
+msgstr ""
+
+#: api.py:307 api.py:461
+msgid "invalid action"
+msgstr ""
+
+#: api.py:355
+msgid "parent comment not found"
+msgstr ""
+
+#: api.py:357
+msgid "comment nested too deep"
+msgstr ""
+
+#: api.py:403 api.py:433 api.py:453 api.py:477 api.py:501
+msgid "comment not found"
+msgstr ""
+
+#: api.py:429
+msgid "comment too short"
+msgstr ""
+
+#: api.py:507
+msgid "you already voted"
+msgstr ""
+
+#: api.py:515
+msgid "invalid vote"
+msgstr ""
+
+#: api.py:538
+msgid "message too short"
+msgstr ""
+
+#: api.py:542
+msgid "user not found"
+msgstr ""
+
+#: api.py:544
+msgid "you can't message yourself"
+msgstr ""
+
+#: api.py:551
+#, python-format
+msgid "you can't send more than %(limit)s messages per day"
+msgstr ""
+
+#: api.py:558
+#, python-format
+msgid "%(username)s sent you a message"
+msgstr ""
+
+#: api.py:573
+msgid "message not found"
+msgstr ""
+
+#: api.py:575
+msgid "you didn't send or receive that message"
+msgstr ""
+
+#: api.py:584
+msgid "username too short"
+msgstr ""
+
+#: api.py:586
+msgid "username too long"
+msgstr ""
+
+#: api.py:588
+msgid "bad username, use only letters/numbers"
+msgstr ""
+
+#: api.py:591
+msgid "username is taken"
+msgstr ""
+
+#: api.py:603 api.py:632
+msgid "you're already logged in"
+msgstr ""
+
+#: api.py:606
+msgid "password must be at least six characters"
+msgstr ""
+
+#: api.py:608
+msgid "password too long"
+msgstr ""
+
+#: api.py:611
+msgid "invalid email address"
+msgstr ""
+
+#: api.py:635
+msgid "invalid username or password"
+msgstr ""
+
+#: feeds.py:26
+msgid "OccupyWallSt News"
+msgstr ""
+
+#: feeds.py:28
+msgid "News and updates relating to the Occupy Wall Street movement"
+msgstr ""
 
 #: fields.py:12
 msgid "Invalid captcha"
-msgstr ""
-
-#: settings.py:106
-msgid "English"
-msgstr ""
-
-#: settings.py:107
-msgid "Spanish"
-msgstr ""
+msgstr "Άκυρα captcha"
 
 #: settings.py:108
-msgid "French"
-msgstr ""
+msgid "English"
+msgstr "Αγγλικά"
 
 #: settings.py:109
-msgid "Greek"
-msgstr ""
+msgid "Spanish"
+msgstr "Ισπανικά"
 
 #: settings.py:110
+msgid "French"
+msgstr "Γαλλικά"
+
+#: settings.py:111
+msgid "Greek"
+msgstr "Ελληνικά"
+
+#: settings.py:112
 msgid "Arabic"
+msgstr "Αραβικά"
+
+#: settings.py:113
+msgid "Simplified Chinese"
 msgstr ""
 
+#: utils.py:133
+msgid "year"
+msgid_plural "years"
+msgstr[0] "χρόνος"
+msgstr[1] "χρόνια"
+
 #: utils.py:134
-#, python-format
-msgid "%(x)d second"
-msgid_plural "%(x)d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgid "month"
+msgid_plural "months"
+msgstr[0] "μήνας"
+msgstr[1] "μήνες"
+
+#: utils.py:135
+msgid "week"
+msgid_plural "weeks"
+msgstr[0] "εβδομάδα"
+msgstr[1] "εβδομάδες"
+
+#: utils.py:136
+msgid "day"
+msgid_plural "days"
+msgstr[0] "ημέρα"
+msgstr[1] "ημέρες"
 
 #: utils.py:137
-#, python-format
-msgid "%(x)d minute"
-msgid_plural "%(x)d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "ώρα"
+msgstr[1] "ώρες"
 
-#: utils.py:140
-#, python-format
-msgid "%(x)d hour"
-msgid_plural "%(x)d hours"
-msgstr[0] ""
-msgstr[1] ""
+#: utils.py:138
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "λεπτό"
+msgstr[1] "λεπτά"
 
-#: utils.py:143
-#, python-format
-msgid "%(x)d day"
-msgid_plural "%(x)d days"
-msgstr[0] ""
-msgstr[1] ""
+#: utils.py:155
+msgid "minutes"
+msgstr "λεπτά"
 
-#: utils.py:146
+#: utils.py:160
 #, python-format
-msgid "%(x)d month"
-msgid_plural "%(x)d months"
-msgstr[0] ""
-msgstr[1] ""
+msgid "%(number)d %(type)s"
+msgstr ""
+
+#: templates/404.html:5
+msgid "Page Not Found"
+msgstr ""
+
+#: templates/500.html:5
+msgid "Internal Server Error"
+msgstr ""
 
 #: templates/admin/auth/user/change_form.html:4
 msgid "OccupyWallSt User Info"
-msgstr ""
+msgstr "OccupyWallSt Πληροφορίες Χρήστη"
 
 #: templates/admin/occupywallst/article/change_form.html:5
 msgid "Convert to News Article"
-msgstr ""
+msgstr "Μετατροπή σε άρθρο Ειδήσεις"
 
 #: templates/admin/occupywallst/article/change_form.html:7
 msgid "Convert to Forum Post"
-msgstr ""
+msgstr "Μετατροπή σε Forum Δημοσίευση"
 
 #: templates/admin/occupywallst/comment/change_form.html:5
 msgid "Parent Comment"
-msgstr ""
+msgstr "Σχόλιο Μητρική"
 
-#: templates/occupywallst/article_info.html:12
+#: templates/occupywallst/article.html:41
+#: templates/occupywallst/article_above_fold.html:16
+#: templates/occupywallst/article_content.html:16
+#: templates/occupywallst/ride_info.html:95
+msgid "Comments"
+msgstr "Σχόλια"
+
+#: templates/occupywallst/article.html:45
+#: templates/occupywallst/ride_info.html:98
+msgid "post comment"
+msgstr "μετά σχόλιο"
+
+#: templates/occupywallst/article.html:55 templates/occupywallst/forum.html:6
+#: templates/occupywallst/forum.html:29
+msgid "Public Forum"
+msgstr "Δημόσια Φόρουμ"
+
+#: templates/occupywallst/article.html:57
+msgid "Other Articles"
+msgstr "Άλλα άρθρα"
+
+#: templates/occupywallst/article.html:64
+#: templates/occupywallst/forumpost_synopsis.html:8
+msgid "View Thread"
+msgstr "Προβολή μηνυματοσειράς"
+
+#: templates/occupywallst/article.html:68
+#, python-format
+msgid ""
+"\n"
+"%(comment_count)s comments %(timesince)s ago by %(username)s\n"
+msgstr ""
+"\n"
+"%(comment_count)s σχόλια %(timesince)s s πριν από %(username)s"
+
+#: templates/occupywallst/article.html:80
+msgid "save"
+msgstr "εκτός"
+
+#: templates/occupywallst/article.html:81
+msgid "cancel"
+msgstr "ακυρώσει"
+
+#: templates/occupywallst/article_above_fold.html:15
+#: templates/occupywallst/article_content.html:15
+msgid "View Comments"
+msgstr "Προβολή σχολίων"
+
+#: templates/occupywallst/article_info.html:13
 #: templates/occupywallst/index.html:35
-msgid "Posted"
+#, python-format
+msgid ""
+"\n"
+"Posted %(date)s EST (%(timesince)s ago) by %(username)s\n"
+msgstr ""
+"\n"
+"Δημοσιεύτηκε %(date)s  EST (%(timesince)s  πριν) από %(username)s "
+
+#: templates/occupywallst/article_info.html:18
+#: templates/occupywallst/comment.html:18
+#, python-format
+msgid ""
+"\n"
+"(%(city)s, %(region)s)\n"
 msgstr ""
 
-#: templates/occupywallst/article_info.html:14
-msgid "ago"
-msgstr ""
+#: templates/occupywallst/article_info.html:24
+#: templates/occupywallst/base.html:37
+msgid "admin"
+msgstr "το admin"
 
-#: templates/occupywallst/article_info.html:16
-#: templates/occupywallst/index.html:36
-msgid "by"
-msgstr ""
+#: templates/occupywallst/article_info.html:25
+#: templates/occupywallst/article_info.html:29
+#: templates/occupywallst/comment.html:35
+#: templates/occupywallst/comment.html:39
+msgid "edit"
+msgstr "edit"
+
+#: templates/occupywallst/article_info.html:26
+#: templates/occupywallst/comment.html:34
+msgid "unremove"
+msgstr "unremove"
+
+#: templates/occupywallst/article_info.html:26
+#: templates/occupywallst/comment.html:34
+msgid "remove"
+msgstr "αφαιρέστε"
+
+#: templates/occupywallst/article_info.html:30
+#: templates/occupywallst/comment.html:36
+#: templates/occupywallst/comment.html:40
+#: templates/occupywallst/message.html:10
+msgid "delete"
+msgstr "διαγράψετε"
+
+#: templates/occupywallst/article_info.html:35
+msgid "This content is user submitted and not an official statement"
+msgstr "Αυτό το περιεχόμενο είναι χρήστης υπέβαλε και όχι μια επίσημη δήλωση"
+
+#: templates/occupywallst/attendee_info.html:20
+msgid "send private message"
+msgstr "Αποστολή προσωπικού μηνύματος"
 
 #: templates/occupywallst/base.html:33
 msgid "Welcome"
-msgstr ""
-
-#: templates/occupywallst/base.html:37
-msgid "admin"
-msgstr ""
+msgstr "Καλωσόρισμα"
 
 #: templates/occupywallst/base.html:39
 msgid "logout"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: templates/occupywallst/base.html:41
 msgid "login"
-msgstr ""
+msgstr "σύνδεση"
 
 #: templates/occupywallst/base.html:42
 msgid "signup"
-msgstr ""
+msgstr "εγγραφής"
 
 #: templates/occupywallst/base.html:48
 msgid "Language"
-msgstr ""
+msgstr "Γλώσσα"
 
 #: templates/occupywallst/base.html:78
 msgid "Notifications"
+msgstr "Ειδοποιήσεις"
+
+#: templates/occupywallst/comment.html:9
+msgid "This comment was deleted D:"
+msgstr "Αυτό το σχόλιο έχει διαγραφεί D:"
+
+#: templates/occupywallst/comment.html:22
+msgid "points"
+msgstr "σημεία"
+
+#: templates/occupywallst/comment.html:23
+msgid "ago"
+msgstr "πριν"
+
+#: templates/occupywallst/comment.html:30
+msgid "reply"
+msgstr "απάντηση"
+
+#: templates/occupywallst/comment.html:32
+msgid "permalink"
+msgstr "Permalink"
+
+#: templates/occupywallst/edit_profile.html:6
+#: templates/occupywallst/edit_profile.html:22
+msgid "Edit Profile"
+msgstr "Επεξεργασία Προφίλ"
+
+#: templates/occupywallst/edit_profile.html:41
+#: templates/occupywallst/signup.html:54
+msgid "Location"
+msgstr "Τοποθεσία"
+
+#: templates/occupywallst/edit_profile.html:46
+#: templates/occupywallst/signup.html:59
+msgid "Click here to remove the marker."
+msgstr "Κάντε κλικ εδώ για να καταργήσετε το δείκτη."
+
+#: templates/occupywallst/edit_profile.html:52
+msgid "Save"
+msgstr "Εκτός"
+
+#: templates/occupywallst/forum.html:31
+msgid "Read the Rules Before Posting"
+msgstr "Διαβάστε τους κανόνες πριν την καταχώρηση"
+
+#: templates/occupywallst/forum.html:32
+msgid "post"
+msgstr "θέση"
+
+#: templates/occupywallst/forum.html:36
+msgid "title"
+msgstr "τίτλος"
+
+#: templates/occupywallst/forum.html:40
+msgid "content"
+msgstr "περιεχόμενο"
+
+#: templates/occupywallst/forum.html:44
+msgid "post thread"
+msgstr "Δημοσίευση Θέματος"
+
+#: templates/occupywallst/forum.html:60
+msgid "Best Comments Today"
+msgstr "Καλύτερα σχόλια Σήμερα"
+
+#: templates/occupywallst/forum.html:62
+msgid "None Found :'("
+msgstr "Κανένας Βρέθηκαν"
+
+#: templates/occupywallst/forum.html:67 templates/occupywallst/forum.html:81
+msgid "View Comment Thread"
+msgstr "Προβολή θέματος Σχόλιο"
+
+#: templates/occupywallst/forum.html:71 templates/occupywallst/forum.html:85
+#, python-format
+msgid ""
+"\n"
+"%(karma)s points %(timesince)s ago by %(username)s\n"
 msgstr ""
+"\n"
+"%(karma)s μονάδες %(timesince)s πριν από %(username)s "
+
+#: templates/occupywallst/forum.html:77
+msgid "Recent Comments"
+msgstr "Πρόσφατα σχόλια"
+
+#: templates/occupywallst/forumpost_synopsis.html:7
+msgid "News Article"
+msgstr "Άρθρο Νέων"
+
+#: templates/occupywallst/forumpost_synopsis.html:12
+#, python-format
+msgid ""
+"\n"
+"%(comment_count)s comments %(created)s ago by %(username)s last comment "
+"%(last_comment)s ago\n"
+msgstr ""
+"\n"
+"%(comment_count)s σχόλια %(created)s πριν από %(username)s το τελευταίο "
+"σχόλιο %(last_comment)s ago"
+
+#: templates/occupywallst/logged_out.html:6
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: templates/occupywallst/logged_out.html:7
+msgid "You are now logged out."
+msgstr "Τώρα είστε αποσυνδεδεμένος."
+
+#: templates/occupywallst/login.html:5 templates/occupywallst/login.html:14
+#: templates/occupywallst/login.html:20
+msgid "Login"
+msgstr "Σύνδεση"
+
+#: templates/occupywallst/message.html:7
+#, python-format
+msgid ""
+"\n"
+"%(from_user)s said %(timesince)s ago at %(date)s EST\n"
+msgstr ""
+"\n"
+"%(from_user)s , δήλωσε %(timesince)s ago σε %(date)s EST"
+
+#: templates/occupywallst/signup.html:6 templates/occupywallst/signup.html:23
+msgid "Signup"
+msgstr "Εγγραφή"
+
+#: templates/occupywallst/signup.html:30
+msgid "Required Fields"
+msgstr "Υποχρεωτικά Πεδία"
+
+#: templates/occupywallst/signup.html:38
+msgid "Optional Fields"
+msgstr "Προαιρετικά πεδία"
+
+#: templates/occupywallst/user.html:5
+#, python-format
+msgid "%(username)s's User Profile"
+msgstr "%(username)s Προφίλ του χρήστη"
+
+#: templates/occupywallst/user.html:33
+msgid "No Profile Information"
+msgstr "Δεν Υπάρχουν Πληροφορίες Προφίλ"
+
+#: templates/occupywallst/user.html:37
+msgid "Private Messages"
+msgstr "Προσωπικά μηνύματα"
+
+#: templates/occupywallst/user.html:42
+msgid "send message"
+msgstr "στείλετε μήνυμα"
+
+#: templates/occupywallst/user.html:59
+msgid "Information"
+msgstr "Πληροφορίες"
+
+#: templates/occupywallst/user.html:61
+msgid "Edit"
+msgstr "Επεξεργασία"
 
 #: templates/occupywallst/user.html:67
 msgid "From"
-msgstr ""
+msgstr "Από"
 
 #: templates/occupywallst/user.html:70
 msgid "Joined"
-msgstr ""
+msgstr "Εγγραφή"
+
+#: templates/occupywallst/user.html:79
+msgid "Nearby Users"
+msgstr "Κοντινά Χρήστες"
 
 #: templatetags/ows.py:120
 #, python-format
 msgid "[Read More...](%(url)s)"
+msgstr "[Διαβάστε περισσότερα ...](%(url)s)"
+
+#: templatetags/ows.py:174
+msgid "anonymous"
+msgstr "ανώνυμος"
+
+#: templatetags/ows.py:175
+#, python-format
+msgid ""
+"<a title=\"View %(user)s's profile\" class=\"user\" href=\"%(url)s\">"
+"%(user)s</a>"
 msgstr ""
+
+#~ msgid ""
+#~ "\n"
+#~ "              Posted %(date)s EST (%(timesince)s ago) by %(username)s\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "Δημοσιεύτηκε %(date)s  EST (%(timesince)s πριν) από %(username)s "

@@ -1,18 +1,16 @@
 {% load ows %}
+{% load i18n %}
+{% load l10n %}
+
 <div class="item clickdiv" id="{{ article.slug }}">
   <h3>
-    {% if not article.is_forum %}News Article:{% endif %}
-    <a class="primary" title="View Thread"
+    {% if not article.is_forum %}{% trans 'News Article' %}:{% endif %}
+    <a class="primary" title="{% trans 'View Thread' %}"
        href="{{ article.get_forum_url }}">{{ article.title }}</a>
   </h3>
   <div class="info">
-    {{ article.comment_count }} comments
-    {{ article.published|timesince_short }} ago
-    by {% if not article.author %}anonymous{% else %}
-      <a title="View {{ article.author.username }}'s profile"
-         class="user" href="{{ article.author.get_absolute_url }}">
-      {{ article.author.username }}</a>
-    {% endif %}
-    last comment {{ article.killed|timesince_short }} ago
+{% blocktrans with comment_count=article.comment_count|localize created=article.published|timesince_short username=article.author|userlink last_comment=article.killed|timesince_short %}
+{{ comment_count }} comments {{ created }} ago by {{ username }} last comment {{ last_comment }} ago
+{% endblocktrans %}
   </div>
 </div>

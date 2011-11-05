@@ -16,15 +16,17 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils.html import escape
 from django.contrib.syndication.views import Feed
+from django.utils.translation import ugettext_lazy as _
 
 from occupywallst import models as db
 from occupywallst.templatetags.ows import synopsis
 
 
 class RSSNewsFeed(Feed):
-    title = "OccupyWallSt News"
+    title = _("OccupyWallSt News")
     link = settings.OWS_CANONICAL_URL
-    description = "News and updates relating to the Sept. 17th protest"
+    description = _("News and information relating to the Occupy Wall Street "
+                    "movement")
     description_template = 'occupywallst/feed-article.html'
     delay = timedelta(seconds=60 * 15)
 
@@ -56,9 +58,10 @@ class RSSNewsFeed(Feed):
 
 
 class RSSForumFeed(RSSNewsFeed):
-    title = "OccupyWallSt Forum"
+    title = _("OccupyWallSt Forum")
     link = settings.OWS_CANONICAL_URL
-    description = "Public discussion pertaining to the occupation"
+    description = _("Public discussion posts pertaining to the Occupy Wall "
+                    "Street movement")
     delay = timedelta(seconds=60 * 60 * 2)
 
     def items(self):
@@ -73,7 +76,7 @@ class RSSForumFeed(RSSNewsFeed):
 class RSSCommentFeed(Feed):
     title = "OccupyWallSt Comments"
     link = settings.OWS_CANONICAL_URL
-    description = "All comments submitted to the website"
+    description = "All comments submitted to the Occupy Wall Street forum"
     description_template = 'occupywallst/feed-comment.html'
     delay = timedelta(seconds=60 * 60 * 2)
 

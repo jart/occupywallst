@@ -1,7 +1,9 @@
 {% extends base %}
 {% load ows %}
+{% load i18n %}
+{% load l10n %}
 
-{% block title %}Public Forum | {{ OWS_SITE_NAME }}{% endblock title %}
+{% block title %}{% trans 'Public Forum' %} | {{ OWS_SITE_NAME }}{% endblock title %}
 
 {% block stylesheets %}
   <style type="text/css">
@@ -24,21 +26,22 @@
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h2 style="margin-top:0;margin-bottom:0.5em">Public Forum
-      (<a class="primary" href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">Read the Rules Before Posting</a>)
-      <a href="#" id="newlink">post</a>
+    <h2 style="margin-top:0;margin-bottom:0.5em">{% trans 'Public Forum' %} - 
+      <a class="primary" href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">
+        {% trans 'Read the Rules Before Posting' %}</a>
+      <a href="#" id="newlink">{% trans 'post' %}</a>
     </h2>
     <div class="postform" style="display:none">
       <div>
-        <label for="title">title</label><br />
+        <label for="title">{% trans 'title' %}</label><br />
         <input class="title" id="title" maxlength="255" size="60" />
       </div>
       <div>
-        <label for="content">content</label><br />
+        <label for="content">{% trans 'content' %}</label><br />
         <textarea class="content" id="content" rows="7" cols="70"></textarea>
       </div>
       <div>
-        <button class="save">post thread</button>
+        <button class="save">{% trans 'post thread' %}</button>
         <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif"
              width="16" height="16" />
         <span class="error"></span>
@@ -54,42 +57,34 @@
     </p>
   </td><td id="right">
     <section id="recents">
-      <h2 style="margin-bottom:0.5em">Best Comments Today</h2>
+      <h2 style="margin-bottom:0.5em">{% trans 'Best Comments Today' %}</h2>
       {% if not bests %}
-        <p>None Found :'(</p>
+        <p>{% trans "None Found :'(" %}</p>
       {% endif %}
       {% for best in bests %}
         <div class="item clickdiv recent-comment">
           <div class="title">
-            <a class="primary" title="View Comment Thread"
+            <a class="primary" title="{% trans 'View Comment Thread' %}"
                href="{{ best.get_forum_url }}">{{ best.content|synopsis }}</a>
           </div>
           <div class="info">
-            {{ best.karma }} points
-            {{ best.published|timesince_short }} ago
-            by {% if not best.user %}anonymous{% else %}
-              <a title="View {{ best.user.username }}'s profile"
-                 class="user" href="{{ best.user.get_absolute_url }}">
-              {{ best.user.username }}</a>
-            {% endif %}
+{% blocktrans with karma=best.karma|localize timesince=best.published|timesince_short username=best.user|userlink %}
+{{ karma }} points {{ timesince }} ago by {{ username }}
+{% endblocktrans %}
           </div>
         </div>
       {% endfor %}
-      <h2 style="margin:0.5em 0">Recent Comments</h2>
+      <h2 style="margin:0.5em 0">{% trans 'Recent Comments' %}</h2>
       {% for recent in recents %}
         <div class="item clickdiv recent-comment">
           <div class="title">
-            <a class="primary" title="View Comment Thread"
+            <a class="primary" title="{% trans 'View Comment Thread' %}"
                href="{{ recent.get_forum_url }}">{{ recent.content|synopsis }}</a>
           </div>
           <div class="info">
-            {{ recent.karma }} points
-            {{ recent.published|timesince_short }} ago
-            by {% if not recent.user %}anonymous{% else %}
-              <a title="View {{ recent.user.username }}'s profile"
-                 class="user" href="{{ recent.user.get_absolute_url }}">
-              {{ recent.user.username }}</a>
-            {% endif %}
+{% blocktrans with karma=recent.karma|localize timesince=recent.published|timesince_short username=recent.user|userlink %}
+{{ karma }} points {{ timesince }} ago by {{ username }}
+{% endblocktrans %}
           </div>
         </div>
       {% endfor %}

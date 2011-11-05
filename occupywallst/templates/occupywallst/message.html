@@ -1,11 +1,13 @@
 {% load ows %}
+{% load i18n %}
 {% load l10n %}
 
 <div id="message-{{ message.id }}" class="message {% cycle off,on %}">
   <p class="info tinygray">
-    {{ message.from_user }} said
-    {{ message.published|timesince_short }} ago
-    (<a class="delete" href="#">delete</a>)
+{% blocktrans with date=message.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" timesince=message.published|timesince_short from_user=message.from_user|userlink %}
+{{ from_user }} said {{ timesince }} ago at {{ date }} EST
+{% endblocktrans %}
+    (<a class="delete" href="#">{% trans 'delete' %}</a>)
   </p>
   <div class="words">
     {{ message.content|markup }}

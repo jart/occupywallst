@@ -187,5 +187,25 @@
       "verbiage": 1,
       "language": "fr"
     }
+  },
+  {
+    "pk": 20,
+    "model": "occupywallst.verbiage",
+    "fields": {
+      "content": "# four oh four - page not found\n\nThe page you're looking for isn't here.  Sorry ._.",
+      "use_markdown": false,
+      "name": "error404",
+      "use_markdown": true
+    }
+  },
+  {
+    "pk": 21,
+    "model": "occupywallst.verbiage",
+    "fields": {
+      "content": "# five hundred - internal server error\n\nThe admins have been notified of this error.  Please try again soon.",
+      "use_markdown": false,
+      "name": "error500",
+      "use_markdown": true
+    }
   }
 ]

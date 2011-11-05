@@ -30,8 +30,9 @@ RECAPTCHA_PRIVATE_KEY =  'please change me'
 SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 
-OWS_POST_LIMIT_THREAD = 60 * 10  # ten minutes
-OWS_POST_LIMIT_COMMENT = 60 * 3  # three minutes
+OWS_LIMIT_MSG_DAY = 15  # max private messages per day
+OWS_LIMIT_THREAD = 60 * 10  # ten minutes
+OWS_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_COMMENT_DEPTH = 15
 OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
@@ -99,6 +100,7 @@ ADMIN_MEDIA_PREFIX = '/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
 USE_X_FORWARDED_HOST = True
+ROSETTA_MESSAGES_PER_PAGE = 25
 
 gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en-us'
@@ -108,6 +110,7 @@ LANGUAGES = (
     ('fr', gettext_noop('French')),
     ('el', gettext_noop('Greek')),
     ('ar', gettext_noop('Arabic')),
+    ('zh-cn', gettext_noop('Simplified Chinese')),
 )
 
 TEMPLATE_LOADERS = (
