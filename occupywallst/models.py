@@ -89,7 +89,10 @@ class Verbiage(models.Model):
 
     @staticmethod
     def get(name, language=None):
-        key = 'verbiage_%s_%s' % (name, language)
+        key_uf = 'verbiage_%s_%s' % (name, language)
+        key = filter(lambda c: ord(c) > 0x20, key_uf.replace(' ', '_'))
+        if len(key) >= 250:
+            raise ObjectDoesNotExist
         res = cache.get(key)
         if res is None:
             verb = Verbiage.objects.get(name=name)
