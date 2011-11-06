@@ -415,7 +415,8 @@ def comment_get(user, comment_id=None, **kwargs):
                 comment.downvoted = True
     html = render_to_string('occupywallst/comment.html',
                             {'comment': comment,
-                             'user': user})
+                             'user': user,
+                             'can_reply': True})
     return [comment.as_dict({'html': html})]
 
 
