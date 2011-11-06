@@ -9,8 +9,8 @@
         <p class="deleted"><span>{% trans 'This comment was deleted D:' %}</span></p>
       {% else %}
         <div class="info">
-          <a class="collapse" href="#">[-]</a>
-          {{ comment.user|userlink }}
+          <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
+          <span>{{ comment.user|userlink }}</span>
           {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
 {% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
 ({{ city }}, {{ region }})
@@ -23,8 +23,8 @@
           {{ comment.content|markup }}
         </div>
         <div class="links">
-          ↥<a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">{% trans 'like' %}</a>
-          ↧<a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">{% trans 'dislike' %}</a>
+          <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">{% trans '↥like' %}</a>
+          <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">{% trans '↧dislike' %}</a>
           {% if can_reply %}
             <a class="reply" href="#">{% trans 'reply' %}</a>
           {% endif %}

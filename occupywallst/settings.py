@@ -109,9 +109,15 @@ LANGUAGES = (
     ('en', gettext_noop('English')),
     ('es', gettext_noop('Spanish')),
     ('fr', gettext_noop('French')),
+    ('de', gettext_noop('German')),
+    ('pt', gettext_noop('Portuguese')),
+    ('ru', gettext_noop('Russian')),
     ('el', gettext_noop('Greek')),
+    ('he', gettext_noop('Hebrew')),
     ('ar', gettext_noop('Arabic')),
+    ('hi', gettext_noop('Hindi')),
     ('zh-cn', gettext_noop('Simplified Chinese')),
+    ('ja', gettext_noop('Japanese')),
 )
 
 TEMPLATE_LOADERS = (

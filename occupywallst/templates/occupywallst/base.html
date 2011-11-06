@@ -26,6 +26,10 @@
   {% endblock stylesheets %}
 </head>
 <body>
+  {% get_language_info for LANGUAGE_CODE as lang %}
+  {% if LANGUAGE_CODE != 'en' %}
+    <div id="halptranslate">{{ lang.name }} translations are still a work in progress.  Please volunteer! <a href="mailto:translate@occupywallst.org">translate@occupywallst.org</a></div>
+  {% endif %}
   {% block body %}
     {% block header %}
       <header>

@@ -216,6 +216,8 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .error { color: red; font-size: small; }
 .warning { color: #a00; font-size: small; width: 30em; }
 .loader { display: none; }
+#postform a { font-size: small; }
+.postform a { font-size: small; }
 
 .message .on { background: #f2f2f2; }
 .message .info { font-size: small; color: #777; margin-bottom: 0; }

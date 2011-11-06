@@ -3,19 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-06 02:44+0000\n"
-"PO-Revision-Date: 2011-11-05 18:48-0400\n"
-"Last-Translator:   <OccupyWallSt@occupywallst.org>\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Translated-Using: django-rosetta 0.6.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: api.py:83
 msgid "bad arguments"
@@ -182,9 +183,8 @@ msgid "News and information relating to the Occupy Wall Street movement"
 msgstr ""
 
 #: feeds.py:61
-#, fuzzy
 msgid "OccupyWallSt Forum"
-msgstr "OccupyWallSt用户信息"
+msgstr ""
 
 #: feeds.py:63
 msgid "Public discussion posts pertaining to the Occupy Wall Street movement"
@@ -192,24 +192,23 @@ msgstr ""
 
 #: fields.py:12
 msgid "Invalid captcha"
-msgstr "无效的CAPTCHA"
+msgstr ""
 
 #: settings.py:109
 msgid "English"
-msgstr "英语"
+msgstr ""
 
 #: settings.py:110
 msgid "Spanish"
-msgstr "西班牙语"
+msgstr ""
 
 #: settings.py:111
 msgid "French"
-msgstr "法国"
+msgstr ""
 
 #: settings.py:112
-#, fuzzy
 msgid "German"
-msgstr "永久"
+msgstr ""
 
 #: settings.py:113
 msgid "Portuguese"
@@ -221,7 +220,7 @@ msgstr ""
 
 #: settings.py:115
 msgid "Greek"
-msgstr "希腊"
+msgstr ""
 
 #: settings.py:116
 msgid "Hebrew"
@@ -229,7 +228,7 @@ msgstr ""
 
 #: settings.py:117
 msgid "Arabic"
-msgstr "阿拉伯语"
+msgstr ""
 
 #: settings.py:118
 msgid "Hindi"
@@ -237,7 +236,7 @@ msgstr ""
 
 #: settings.py:119
 msgid "Simplified Chinese"
-msgstr "简体中文"
+msgstr ""
 
 #: settings.py:120
 msgid "Japanese"
@@ -246,36 +245,42 @@ msgstr ""
 #: utils.py:133
 msgid "year"
 msgid_plural "years"
-msgstr[0] "年"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:134
 msgid "month"
 msgid_plural "months"
-msgstr[0] "月"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:135
 msgid "week"
 msgid_plural "weeks"
-msgstr[0] "周"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:136
 msgid "day"
 msgid_plural "days"
-msgstr[0] "天"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:137
 msgid "hour"
 msgid_plural "hours"
-msgstr[0] "小时"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:138
 msgid "minute"
 msgid_plural "minutes"
-msgstr[0] "分钟"
+msgstr[0] ""
+msgstr[1] ""
 
 #: utils.py:155
 msgid "minutes"
-msgstr "分钟"
+msgstr ""
 
 #: utils.py:160
 #, python-format
@@ -292,33 +297,33 @@ msgstr ""
 
 #: templates/admin/auth/user/change_form.html:4
 msgid "OccupyWallSt User Info"
-msgstr "OccupyWallSt用户信息"
+msgstr ""
 
 #: templates/admin/occupywallst/article/change_form.html:5
 msgid "Convert to News Article"
-msgstr "转换为新闻文章"
+msgstr ""
 
 #: templates/admin/occupywallst/article/change_form.html:7
 msgid "Convert to Forum Post"
-msgstr "转换到论坛发表"
+msgstr ""
 
 #: templates/admin/occupywallst/comment/change_form.html:5
 msgid "Parent Comment"
-msgstr "家长评论"
+msgstr ""
 
 #: templates/occupywallst/article.html:40 templates/occupywallst/forum.html:6
 #: templates/occupywallst/forum.html:29
 msgid "Public Forum"
-msgstr "公共论坛"
+msgstr ""
 
 #: templates/occupywallst/article.html:42
 msgid "Other Articles"
-msgstr "其他文章"
+msgstr ""
 
 #: templates/occupywallst/article.html:49
 #: templates/occupywallst/forumpost_synopsis.html:8
 msgid "View Thread"
-msgstr "查看主题"
+msgstr ""
 
 #: templates/occupywallst/article.html:53
 #, python-format
@@ -326,42 +331,38 @@ msgid ""
 "\n"
 "%(comment_count)s comments %(timesince)s ago by %(username)s\n"
 msgstr ""
-"\n"
-"前%(username)s %(comment_count)s的评论%(timesince)s小号\n"
 
 #: templates/occupywallst/article.html:64
 #: templates/occupywallst/article_above_fold.html:16
 #: templates/occupywallst/article_content.html:16
 #: templates/occupywallst/ride_info.html:95
 msgid "Comments"
-msgstr "评论"
+msgstr ""
 
 #: templates/occupywallst/article.html:68
 #: templates/occupywallst/ride_info.html:98
 msgid "post comment"
-msgstr "发布评论"
+msgstr ""
 
 #: templates/occupywallst/article.html:80
 msgid "save"
-msgstr "保存"
+msgstr ""
 
 #: templates/occupywallst/article.html:81
 msgid "cancel"
-msgstr "取消"
+msgstr ""
 
 #: templates/occupywallst/article_above_fold.html:15
 #: templates/occupywallst/article_content.html:15
 msgid "View Comments"
-msgstr "查看评论"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:13
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "Posted %(timesince)s ago on %(date)s EST by %(username)s\n"
 msgstr ""
-"\n"
-"%(date)s 发表小号东部（%(timesince)s 小号前）%(username)s 小号\n"
 
 #: templates/occupywallst/article_info.html:18
 #: templates/occupywallst/comment.html:15
@@ -374,75 +375,75 @@ msgstr ""
 #: templates/occupywallst/article_info.html:24
 #: templates/occupywallst/base.html:41
 msgid "admin"
-msgstr "管理员"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:25
 #: templates/occupywallst/article_info.html:29
 #: templates/occupywallst/comment.html:32
 #: templates/occupywallst/comment.html:37
 msgid "edit"
-msgstr "编辑"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:26
 #: templates/occupywallst/comment.html:34
 msgid "unremove"
-msgstr "unremove"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:26
 #: templates/occupywallst/comment.html:34
 msgid "remove"
-msgstr "删除"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:30
 #: templates/occupywallst/comment.html:33
 #: templates/occupywallst/comment.html:38
 #: templates/occupywallst/message.html:10
 msgid "delete"
-msgstr "删除"
+msgstr ""
 
 #: templates/occupywallst/article_info.html:35
 msgid "This content is user submitted and not an official statement"
-msgstr "这个内容是用户提交，而不是一个官方声明"
+msgstr ""
 
 #: templates/occupywallst/attendee_info.html:20
 msgid "send private message"
-msgstr "发送私人讯息"
+msgstr ""
 
 #: templates/occupywallst/base.html:37
 msgid "Welcome"
-msgstr "欢迎"
+msgstr ""
 
 #: templates/occupywallst/base.html:43
 msgid "logout"
-msgstr "登出"
+msgstr ""
 
 #: templates/occupywallst/base.html:45
 msgid "login"
-msgstr "登录"
+msgstr ""
 
 #: templates/occupywallst/base.html:46
 msgid "signup"
-msgstr "注册"
+msgstr ""
 
 #: templates/occupywallst/base.html:52
 msgid "Language"
-msgstr "语言"
+msgstr ""
 
 #: templates/occupywallst/base.html:82
 msgid "Notifications"
-msgstr "通知"
+msgstr ""
 
 #: templates/occupywallst/comment.html:9
 msgid "This comment was deleted D:"
-msgstr "此评论已被删除"
+msgstr ""
 
 #: templates/occupywallst/comment.html:19
 msgid "points"
-msgstr "点"
+msgstr ""
 
 #: templates/occupywallst/comment.html:20
 msgid "ago"
-msgstr "前"
+msgstr ""
 
 #: templates/occupywallst/comment.html:26
 msgid "↥like"
@@ -454,62 +455,62 @@ msgstr ""
 
 #: templates/occupywallst/comment.html:29
 msgid "reply"
-msgstr "回复"
+msgstr ""
 
 #: templates/occupywallst/comment.html:41
 msgid "permalink"
-msgstr "永久"
+msgstr ""
 
 #: templates/occupywallst/edit_profile.html:6
 #: templates/occupywallst/edit_profile.html:22
 msgid "Edit Profile"
-msgstr "编辑个人资料"
+msgstr ""
 
 #: templates/occupywallst/edit_profile.html:41
 #: templates/occupywallst/signup.html:54
 msgid "Location"
-msgstr "位置"
+msgstr ""
 
 #: templates/occupywallst/edit_profile.html:46
 #: templates/occupywallst/signup.html:59
 msgid "Click here to remove the marker."
-msgstr "按此删除标记。"
+msgstr ""
 
 #: templates/occupywallst/edit_profile.html:52
 msgid "Save"
-msgstr "保存"
+msgstr ""
 
 #: templates/occupywallst/forum.html:31
 msgid "Read the Rules Before Posting"
-msgstr "阅读之前发布的“规则”"
+msgstr ""
 
 #: templates/occupywallst/forum.html:32
 msgid "post"
-msgstr "后"
+msgstr ""
 
 #: templates/occupywallst/forum.html:36
 msgid "title"
-msgstr "标题"
+msgstr ""
 
 #: templates/occupywallst/forum.html:40
 msgid "content"
-msgstr "内容"
+msgstr ""
 
 #: templates/occupywallst/forum.html:44
 msgid "post thread"
-msgstr "发表主题"
+msgstr ""
 
 #: templates/occupywallst/forum.html:61
 msgid "Best Comments Today"
-msgstr "今天最好的注解"
+msgstr ""
 
 #: templates/occupywallst/forum.html:63
 msgid "None Found :'("
-msgstr "没有找到"
+msgstr ""
 
 #: templates/occupywallst/forum.html:68 templates/occupywallst/forum.html:82
 msgid "View Comment Thread"
-msgstr "查看评论主题"
+msgstr ""
 
 #: templates/occupywallst/forum.html:72 templates/occupywallst/forum.html:86
 #, python-format
@@ -517,16 +518,14 @@ msgid ""
 "\n"
 "%(karma)s points %(timesince)s ago by %(username)s\n"
 msgstr ""
-"\n"
-"前%(username)s %(karma)s点%(timesince)s小号\n"
 
 #: templates/occupywallst/forum.html:78
 msgid "Recent Comments"
-msgstr "最近的评论"
+msgstr ""
 
 #: templates/occupywallst/forumpost_synopsis.html:7
 msgid "News Article"
-msgstr "新闻文章"
+msgstr ""
 
 #: templates/occupywallst/forumpost_synopsis.html:12
 #, python-format
@@ -535,9 +534,6 @@ msgid ""
 "%(comment_count)s comments %(created)s ago by %(username)s last comment "
 "%(last_comment)s ago\n"
 msgstr ""
-"\n"
-"前%(comment_count)s的评论%(created)s创建的小号%(username)s的最后评"
-"论%(last_comment)s前\n"
 
 #: templates/occupywallst/index.html:35
 #, python-format
@@ -545,21 +541,19 @@ msgid ""
 "\n"
 "Posted %(date)s EST (%(timesince)s ago) by %(username)s\n"
 msgstr ""
-"\n"
-"%(date)s 发表小号东部（%(timesince)s 小号前）%(username)s 小号\n"
 
 #: templates/occupywallst/logged_out.html:6
 msgid "Logout"
-msgstr "登出"
+msgstr ""
 
 #: templates/occupywallst/logged_out.html:7
 msgid "You are now logged out."
-msgstr "您现在已经登出。"
+msgstr ""
 
 #: templates/occupywallst/login.html:5 templates/occupywallst/login.html:14
 #: templates/occupywallst/login.html:20
 msgid "Login"
-msgstr "登录"
+msgstr ""
 
 #: templates/occupywallst/message.html:7
 #, python-format
@@ -567,66 +561,64 @@ msgid ""
 "\n"
 "%(from_user)s said %(timesince)s ago at %(date)s EST\n"
 msgstr ""
-"\n"
-"%(from_user)s说%(timesince)s %(date)s的东部\n"
 
 #: templates/occupywallst/signup.html:6 templates/occupywallst/signup.html:23
 msgid "Signup"
-msgstr "注册"
+msgstr ""
 
 #: templates/occupywallst/signup.html:30
 msgid "Required Fields"
-msgstr "必填字段"
+msgstr ""
 
 #: templates/occupywallst/signup.html:38
 msgid "Optional Fields"
-msgstr "可选字段"
+msgstr ""
 
 #: templates/occupywallst/user.html:5
 #, python-format
 msgid "%(username)s's User Profile"
-msgstr "%(username)s的用户配置文件"
+msgstr ""
 
 #: templates/occupywallst/user.html:33
 msgid "No Profile Information"
-msgstr "没有任何留言信息"
+msgstr ""
 
 #: templates/occupywallst/user.html:37
 msgid "Private Messages"
-msgstr "悄悄话"
+msgstr ""
 
 #: templates/occupywallst/user.html:42
 msgid "send message"
-msgstr "发送消息"
+msgstr ""
 
 #: templates/occupywallst/user.html:59
 msgid "Information"
-msgstr "信息"
+msgstr ""
 
 #: templates/occupywallst/user.html:61
 msgid "Edit"
-msgstr "编辑"
+msgstr ""
 
 #: templates/occupywallst/user.html:67
 msgid "From"
-msgstr "从"
+msgstr ""
 
 #: templates/occupywallst/user.html:70
 msgid "Joined"
-msgstr "注册"
+msgstr ""
 
 #: templates/occupywallst/user.html:79
 msgid "Nearby Users"
-msgstr "附近的用户"
+msgstr ""
 
 #: templatetags/ows.py:120
 #, python-format
 msgid "[Read More...](%(url)s)"
-msgstr "[阅读更多...](%(url)s)"
+msgstr ""
 
 #: templatetags/ows.py:174
 msgid "anonymous"
-msgstr "匿名"
+msgstr ""
 
 #: templatetags/ows.py:175
 #, python-format
@@ -634,6 +626,3 @@ msgid ""
 "<a title=\"View %(user)s's profile\" class=\"user\" href=\"%(url)s\">"
 "%(user)s</a>"
 msgstr ""
-
-#~ msgid "Traditional Chinese"
-#~ msgstr "繁体中文"

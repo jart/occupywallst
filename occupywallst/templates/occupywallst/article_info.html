@@ -11,7 +11,7 @@
 <p class="info">
 
 {% blocktrans with date=article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" timesince=article.published|timesince_short username=article.author|userlink %}
-Posted {{ date }} EST ({{ timesince }} ago) by {{ username }}
+Posted {{ timesince }} ago on {{ date }} EST by {{ username }}
 {% endblocktrans %}
 
 {% if article.is_forum and article.author and article.author.userinfo.city and article.author.userinfo.region %}
