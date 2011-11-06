@@ -64,7 +64,8 @@ schema and load some initial content::
     source bin/activate
     git clone git@github.com:$USER/occupywallst.git
 
-    sudo python setup.py develop
+    cd occupywallst/
+    python setup.py develop
     occupywallst-dev syncdb --noinput
     occupywallst-dev loaddata verbiage
     occupywallst-dev loaddata example_data
