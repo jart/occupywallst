@@ -3,7 +3,7 @@
     "pk": 3,
     "model": "occupywallst.verbiage",
     "fields": {
-      "content": "this site was brought to you by various radicals  \r\nhosting for this site generously donated by [alternet](http://www.alternet.org/) <3  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020",
+      "content": "this site was brought to you by various radicals  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020",
       "use_markdown": true,
       "name": "footer",
       "use_template": false
