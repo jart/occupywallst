@@ -158,10 +158,11 @@ pre { margin: 0 1em; }
 
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
-#left { padding: 0 1.5em 0 0.5em; vertical-align: top; }
+#left { padding: 0 1em 0 0; vertical-align: top; }
+#sidebar { float: right; margin: 0 0 1em 1em; }
+#comments { clear: both; }
 
-article { 
-    clear: both;
+article {
     font: 16px Palatino, Georgia, "Times New Roman", serif;
     line-height: 1.4;
 }
@@ -263,12 +264,12 @@ a.button:active {
 #recents .recent-comment .title { white-space: nowrap; overflow: hidden;
                                   text-overflow:ellipsis; max-width: 240px; }
 
-#thread-list { margin: 1em 0; }
+#thread-list { margin: 1em 5px; }
 #thread-list .item { margin: 0 -5px; padding: 3px; cursor: pointer; }
 #thread-list .item:hover { background: #f3f3ff; }
 #thread-list .item h3 { margin: 0; font-size: 1em; font-weight: normal; }
 #thread-list .item .info { font-size: small; color: #555; }
-.threadtype {  color: #a00; }
+.threadtype { color: #a00; }
 
 #new-thread { margin-top: 1em; margin-bottom: 0.25em; }
 
