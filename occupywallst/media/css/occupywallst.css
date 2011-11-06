@@ -9,7 +9,7 @@ h1 { font-size: 1.8em; margin: 0; }
 h2 { font-size: 1.3em; /* margin: 0 0; */ }
 h1 a { color: black; }
 textarea { font-family: Arial, sans-serif; }
-code, pre { font: 11px "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace; }
+code, pre { font: 11px "DejaVu Sans Mono", Monaco, "Courier New", Courier, monospace; }
 pre { margin: 0 1em; }
 
 .amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
@@ -190,23 +190,25 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 #article-page { }
 
 .editform { margin: 1em 0; }
-.comment .content { margin: 1em 1em; font-size: small; }
+.collapsed .words { display: none; }
+.collapsed .links { display: none; }
+.collapsed .replies { display: none; }
+.comment .content { margin: 1em 0; font-size: small; }
 .comment .words { overflow: auto; width: 600px; }
-.comment .arrows { float: left; margin-left: -1em; font-weight: bold; }
 .comment .info { color: #666; font-size: 0.9em; }
+.comment .info .collapse { font: 10px verdana, arial, helvetica; color: #666; }
 .comment .links { font-size: 0.9em; }
 .comment .links a { margin-right: 0.5em; }
-.comment .arrows a { color: #aaa; font-weight: bold; }
-.comment .arrows a.upvoted { color: red; }
-.comment .arrows a.downvoted { color: blue; }
 .comment .deleted { margin-left: -1em; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
+.comment .links .upvoted { font-weight: bold; }
+.comment .links .downvoted { font-weight: bold; }
 .comment p, .comment blockquote { margin: 0.5em 0; }
 .comment blockquote { margin-left: 0.2em; padding-left: 0.5em; border-left: 2px solid #aaa; }
 .comment pre { margin: 1em; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
-.replies { margin-left: 0.75em; }
+.replies { margin-left: 3px; padding-left: 7px; border-left: 2px solid #eee; }
 
 .postform label { font-size: small; color: #666; }
 .bigerror { color: red; font-size: big; font-weight: bold; }

@@ -541,6 +541,10 @@ class Comment(models.Model):
         self.karma = self.ups - self.downs
         self.save()
 
+    @property
+    def is_worthless(self):
+        return self.karma <= settings.OWS_WORTHLESS_COMMENT_THRESHOLD
+
     @staticmethod
     def recalculate():
         for ct in Comment.objects.all():

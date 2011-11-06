@@ -36,6 +36,7 @@ OWS_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_COMMENT_DEPTH = 15
 OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
+OWS_WORTHLESS_COMMENT_THRESHOLD = -4
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
                for fname in os.listdir(join(MEDIA_ROOT, 'js/occupywallst'))]

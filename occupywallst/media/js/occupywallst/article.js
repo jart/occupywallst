@@ -159,6 +159,23 @@ jQuery.fn.numberAdd = function(delta) {
         var content = $("> .content", comment);
         var replies = $("> .replies", comment);
 
+        $(".collapse", content).click(function(ev) {
+            ev.preventDefault();
+            if (comment.is('.collapsed')) {
+                $(".collapse", content).text("[-]");
+                comment.removeClass('collapsed');
+                $(".words", content).show();
+                $(".links", content).show();
+                replies.show();
+            } else {
+                $(".collapse", content).text("[+]");
+                comment.addClass('collapsed');
+                $(".words", content).hide();
+                $(".links", content).hide();
+                replies.hide();
+            }
+        });
+
         $(".reply", content).click(function(ev) {
             ev.preventDefault();
             if ($(".editform", content).length)
