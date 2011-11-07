@@ -114,11 +114,11 @@ def mortify(text, url, funk):
     for pat in pat_mortify:
         mat = pat.search(text)
         if mat:
-            res = mat.group(1)
+            res = mat.group(1) + ' ' + readmore
             break
     else:
         res = text
-    return funk(res + ' ' + readmore)
+    return funk(res)
 
 
 @register.filter
