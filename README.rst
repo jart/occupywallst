@@ -43,16 +43,17 @@ Define pseudo hostnames by putting this in ``/etc/hosts``::
 
 Install dependencies::
 
-    wget -qO- https://raw.github.com/jart/occupywallst/master/install_depends.sh | bash
+    wget -qO- https://raw.github.com/jart/occupywallst/master/install_depends.sh | sudo bash
 
 Now we're going to run the install script to create a virtualenv,
 install the project, create the database, load the database content,
 and create a local settings file::
 
-    export DEST='/opt'
-    export REPO='git@github.com:$USER/occupywallst.git'  # did you make your github fork yet?
+    export PROJ="ows"
+    export DEST="/opt"
+    export REPO="git@github.com:$USER/occupywallst.git"  # did you make your github fork yet?
     wget -qO- https://raw.github.com/jart/occupywallst/master/mkows.sh | bash
-    cd /opt/occupywallst/occupywallst
+    cd /opt/ows/occupywallst
     source ../bin/activate
 
 Now we'll setup nginx as our webserver::

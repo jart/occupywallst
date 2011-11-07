@@ -15,12 +15,15 @@
 [ -z $REPO ]           && REPO=$(git remote -v 2>/dev/null | grep ^origin | awk '{print $2}' | grep /occupywallst\.git$ | head -n 1)
 [ -z $REPO ]           && REPO='git://github.com/jart/occupywallst.git'
 
-cd $DEST
-
 function pg_db_exists {
     psql -Al | grep ^$1\| >/dev/null
     return $?
 }
+
+if pg_db_exists $DB; then
+    echo "database $DB already exists!" >&2
+    exit 1
+fi
 
 if ! pg_db_exists template_postgis; then
     echo 'Creating template_postgis database...'
@@ -32,6 +35,7 @@ if ! pg_db_exists template_postgis; then
 fi
 
 # create a virtualenv for our project
+cd $DEST                 || exit 1
 virtualenv $PROJ         || exit 1
 cd $PROJ                 || exit 1
 source bin/activate      || exit 1
