@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Adding field 'UserInfo.is_shadow_banned'
-        db.add_column('occupywallst_userinfo', 'is_shadow_banned', self.gf('django.db.models.fields.BooleanField')(default=True), keep_default=False)
+        db.add_column('occupywallst_userinfo', 'is_shadow_banned', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
 
 
     def backwards(self, orm):
@@ -160,7 +160,7 @@ class Migration(SchemaMigration):
             'formatted_address': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'info': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'is_shadow_banned': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_shadow_banned': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'need_ride': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'notify_message': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'notify_news': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
