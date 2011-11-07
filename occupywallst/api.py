@@ -387,14 +387,17 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         article.comment_count += 1
         article.killed = datetime.now()
     article.save()
-    if parent:
-        db.Notification.send(parent.user, comment.get_absolute_url(),
-                             '%s replied to your comment: %s'
-                             % (username, truncate_words(parent.content, 7)))
-    else:
-        db.Notification.send(article.author, comment.get_absolute_url(),
-                             '%s replied to your post: %s'
-                             % (username, truncate_words(article.content, 7)))
+    if not comment.is_removed:
+        if parent:
+            descrip = truncate_words(parent.content, 7)
+            db.Notification.send(
+                parent.user, comment.get_absolute_url(),
+                '%s replied to your comment: %s' % (username, descrip))
+        else:
+            descrip = truncate_words(article.content, 7)
+            db.Notification.send(
+                article.author, comment.get_absolute_url(),
+                '%s replied to your post: %s' % (username, descrip))
     return comment_get(user, comment.id)
 
 
