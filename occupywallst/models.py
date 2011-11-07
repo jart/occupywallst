@@ -15,7 +15,7 @@ r"""
 import re
 import socket
 import logging
-import functools
+from hashlib import sha256
 from datetime import date, timedelta
 
 from django.conf import settings
@@ -75,10 +75,7 @@ class Verbiage(models.Model):
 
     @staticmethod
     def get(name, language=None):
-        key_uf = 'verbiage_%s_%s' % (name, language)
-        key = filter(lambda c: ord(c) > 0x20, key_uf.replace(' ', '_'))
-        if len(key) >= 250:
-            raise ObjectDoesNotExist
+        key = sha256('verbiage_%s_%s' % (name, language)).hexdigest()
         res = cache.get(key)
         if res is None:
             verb = Verbiage.objects.get(name=name)
@@ -655,7 +652,7 @@ class SpamText(models.Model):
          expression?""")
 
     def __unicode__(self):
-        return "spamtext%s: %s" % (' regex' if self.is_regex else '', self.text)
+        return "%s%s" % ('' if self.is_regex else ' (regex)', self.text)
 
     def match(self, msg):
         if self.is_regex:

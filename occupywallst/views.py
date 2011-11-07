@@ -8,6 +8,7 @@ r"""
 """
 
 import logging
+from hashlib import sha256
 from functools import wraps
 from datetime import datetime, timedelta
 
@@ -40,8 +41,8 @@ def my_cache(mkkey, seconds=60):
             if request.user.is_authenticated():
                 response = function(request, *args, **kwargs)
             else:
-                key = mkkey(request, *args, **kwargs)
-                key += ':' + request.LANGUAGE_CODE
+                key = sha256(mkkey(request, *args, **kwargs) + ':' +
+                             request.LANGUAGE_CODE).hexdigest()
                 response = cache.get(key)
                 if not response:
                     response = function(request, *args, **kwargs)
