@@ -118,7 +118,7 @@ def mortify(text, url, funk):
             break
     else:
         res = text
-    return funk(res)
+    return funk(res + ' ' + readmore)
 
 
 @register.filter
