@@ -35,21 +35,6 @@ from occupywallst import geo
 logger = logging.getLogger(__name__)
 
 
-def memoize(method):
-    """Memoize decorator for methods taking no arguments
-    """
-    @functools.wraps(method)
-    def _memoize(instance):
-        key = method.__name__ + '__memoize'
-        if not hasattr(instance, key):
-            res = method(instance)
-            setattr(instance, key, res)
-        else:
-            res = getattr(instance, key)
-        return res
-    return _memoize
-
-
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown
 

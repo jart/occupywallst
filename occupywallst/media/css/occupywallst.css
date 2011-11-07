@@ -159,7 +159,7 @@ pre { margin: 0 1em; }
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
 #left { padding: 0 1em 0 0; vertical-align: top; }
-#sidebar { float: right; margin: 0 0 1em 1em; }
+#sidebar { width: 250px; float: right; margin: 0.5em 0 1em 1em; }
 #comments { clear: both; }
 
 article {
@@ -167,7 +167,7 @@ article {
     line-height: 1.4;
 }
 
-article h1 { margin-bottom: 0; }
+article h1:first-child { margin: 0; padding: 0; line-height: normal; }
 article h1 a { color: black; }
 article p, article blockquote { }
 article blockquote { color: #333; }
@@ -191,9 +191,6 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 #article-page { }
 
 .editform { margin: 1em 0; }
-.collapsed .words { display: none; }
-.collapsed .links { display: none; }
-.collapsed .replies { display: none; }
 .comment .content { margin: 1em 0; font-size: small; }
 .comment .words { overflow: auto; width: 600px; }
 .comment .info { color: #666; font-size: 0.9em; }
@@ -210,6 +207,9 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .removed { background: #fcc; }
 .highlight { background: #fffbcc; }
 .replies { margin-left: 3px; padding-left: 7px; border-left: 2px solid #eee; }
+.collapsed .words { display: none; }
+.collapsed .links { display: none; }
+.collapsed .replies { display: none; }
 
 .postform label { font-size: small; color: #666; }
 .bigerror { color: red; font-size: big; font-weight: bold; }

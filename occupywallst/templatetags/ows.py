@@ -35,6 +35,13 @@ tr_template = Template(u'''
 
 pat_url = re.compile(r'(?<!\S)(https?://[^\s\'\"\]\)]+)', re.I)
 pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
+pat_comment = re.compile(r'<!--.*?-->', re.S)
+pat_mortify = [
+    re.compile(r'(.*?)<!-- ?more ?-->', re.I | re.S),
+    re.compile(r'<!-- ?begin synopsis ?-->(.+?)<!-- ?end synopsis ?-->',
+               re.I | re.S),
+]
+
 markdown_safe = markdown.Markdown(safe_mode='escape')
 markdown_unsafe = markdown.Markdown()
 
@@ -70,7 +77,8 @@ timesince_short.is_safe = True
 
 @register.filter
 def synopsis(text, max_words=10, max_chars=40):
-    """Creates a shortened version of content
+    """
+    Creates a shortened version of content
 
     We only care about the first line.  If the text begins with a
     markdown quotation, it will be excluded unless the whole thing is
@@ -88,53 +96,39 @@ def synopsis(text, max_words=10, max_chars=40):
     words = first_line.split()
     return " ".join(words[:max_words])[:max_chars]
 
-@register.filter
-def not_more(text, arg):
-    """Run portion of text before <!-- more --> through markdown, no
-    html allowed
-    """
-    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
-    text = parts[0]
-    if len(parts) > 1:
-        text += '([more](%s))' % arg
-    return markup(text)
-not_more.is_safe = True
-
-@register.filter
-def not_more_unsafe(text, arg):
-    """Run portion of text before <!-- more --> through markdown, no
-    html allowed
-    """
-    parts = text.split('<!-- more -->')  # TODO: make this more robust, shouldn't need to get spaces just right
-    text = parts[0]
-    if len(parts) > 1:
-        text += '([more](%s))' % arg
-    return markup_unsafe(text)
-not_more_unsafe.is_safe = True
 
 def mortify(text, url, funk):
-    # TODO: make this more robust, shouldn't need to get spaces just right
-    parts = text.split('<!-- more -->')
-    text = parts[0]
-    if len(parts) > 1:
-        text += ugettext('[Read More...](%(url)s)') % {'url': url}
-    return funk(text)
+    """
+    Extracts specified synopsis in markdown article
+
+    There are two ways to specify a synopsis:
+
+    1. Put "<!-- more -->" somewhere in the article.  The synopsis
+       will start at the beginning and end there.
+
+    2. Wrap any particular portion text between "<!-- begin synopsis -->" and
+       "<!-- end synopsis -->" tags.
+
+    """
+    readmore = ugettext('[Read More...](%(url)s)') % {'url': url}
+    for pat in pat_mortify:
+        mat = pat.search(text)
+        if mat:
+            res = mat.group(1)
+            break
+    else:
+        res = text
+    return funk(res)
 
 
 @register.filter
 def not_more(text, arg):
-    """Run portion of text before <!-- more --> through markdown, no
-    html allowed
-    """
     return mortify(text, arg, markup)
 not_more.is_safe = True
 
 
 @register.filter
 def not_more_unsafe(text, arg):
-    """Run portion of text before <!-- more --> through markdown, no
-    html allowed
-    """
     return mortify(text, arg, markup_unsafe)
 not_more_unsafe.is_safe = True
 
@@ -142,9 +136,8 @@ not_more_unsafe.is_safe = True
 def _markup(text, transform):
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
-    text = text.replace('<!-- more -->', '')
+    text = pat_comment.sub('', text)
     html = transform(text)
-    # temporary hack to content distribution network
     html = html.replace('src="/media/', 'src="' + settings.MEDIA_URL)
     return mark_safe(html)
 
@@ -181,7 +174,8 @@ userlink.is_safe = True
 
 @register.simple_tag
 def translate_object(obj, lang):
-    """If possible, replaces certain fields with translated text
+    """
+    If possible, replaces certain fields with translated text
     """
     if obj:
         obj.translate(lang)
@@ -190,7 +184,8 @@ def translate_object(obj, lang):
 
 @register.simple_tag(takes_context=True)
 def show_comments(context, user, comments):
-    """I wrote this because template includes don't recurse properly
+    """
+    I wrote this because template includes don't recurse properly
     """
     res = []
     depth = context.get('depth', -1) + 1
