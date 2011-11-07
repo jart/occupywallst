@@ -105,7 +105,7 @@ USE_X_FORWARDED_HOST = True
 ROSETTA_MESSAGES_PER_PAGE = 25
 
 gettext_noop = lambda s: s
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('es', gettext_noop('Spanish')),

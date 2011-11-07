@@ -656,10 +656,10 @@ class SpamText(models.Model):
 
     def match(self, msg):
         if self.is_regex:
-            expr = re.compile(self.text, re.I)
+            expr = re.compile(self.text, re.I | re.S)
         else:
             expr = re.compile(re.escape(self.text), re.I)
-        return bool(expr.search(msg))
+        return expr.search(msg) is not None
 
     @staticmethod
     def is_spam(msg):

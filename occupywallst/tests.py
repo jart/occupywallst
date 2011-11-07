@@ -10,6 +10,7 @@ r"""
 
 import random
 
+from django.conf import settings
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse
@@ -55,7 +56,7 @@ def random_words(N):
 def add_content(N):
     """ add N articles and comments to the database, for testing
     etc"""
-    api.settings.DEBUG = True
+    settings.DEBUG = True
     users = [u for u in db.User.objects.all()]
 
     for i in range(N):
@@ -97,6 +98,9 @@ class OWS(TestCase):
             ui.save()
 
     def setUp(self):
+        settings.OWS_LIMIT_THREAD = -1
+        settings.OWS_LIMIT_COMMENT = -1
+        settings.OWS_LIMIT_MSG_DAY = 999999
         self.create_users()
         self.article = db.Article(author=self.red_user,
                                   title='article title',
@@ -603,7 +607,7 @@ class OWS(TestCase):
         assert j['results'][0]['username'] == 'blue'
 
     def test_api_message(self):
-        api.settings.DEBUG = True
+        settings.DEBUG = True
         content = random_words(10)
 
         # login as red
@@ -642,10 +646,9 @@ class OWS(TestCase):
         response = self.client.post('/api/message_delete/',
                                     {'message_id': m.id})
 
-        api.settings.DEBUG = False
+        settings.DEBUG = False
 
     def test_api_article(self):
-        api.settings.OWS_LIMIT_THREAD = -1  # turn off limit for testing
         title = random_words(5)
         content = random_words(20)
 
@@ -719,7 +722,7 @@ class OWS(TestCase):
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
 
     def test_api_comment(self):
-        api.settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
+        settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
         content = random_words(20)
 
         # login as red

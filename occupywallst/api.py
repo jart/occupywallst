@@ -273,8 +273,7 @@ def article_delete(user, article_slug, **kwargs):
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
     try:
-        article = db.Article.objects.get(slug=article_slug, is_visible=True,
-                                         is_deleted=False)
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
     if article.author != user:
