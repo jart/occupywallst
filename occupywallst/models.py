@@ -26,6 +26,7 @@ from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import smart_str
 from django.template.defaultfilters import slugify
 
 from occupywallst.utils import jsonify
@@ -75,7 +76,8 @@ class Verbiage(models.Model):
 
     @staticmethod
     def get(name, language=None):
-        key = sha256('verbiage_%s_%s' % (name, language)).hexdigest()
+        key = 'verbiage_%s_%s' % (name, language)
+        key = sha256(smart_str(key)).hexdigest()
         res = cache.get(key)
         if res is None:
             verb = Verbiage.objects.get(name=name)
