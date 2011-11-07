@@ -383,8 +383,9 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     _check_post(user, comment)
     comment.save()
     comment_vote(user, comment, "up", **kwargs)
-    article.comment_count += 1
-    article.killed = datetime.now()
+    if not comment.is_removed:
+        article.comment_count += 1
+        article.killed = datetime.now()
     article.save()
     if parent:
         db.Notification.send(parent.user, comment.get_absolute_url(),
