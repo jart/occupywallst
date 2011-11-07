@@ -12,7 +12,7 @@
           <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
           <span>{{ comment.user|userlink }}</span>
           {% if user and user.is_staff %}
-            [<a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">ban</a>
+            [<a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
              <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
              <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>]
           {% endif %}
