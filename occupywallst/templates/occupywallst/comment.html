@@ -4,13 +4,18 @@
 
 {% if not comment.is_deleted or comment.replies %}
   <div class="comment {% if comment.is_worthless %}collapsed{% endif %}" id="comment-{{ comment.id }}">
-    <div class="content {% if user.is_staff and comment.is_removed %}removed{% endif %}">
+    <div class="content {% if user and user.is_staff and comment.is_removed %}removed{% endif %}">
       {% if comment.is_deleted %}
         <p class="deleted"><span>{% trans 'This comment was deleted D:' %}</span></p>
       {% else %}
         <div class="info">
           <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
           <span>{{ comment.user|userlink }}</span>
+          {% if user and user.is_staff %}
+            [<a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">ban</a>
+             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
+             <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>]
+          {% endif %}
           {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
 {% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
 ({{ city }}, {{ region }})
