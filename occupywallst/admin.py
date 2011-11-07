@@ -80,6 +80,29 @@ class VerbiageAdmin(GeoAdmin):
 
 
 class UserAdmin(BaseUserAdmin):
+    def get_urls(self):
+        urls = super(UserAdmin, self).get_urls()
+        admin_view = self.admin_site.admin_view
+        my_urls = patterns('',
+            (r'^(\d+)/shadowban/$', admin_view(self.view_shadowban)),
+        )
+        return my_urls + urls
+
+    def view_shadowban(self, request, id_):
+        if not self.has_change_permission(request):
+            raise PermissionDenied()
+        id_ = int(id_)
+        obj = get_object_or_404(db.User, pk=id_)
+        obj.userinfo.is_shadow_banned = not obj.userinfo.is_shadow_banned
+        obj.userinfo.save()
+        if obj.userinfo.is_shadow_banned:
+            msg = 'ShadowBanned'
+        else:
+            msg = 'Un-ShadowBanned'
+        self.log_change(request, obj, msg)
+        messages.success(request, msg)
+        return HttpResponseRedirect("../../../user/%d/" % (id_))
+
     def save_model(self, request, user, form, change):
         user.save()
         if db.UserInfo.objects.filter(user=user).count() == 0:

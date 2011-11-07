@@ -806,3 +806,61 @@ class OWS(TestCase):
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.downs == downs + 1
+
+    def test_api_comment_spam(self):
+        self.client.post('/api/login/', {'username': 'red', 'password': 'red'})
+
+        response = self.client.post(
+            '/api/comment_new/', {'article_slug': self.article.slug,
+                                  'parent_id': '',
+                                  'content': 'VISIT SWAMPTHING.COM TODAY!'})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert j['message'] == 'turn off bloody caps lock'
+
+        data = {'article_slug': self.article.slug,
+                'parent_id': '',
+                'content': 'visit swampthing.com today!'}
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert not c.is_removed
+
+        assert not db.SpamText.is_spam(c.content)
+        db.SpamText.objects.create(text='swampthing.com')
+        assert db.SpamText.is_spam(c.content)
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.is_removed
+
+    def test_shadow_ban(self):
+        self.client.post('/api/login/', {'username': 'red', 'password': 'red'})
+
+        data = {'article_slug': self.article.slug,
+                'parent_id': '',
+                'content': 'oh my goth'}
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        import pprint
+        pprint.pprint(j)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert not c.is_removed
+
+        self.red_user.userinfo.is_shadow_banned = True
+        self.red_user.userinfo.save()
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.is_removed
+
+        self.red_user.userinfo.is_shadow_banned = False
+        self.red_user.userinfo.save()

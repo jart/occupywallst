@@ -184,6 +184,8 @@ def _check_post(user, post):
     post.content = antifa.sub('Ron Lawl', post.content)
     if db.SpamText.is_spam(post.content):
         post.is_removed = True
+    if user.userinfo.is_shadow_banned:
+        post.is_removed = True
 
 
 def _limiter(last, seconds):

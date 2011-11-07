@@ -134,6 +134,8 @@ class UserInfo(models.Model):
         Does user want an email when they message or comment response.""")
     notify_news = models.BooleanField(default=True, help_text="""
         Does user want an email new articles are published?""")
+    is_shadow_banned = models.BooleanField(default=False, help_text="""
+        If true, anything this user posts will be automatically removed.""")
 
     position = models.PointField(null=True, blank=True, help_text="""
         Aproximate coordinates of where they live to display on the
