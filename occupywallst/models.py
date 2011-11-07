@@ -12,6 +12,7 @@ r"""
 
 """
 
+import re
 import socket
 import logging
 import functools
@@ -302,6 +303,14 @@ class Article(models.Model):
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be shown on site.""")
     ip = models.CharField(max_length=255, blank=True)
+
+    # hacks to make method naming more compatible with other models :(
+    is_removed = property(
+        lambda self: not self.is_visible,
+        lambda self, val: setattr(self, 'is_visible', not val))
+    user = property(
+        lambda self: self.author,
+        lambda self, val: setattr(self, 'author', val))
 
     objects = models.GeoManager()
 
@@ -648,6 +657,34 @@ class Message(models.Model):
                'published': self.published}
         res.update(moar)
         return res
+
+
+class SpamText(models.Model):
+    """
+    This table is used to automatically removed user submitted content
+    containing certain spammy phrases.
+    """
+    text = models.TextField()
+    is_regex = models.BooleanField(default=False, help_text="""
+         Should text be interpreted as a perl-compatible regular
+         expression?""")
+
+    def __unicode__(self):
+        return "spamtext%s: %s" % (' regex' if self.is_regex else '', self.text)
+
+    def match(self, msg):
+        if self.is_regex:
+            expr = re.compile(self.text, re.I)
+        else:
+            expr = re.compile(re.escape(self.text), re.I)
+        return bool(expr.search(msg))
+
+    @staticmethod
+    def is_spam(msg):
+        for spamtext in SpamText.objects.all():
+            if spamtext.match(msg):
+                return True
+        return False
 
 
 class Ride(models.Model):

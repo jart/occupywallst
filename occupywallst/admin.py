@@ -31,6 +31,7 @@ class AdminSite(BaseAdminSite):
         self.register(db.Comment, CommentAdmin)
         self.register(db.RideRequest, GeoAdmin)
         self.register(db.Ride, GeoAdmin)
+        self.register(db.SpamText, admin.ModelAdmin)
         # message table intentionally excluded.  i don't want to tempt
         # myself or anyone else using the backend to read private
         # conversations.

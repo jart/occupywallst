@@ -182,6 +182,8 @@ def _check_post(user, post):
     if hasattr(post, 'title'):
         post.title = antifa.sub('Ron Lawl', post.title)
     post.content = antifa.sub('Ron Lawl', post.content)
+    if db.SpamText.is_spam(post.content):
+        post.is_removed = True
 
 
 def _limiter(last, seconds):
