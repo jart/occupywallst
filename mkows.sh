@@ -43,8 +43,8 @@ python setup.py develop  || exit 1
 cat >occupywallst/settings_local.py <<EOF
 OWS_SITE_NAME = "$DOMAIN"
 OWS_CANONICAL_URL = "http://$DOMAIN"
-SESSION_COOKIE_DOMAIN = "$DOMAIN"
-CSRF_COOKIE_DOMAIN = "$DOMAIN"
+SESSION_COOKIE_DOMAIN = ".$DOMAIN"
+CSRF_COOKIE_DOMAIN = ".$DOMAIN"
 SECRET_KEY = "$(head -c 51 /dev/urandom | base64)"
 RECAPTCHA_PUBLIC_KEY =  "$RECAPTCHA_PUB"
 RECAPTCHA_PRIVATE_KEY = "$RECAPTCHA_PRIV"
