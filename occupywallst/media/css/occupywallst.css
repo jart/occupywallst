@@ -160,7 +160,6 @@ pre { margin: 0 1em; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
 #left { padding: 0 1em 0 0; vertical-align: top; }
 #sidebar { width: 250px; float: right; margin: 0.5em 0 1em 1em; }
-#comments { clear: both; }
 
 article {
     font: 16px Palatino, Georgia, "Times New Roman", serif;
