@@ -654,7 +654,7 @@ class SpamText(models.Model):
          expression?""")
 
     def __unicode__(self):
-        return "%s%s" % ('' if self.is_regex else ' (regex)', self.text)
+        return "%s%s" % (self.text, ' (regex)' if self.is_regex else '')
 
     def match(self, msg):
         if self.is_regex:
