@@ -23,7 +23,7 @@ Posted {{ timesince }} ago on {{ date }} EST by {{ username }}
   {% if user and user.is_staff %}
     | <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">{% trans 'admin' %}</a>
     | <a class="edit" href="#">{% trans 'edit' %}</a>
-    | <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% endif %}{% trans 'remove' %}</a>
+    | <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
   {% else %}
     {% if user and user.is_authenticated and user == article.author %}
       | <a class="edit" href="#">{% trans 'edit' %}</a>
