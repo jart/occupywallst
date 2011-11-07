@@ -28,7 +28,7 @@
             preview.html(converter.makeHtml(text));
         }
         update();
-        update = ows_inactivity_delay(200, update);
+        update = ows_inactivity_delay(1000, update);
         elem.keyup(update).bind('cut paste', update);
     }
 
