@@ -21,6 +21,9 @@ Posted {{ timesince }} ago on {{ date }} EST by {{ username }}
 {% endif %}
 
   {% if user and user.is_staff %}
+    | <a href="/admin/auth/user/{{ article.author.id }}/shadowban/">ban</a>
+    | <a href="/admin/occupywallst/comment/?user={{ article.author.id }}">comments</a>
+    | <a href="/admin/occupywallst/forumpost/?author={{ article.author.id }}">threads</a>
     | <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">{% trans 'admin' %}</a>
     | <a class="edit" href="#">{% trans 'edit' %}</a>
     | <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
