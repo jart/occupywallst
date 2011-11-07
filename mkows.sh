@@ -20,8 +20,13 @@ function pg_db_exists {
     return $?
 }
 
+if [ -d $DEST/$PROJ ]; then
+    echo "target $DEST/$PROJ already exists" >&2
+    exit 1
+fi
+
 if pg_db_exists $DB; then
-    echo "database $DB already exists!" >&2
+    echo "database $DB already exists" >&2
     exit 1
 fi
 
@@ -65,8 +70,9 @@ createdb $DB
 createlang plpgsql $DB
 pg_dump template_postgis | psql -q $DB
 
-# ask django to create the schema
+# ask django and south to create the database
 occupywallst-dev syncdb --noinput
+occupywallst-dev migrate occupywallst
 
 # load some starting data so the website actually looks normal
 occupywallst-dev loaddata verbiage
