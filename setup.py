@@ -22,7 +22,7 @@ setup(
     author               = 'Justine Tunney',
     author_email         = 'jtunney@lobstertech.com',
     license              = 'GNU AGPL v3 or later',
-    install_requires     = ['Django>=1.3', 'python-memcached>=1.40', 'pytz',
+    install_requires     = ['Django==1.3.1', 'python-memcached>=1.40', 'pytz',
                             'markdown', 'twilio', 'django-debug-toolbar',
                             'recaptcha-client', 'gunicorn', 'django-rosetta',
                             'south'],
