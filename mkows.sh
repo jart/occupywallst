@@ -40,13 +40,15 @@ if ! pg_db_exists template_postgis; then
 fi
 
 # create a virtualenv for our project
-cd $DEST                 || exit 1
-virtualenv $PROJ         || exit 1
-cd $PROJ                 || exit 1
-source bin/activate      || exit 1
-git clone $REPO          || exit 1
-cd occupywallst          || exit 1
-python setup.py develop  || exit 1
+cd $DEST             || exit 1
+virtualenv $PROJ     || exit 1
+cd $PROJ             || exit 1
+source bin/activate  || exit 1
+easy_install pip     || exit 1
+
+# clone project and install as editable folder
+pip install -e git+$REPO#egg=occupywallst  || exit 1
+cd occupywallst                            || exit 1
 
 # these settings override what's in settings.py *only* for our local install
 cat >occupywallst/settings_local.py <<EOF
