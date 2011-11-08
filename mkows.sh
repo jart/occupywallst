@@ -5,6 +5,8 @@
 # This script makes it painless to deploy the website into happy
 # little self-contained virtualenvs.
 #
+# PROTIP: export PIP_DOWNLOAD_CACHE=~/.pip/cache
+#
 
 [ -z $DEST ]           && DEST='.'
 [ -z $PROJ ]           && PROJ='ows'
@@ -19,6 +21,11 @@ function pg_db_exists {
     psql -Al | grep ^$1\| >/dev/null
     return $?
 }
+
+if [ $VIRTUAL_ENV ]; then
+    echo "you're already inside a virtualenv" >&2
+    exit 1
+fi
 
 if [ -d $DEST/$PROJ ]; then
     echo "target $DEST/$PROJ already exists" >&2
@@ -40,15 +47,14 @@ if ! pg_db_exists template_postgis; then
 fi
 
 # create a virtualenv for our project
-cd $DEST             || exit 1
-virtualenv $PROJ     || exit 1
-cd $PROJ             || exit 1
-source bin/activate  || exit 1
-easy_install pip     || exit 1
-
-# clone project and install as editable folder
-pip install -e git+$REPO#egg=occupywallst  || exit 1
-cd occupywallst                            || exit 1
+cd $DEST                      || exit 1
+virtualenv $PROJ              || exit 1
+cd $PROJ                      || exit 1
+source bin/activate           || exit 1
+easy_install pip              || exit 1
+git clone $REPO occupywallst  || exit 1
+pip install -e occupywallst   || exit 1
+cd occupywallst               || exit 1
 
 # these settings override what's in settings.py *only* for our local install
 cat >occupywallst/settings_local.py <<EOF
