@@ -9,35 +9,32 @@
   {{ article.title }}
 </a></h1>
 <p class="info">
-  {% trans "Posted" %} {{ article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" }} EST
-  {% if forum %}
-    ({{ article.published|timesince_short }} {% trans "ago" %})
-  {% endif %}
-  {% trans "by" %}
-  {% if not article.author %}
-    anonymous
+
+{% blocktrans with date=article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" timesince=article.published|timesince_short username=article.author|userlink %}
+Posted {{ timesince }} ago on {{ date }} EST by {{ username }}
+{% endblocktrans %}
+
+{% if article.is_forum and article.author and article.author.userinfo.city and article.author.userinfo.region %}
+{% blocktrans with city=article.author.userinfo.city region=article.author.userinfo.region %}
+({{ city }}, {{ region }})
+{% endblocktrans %}
+{% endif %}
+
+  {% if user and user.is_staff %}
+    | <a href="/admin/auth/user/{{ article.author.id }}/shadowban/">{% if article.author.userinfo.is_shadow_banned %}un{% endif %}ban</a>
+    | <a href="/admin/occupywallst/comment/?user={{ article.author.id }}">comments</a>
+    | <a href="/admin/occupywallst/forumpost/?author={{ article.author.id }}">threads</a>
+    | <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">{% trans 'admin' %}</a>
+    | <a class="edit" href="#">{% trans 'edit' %}</a>
+    | <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
   {% else %}
-    <a rel="author" title="View {{ article.author.username }}'s profile"
-       class="user" href="{{ article.author.get_absolute_url }}">
-    {{ article.author.username }}</a>
-    {% if article.is_forum %}
-      {% if article.author.userinfo.city and article.author.userinfo.region %}
-        ({{ article.author.userinfo.city }}, {{ article.author.userinfo.region }})
-      {% endif %}
-    {% endif %}
-    {% if user and user.is_staff %}
-      | <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">admin</a>
-      | <a class="edit" href="#">edit</a>
-      | <a class="remove" href="#">{% if not article.is_visible %}un{% endif %}remove</a>
-    {% else %}
-      {% if user and user.is_authenticated and user == article.author %}
-        | <a class="edit" href="#">edit</a>
-        | <a class="delete" href="#">delete</a>
-      {% endif %}
+    {% if user and user.is_authenticated and user == article.author %}
+      | <a class="edit" href="#">{% trans 'edit' %}</a>
+      | <a class="delete" href="#">{% trans 'delete' %}</a>
     {% endif %}
   {% endif %}
   {% if article.is_forum and not article.author.is_staff %}
     <br />
-    This content is user submitted and not an official statement
+    {% trans 'This content is user submitted and not an official statement' %}
   {% endif %}
 </p>

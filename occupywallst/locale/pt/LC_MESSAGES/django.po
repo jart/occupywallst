@@ -1,0 +1,628 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-11-06 02:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: api.py:83
+msgid "bad arguments"
+msgstr ""
+
+#: api.py:135
+msgid "request not found"
+msgstr ""
+
+#: api.py:141 api.py:297 api.py:450
+msgid "insufficient permissions"
+msgstr ""
+
+#: api.py:166
+msgid "content too short"
+msgstr ""
+
+#: api.py:168
+msgid "content too long"
+msgstr ""
+
+#: api.py:171
+msgid "please don't bump threads"
+msgstr ""
+
+#: api.py:173 api.py:180
+msgid "turn off bloody caps lock"
+msgstr ""
+
+#: api.py:176
+msgid "title too short"
+msgstr ""
+
+#: api.py:178
+msgid "title too long"
+msgstr ""
+
+#: api.py:192
+#, python-format
+msgid "please wait %(duration)s before making another post"
+msgstr ""
+
+#: api.py:204 api.py:239 api.py:272 api.py:295 api.py:333 api.py:427
+#: api.py:448 api.py:474 api.py:536 api.py:570
+msgid "you're not logged in"
+msgstr ""
+
+#: api.py:207 api.py:250 api.py:282
+msgid "insufficient privileges"
+msgstr ""
+
+#: api.py:212
+msgid "a thread with this title exists"
+msgstr ""
+
+#: api.py:245 api.py:277 api.py:301 api.py:318 api.py:338
+msgid "article not found"
+msgstr ""
+
+#: api.py:248 api.py:279 api.py:437 api.py:481
+msgid "you didn't post that"
+msgstr ""
+
+#: api.py:307 api.py:462
+msgid "invalid action"
+msgstr ""
+
+#: api.py:355
+msgid "parent comment not found"
+msgstr ""
+
+#: api.py:357
+msgid "comment nested too deep"
+msgstr ""
+
+#: api.py:403 api.py:434 api.py:454 api.py:478 api.py:502
+msgid "comment not found"
+msgstr ""
+
+#: api.py:430
+msgid "comment too short"
+msgstr ""
+
+#: api.py:508
+msgid "you already voted"
+msgstr ""
+
+#: api.py:516
+msgid "invalid vote"
+msgstr ""
+
+#: api.py:539
+msgid "message too short"
+msgstr ""
+
+#: api.py:543
+msgid "user not found"
+msgstr ""
+
+#: api.py:545
+msgid "you can't message yourself"
+msgstr ""
+
+#: api.py:552
+#, python-format
+msgid "you can't send more than %(limit)s messages per day"
+msgstr ""
+
+#: api.py:559
+#, python-format
+msgid "%(username)s sent you a message"
+msgstr ""
+
+#: api.py:574
+msgid "message not found"
+msgstr ""
+
+#: api.py:576
+msgid "you didn't send or receive that message"
+msgstr ""
+
+#: api.py:585
+msgid "username too short"
+msgstr ""
+
+#: api.py:587
+msgid "username too long"
+msgstr ""
+
+#: api.py:589
+msgid "bad username, use only letters/numbers"
+msgstr ""
+
+#: api.py:592
+msgid "username is taken"
+msgstr ""
+
+#: api.py:604 api.py:633
+msgid "you're already logged in"
+msgstr ""
+
+#: api.py:607
+msgid "password must be at least six characters"
+msgstr ""
+
+#: api.py:609
+msgid "password too long"
+msgstr ""
+
+#: api.py:612
+msgid "invalid email address"
+msgstr ""
+
+#: api.py:636
+msgid "invalid username or password"
+msgstr ""
+
+#: feeds.py:26
+msgid "OccupyWallSt News"
+msgstr ""
+
+#: feeds.py:28
+msgid "News and information relating to the Occupy Wall Street movement"
+msgstr ""
+
+#: feeds.py:61
+msgid "OccupyWallSt Forum"
+msgstr ""
+
+#: feeds.py:63
+msgid "Public discussion posts pertaining to the Occupy Wall Street movement"
+msgstr ""
+
+#: fields.py:12
+msgid "Invalid captcha"
+msgstr ""
+
+#: settings.py:109
+msgid "English"
+msgstr ""
+
+#: settings.py:110
+msgid "Spanish"
+msgstr ""
+
+#: settings.py:111
+msgid "French"
+msgstr ""
+
+#: settings.py:112
+msgid "German"
+msgstr ""
+
+#: settings.py:113
+msgid "Portuguese"
+msgstr ""
+
+#: settings.py:114
+msgid "Russian"
+msgstr ""
+
+#: settings.py:115
+msgid "Greek"
+msgstr ""
+
+#: settings.py:116
+msgid "Hebrew"
+msgstr ""
+
+#: settings.py:117
+msgid "Arabic"
+msgstr ""
+
+#: settings.py:118
+msgid "Hindi"
+msgstr ""
+
+#: settings.py:119
+msgid "Simplified Chinese"
+msgstr ""
+
+#: settings.py:120
+msgid "Japanese"
+msgstr ""
+
+#: utils.py:133
+msgid "year"
+msgid_plural "years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:134
+msgid "month"
+msgid_plural "months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:135
+msgid "week"
+msgid_plural "weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:136
+msgid "day"
+msgid_plural "days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:137
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:138
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: utils.py:155
+msgid "minutes"
+msgstr ""
+
+#: utils.py:160
+#, python-format
+msgid "%(number)d %(type)s"
+msgstr ""
+
+#: templates/404.html:5
+msgid "Page Not Found"
+msgstr ""
+
+#: templates/500.html:5
+msgid "Internal Server Error"
+msgstr ""
+
+#: templates/admin/auth/user/change_form.html:4
+msgid "OccupyWallSt User Info"
+msgstr ""
+
+#: templates/admin/occupywallst/article/change_form.html:5
+msgid "Convert to News Article"
+msgstr ""
+
+#: templates/admin/occupywallst/article/change_form.html:7
+msgid "Convert to Forum Post"
+msgstr ""
+
+#: templates/admin/occupywallst/comment/change_form.html:5
+msgid "Parent Comment"
+msgstr ""
+
+#: templates/occupywallst/article.html:40 templates/occupywallst/forum.html:6
+#: templates/occupywallst/forum.html:29
+msgid "Public Forum"
+msgstr ""
+
+#: templates/occupywallst/article.html:42
+msgid "Other Articles"
+msgstr ""
+
+#: templates/occupywallst/article.html:49
+#: templates/occupywallst/forumpost_synopsis.html:8
+msgid "View Thread"
+msgstr ""
+
+#: templates/occupywallst/article.html:53
+#, python-format
+msgid ""
+"\n"
+"%(comment_count)s comments %(timesince)s ago by %(username)s\n"
+msgstr ""
+
+#: templates/occupywallst/article.html:64
+#: templates/occupywallst/article_above_fold.html:16
+#: templates/occupywallst/article_content.html:16
+#: templates/occupywallst/ride_info.html:95
+msgid "Comments"
+msgstr ""
+
+#: templates/occupywallst/article.html:68
+#: templates/occupywallst/ride_info.html:98
+msgid "post comment"
+msgstr ""
+
+#: templates/occupywallst/article.html:80
+msgid "save"
+msgstr ""
+
+#: templates/occupywallst/article.html:81
+msgid "cancel"
+msgstr ""
+
+#: templates/occupywallst/article_above_fold.html:15
+#: templates/occupywallst/article_content.html:15
+msgid "View Comments"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:13
+#, python-format
+msgid ""
+"\n"
+"Posted %(timesince)s ago on %(date)s EST by %(username)s\n"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:18
+#: templates/occupywallst/comment.html:15
+#, python-format
+msgid ""
+"\n"
+"(%(city)s, %(region)s)\n"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:24
+#: templates/occupywallst/base.html:41
+msgid "admin"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:25
+#: templates/occupywallst/article_info.html:29
+#: templates/occupywallst/comment.html:32
+#: templates/occupywallst/comment.html:37
+msgid "edit"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:26
+#: templates/occupywallst/comment.html:34
+msgid "unremove"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:26
+#: templates/occupywallst/comment.html:34
+msgid "remove"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:30
+#: templates/occupywallst/comment.html:33
+#: templates/occupywallst/comment.html:38
+#: templates/occupywallst/message.html:10
+msgid "delete"
+msgstr ""
+
+#: templates/occupywallst/article_info.html:35
+msgid "This content is user submitted and not an official statement"
+msgstr ""
+
+#: templates/occupywallst/attendee_info.html:20
+msgid "send private message"
+msgstr ""
+
+#: templates/occupywallst/base.html:37
+msgid "Welcome"
+msgstr ""
+
+#: templates/occupywallst/base.html:43
+msgid "logout"
+msgstr ""
+
+#: templates/occupywallst/base.html:45
+msgid "login"
+msgstr ""
+
+#: templates/occupywallst/base.html:46
+msgid "signup"
+msgstr ""
+
+#: templates/occupywallst/base.html:52
+msgid "Language"
+msgstr ""
+
+#: templates/occupywallst/base.html:82
+msgid "Notifications"
+msgstr ""
+
+#: templates/occupywallst/comment.html:9
+msgid "This comment was deleted D:"
+msgstr ""
+
+#: templates/occupywallst/comment.html:19
+msgid "points"
+msgstr ""
+
+#: templates/occupywallst/comment.html:20
+msgid "ago"
+msgstr ""
+
+#: templates/occupywallst/comment.html:26
+msgid "↥like"
+msgstr ""
+
+#: templates/occupywallst/comment.html:27
+msgid "↧dislike"
+msgstr ""
+
+#: templates/occupywallst/comment.html:29
+msgid "reply"
+msgstr ""
+
+#: templates/occupywallst/comment.html:41
+msgid "permalink"
+msgstr ""
+
+#: templates/occupywallst/edit_profile.html:6
+#: templates/occupywallst/edit_profile.html:22
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/occupywallst/edit_profile.html:41
+#: templates/occupywallst/signup.html:54
+msgid "Location"
+msgstr ""
+
+#: templates/occupywallst/edit_profile.html:46
+#: templates/occupywallst/signup.html:59
+msgid "Click here to remove the marker."
+msgstr ""
+
+#: templates/occupywallst/edit_profile.html:52
+msgid "Save"
+msgstr ""
+
+#: templates/occupywallst/forum.html:31
+msgid "Read the Rules Before Posting"
+msgstr ""
+
+#: templates/occupywallst/forum.html:32
+msgid "post"
+msgstr ""
+
+#: templates/occupywallst/forum.html:36
+msgid "title"
+msgstr ""
+
+#: templates/occupywallst/forum.html:40
+msgid "content"
+msgstr ""
+
+#: templates/occupywallst/forum.html:44
+msgid "post thread"
+msgstr ""
+
+#: templates/occupywallst/forum.html:61
+msgid "Best Comments Today"
+msgstr ""
+
+#: templates/occupywallst/forum.html:63
+msgid "None Found :'("
+msgstr ""
+
+#: templates/occupywallst/forum.html:68 templates/occupywallst/forum.html:82
+msgid "View Comment Thread"
+msgstr ""
+
+#: templates/occupywallst/forum.html:72 templates/occupywallst/forum.html:86
+#, python-format
+msgid ""
+"\n"
+"%(karma)s points %(timesince)s ago by %(username)s\n"
+msgstr ""
+
+#: templates/occupywallst/forum.html:78
+msgid "Recent Comments"
+msgstr ""
+
+#: templates/occupywallst/forumpost_synopsis.html:7
+msgid "News Article"
+msgstr ""
+
+#: templates/occupywallst/forumpost_synopsis.html:12
+#, python-format
+msgid ""
+"\n"
+"%(comment_count)s comments %(created)s ago by %(username)s last comment "
+"%(last_comment)s ago\n"
+msgstr ""
+
+#: templates/occupywallst/index.html:35
+#, python-format
+msgid ""
+"\n"
+"Posted %(date)s EST (%(timesince)s ago) by %(username)s\n"
+msgstr ""
+
+#: templates/occupywallst/logged_out.html:6
+msgid "Logout"
+msgstr ""
+
+#: templates/occupywallst/logged_out.html:7
+msgid "You are now logged out."
+msgstr ""
+
+#: templates/occupywallst/login.html:5 templates/occupywallst/login.html:14
+#: templates/occupywallst/login.html:20
+msgid "Login"
+msgstr ""
+
+#: templates/occupywallst/message.html:7
+#, python-format
+msgid ""
+"\n"
+"%(from_user)s said %(timesince)s ago at %(date)s EST\n"
+msgstr ""
+
+#: templates/occupywallst/signup.html:6 templates/occupywallst/signup.html:23
+msgid "Signup"
+msgstr ""
+
+#: templates/occupywallst/signup.html:30
+msgid "Required Fields"
+msgstr ""
+
+#: templates/occupywallst/signup.html:38
+msgid "Optional Fields"
+msgstr ""
+
+#: templates/occupywallst/user.html:5
+#, python-format
+msgid "%(username)s's User Profile"
+msgstr ""
+
+#: templates/occupywallst/user.html:33
+msgid "No Profile Information"
+msgstr ""
+
+#: templates/occupywallst/user.html:37
+msgid "Private Messages"
+msgstr ""
+
+#: templates/occupywallst/user.html:42
+msgid "send message"
+msgstr ""
+
+#: templates/occupywallst/user.html:59
+msgid "Information"
+msgstr ""
+
+#: templates/occupywallst/user.html:61
+msgid "Edit"
+msgstr ""
+
+#: templates/occupywallst/user.html:67
+msgid "From"
+msgstr ""
+
+#: templates/occupywallst/user.html:70
+msgid "Joined"
+msgstr ""
+
+#: templates/occupywallst/user.html:79
+msgid "Nearby Users"
+msgstr ""
+
+#: templatetags/ows.py:120
+#, python-format
+msgid "[Read More...](%(url)s)"
+msgstr ""
+
+#: templatetags/ows.py:174
+msgid "anonymous"
+msgstr ""
+
+#: templatetags/ows.py:175
+#, python-format
+msgid ""
+"<a title=\"View %(user)s's profile\" class=\"user\" href=\"%(url)s\">"
+"%(user)s</a>"
+msgstr ""

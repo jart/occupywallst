@@ -18,7 +18,9 @@ var forum_init;
         pagination();
         $("#newlink").click(function(ev) {
             ev.preventDefault();
-            $(".postform").toggle(400);
+            $(".postform").toggle(400, function() {
+                $(".postform .title").focus();
+            });
         });
     }
 

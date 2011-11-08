@@ -12,7 +12,7 @@
     {% endif %}
   </div>
   <p class="view-comments">
-    <a title="View Comments" href="{{ article.get_absolute_url }}#comments">
-      {{ article.comment_count|localize }} Comments</a>
+    <a title="{% trans 'View Comments' %}" href="{{ article.get_absolute_url }}#comments">
+      {{ article.comment_count|localize }} {% trans 'Comments' %}</a>
   </p>
 </article>

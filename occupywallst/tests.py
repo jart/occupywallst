@@ -10,6 +10,7 @@ r"""
 
 import random
 
+from django.conf import settings
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse
@@ -55,7 +56,7 @@ def random_words(N):
 def add_content(N):
     """ add N articles and comments to the database, for testing
     etc"""
-    api.settings.DEBUG = True
+    settings.DEBUG = True
     users = [u for u in db.User.objects.all()]
 
     for i in range(N):
@@ -97,6 +98,9 @@ class OWS(TestCase):
             ui.save()
 
     def setUp(self):
+        settings.OWS_LIMIT_THREAD = -1
+        settings.OWS_LIMIT_COMMENT = -1
+        settings.OWS_LIMIT_MSG_DAY = 999999
         self.create_users()
         self.article = db.Article(author=self.red_user,
                                   title='article title',
@@ -555,7 +559,7 @@ class OWS(TestCase):
                                      'email': 'new@occupywallst.org'})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ERROR'
-        assert j['message'] == 'Username is taken'
+        assert j['message'] == 'username is taken'
 
     def test_api_login_and_logout(self):
         # should be same for invalid username and invalid password,
@@ -606,7 +610,7 @@ class OWS(TestCase):
         assert j['results'][0]['username'] == 'blue'
 
     def test_api_message(self):
-        api.settings.DEBUG = 1
+        settings.DEBUG = True
         content = random_words(10)
 
         # login as red
@@ -645,10 +649,9 @@ class OWS(TestCase):
         response = self.client.post('/api/message_delete/',
                                     {'message_id': m.id})
 
-        api.settings.DEBUG = 0
+        settings.DEBUG = False
 
     def test_api_article(self):
-        api.settings.OWS_POST_LIMIT_THREAD = -1  # turn off limit for testing
         title = random_words(5)
         content = random_words(20)
 
@@ -722,7 +725,7 @@ class OWS(TestCase):
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
 
     def test_api_comment(self):
-        api.settings.OWS_POST_LIMIT_COMMENT = -1  # turn off limit for testing
+        settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
         content = random_words(20)
 
         # login as red
@@ -806,3 +809,61 @@ class OWS(TestCase):
         j = assert_and_get_valid_json(response)
         c = db.Comment.objects.get(id=c.id)
         assert c.downs == downs + 1
+
+    def test_api_comment_spam(self):
+        self.client.post('/api/login/', {'username': 'red', 'password': 'red'})
+
+        response = self.client.post(
+            '/api/comment_new/', {'article_slug': self.article.slug,
+                                  'parent_id': '',
+                                  'content': 'VISIT SWAMPTHING.COM TODAY!'})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'ERROR'
+        assert j['message'] == 'turn off bloody caps lock'
+
+        data = {'article_slug': self.article.slug,
+                'parent_id': '',
+                'content': 'visit swampthing.com today!'}
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert not c.is_removed
+
+        assert not db.SpamText.is_spam(c.content)
+        db.SpamText.objects.create(text='swampthing.com')
+        assert db.SpamText.is_spam(c.content)
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.is_removed
+
+    def test_shadow_ban(self):
+        self.client.post('/api/login/', {'username': 'red', 'password': 'red'})
+
+        data = {'article_slug': self.article.slug,
+                'parent_id': '',
+                'content': 'oh my goth'}
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        import pprint
+        pprint.pprint(j)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert not c.is_removed
+
+        self.red_user.userinfo.is_shadow_banned = True
+        self.red_user.userinfo.save()
+
+        response = self.client.post('/api/comment_new/', data)
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK'
+        c = db.Comment.objects.get(id=j['results'][0]['id'])
+        assert c.is_removed
+
+        self.red_user.userinfo.is_shadow_banned = False
+        self.red_user.userinfo.save()

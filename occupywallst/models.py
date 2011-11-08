@@ -1,4 +1,4 @@
-r"""
+"""
 
     occupywallst.models
     ~~~~~~~~~~~~~~~~~~~
@@ -12,9 +12,10 @@ r"""
 
 """
 
+import re
 import socket
 import logging
-import functools
+from hashlib import sha256
 from datetime import date, timedelta
 
 from django.conf import settings
@@ -25,6 +26,7 @@ from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import smart_str
 from django.template.defaultfilters import slugify
 
 from imagekit.models import ImageModel
@@ -109,6 +111,7 @@ class Verbiage(models.Model):
     @staticmethod
     def get(name, language=None):
         key = 'verbiage_%s_%s' % (name, language)
+        key = sha256(smart_str(key)).hexdigest()
         res = cache.get(key)
         if res is None:
             verb = Verbiage.objects.get(name=name)
@@ -167,6 +170,8 @@ class UserInfo(models.Model):
         Does user want an email when they message or comment response.""")
     notify_news = models.BooleanField(default=True, help_text="""
         Does user want an email new articles are published?""")
+    is_shadow_banned = models.BooleanField(default=False, help_text="""
+        If true, anything this user posts will be automatically removed.""")
 
     position = models.PointField(null=True, blank=True, help_text="""
         Aproximate coordinates of where they live to display on the
@@ -318,6 +323,14 @@ class Article(models.Model):
     is_deleted = models.BooleanField(default=False, help_text="""
         Flag to indicate should no longer be shown on site.""")
     ip = models.CharField(max_length=255, blank=True)
+
+    # hacks to make method naming more compatible with other models :(
+    is_removed = property(
+        lambda self: not self.is_visible,
+        lambda self, val: setattr(self, 'is_visible', not val))
+    user = property(
+        lambda self: self.author,
+        lambda self, val: setattr(self, 'author', val))
 
     objects = models.GeoManager()
 
@@ -560,6 +573,10 @@ class Comment(models.Model):
         self.karma = self.ups - self.downs
         self.save()
 
+    @property
+    def is_worthless(self):
+        return self.karma <= settings.OWS_WORTHLESS_COMMENT_THRESHOLD
+
     @staticmethod
     def recalculate():
         for ct in Comment.objects.all():
@@ -660,6 +677,34 @@ class Message(models.Model):
                'published': self.published}
         res.update(moar)
         return res
+
+
+class SpamText(models.Model):
+    """
+    This table is used to automatically removed user submitted content
+    containing certain spammy phrases.
+    """
+    text = models.TextField()
+    is_regex = models.BooleanField(default=False, help_text="""
+         Should text be interpreted as a perl-compatible regular
+         expression?""")
+
+    def __unicode__(self):
+        return "%s%s" % (self.text, ' (regex)' if self.is_regex else '')
+
+    def match(self, msg):
+        if self.is_regex:
+            expr = re.compile(self.text, re.I | re.S)
+        else:
+            expr = re.compile(re.escape(self.text), re.I)
+        return expr.search(msg) is not None
+
+    @staticmethod
+    def is_spam(msg):
+        for spamtext in SpamText.objects.all():
+            if spamtext.match(msg):
+                return True
+        return False
 
 
 class Ride(models.Model):

@@ -1,45 +1,49 @@
 {% load ows %}
+{% load i18n %}
 {% load l10n %}
 
 {% if not comment.is_deleted or comment.replies %}
-  <div class="comment" id="comment-{{ comment.id }}">
-    <div class="content {% if comment.is_removed %}removed{% endif %}">
+  <div class="comment {% if comment.is_worthless %}collapsed{% endif %}" id="comment-{{ comment.id }}">
+    <div class="content {% if user and user.is_staff and comment.is_removed %}removed{% endif %}">
       {% if comment.is_deleted %}
-        <p class="deleted"><span>This comment was deleted D:</span></p>
+        <p class="deleted"><span>{% trans 'This comment was deleted D:' %}</span></p>
       {% else %}
-        <div class="arrows">
-          <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">↥</a><br />
-          <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">↧</a>
-        </div>
         <div class="info">
-          {% if not comment.user %}anonymous{% else %}
-            <a class="user" href="{{ comment.user.get_absolute_url }}">
-              {{ comment.user.username }}</a>
-            {% if comment.user.userinfo.city and comment.user.userinfo.region %}
-              ({{ comment.user.userinfo.city }}, {{ comment.user.userinfo.region }})
-            {% endif %}
+          <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
+          <span>{{ comment.user|userlink }}</span>
+          {% if user and user.is_staff %}
+            [<a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
+             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
+             <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>]
           {% endif %}
-          <span class="karma">{{ comment.karma }}</span> points
-          <span class="published">{{ comment.published|timesince_short }} ago</span>
+          {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
+{% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
+({{ city }}, {{ region }})
+{% endblocktrans %}
+          {% endif %}
+          <span class="karma">{{ comment.karma|localize }}</span> {% trans 'points' %}
+          <span class="published">{{ comment.published|timesince_short }} {% trans 'ago' %}</span>
         </div>
         <div class="words">
           {{ comment.content|markup }}
         </div>
         <div class="links">
-            {% if can_reply %}
-            <a class="reply" href="#">reply</a>
-            {% endif %}
-          <a class="permalink" href="{{ comment.get_absolute_url }}">permalink</a>
+          <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">{% trans '↥like' %}</a>
+          <a class="down {% if comment.downvoted %}downvoted{% endif %}" href="#">{% trans '↧dislike' %}</a>
+          {% if can_reply %}
+            <a class="reply" href="#">{% trans 'reply' %}</a>
+          {% endif %}
           {% if user and user.is_staff %}
-            <a class="remove" href="#">{% if comment.is_removed %}un{% endif %}remove</a>
-            <a class="edit" href="#">edit</a>
-            <a class="delete" href="#">delete</a>
+            <a class="edit" href="#">{% trans 'edit' %}</a>
+            <a class="delete" href="#">{% trans 'delete' %}</a>
+            <a class="remove" href="#">{% if comment.is_removed %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
           {% else %}
             {% if user and user.is_authenticated and user == comment.user %}
-              <a class="edit" href="#">edit</a>
-              <a class="delete" href="#">delete</a>
+              <a class="edit" href="#">{% trans 'edit' %}</a>
+              <a class="delete" href="#">{% trans 'delete' %}</a>
             {% endif %}
           {% endif %}
+          <a class="permalink" href="{{ comment.get_absolute_url }}">{% trans 'permalink' %}</a>
         </div>
       {% endif %}
     </div>

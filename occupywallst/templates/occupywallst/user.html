@@ -2,7 +2,7 @@
 {% load ows %}
 {% load i18n %}
 
-{% block title %}{{ obj.username }}'s User Profile | {{ OWS_SITE_NAME }}{% endblock title %}
+{% block title %}{% blocktrans with username=obj.username %}{{ username }}'s User Profile{% endblocktrans %} | {{ OWS_SITE_NAME }}{% endblock title %}
 
 {% block scripts %}
   <script src="//maps.google.com/maps/api/js?sensor=false&region=us" type="text/javascript"></script>
@@ -30,16 +30,16 @@
       {% if obj.userinfo.info %}
         {{ obj.userinfo.info|linebreaks }}
       {% else %}
-        <p style="color:#333">No Profile Information</p>
+        <p style="color:#333">{% trans 'No Profile Information' %}</p>
       {% endif %}
     </section>
 
-    <h2>Private Messages</h2>
+    <h2>{% trans 'Private Messages' %}</h2>
 
     {% if user.is_authenticated %}
       <p class="postform">
         <textarea rows="5" cols="50"></textarea><br />
-        <button class="save">send message</button>
+        <button class="save">{% trans 'send message' %}</button>
         <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif"
              width="16" height="16" />
         <span class="error"></span>
@@ -56,9 +56,9 @@
   </td><td id="right">
 
     <h2 style="margin-top:0">
-      Information
+      {% trans 'Information' %}
       {% if obj.username == user.username %}
-        [<a href="edit/">Edit</a>]
+        [<a href="edit/">{% trans 'Edit' %}</a>]
       {% endif %}
     </h2>
     <section id="user-info">
@@ -76,7 +76,7 @@
     </section>
 
     {% if nearby and obj.userinfo.position %}
-      <h2>Nearby Users</h2>
+      <h2>{% trans 'Nearby Users' %}</h2>
       <section id="nearby-users">
         <ul>
           {% for obj in nearby %}

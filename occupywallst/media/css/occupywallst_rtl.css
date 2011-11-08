@@ -3,6 +3,12 @@ html { direction: rtl; }
 #navbar ul { float: right; }
 #navbar li { float: right; }
 #navbar li.last { padding-right: 0.5em; }
+#sidebar { float: left; margin: 0 1em 0 1em; }
+
+.comment .deleted { margin-left: -1em; }
+.comment blockquote { margin-right: 0.2em; padding-right: 0.5em; border-right: 2px solid #aaa; }
+.replies { margin-right: 3px; padding-right: 7px; border-right: 2px solid #eee; border-left: none; }
+
 
 #fist {
     float: right;
