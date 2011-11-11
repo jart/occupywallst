@@ -11,7 +11,7 @@
 [ -z $DEST ]           && DEST='.'
 [ -z $PROJ ]           && PROJ='ows'
 [ -z $DB ]             && DB=$PROJ
-[ -z $DOMAIN ]         && DOMAIN='dev.occupywallst.org'
+[ -z $DOMAIN ]         && DOMAIN='occupywallst.dev'
 [ -z $RECAPTCHA_PUB ]  && RECAPTCHA_PUB='6Lf32MkSAAAAAMKMBKBqwtjdh2TeYUwVthzgPLRC'
 [ -z $RECAPTCHA_PRIV ] && RECAPTCHA_PRIV='6Lf32MkSAAAAAJPNhPJ7moPueeJSfvjfecyG6x1u'
 [ -z $REPO ]           && REPO=$(git remote -v 2>/dev/null | grep ^origin | awk '{print $2}' | grep /occupywallst\.git$ | head -n 1)
