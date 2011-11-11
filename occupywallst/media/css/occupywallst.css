@@ -195,7 +195,7 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .comment .info { color: #666; font-size: 0.9em; }
 .comment .info .collapse { font: 10px verdana, arial, helvetica; color: #666; }
 .comment .links { font-size: 0.9em; }
-.comment .links a { margin-right: 0.5em; }
+.comment .links a { margin: 0 0.15em; }
 .comment .deleted { margin-left: -1em; }
 .comment .deleted span { background: #eee; padding: 0.5em; }
 .comment .links .upvoted { font-weight: bold; }

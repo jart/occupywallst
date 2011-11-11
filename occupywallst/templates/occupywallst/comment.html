@@ -11,11 +11,6 @@
         <div class="info">
           <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
           <span>{{ comment.user|userlink }}</span>
-          {% if user and user.is_staff %}
-            [<a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
-             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
-             <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>]
-          {% endif %}
           {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
 {% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
 ({{ city }}, {{ region }})
@@ -33,17 +28,20 @@
           {% if can_reply %}
             <a class="reply" href="#">{% trans 'reply' %}</a>
           {% endif %}
-          {% if user and user.is_staff %}
+          {% if user and user.is_authenticated and user == comment.user %}
             <a class="edit" href="#">{% trans 'edit' %}</a>
             <a class="delete" href="#">{% trans 'delete' %}</a>
-            <a class="remove" href="#">{% if comment.is_removed %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
-          {% else %}
-            {% if user and user.is_authenticated and user == comment.user %}
-              <a class="edit" href="#">{% trans 'edit' %}</a>
-              <a class="delete" href="#">{% trans 'delete' %}</a>
-            {% endif %}
           {% endif %}
           <a class="permalink" href="{{ comment.get_absolute_url }}">{% trans 'permalink' %}</a>
+          {% if user and user.is_staff %}
+            ({% trans 'Mod:' %}
+            <a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
+            <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
+            <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>
+            <a href="/admin/occupywallst/comment/{{ comment.id }}/">{% trans 'admin' %}</a>
+            <a class="edit" href="#">{% trans 'edit' %}</a>
+            <a class="remove" href="#">{% if comment.is_removed %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>)
+          {% endif %}
         </div>
       {% endif %}
     </div>
