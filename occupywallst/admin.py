@@ -116,6 +116,11 @@ class ArticleTranslationInline(admin.StackedInline):
     extra = 1
 
 
+def action_invisible(modeladmin, request, queryset):
+    queryset.update(is_visible=False)
+action_invisible.short_description = "Make article/thread invisible"
+
+
 class ArticleAdmin(GeoAdmin):
     date_hierarchy = 'published'
     list_display = ('title', 'author', 'published', 'comment_count',
@@ -125,6 +130,7 @@ class ArticleAdmin(GeoAdmin):
     ordering = ('-published',)
     prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ('author',)
+    actions = (action_invisible,)
     inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
@@ -155,6 +161,11 @@ class ArticleAdmin(GeoAdmin):
         return HttpResponseRedirect(url)
 
 
+def action_remove(modeladmin, request, queryset):
+    queryset.update(is_removed=True)
+action_remove.short_description = "Remove comments from forum"
+
+
 class CommentAdmin(GeoAdmin):
     date_hierarchy = 'published'
     list_display = (content_field(30), 'published', 'user', 'karma', 'ups',
@@ -162,6 +173,7 @@ class CommentAdmin(GeoAdmin):
     list_filter = ('is_removed', 'is_deleted')
     search_fields = ('content', 'user__username')
     ordering = ('-published',)
+    actions = (action_remove,)
 
     def has_add_permission(self, request):
         return False
