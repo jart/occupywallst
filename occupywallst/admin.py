@@ -7,6 +7,7 @@ r"""
 
 """
 
+from django.utils.html import escape
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -133,7 +134,7 @@ def verbiage_type(verbiage):
 
 def user_column(obj):
     return '<a href="/admin/auth/user/%d/">%s</a>' % (
-        obj.id, obj.user.username)
+        obj.id, escape(obj.user.username))
 user_column.short_description = 'User'
 user_column.allow_tags = True
 
