@@ -121,9 +121,26 @@ def action_invisible(modeladmin, request, queryset):
 action_invisible.short_description = "Make article/thread invisible"
 
 
+def verbiage_type(verbiage):
+    vt = 'Page' if verbiage.name.startswith('/') else 'Fragment'
+    if verbiage.use_markdown:
+        return 'Markdown ' + vt
+    elif verbiage.use_template:
+        return 'Template ' + vt
+    else:
+        return 'Plain-Text ' + vt
+
+
+def user_column(obj):
+    return '<a href="/admin/auth/user/%d/">%s</a>' % (
+        obj.id, obj.user.username)
+user_column.short_description = 'User'
+user_column.allow_tags = True
+
+
 class ArticleAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = ('title', 'author', 'published', 'comment_count',
+    list_display = ('title', user_column, 'published', 'comment_count',
                     'is_visible', 'is_deleted')
     list_filter = ('is_visible', 'is_deleted')
     search_fields = ('title', 'content', 'author__username')
@@ -166,10 +183,15 @@ def action_remove(modeladmin, request, queryset):
 action_remove.short_description = "Remove comments from forum"
 
 
+def words_column(obj):
+    return len(obj.content.split())
+words_column.short_description = 'Words'
+
+
 class CommentAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = (content_field(30), 'published', 'user', 'karma', 'ups',
-                    'downs', 'is_removed', 'is_deleted')
+    list_display = (content_field(30), user_column, 'karma', words_column,
+                    'published', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
     search_fields = ('content', 'user__username')
     ordering = ('-published',)
