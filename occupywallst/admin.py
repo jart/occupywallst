@@ -134,7 +134,7 @@ def verbiage_type(verbiage):
 
 def user_column(obj):
     return '<a href="/admin/auth/user/%d/">%s</a>' % (
-        obj.id, escape(obj.user.username))
+        obj.user.id, escape(obj.user.username))
 user_column.short_description = 'User'
 user_column.allow_tags = True
 
