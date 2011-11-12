@@ -3,7 +3,7 @@
     "pk": 3,
     "model": "occupywallst.verbiage",
     "fields": {
-      "content": "this site was brought to you by various radicals  \r\nhosting for this site generously donated by [alternet](http://www.alternet.org/) <3  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020",
+      "content": "this site was brought to you by various radicals  \r\nemail: [general@occupywallst.org](mailto:general@occupywallst.org) | help line: +1 (877) 881-3020",
       "use_markdown": true,
       "name": "footer",
       "use_template": false
@@ -73,7 +73,7 @@
     "pk": 2,
     "model": "occupywallst.verbiage",
     "fields": {
-      "content": "<div id=\"navbar\">\r\n  <ul>\r\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\r\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.livestream.com/globalrevolution\">LiveStream</a></li>\r\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\r\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\r\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\r\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://www.nycga.net/\">NYCGA</a></li>\r\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\r\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"/donate/\">Donate</a></li>\r\n    <li class=\"last\">\r\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\r\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\r\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\r\n    </li>\r\n  </ul>\r\n</div>  \r\n",
+      "content": "<div id=\"navbar\">\r\n  <ul>\r\n    <li class=\"item nav-news first\"><a class=\"fast\" title=\"News Articles\" href=\"/\">News</a></li>\r\n    <li class=\"item nav-livestream\"><a title=\"Watch the Protest Live\" href=\"http://www.occupystreams.org/\">LiveStream</a></li>\r\n    <li class=\"item nav-forum\"><a title=\"Public discussion board\" href=\"/forum/\">Forum</a></li>\r\n    <li class=\"item nav-chat\"><a class=\"fast\" title=\"Web-based chatroom\" href=\"/chat/\">Chat</a></li>\r\n    <li class=\"item nav-attendees\"><a class=\"fast\" title=\"Map of people involved\" href=\"/attendees/\">User Map</a></li>\r\n    <li class=\"item nav-nycga\"><a title=\"NYC General Assembly\" href=\"http://nycga.net/\">NYCGA</a></li>\r\n    <li class=\"item nav-about\"><a class=\"fast\" title=\"About Us / Contact\" href=\"/about/\">About</a></li>\r\n    <li class=\"item nav-donate\"><a class=\"fast\" title=\"Solidarity Forever!\" href=\"/donate/\">Donate</a></li>\r\n    <li class=\"last\">\r\n      <a title=\"Facebook Event\" href=\"http://www.facebook.com/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/facebook.png\" /></a>\r\n      <a title=\"Our Twitter Page\" href=\"https://twitter.com/#!/OccupyWallSt\"><img width=\"24\" height=\"24\" src=\"/media/img/twitter.png\" /></a>\r\n      <a title=\"Reddit\" href=\"http://www.reddit.com/r/occupywallstreet/\"><img width=\"24\" height=\"23\" style=\"padding-bottom:3px\" src=\"/media/img/reddit.png\" /></a>\r\n    </li>\r\n  </ul>\r\n</div>  \r\n",
       "use_markdown": true,
       "name": "navbar",
       "use_template": false
@@ -186,6 +186,26 @@
       "content": "<div>\r\n  <img alt=\"Raised Fist\" title=\"Raised Fist\" id=\"fist\" src=\"/media/img/fist.png\" width=\"59\" height=\"94\" />\r\n  <div id=\"brand\"><a href=\"/\"><span class=\"red\">Occupy</span>WallStreet</a></div>\r\n  <div id=\"slogan\">\r\n    La r\u00e9sistance pers\u00e9v\u00e8re au Liberty Square et <a href=\"http://occupytogether.org/\">nationale</a>!\r\n  </div>\r\n</div>",
       "verbiage": 1,
       "language": "fr"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "occupywallst.verbiage",
+    "fields": {
+      "content": "# four oh four - page not found\n\nThe page you're looking for isn't here.  Sorry ._.",
+      "use_markdown": false,
+      "name": "error404",
+      "use_markdown": true
+    }
+  },
+  {
+    "pk": 21,
+    "model": "occupywallst.verbiage",
+    "fields": {
+      "content": "# five hundred - internal server error\n\nThe admins have been notified of this error.  Please try again soon.",
+      "use_markdown": false,
+      "name": "error500",
+      "use_markdown": true
     }
   }
 ]

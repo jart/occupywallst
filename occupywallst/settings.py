@@ -30,11 +30,13 @@ RECAPTCHA_PRIVATE_KEY =  'please change me'
 SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 
-OWS_POST_LIMIT_THREAD = 60 * 10  # ten minutes
-OWS_POST_LIMIT_COMMENT = 60 * 3  # three minutes
+OWS_LIMIT_MSG_DAY = 15  # max private messages per day
+OWS_LIMIT_THREAD = 60 * 10  # ten minutes
+OWS_LIMIT_COMMENT = 60 * 3  # three minutes
 OWS_MAX_COMMENT_DEPTH = 15
 OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
+OWS_WORTHLESS_COMMENT_THRESHOLD = -4
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
                for fname in os.listdir(join(MEDIA_ROOT, 'js/occupywallst'))]
@@ -61,7 +63,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'KEY_PREFIX': os.getenv('VIRTUAL_ENV'),
+        'KEY_PREFIX': project_root,
         'LOCATION': [
             '127.0.0.1:11211',
         ],
@@ -95,18 +97,28 @@ LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
+STATIC_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_ENGINE = 'occupywallst.memcachedjson'
 USE_X_FORWARDED_HOST = True
+ROSETTA_MESSAGES_PER_PAGE = 25
 
 gettext_noop = lambda s: s
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('es', gettext_noop('Spanish')),
     ('fr', gettext_noop('French')),
+    ('de', gettext_noop('German')),
+    ('pt', gettext_noop('Portuguese')),
+    ('ru', gettext_noop('Russian')),
     ('el', gettext_noop('Greek')),
+    ('he', gettext_noop('Hebrew')),
+    ('ar', gettext_noop('Arabic')),
+    ('hi', gettext_noop('Hindi')),
+    ('zh-cn', gettext_noop('Simplified Chinese')),
+    ('ja', gettext_noop('Japanese')),
 )
 
 TEMPLATE_LOADERS = (
@@ -150,6 +162,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.gis',
+    'rosetta',
+    'south',
 ]
 
 try:

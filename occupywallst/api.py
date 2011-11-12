@@ -43,9 +43,10 @@ from django.core.validators import email_re
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext as _
 
 from occupywallst import models as db
-from occupywallst.utils import APIException
+from occupywallst.utils import APIException, timesince
 
 
 def _str_to_bbox(val):
@@ -79,7 +80,7 @@ def forumlinks(after, count, **kwargs):
     """
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
-        raise APIException("bad arguments")
+        raise APIException(_("bad arguments"))
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_deleted=False)
@@ -131,13 +132,13 @@ def ride_request_update(request_id, status, user=None, **kwargs):
     try:
         req = ride_request[0]
     except IndexError:
-        raise APIException("Request not found.")
+        raise APIException(_("request not found"))
     if req.ride.user == user:
         req.status = status
         req.save()
         return [{"id": req.id, "status": req.status}]
     else:
-        raise APIException("You do not have permission to update this request")
+        raise APIException(_("insufficient permissions"))
 
 
 def attendee_info(username, **kwargs):
@@ -162,25 +163,38 @@ def _check_post(user, post):
     if user.is_staff:
         return
     if len(post.content) < 3:
-        raise APIException("content too short")
+        raise APIException(_("content too short"))
     if len(post.content) > 5 * 1024:
-        raise APIException("content too long")
+        raise APIException(_("content too long"))
     if ((len(post.content) < 8 and 'bump' in post.content.lower()) or
         (len(post.content) < 5 and '+1' in post.content.lower())):
-        raise APIException("please don't bump threads")
+        raise APIException(_("please don't bump threads"))
     if _too_many_caps(post.content):
-        raise APIException("turn off bloody caps lock")
+        raise APIException(_("turn off bloody caps lock"))
     if hasattr(post, 'title'):
         if len(post.title) < 3:
-            raise APIException("title too short")
+            raise APIException(_("title too short"))
         if len(post.title) > 255:
-            raise APIException("title too long")
+            raise APIException(_("title too long"))
         if _too_many_caps(post.title):
-            raise APIException("turn off bloody caps lock")
+            raise APIException(_("turn off bloody caps lock"))
     antifa = re.compile(r'ron paul', re.I)
     if hasattr(post, 'title'):
         post.title = antifa.sub('Ron Lawl', post.title)
     post.content = antifa.sub('Ron Lawl', post.content)
+    if db.SpamText.is_spam(post.content):
+        post.is_removed = True
+    if user.userinfo.is_shadow_banned:
+        post.is_removed = True
+
+
+def _limiter(last, seconds):
+    limit = timedelta(seconds=seconds)
+    since = (datetime.now() - last)
+    if since < limit:
+        raise APIException(
+            _("please wait %(duration)s before making another post") % {
+                "duration": timesince(datetime.now() - limit + since)})
 
 
 def article_new(user, title, content, is_forum, **kwargs):
@@ -191,23 +205,19 @@ def article_new(user, title, content, is_forum, **kwargs):
     """
     is_forum = _to_bool(is_forum)
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     if not is_forum:
         if not user.is_staff:
-            raise APIException("insufficient privileges")
+            raise APIException(_("insufficient privileges"))
     title = title.strip()
     content = content.strip()
     slug = slugify(title)[:50]
     if db.Article.objects.filter(slug=slug).count():
-        raise APIException("a thread with this title exists")
+        raise APIException(_("a thread with this title exists"))
     if not settings.DEBUG and not user.is_staff:
         last = user.article_set.order_by('-published')[:1]
         if last:
-            limit = settings.OWS_POST_LIMIT_THREAD
-            since = (datetime.now() - last[0].published).seconds
-            if since < limit:
-                raise APIException("please wait %d seconds before making "
-                                   "another forum thread" % (limit - since))
+            _limiter(last[0].published, settings.OWS_LIMIT_THREAD)
     article = db.Article()
     article.author = user
     article.published = datetime.now()
@@ -230,18 +240,18 @@ def article_edit(user, article_slug, title, content, **kwargs):
     article.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     title = title.strip()
     content = content.strip()
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
-        raise APIException("article not found")
+        raise APIException(_("article not found"))
     if not user.is_staff:
         if article.author != user:
-            raise APIException("you didn't post that")
+            raise APIException(_("you didn't post that"))
         if article.allow_html or not article.is_forum:
-            raise APIException("insufficient privileges")
+            raise APIException(_("insufficient privileges"))
     article.title = title
     article.content = content
     _check_post(user, article)
@@ -263,17 +273,16 @@ def article_delete(user, article_slug, **kwargs):
     once it's been converted to a news article.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     try:
-        article = db.Article.objects.get(slug=article_slug, is_visible=True,
-                                         is_deleted=False)
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
-        raise APIException("article not found")
+        raise APIException(_("article not found"))
     if article.author != user:
-        raise APIException("you didn't post that")
+        raise APIException(_("you didn't post that"))
     if not user.is_staff:
         if not article.is_forum:
-            raise APIException("insufficient privileges")
+            raise APIException(_("insufficient privileges"))
     article.author = None
     article.title = "[DELETED]"
     article.content = "[DELETED]"
@@ -286,19 +295,19 @@ def article_remove(user, article_slug, action, **kwargs):
     """Makes an article unlisted and invisible to search engines
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     if not user.is_staff:
-        raise APIException("insufficient permissions")
+        raise APIException(_("insufficient permissions"))
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
-        raise APIException("article not found")
+        raise APIException(_("article not found"))
     if action == 'remove':
         article.is_visible = False
     elif action == 'unremove':
         article.is_visible = True
     else:
-        raise APIException("invalid action")
+        raise APIException(_("invalid action"))
     article.save()
     return []
 
@@ -309,7 +318,7 @@ def article_get(user, article_slug=None, **kwargs):
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
-        raise APIException("article not found")
+        raise APIException(_("article not found"))
     html = render_to_string('occupywallst/article_content.html',
                             {'article': article,
                              'user': user})
@@ -324,12 +333,12 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     Also upvotes comment and increments article comment count.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     content = content.strip()
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
-        raise APIException('article not found')
+        raise APIException(_('article not found'))
 
     def comment_depth(id):
         depth = 0
@@ -346,9 +355,9 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         comhash = dict((c.id, c) for c in other_comments)
         parent = comhash[int(parent_id)]
         if int(parent_id) not in comhash:
-            raise APIException("parent comment not found")
+            raise APIException(_("parent comment not found"))
         if comment_depth(int(parent_id)) + 1 > settings.OWS_MAX_COMMENT_DEPTH:
-            raise APIException("comment nested too deep")
+            raise APIException(_("comment nested too deep"))
     else:
         parent = None
         parent_id = None
@@ -362,11 +371,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
             except IndexError:
                 pass
         if last:
-            limit = settings.OWS_POST_LIMIT_COMMENT
-            since = (datetime.now() - last.published).seconds
-            if since < limit:
-                raise APIException("please wait %d seconds before making "
-                                   "another comment" % (limit - since))
+            _limiter(last.published, settings.OWS_LIMIT_COMMENT)
 
     comment = db.Comment()
     comment.article = article
@@ -378,17 +383,21 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     _check_post(user, comment)
     comment.save()
     comment_vote(user, comment, "up", **kwargs)
-    article.comment_count += 1
-    article.killed = datetime.now()
+    if not comment.is_removed:
+        article.comment_count += 1
+        article.killed = datetime.now()
     article.save()
-    if parent:
-        db.Notification.send(parent.user, comment.get_absolute_url(),
-                             '%s replied to your comment: %s'
-                             % (username, truncate_words(parent.content, 7)))
-    else:
-        db.Notification.send(article.author, comment.get_absolute_url(),
-                             '%s replied to your post: %s'
-                             % (username, truncate_words(article.content, 7)))
+    if not comment.is_removed:
+        if parent:
+            descrip = truncate_words(parent.content, 7)
+            db.Notification.send(
+                parent.user, comment.get_absolute_url(),
+                '%s replied to your comment: %s' % (username, descrip))
+        else:
+            descrip = truncate_words(article.content, 7)
+            db.Notification.send(
+                article.author, comment.get_absolute_url(),
+                '%s replied to your post: %s' % (username, descrip))
     return comment_get(user, comment.id)
 
 
@@ -398,7 +407,7 @@ def comment_get(user, comment_id=None, **kwargs):
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException("comment not found")
+        raise APIException(_("comment not found"))
     comment.upvoted = False
     comment.downvoted = False
     if user and user.id:
@@ -413,7 +422,8 @@ def comment_get(user, comment_id=None, **kwargs):
                 comment.downvoted = True
     html = render_to_string('occupywallst/comment.html',
                             {'comment': comment,
-                             'user': user})
+                             'user': user,
+                             'can_reply': True})
     return [comment.as_dict({'html': html})]
 
 
@@ -421,17 +431,17 @@ def comment_edit(user, comment_id, content, **kwargs):
     """Edit a comment's content
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     content = content.strip()
     if len(content) < 3:
-        raise APIException("comment too short")
+        raise APIException(_("comment too short"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException("comment not found")
+        raise APIException(_("comment not found"))
     if not user.userinfo.can_moderate():
         if comment.user != user:
-            raise APIException("you didn't post that comment")
+            raise APIException(_("you didn't post that"))
     comment.content = content
     _check_post(user, comment)
     comment.save()
@@ -442,13 +452,13 @@ def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     if not user.userinfo.can_moderate():
-        raise APIException("insufficient vespene gas")
+        raise APIException(_("insufficient permissions"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException("comment not found")
+        raise APIException(_("comment not found"))
     if action == 'remove' and not comment.is_removed:
         comment.is_removed = True
         comment.article.comment_count -= 1
@@ -456,7 +466,7 @@ def comment_remove(user, comment_id, action, **kwargs):
         comment.is_removed = False
         comment.article.comment_count += 1
     else:
-        raise APIException("invalid action")
+        raise APIException(_("invalid action"))
     comment.save()
     comment.article.save()
     return []
@@ -468,14 +478,14 @@ def comment_delete(user, comment_id, **kwargs):
     Also decrements article comment count.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
-        raise APIException("comment not found")
+        raise APIException(_("comment not found"))
     if not user.userinfo.can_moderate():
         if comment.user != user:
-            raise APIException("you didn't post that comment")
+            raise APIException(_("you didn't post that"))
     comment.article.comment_count -= 1
     comment.article.save()
     comment.delete()
@@ -496,13 +506,13 @@ def comment_vote(user, comment, vote, **kwargs):
         try:
             comment = db.Comment.objects.get(id=comment, is_deleted=False)
         except db.Comment.DoesNotExist:
-            raise APIException("comment not found")
+            raise APIException(_("comment not found"))
     if not (user and user.id):
         ip = _try_to_get_ip(kwargs)
         if ip:
             key = "vote_comment_%s__%s" % (comment.id, ip)
             if cache.get(key, False):
-                raise APIException("you already voted")
+                raise APIException(_("you already voted"))
             else:
                 cache.set(key, True)
     if vote == "up":
@@ -510,7 +520,7 @@ def comment_vote(user, comment, vote, **kwargs):
     elif vote == "down":
         comment.downvote(user)
     else:
-        raise APIException("invalid vote")
+        raise APIException(_("invalid vote"))
     return []
 
 
@@ -530,36 +540,31 @@ def message_send(user, to_username, content, **kwargs):
     """Send a private message.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     content = content.strip()
     if len(content) < 3:
-        raise APIException("message too short")
+        raise APIException(_("message too short"))
     try:
         to_user = db.User.objects.get(username=to_username, is_active=True)
     except db.User.DoesNotExist:
-        raise APIException('user not found')
+        raise APIException(_('user not found'))
     if user == to_user:
-        raise APIException("you can't message yourself")
-    if not settings.DEBUG:
-        last = user.messages_sent.order_by('-published')[:1]
-        if last:
-            if (datetime.now() - last[0].published).seconds < 30:
-                raise APIException("hey slow down a little!")
+        raise APIException(_("you can't message yourself"))
     if not user.is_staff:
         hours24 = datetime.now() - timedelta(hours=24)
         rec = db.Message.objects.filter(from_user=user, published__gt=hours24)
         sentusers = set(m.to_user.username for m in rec)
-        max_ = settings.OWS_MAX_PRIVMSG_USER_DAY
-        if len(sentusers) > max_:
-            raise APIException("you can't private message more than %d users "
-                               "in one day" % (max_))
+        if len(sentusers) > settings.OWS_LIMIT_MSG_DAY:
+            raise APIException(
+                _("you can't send more than %(limit)s messages per day") % {
+                    "limit": settings.OWS_LIMIT_MSG_DAY})
     msg = db.Message.objects.create(from_user=user,
                                     to_user=to_user,
                                     content=content)
-    db.Notification.send(to_user, user.get_absolute_url(),
-                         '%s sent you a message' % (user.username))
-    html = render_to_string('occupywallst/message.html',
-                            {'message': msg})
+    db.Notification.send(
+        to_user, user.get_absolute_url(),
+        _("%(username)s sent you a message" % {"username": user.username}))
+    html = render_to_string('occupywallst/message.html', {'message': msg})
     return [msg.as_dict({'html': html})]
 
 
@@ -569,13 +574,13 @@ def message_delete(user, message_id, **kwargs):
     Both the sender and the receiver are able to delete messages.
     """
     if not (user and user.id):
-        raise APIException("you're not logged in")
+        raise APIException(_("you're not logged in"))
     try:
         msg = db.Message.objects.get(id=message_id, is_deleted=False)
     except db.Message.DoesNotExist:
-        raise APIException("message not found")
+        raise APIException(_("message not found"))
     if user != msg.to_user and user != msg.from_user:
-        raise APIException("you didn't send or receive that message")
+        raise APIException(_("you didn't send or receive that message"))
     msg.delete()
     return []
 
@@ -584,14 +589,14 @@ def check_username(username, check_if_taken=True, **kwargs):
     """Check if a username is valid and available
     """
     if len(username) < 3:
-        raise APIException("Username is too short")
+        raise APIException(_("username too short"))
     if len(username) > 30:
-        raise APIException("Username is too long")
+        raise APIException(_("username too long"))
     if not re.match(r'[a-zA-Z0-9]{3,30}', username):
-        raise APIException("Bad username, use only letters/numbers")
+        raise APIException(_("bad username, use only letters/numbers"))
     if check_if_taken:
-        if db.User.objects.filter(username=username).count():
-            raise APIException("Username is taken")
+        if db.User.objects.filter(username__iexact=username).count():
+            raise APIException(_("username is taken"))
     return []
 
 
@@ -603,15 +608,15 @@ def signup(request, username, password, email, **kwargs):
     - Email is optional
     """
     if request.user.is_authenticated():
-        raise APIException("you're already logged in")
+        raise APIException(_("you're already logged in"))
     check_username(username=username)
     if len(password) < 6:
-        raise APIException("password must be at least six characters")
+        raise APIException(_("password must be at least six characters"))
     if len(password) > 128:
-        raise APIException("password too long")
+        raise APIException(_("password too long"))
     if email:
         if not email_re.match(email):
-            raise APIException("invalid email address")
+            raise APIException(_("invalid email address"))
     user = db.User()
     user.username = username
     user.set_password(password)
@@ -632,10 +637,10 @@ def login(request, username, password, **kwargs):
     """Login user
     """
     if request.user.is_authenticated():
-        raise APIException("you're already logged in")
+        raise APIException(_("you're already logged in"))
     user = auth.authenticate(username=username, password=password)
     if not user:
-        raise APIException("invalid username or password")
+        raise APIException(_("invalid username or password"))
     auth.login(request, user)
     return [user.userinfo.as_dict()]
 

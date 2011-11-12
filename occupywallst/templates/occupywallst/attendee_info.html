@@ -1,3 +1,7 @@
+{% load ows %}
+{% load i18n %}
+{% load l10n %}
+
 <div class="bubble attendee-info" id="{{ user.username }}">
 
   <p class="links">
@@ -6,18 +10,6 @@
     {% if user.userinfo.city and user.userinfo.region %}
       | {{ user.userinfo.city }}, {{ user.userinfo.region }}
     {% endif %}
-    {% if user.userinfo.need_ride %}
-      | Needs Ride
-    {% endif %}
-    {% if user.userinfo.attendance == "yes" %}
-      | <span class="attendance yes">Attending</span>
-    {% endif %}
-    {% if user.userinfo.attendance == "no" %}
-      | <span class="attendance no">Not Attending</span>
-    {% endif %}
-    {% if user.userinfo.attendance == "maybe" %}
-      | <span class="attendance maybe">Maybe Attending</span>
-    {% endif %}
   </p>
   <div class="profile">
     {{ user.userinfo.info|linebreaks }}
@@ -25,7 +17,7 @@
 
   <p class="postform">
     <textarea rows="3" cols="40"></textarea><br />
-    <button class="save">send private message</button>
+    <button class="save">{% trans 'send private message' %}</button>
     <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
     <span class="error"></span>
   </p>

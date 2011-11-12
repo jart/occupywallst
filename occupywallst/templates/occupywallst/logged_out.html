@@ -1,8 +1,9 @@
 {% extends base %}
+{% load i18n %}
 
 {% block content %}
   <section id="logout">
-    <h1>Logout</h1>
-    <p>You are now logged out.</p>
+    <h1>{% trans 'Logout' %}</h1>
+    <p>{% trans 'You are now logged out.' %}</p>
   </section>
 {% endblock content %}

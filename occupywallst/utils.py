@@ -13,12 +13,13 @@ import logging
 import traceback
 from decimal import Decimal
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponse
-from django.utils.translation import ungettext
+from django.utils.tzinfo import LocalTimezone
+from django.utils.translation import ungettext, ugettext
 
 
 logger = logging.getLogger(__name__)
@@ -124,26 +125,40 @@ def sanitize_json(value):
         return value
 
 
-def timesince(timestamp):
-    delta = (datetime.now() - timestamp)
-    seconds = delta.days * 60 * 60 * 24 + delta.seconds
-    if seconds < 0:
-        seconds = 0
-    if seconds <= 60:
-        x = seconds
-        return ungettext('%(x)d second', '%(x)d seconds', x) % {'x': x}
-    elif seconds <= 60 * 60:
-        x = int(seconds / 60)
-        return ungettext('%(x)d minute', '%(x)d minutes', x) % {'x': x}
-    elif seconds <= 60 * 60 * 24:
-        x = int(seconds / 60 / 60)
-        return ungettext('%(x)d hour', '%(x)d hours', x) % {'x': x}
-    elif seconds <= 60 * 60 * 24 * 30:
-        x = int(seconds / 60 / 60 / 24)
-        return ungettext('%(x)d day', '%(x)d days', x) % {'x': x}
-    else:
-        x = int(seconds / 60 / 60 / 24 / 30)
-        return ungettext('%(x)d month', '%(x)d months', x) % {'x': x}
+def timesince(d, now=None):
+    """
+    Shortened version of django.utils.timesince.timesince
+    """
+    chunks = (
+        (60 * 60 * 24 * 365, lambda n: ungettext('year', 'years', n)),
+        (60 * 60 * 24 * 30, lambda n: ungettext('month', 'months', n)),
+        (60 * 60 * 24 * 7, lambda n: ungettext('week', 'weeks', n)),
+        (60 * 60 * 24, lambda n : ungettext('day', 'days', n)),
+        (60 * 60, lambda n: ungettext('hour', 'hours', n)),
+        (60, lambda n: ungettext('minute', 'minutes', n))
+    )
+    # Convert datetime.date to datetime.datetime for comparison.
+    if not isinstance(d, datetime):
+        d = datetime(d.year, d.month, d.day)
+    if now and not isinstance(now, datetime):
+        now = datetime(now.year, now.month, now.day)
+    if not now:
+        if d.tzinfo:
+            now = datetime.now(LocalTimezone(d))
+        else:
+            now = datetime.now()
+    # ignore microsecond part of 'd' since we removed it from 'now'
+    delta = now - (d - timedelta(0, 0, d.microsecond))
+    since = delta.days * 24 * 60 * 60 + delta.seconds
+    if since <= 0:
+        # d is in the future compared to now, stop processing.
+        return u'0 ' + ugettext('minutes')
+    for i, (seconds, name) in enumerate(chunks):
+        count = since // seconds
+        if count != 0:
+            break
+    return ugettext('%(number)d %(type)s') % {
+        'number': count, 'type': name(count)}
 
 
 def jstime(dt):

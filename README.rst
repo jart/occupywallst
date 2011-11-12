@@ -6,17 +6,18 @@
 
 :name:        occupywallst
 :description: Occupy Wall Street!
-:copyright:   © 2011 Justine Tunney
+:copyright:   © 2011 Justine Tunney, et al.
 :license:     GNU AGPL v3 or later
 
 
 Installation
 ============
 
-This project has been tested on Debian 6, Ubuntu 10.04 LTS and Ubuntu
-10.10.  If you're not using Ubuntu >= 10.04 or a recent Debian then
-spare your sanity and set up a virtual machine.  Read this if you use
-PostgreSQL 9.1:
+This project has been tested on Debian 6 (recommended), Ubuntu 10.04,
+10.10, and 11.10.  If you're not using one of these distros then spare
+your sanity and set up a virtual machine.
+
+Read this if you're using PostgreSQL 9.1:
 http://psycopg.lighthouseapp.com/projects/62710-psycopg/tickets/69
 
 Right now you can ignore most of the chat/real-time related stuff
@@ -24,79 +25,57 @@ because I couldn't figure out how to make node.js/socket.io *not* leak
 a ridiculous amount of memory.  When the website was getting only
 25,000 visitors a day it would leak about 300 megs of memory an hour.
 I'm pretty confident this wasn't my fault because most of those
-requests were being plugged into the 10 lines of code in the
+requests were being plugged into about 10 lines of code I wrote in the
 notifications section in ``chat/app.js``.
 
 Anyway here's how you get started!
 
-Put this to ``/etc/hosts``::
-
-    127.0.2.1 dev.occupywallst.org
-    127.0.2.2 chat.dev.occupywallst.org
-
-Install dependencies::
-
-    sudo ./install_depends.sh
-
-Set up a PostgreSQL database with PostGIS::
+Perform some basic system changes::
 
     sudo -u postgres -i createuser --superuser root   # make root a pg admin
     sudo -u postgres -i createuser --superuser $USER  # make you a pg admin
-    for DB in occupywallst template_postgis; do
-        createdb occupywallst
-        createlang plpgsql occupywallst
-        if [ -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql ]; then
-            psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/postgis.sql
-            psql -d occupywallst -f /usr/share/postgresql/*/contrib/postgis-*/spatial_ref_sys.sql
-        else
-            psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/postgis.sql
-            psql -d occupywallst -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
-        fi
-    done
+    sudo chmod go+rwt /opt  # let all users create files in /opt
 
-Now install the project in its own virtualenv, create the database
-schema and load some initial content::
+Define pseudo hostnames by putting this in ``/etc/hosts``::
 
-    cd /opt
-    sudo virtualenv ows
-    sudo chown -R $USER ows
-    cd ows
-    source bin/activate
-    git clone git@github.com:$USER/occupywallst.git
+    127.0.2.1 occupywallst.dev
+    127.0.2.2 chat.occupywallst.dev
 
-    sudo python setup.py develop
-    occupywallst-dev syncdb --noinput
-    occupywallst-dev loaddata verbiage
-    occupywallst-dev loaddata example_data
-    occupywallst-dev runserver 127.0.0.1:9000
+Install dependencies::
 
-Set up nginx.  This is optional (but strongly recommended for
-development) and *mandatory* for production::
+    wget -qO- https://raw.github.com/jart/occupywallst/master/install_depends.sh | sudo bash
+
+Now we're going to run the install script to create a virtualenv,
+install the project, create the database, load the database content,
+and create a local settings file::
+
+    export PROJ="ows"
+    export DEST="/opt"
+    export REPO="git@github.com:$USER/occupywallst.git"  # did you make your github fork yet?
+    wget -qO- https://raw.github.com/jart/occupywallst/master/mkows.sh | bash
+    cd /opt/ows/occupywallst
+    source ../bin/activate
+
+Now we'll setup nginx as our webserver::
 
     sudo apt-get install nginx
     sudo rm /etc/nginx/sites-enabled/default
-    sudo cp conf/occupywallst.org.conf /etc/nginx/sites-available/
-    pushd /etc/nginx/sites-enabled/; sudo ln -sf ../sites-available/occupywallst.org.conf; popd
+    sudo cp conf/occupywallst.dev.conf /etc/nginx/sites-available/
+    pushd /etc/nginx/sites-enabled/; sudo ln -sf ../sites-available/occupywallst.dev.conf; popd
     sudo /etc/init.d/nginx restart
 
-Install dependencies for server-side javascript code::
+Which will forward requests to our internally running webserver::
 
-    cd chat; npm install -d; cd ..
+    occupywallst runserver 9000
 
-Optional: Run the chat server in a second terminal::
-
-    cd chat
-    sudo NODE_ENV=development node app.js
-
-Then open this url :) http://dev.occupywallst.org/
+Then open this url :) http://occupywallst.dev/
 
 There's also a backend for modifying the database and writing
-articles.  Go to http://dev.occupywallst.org/admin/ and log in as user
+articles.  Go to http://occupywallst.dev/admin/ and log in as user
 "OccupyWallSt" with the password "anarchy".
 
 If you need to customize Django settings for your local install, do it
-inside ``occupywallst/settings_local.py`` and
-``chat/settings_local.json`` because git ignores them.
+inside ``occupywallst/settings_local.py``.
 
 
 Testing
@@ -110,47 +89,30 @@ To run the regression tests::
 Production Tips
 ===============
 
-Deploying OccupyWallSt to a production environment takes a bit more
-effort.  Please consider the following advice.
-
-Create a user named ows::
-
-    sudo adduser ows
-    ssh ows@localhost
-
-Use a virtualenv::
-
-    virtualenv env
-    cd env
-    source bin/activate
-    git clone git://github.com/jart/occupywallst.git
-    cd occupywallst
-    python setup.py develop
-    occupywallst help  <-- this actually runs ../bin/occupywallst
-
 Rather than using Django's "runserver" as the backend HTTP server, I
 recommend using gunicorn::
 
-    easy_install gunicorn
-    gunicorn_django -b 127.0.0.1:9000 --workers=9 --max-requests=1000 --pid=/tmp/gunicorn-occupywallst.pid occupywallst/settings.py
+    /opt/ows/bin/gunicorn_django -b 127.0.0.1:9000 --workers=9 --max-requests=1000 --pid=/tmp/gunicorn-occupywallst.pid occupywallst/settings.py
 
-Use AppArmor to harden security::
+AppArmor allows you to write mandatory access controls that will
+reduce the potential damage of future security exploits::
 
-    sudo aa-genprof /home/ows/env/bin/gunicorn_django
-    sudo aa-complain /home/ows/env/bin/gunicorn_django
+    sudo aa-genprof /opt/ows/bin/gunicorn_django
+    sudo aa-complain /opt/ows/bin/gunicorn_django
     # run gunicorn/occupywallst and do a bunch of stuff on the site
     sudo aa-logprof
     # restart gunicorn/occupywallst and do a bunch of stuff on the site
     sudo aa-logprof
-    sudo nano -w /etc/apparmor.d/home.ows.env.bin.gunicorn_django
-    sudo aa-enforce /home/ows/env/bin/gunicorn_django
+    sudo nano -w /etc/apparmor.d/opt.ows.bin.gunicorn_django
+    sudo aa-enforce /opt/ows/bin/gunicorn_django
 
-Use pgbouncer to drastically reduce the number of processes PostgreSQL
-needs to run.  Now you have more leeway to performance tune
-PostgreSQL's settings.  These settings are *very conservative* in
-Debian by default, even more so than the default PostgreSQL sources.
+pgbouncer should be used to drastically reduce the number of processes
+postgres needs to run.  Running fewer postgresql processes also means
+you can configure postgres to use lots of memory for better
+performance.
 
-Query optimizations for forum::
+These fancy indexes will optimize the performance of certain slow
+queries::
 
     -- optimize: recent comments on forum page
     create index occupywallst_comment_published
