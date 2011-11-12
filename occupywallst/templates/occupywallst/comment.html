@@ -20,7 +20,7 @@
           <span class="published">{{ comment.published|timesince_short }} {% trans 'ago' %}</span>
         </div>
         <div class="words">
-          {{ comment.content|markup }}
+          {{ comment.content|markup|strip_annoying_html }}
         </div>
         <div class="links">
           <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">{% trans '↥like' %}</a>
