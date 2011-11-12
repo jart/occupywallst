@@ -182,7 +182,7 @@ def show_comments(context, user, comments):
     depth = context.get('depth', -1) + 1
     can_reply = depth + 1 < settings.OWS_MAX_COMMENT_DEPTH
     for comment in comments:
-        if not comment.is_removed or user.is_staff:
+        if not comment.is_removed or user.userinfo.can_moderate():
             res.append(render_to_string('occupywallst/comment.html',
                                         {'comment': comment,
                                          'user': user,
