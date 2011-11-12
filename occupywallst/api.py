@@ -429,7 +429,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         if comment.user != user:
             raise APIException("you didn't post that comment")
     comment.content = content
@@ -443,7 +443,7 @@ def comment_remove(user, comment_id, action, **kwargs):
     """
     if not (user and user.id):
         raise APIException("you're not logged in")
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         raise APIException("insufficient vespene gas")
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
@@ -473,7 +473,7 @@ def comment_delete(user, comment_id, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException("comment not found")
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         if comment.user != user:
             raise APIException("you didn't post that comment")
     comment.article.comment_count -= 1

@@ -30,7 +30,7 @@
             <a class="reply" href="#">reply</a>
             {% endif %}
           <a class="permalink" href="{{ comment.get_absolute_url }}">permalink</a>
-          {% if user and user.is_staff %}
+          {% if user and user.userinfo.can_moderate %}
             <a class="remove" href="#">{% if comment.is_removed %}un{% endif %}remove</a>
             <a class="edit" href="#">edit</a>
             <a class="delete" href="#">delete</a>
