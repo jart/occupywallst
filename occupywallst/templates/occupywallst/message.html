@@ -10,6 +10,6 @@
     (<a class="delete" href="#">{% trans 'delete' %}</a>)
   </p>
   <div class="words">
-    {{ message.content|markup }}
+    {{ message.content|markup|strip_annoying_html }}
   </div>
 </div>
