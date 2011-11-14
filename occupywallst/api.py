@@ -186,6 +186,8 @@ def _check_post(user, post):
         post.is_removed = True
     if user.userinfo.is_shadow_banned:
         post.is_removed = True
+    if post.ip.startswith('173.245.64.'):
+        post.is_removed = True
 
 
 def _limiter(last, seconds):
