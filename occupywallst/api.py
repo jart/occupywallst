@@ -607,6 +607,7 @@ def signup(request, username, password, email, **kwargs):
     - Password must be 6-128 chars
     - Email is optional
     """
+    raise APIException("disabled")
     if request.user.is_authenticated():
         raise APIException(_("you're already logged in"))
     check_username(username=username)
