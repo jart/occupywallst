@@ -314,7 +314,7 @@ def signup(request):
             key = 'signup_' + request.META['REMOTE_ADDR']
             if cache.get(key):
                 return HttpResponse('please wait before signing up again')
-            cache.set(key, True, settings.OWS_SIGNUP_LIMIT)
+            cache.set(key, True, settings.OWS_LIMIT_SIGNUP)
             form.save()
             api.login(request, form.cleaned_data.get('username'),
                       form.cleaned_data.get('password'))
