@@ -4,7 +4,7 @@
 
 <article id="{{ article.slug }}">
   {% include "occupywallst/article_info.html" %}
-  <div class="words">
+  <div class="words"> %}
     {% if article.allow_html %}
       {{ article.content|markup_unsafe }}
     {% else %}

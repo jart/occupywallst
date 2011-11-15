@@ -31,8 +31,9 @@ SESSION_COOKIE_DOMAIN = '.occupywallst.org'
 CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 
 OWS_LIMIT_MSG_DAY = 15  # max private messages per day
-OWS_LIMIT_THREAD = 60 * 10  # ten minutes
+OWS_LIMIT_THREAD = 60 * 30  # thirty minutes
 OWS_LIMIT_COMMENT = 60 * 3  # three minutes
+OWS_LIMIT_SIGNUP = 60 * 60 * 30  # three hours
 OWS_MAX_COMMENT_DEPTH = 15
 OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
