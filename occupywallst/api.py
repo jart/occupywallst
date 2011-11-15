@@ -510,13 +510,14 @@ def comment_vote(user, comment, vote, **kwargs):
         except db.Comment.DoesNotExist:
             raise APIException(_("comment not found"))
     if not (user and user.id):
-        ip = _try_to_get_ip(kwargs)
-        if ip:
-            key = "vote_comment_%s__%s" % (comment.id, ip)
-            if cache.get(key, False):
-                raise APIException(_("you already voted"))
-            else:
-                cache.set(key, True)
+        raise APIException(_("not logged in"))
+        # ip = _try_to_get_ip(kwargs)
+        # if ip:
+        #     key = "vote_comment_%s__%s" % (comment.id, ip)
+        #     if cache.get(key, False):
+        #         raise APIException(_("you already voted"))
+        #     else:
+        #         cache.set(key, True)
     if vote == "up":
         comment.upvote(user)
     elif vote == "down":
