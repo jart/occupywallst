@@ -220,6 +220,11 @@ def article_new(user, title, content, is_forum, **kwargs):
         last = user.article_set.order_by('-published')[:1]
         if last:
             _limiter(last[0].published, settings.OWS_LIMIT_THREAD)
+        ip = _try_to_get_ip(kwargs)
+        if ip:
+            last = cache.get('api_article_new_' + ip)
+            if last:
+                _limiter(last, settings.OWS_LIMIT_THREAD)
     article = db.Article()
     article.author = user
     article.published = datetime.now()
@@ -364,16 +369,15 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         parent = None
         parent_id = None
 
-    if not settings.DEBUG:
-        last = None
-        if not user.is_staff:
-            qset = user.comment_set.order_by('-published')
-            try:
-                last = qset[1]
-            except IndexError:
-                pass
+    if not settings.DEBUG and not user.is_staff:
+        last = user.comment_set.order_by('-published')[:1]
         if last:
-            _limiter(last.published, settings.OWS_LIMIT_COMMENT)
+            _limiter(last[0].published, settings.OWS_LIMIT_COMMENT)
+        ip = _try_to_get_ip(kwargs)
+        if ip:
+            last = cache.get('api_comment_new_' + ip)
+            if last:
+                _limiter(last, settings.OWS_LIMIT_COMMENT)
 
     comment = db.Comment()
     comment.article = article
