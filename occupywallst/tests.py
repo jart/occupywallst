@@ -509,57 +509,57 @@ class OWS(TestCase):
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ZERO_RESULTS', jdump(j)  # this means success
 
-    def test_api_signup(self):
-        # already taken
-        response = self.client.post('/api/signup/',
-                                    {'username': self.red_user.username,
-                                     'password': '123456',
-                                     'email': 'new@occupywallst.org'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
+    # def test_api_signup(self):
+    #     # already taken
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': self.red_user.username,
+    #                                  'password': '123456',
+    #                                  'email': 'new@occupywallst.org'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'ERROR', jdump(j)
 
-        # password too short
-        response = self.client.post('/api/signup/',
-                                    {'username': 'new_user',
-                                     'password': '1234',
-                                     'email': 'new@occupywallst.org'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
+    #     # password too short
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': 'new_user',
+    #                                  'password': '1234',
+    #                                  'email': 'new@occupywallst.org'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'ERROR', jdump(j)
 
-        # email no good
-        response = self.client.post('/api/signup/',
-                                    {'username': 'new_user',
-                                     'password': '123456',
-                                     'email': 'new@occupy'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
+    #     # email no good
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': 'new_user',
+    #                                  'password': '123456',
+    #                                  'email': 'new@occupy'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'ERROR', jdump(j)
 
-        # just right
-        response = self.client.post('/api/signup/',
-                                    {'username': 'new_user',
-                                     'password': '123456',
-                                     'email': 'new@occupywallst.org'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'OK', jdump(j)
+    #     # just right
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': 'new_user',
+    #                                  'password': '123456',
+    #                                  'email': 'new@occupywallst.org'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'OK', jdump(j)
 
-        # but trying it again fails, because we're now logged in
-        response = self.client.post('/api/signup/',
-                                    {'username': 'new_user',
-                                     'password': '123456',
-                                     'email': 'new@occupywallst.org'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
-        assert 'logged in' in j['message'], jdump(j)
+    #     # but trying it again fails, because we're now logged in
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': 'new_user',
+    #                                  'password': '123456',
+    #                                  'email': 'new@occupywallst.org'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'ERROR', jdump(j)
+    #     assert 'logged in' in j['message'], jdump(j)
 
-        # and even if we log out, it still fails, because the user now exists
-        self.client.post('/api/logout/')
-        response = self.client.post('/api/signup/',
-                                    {'username': 'new_user',
-                                     'password': '123456',
-                                     'email': 'new@occupywallst.org'})
-        j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
-        assert j['message'] == 'username is taken', jdump(j)
+    #     # and even if we log out, it still fails, because the user now exists
+    #     self.client.post('/api/logout/')
+    #     response = self.client.post('/api/signup/',
+    #                                 {'username': 'new_user',
+    #                                  'password': '123456',
+    #                                  'email': 'new@occupywallst.org'})
+    #     j = assert_and_get_valid_json(response)
+    #     assert j['status'] == 'ERROR', jdump(j)
+    #     assert j['message'] == 'username is taken', jdump(j)
 
     def test_api_login_and_logout(self):
         # should be same for invalid username and invalid password,
