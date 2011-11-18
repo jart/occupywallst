@@ -508,20 +508,20 @@ def comment_vote(user, comment, vote, **kwargs):
     allow an IP to vote once.  We track these votes in a
     non-persistant cache because we don't want to log IP addresses.
     """
+    if not (user and user.id):
+        raise APIException(_("not logged in"))
     if not isinstance(comment, db.Comment):
         try:
             comment = db.Comment.objects.get(id=comment, is_deleted=False)
         except db.Comment.DoesNotExist:
             raise APIException(_("comment not found"))
-    if not (user and user.id):
-        raise APIException(_("not logged in"))
-        # ip = _try_to_get_ip(kwargs)
-        # if ip:
-        #     key = "vote_comment_%s__%s" % (comment.id, ip)
-        #     if cache.get(key, False):
-        #         raise APIException(_("you already voted"))
-        #     else:
-        #         cache.set(key, True)
+    if not settings.DEBUG and not user.is_staff:
+        for tdelta, maxvotes in settings.OWS_LIMIT_VOTES:
+            votes = (db.CommentVote.objects
+                     .filter(user=user, time__gt=datetime.now() - tdelta)
+                     .count())
+            if votes > maxvotes:
+                raise APIException(_("you're voting too much"))
     if vote == "up":
         comment.upvote(user)
     elif vote == "down":
