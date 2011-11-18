@@ -194,7 +194,7 @@ class CommentAdmin(GeoAdmin):
     list_display = (content_field(30), user_column, 'karma', words_column,
                     'published', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
-    search_fields = ('content', 'user__username')
+    search_fields = ('content', 'user__username', 'ip')
     ordering = ('-published',)
     actions = (action_remove,)
 
