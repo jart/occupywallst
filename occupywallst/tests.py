@@ -792,6 +792,47 @@ class OWS(TestCase):
         c = db.Comment.objects.get(id=c.id)
         assert c.is_removed == False
 
+        # grant moderator permissions to green
+        self.green_user.userinfo.is_moderator = True
+        self.green_user.userinfo.save()
+      
+        assert self.green_user.userinfo.can_moderate() == True
+       
+        # logout and login as green 
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', {'username': 'green', 'password': 'green'})
+        
+        # remove red's comment
+        response = self.client.post('/api/comment_remove/',
+                                    {'comment_id': c.id,
+                                     'action': 'remove'})
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.is_removed == True
+
+        # unremove it
+        response = self.client.post('/api/comment_remove/',
+                                   {'comment_id': c.id,
+                                    'action': 'unremove'})
+        j = assert_and_get_valid_json(response)
+        c = db.Comment.objects.get(id=c.id)
+        assert c.is_removed == False
+
+        # logout and login as blue
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', {'username': 'blue', 'password': 'blue'})
+
+        # try to remove red's comment, should fail
+        response = self.client.post('/api/comment_remove/',
+                                    {'comment_id': c.id,
+                                     'action': 'remove'})
+        c = db.Comment.objects.get(id=c.id)
+        assert c.is_removed == False
+
+        # logout and login as admin
+        self.client.post('/api/logout/')
+        self.client.post('/api/login/', {'username': 'OccupyWallSt', 'password': 'anarchy'})
+
         # upvote it
         ups = c.ups
         response = self.client.post('/api/comment_upvote/', {'comment': c.id})
