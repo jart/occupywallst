@@ -7,6 +7,7 @@ r"""
 
 """
 
+from django.utils.html import escape
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -135,15 +136,38 @@ class ArticleTranslationInline(admin.StackedInline):
     extra = 1
 
 
+def action_invisible(modeladmin, request, queryset):
+    queryset.update(is_visible=False)
+action_invisible.short_description = "Make article/thread invisible"
+
+
+def verbiage_type(verbiage):
+    vt = 'Page' if verbiage.name.startswith('/') else 'Fragment'
+    if verbiage.use_markdown:
+        return 'Markdown ' + vt
+    elif verbiage.use_template:
+        return 'Template ' + vt
+    else:
+        return 'Plain-Text ' + vt
+
+
+def user_column(obj):
+    return '<a href="/admin/auth/user/%d/">%s</a>' % (
+        obj.user.id, escape(obj.user.username))
+user_column.short_description = 'User'
+user_column.allow_tags = True
+
+
 class ArticleAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = ('title', 'author', 'published', 'comment_count',
+    list_display = ('title', user_column, 'published', 'comment_count',
                     'is_visible', 'is_deleted')
     list_filter = ('is_visible', 'is_deleted')
     search_fields = ('title', 'content', 'author__username')
     ordering = ('-published',)
     prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ('author',)
+    actions = (action_invisible,)
     inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
@@ -174,13 +198,24 @@ class ArticleAdmin(GeoAdmin):
         return HttpResponseRedirect(url)
 
 
+def action_remove(modeladmin, request, queryset):
+    queryset.update(is_removed=True)
+action_remove.short_description = "Remove comments from forum"
+
+
+def words_column(obj):
+    return len(obj.content.split())
+words_column.short_description = 'Words'
+
+
 class CommentAdmin(GeoAdmin):
     date_hierarchy = 'published'
-    list_display = (content_field(30), 'published', 'user', 'karma', 'ups',
-                    'downs', 'is_removed', 'is_deleted')
+    list_display = (content_field(30), user_column, 'karma', words_column,
+                    'published', 'is_removed', 'is_deleted')
     list_filter = ('is_removed', 'is_deleted')
-    search_fields = ('content', 'user__username')
+    search_fields = ('content', 'user__username', 'ip')
     ordering = ('-published',)
+    actions = (action_remove,)
 
     def has_add_permission(self, request):
         return False

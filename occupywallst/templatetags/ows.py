@@ -36,6 +36,8 @@ tr_template = Template(u'''
 pat_url = re.compile(r'(?<!\S)(https?://[^\s\'\"\]\)]+)', re.I)
 pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
 pat_comment = re.compile(r'<!--.*?-->', re.S)
+pat_header = re.compile(r'<(/?)h\d>', re.S)
+pat_img = re.compile(r'<img[^>]>', re.S)
 pat_mortify = [
     re.compile(r'(.*?)<!-- ?more ?-->', re.I | re.S),
     re.compile(r'<!-- ?begin synopsis ?-->(.+?)<!-- ?end synopsis ?-->',
@@ -148,6 +150,14 @@ def markup(text):
     """
     return _markup(text, markdown_safe.convert)
 markup.is_safe = True
+
+
+@register.filter
+def strip_annoying_html(html):
+    html = pat_header.sub(r'<\1p>', html)
+    html = pat_img.sub('', html)
+    return mark_safe(html)
+strip_annoying_html.is_safe = True
 
 
 @register.filter

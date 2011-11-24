@@ -38,8 +38,8 @@ Perform some basic system changes::
 
 Define pseudo hostnames by putting this in ``/etc/hosts``::
 
-    127.0.2.1 dev.occupywallst.org
-    127.0.2.2 chat.dev.occupywallst.org
+    127.0.2.1 occupywallst.dev
+    127.0.2.2 chat.occupywallst.dev
 
 Install dependencies::
 
@@ -60,18 +60,18 @@ Now we'll setup nginx as our webserver::
 
     sudo apt-get install nginx
     sudo rm /etc/nginx/sites-enabled/default
-    sudo cp conf/occupywallst.org.conf /etc/nginx/sites-available/
-    pushd /etc/nginx/sites-enabled/; sudo ln -sf ../sites-available/occupywallst.org.conf; popd
+    sudo cp conf/occupywallst.dev.conf /etc/nginx/sites-available/
+    pushd /etc/nginx/sites-enabled/; sudo ln -sf ../sites-available/occupywallst.dev.conf; popd
     sudo /etc/init.d/nginx restart
 
 Which will forward requests to our internally running webserver::
 
     occupywallst runserver 9000
 
-Then open this url :) http://dev.occupywallst.org/
+Then open this url :) http://occupywallst.dev/
 
 There's also a backend for modifying the database and writing
-articles.  Go to http://dev.occupywallst.org/admin/ and log in as user
+articles.  Go to http://occupywallst.dev/admin/ and log in as user
 "OccupyWallSt" with the password "anarchy".
 
 If you need to customize Django settings for your local install, do it

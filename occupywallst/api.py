@@ -186,6 +186,8 @@ def _check_post(user, post):
         post.is_removed = True
     if user.userinfo.is_shadow_banned:
         post.is_removed = True
+    if post.ip.startswith('173.245.64.'):
+        post.is_removed = True
 
 
 def _limiter(last, seconds):
@@ -218,6 +220,11 @@ def article_new(user, title, content, is_forum, **kwargs):
         last = user.article_set.order_by('-published')[:1]
         if last:
             _limiter(last[0].published, settings.OWS_LIMIT_THREAD)
+        ip = _try_to_get_ip(kwargs)
+        if ip:
+            last = cache.get('api_article_new_' + ip)
+            if last:
+                _limiter(last, settings.OWS_LIMIT_THREAD)
     article = db.Article()
     article.author = user
     article.published = datetime.now()
@@ -362,16 +369,15 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
         parent = None
         parent_id = None
 
-    if not settings.DEBUG:
-        last = None
-        if not user.is_staff:
-            qset = user.comment_set.order_by('-published')
-            try:
-                last = qset[1]
-            except IndexError:
-                pass
+    if not settings.DEBUG and not user.is_staff:
+        last = user.comment_set.order_by('-published')[:1]
         if last:
-            _limiter(last.published, settings.OWS_LIMIT_COMMENT)
+            _limiter(last[0].published, settings.OWS_LIMIT_COMMENT)
+        ip = _try_to_get_ip(kwargs)
+        if ip:
+            last = cache.get('api_comment_new_' + ip)
+            if last:
+                _limiter(last, settings.OWS_LIMIT_COMMENT)
 
     comment = db.Comment()
     comment.article = article
@@ -502,19 +508,20 @@ def comment_vote(user, comment, vote, **kwargs):
     allow an IP to vote once.  We track these votes in a
     non-persistant cache because we don't want to log IP addresses.
     """
+    if not (user and user.id):
+        raise APIException(_("not logged in"))
     if not isinstance(comment, db.Comment):
         try:
             comment = db.Comment.objects.get(id=comment, is_deleted=False)
         except db.Comment.DoesNotExist:
             raise APIException(_("comment not found"))
-    if not (user and user.id):
-        ip = _try_to_get_ip(kwargs)
-        if ip:
-            key = "vote_comment_%s__%s" % (comment.id, ip)
-            if cache.get(key, False):
-                raise APIException(_("you already voted"))
-            else:
-                cache.set(key, True)
+    if not settings.DEBUG and not user.is_staff:
+        for tdelta, maxvotes in settings.OWS_LIMIT_VOTES:
+            votes = (db.CommentVote.objects
+                     .filter(user=user, time__gt=datetime.now() - tdelta)
+                     .count())
+            if votes > maxvotes:
+                raise APIException(_("you're voting too much"))
     if vote == "up":
         comment.upvote(user)
     elif vote == "down":
@@ -607,6 +614,7 @@ def signup(request, username, password, email, **kwargs):
     - Password must be 6-128 chars
     - Email is optional
     """
+    raise APIException("disabled")
     if request.user.is_authenticated():
         raise APIException(_("you're already logged in"))
     check_username(username=username)

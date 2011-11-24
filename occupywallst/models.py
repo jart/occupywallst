@@ -100,7 +100,7 @@ class Verbiage(models.Model):
     def save(self):
         super(Verbiage, self).save()
         for language in [None] + [a for a, b in settings.LANGUAGES]:
-            cache.delete('verbiage_%s_%s' % (self.name, language))
+            cache.delete(Verbiage._make_key(self.name, language))
 
     def get_absolute_url(self):
         if self.name.startswith('/'):
@@ -109,9 +109,13 @@ class Verbiage(models.Model):
             return '.'
 
     @staticmethod
-    def get(name, language=None):
+    def _make_key(name, language=None):
         key = 'verbiage_%s_%s' % (name, language)
-        key = sha256(smart_str(key)).hexdigest()
+        return sha256(smart_str(key)).hexdigest()
+
+    @staticmethod
+    def get(name, language=None):
+        key = Verbiage._make_key(name, language)
         res = cache.get(key)
         if res is None:
             verb = Verbiage.objects.get(name=name)
@@ -144,7 +148,7 @@ class VerbiageTranslation(models.Model):
 
     def save(self):
         super(VerbiageTranslation, self).save()
-        cache.delete('verbiage_%s_%s' % (self.name, self.language))
+        cache.delete(Verbiage._make_key(self.name, self.language))
 
 
 class UserInfo(models.Model):

@@ -13,18 +13,17 @@ from functools import wraps
 from datetime import datetime, timedelta
 
 from django.db.models import Q
+from django.conf import settings
 from django.forms import ValidationError
 from django.contrib.auth import views as authviews
 from django.core.cache import cache
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from django.contrib.auth import views as authviews
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 
 from occupywallst import api, forms, models as db
-from occupywallst.context_processors import VerbiageGetter
 
 
 logger = logging.getLogger(__name__)
@@ -118,7 +117,8 @@ def _instate_hierarchy(comments):
     return res
 
 
-@my_cache(lambda r, slug, forum=False: ('artfrm:' if forum else 'artnwz:') + slug)
+@my_cache(lambda r, slug, forum=False:
+              ('artfrm:' if forum else 'artnwz:') + slug)
 def article(request, slug, forum=False):
     try:
         article = (db.Article.objects
@@ -184,7 +184,7 @@ def ride_create_or_update(request, instance=None):
                 ride.full_clean()
                 ride.save()
                 return HttpResponseRedirect(ride.get_absolute_url())
-            except ValidationError as v:
+            except ValidationError:
                 # stupid hack
                 from django.forms.util import ErrorList
                 form._errors["title"] = ErrorList([
@@ -211,7 +211,7 @@ def ride_info(request, ride_id):
             requests = None
             try:
                 ride_request = ride.requests.get(
-                        user=request.user,is_deleted=False)
+                        user=request.user, is_deleted=False)
             except db.RideRequest.DoesNotExist:
                 ride_request = None
     form = forms.RideRequestForm()
@@ -311,6 +311,10 @@ def signup(request):
     if request.method == 'POST':
         form = forms.SignupForm(request.POST)
         if form.is_valid():
+            key = 'signup_' + request.META['REMOTE_ADDR']
+            if cache.get(key):
+                return HttpResponse('please wait before signing up again')
+            cache.set(key, True, settings.OWS_LIMIT_SIGNUP)
             form.save()
             api.login(request, form.cleaned_data.get('username'),
                       form.cleaned_data.get('password'))

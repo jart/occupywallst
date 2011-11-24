@@ -104,7 +104,7 @@ class SignupForm(ProfileForm):
 
     def clean_username(self):
         username = self.data.get('username')
-        if db.User.objects.filter(username=username).count():
+        if db.User.objects.filter(username__iexact=username).count():
             raise forms.ValidationError("Username is taken")
         return username
 
