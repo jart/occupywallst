@@ -331,6 +331,16 @@ def article_get(user, article_slug=None, **kwargs):
                              'user': user})
     return [article.as_dict({'html': html})]
 
+def article_get_comments(user, article_slug=None, **kwargs):
+    """Get all comments for an article
+    """
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+        comments = article.comment_set.all()
+    except db.Article.DoesNotExist:
+        raise APIException(_("article not found"))
+    return [comment.as_dict() for comment in comments]
+
 
 def comment_new(user, article_slug, parent_id, content, **kwargs):
     """Leave a comment on an article

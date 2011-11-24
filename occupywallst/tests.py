@@ -116,6 +116,12 @@ class OWS(TestCase):
                                        content=random_words(20))
         self.comment = db.Comment.objects.get(id=comment_list[0]['id'])
 
+        # add a second comment
+        api.comment_new(user=self.blue_user,
+                        article_slug=self.article.slug,
+                        parent_id=0,
+                        content=random_words(20))
+
     ######################################################################
     # tests of models
 
@@ -468,6 +474,14 @@ class OWS(TestCase):
                                    {'article_slug': self.article.slug})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'OK', jdump(j)
+
+    def test_api_article_get_comments(self):
+        self.client.login(username='red', password='red')
+        response = self.client.get('/api/safe/article_get_comments/',
+                                   {'article_slug': self.article.slug})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK', jdump(j)
+        assert len(j['results']) == self.article.comment_set.count(), jdump(j)
 
     def test_api_comment_get(self):
         response = self.client.get('/api/safe/comment_get/',
