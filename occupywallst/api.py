@@ -313,15 +313,17 @@ def article_remove(user, article_slug, action, **kwargs):
     return []
 
 
-def article_get(user, article_slug=None, **kwargs):
+def article_get(user, article_slug=None, read_more=False, **kwargs):
     """Get article information"""
+    read_more = _to_bool(read_more)
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
     html = render_to_string('occupywallst/article_content.html',
                             {'article': article,
-                             'user': user})
+                             'user': user,
+                             'read_more': read_more})
     return [article.as_dict({'html': html})]
 
 

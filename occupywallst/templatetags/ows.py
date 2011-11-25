@@ -38,7 +38,7 @@ pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
 pat_comment = re.compile(r'<!--.*?-->', re.S)
 pat_header = re.compile(r'<(/?)h\d>', re.S)
 pat_img = re.compile(r'<img[^>]>', re.S)
-pat_mortify = [
+pat_readmore = [
     re.compile(r'(.*?)<!-- ?more ?-->', re.I | re.S),
     re.compile(r'<!-- ?begin synopsis ?-->(.+?)<!-- ?end synopsis ?-->',
                re.I | re.S),
@@ -98,46 +98,60 @@ def synopsis(text, max_words=10, max_chars=40):
     return " ".join(words[:max_words])[:max_chars]
 
 
-def mortify(text, url, funk):
-    """Extracts specified synopsis in markdown article
+@register.filter
+def read_more(text, url=None):
+    """Extracts shortened version of markdown article (for "read more")
+
+    If ``url`` is specified, a "Read More" hyperlink will be appended
+    to the returned string, if and only if the synopsis was manually
+    specified.
 
     There are two ways to specify a synopsis:
 
-    1. Put "<!-- more -->" somewhere in the article.  The synopsis
+    1. Put ``<!-- more -->`` somewhere in the article.  The synopsis
        will start at the beginning and end there.
 
-    2. Wrap any particular portion text between "<!-- begin synopsis -->" and
-       "<!-- end synopsis -->" tags.
+    2. Wrap any particular portion text between ``<!-- begin synopsis -->``
+       and ``<!-- end synopsis -->`` tags.
 
     """
-    readmore = ugettext('[Read More...](%(url)s)') % {'url': url}
-    for pat in pat_mortify:
+    for pat in pat_readmore:
         mat = pat.search(text)
         if mat:
-            res = mat.group(1) + ' ' + readmore
+            res = mat.group(1)
+            if url:
+                res += ' ' + ugettext('[Read More...](%(url)s)') % {'url': url}
             break
     else:
         res = text
-    return funk(res)
+    return res
 
 
 @register.filter
-def not_more(text, arg):
-    return mortify(text, arg, markup)
-not_more.is_safe = True
+def strip_annoying_html(html):
+    html = pat_header.sub(r'<\1p>', html)
+    html = pat_img.sub('', html)
+    return mark_safe(html)
+strip_annoying_html.is_safe = True
 
 
-@register.filter
-def not_more_unsafe(text, arg):
-    return mortify(text, arg, markup_unsafe)
-not_more_unsafe.is_safe = True
+def _markup(text, convert):
+    """Turn markdown text into HTML with additional hacks
 
+    - HTML comments are removed.
 
-def _markup(text, transform):
+    - Angle brackets are added around hyperlinks to make them
+      clickable because otherwise no one would know to do this.
+
+    - Any images that start with ``/media/`` will be rewritten to use
+      ``settings.MEDIA_URL``.  This is so we don't have to specify the
+      CDN address when writing articles.
+
+    """
     text = pat_url.sub(r'<\1>', text)
     text = pat_url_www.sub(r'[\1](http://\1)', text)
     text = pat_comment.sub('', text)
-    html = transform(text)
+    html = convert(text)
     html = html.replace('src="/media/', 'src="' + settings.MEDIA_URL)
     return mark_safe(html)
 
@@ -150,16 +164,8 @@ markup.is_safe = True
 
 
 @register.filter
-def strip_annoying_html(html):
-    html = pat_header.sub(r'<\1p>', html)
-    html = pat_img.sub('', html)
-    return mark_safe(html)
-strip_annoying_html.is_safe = True
-
-
-@register.filter
 def markup_unsafe(text):
-    """Runs text through markdown allowing custom html"""
+    """Runs text through markdown, html allowed"""
     return _markup(text, markdown_unsafe.convert)
 markup_unsafe.is_safe = True
 

@@ -5,10 +5,18 @@
 <article id="{{ article.slug }}">
   {% include "occupywallst/article_info.html" %}
   <div class="words">
-    {% if article.allow_html %}
-      {{ article.content|markup_unsafe }}
+    {% if read_more %}
+      {% if article.allow_html %}
+        {{ article.content|read_more:article.get_absolute_url|markup_unsafe }}
+      {% else %}
+        {{ article.content|read_more:article.get_absolute_url|markup }}
+      {% endif %}
     {% else %}
-      {{ article.content|markup }}
+      {% if article.allow_html %}
+        {{ article.content|markup_unsafe }}
+      {% else %}
+        {{ article.content|markup }}
+      {% endif %}
     {% endif %}
   </div>
   <p class="view-comments">

@@ -23,9 +23,11 @@
   {{ verbiage.aboveindex }}
   <table style="width:100%"><tbody><tr><td id="left">
     <section id="articles">
-      {% for article in articles %}
-        {% include "occupywallst/article_above_fold.html" %}
-      {% endfor %}
+      {% with read_more="True" %}
+        {% for article in articles %}
+          {% include "occupywallst/article_content.html" %}
+        {% endfor %}
+      {% endwith %}
     </section>
     <section id="archives">
       {% for article in archives %}
