@@ -403,10 +403,15 @@ class OWS(TestCase):
         url = '/signup/'
         response = self.client.get(url)
         assert_success(response)
+
+        # clear the cache to avoid code that prevents many signups from same ip address
+        from django.core.cache import cache
+        cache.clear()
+
         response = self.client.post(url, {'username': 'purple',
                                           'password': 'purple'}, follow=True)
         assert_success(response)
-        assert 'purple' in response.content
+        assert 'purple' in response.content, response.content
 
     def test_user_pages(self):
         for user in db.UserInfo.objects.all():
