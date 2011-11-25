@@ -76,8 +76,7 @@ def _too_many_caps(text):
 
 
 def forumlinks(after, count, **kwargs):
-    """Used for continuous stream of forum post links
-    """
+    """Used for continuous stream of forum post links"""
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
         raise APIException(_("bad arguments"))
@@ -91,8 +90,7 @@ def forumlinks(after, count, **kwargs):
 
 
 def attendees(bounds, **kwargs):
-    """Find all people going who live within visible map area.
-    """
+    """Find all people going who live within visible map area"""
     if bounds:
         bbox = _str_to_bbox(bounds)
         qset = (db.UserInfo.objects
@@ -110,8 +108,7 @@ def attendees(bounds, **kwargs):
 
 
 def rides(bounds=None, **kwargs):
-    """Find all rides within visible map area.
-    """
+    """Find all rides within visible map area"""
     if bounds:
         bbox = _str_to_bbox(bounds)
         qset = (db.Ride.objects
@@ -142,8 +139,7 @@ def ride_request_update(request_id, status, user=None, **kwargs):
 
 
 def attendee_info(username, **kwargs):
-    """Get information for displaying attendee bubble
-    """
+    """Get information for displaying attendee bubble"""
     user = (db.User.objects
             .select_related("userinfo")
             .get(username=username))
@@ -158,8 +154,7 @@ def attendee_info(username, **kwargs):
 
 
 def _check_post(user, post):
-    """Ensure user-submitted forum content is kosher
-    """
+    """Ensure user-submitted forum content is kosher"""
     if user.is_staff:
         return
     if len(post.content) < 3:
@@ -299,8 +294,7 @@ def article_delete(user, article_slug, **kwargs):
 
 
 def article_remove(user, article_slug, action, **kwargs):
-    """Makes an article unlisted and invisible to search engines
-    """
+    """Makes an article unlisted and invisible to search engines"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
     if not user.is_staff:
@@ -320,8 +314,7 @@ def article_remove(user, article_slug, action, **kwargs):
 
 
 def article_get(user, article_slug=None, **kwargs):
-    """Get article information
-    """
+    """Get article information"""
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
@@ -331,9 +324,9 @@ def article_get(user, article_slug=None, **kwargs):
                              'user': user})
     return [article.as_dict({'html': html})]
 
+
 def article_get_comments(user, article_slug=None, **kwargs):
-    """Get all comments for an article
-    """
+    """Get all comments for an article"""
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
         comments = article.comment_set.all()
@@ -418,8 +411,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
 
 
 def comment_get(user, comment_id=None, **kwargs):
-    """Fetch a single comment information
-    """
+    """Fetch a single comment information"""
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
@@ -444,8 +436,7 @@ def comment_get(user, comment_id=None, **kwargs):
 
 
 def comment_edit(user, comment_id, content, **kwargs):
-    """Edit a comment's content
-    """
+    """Edit a comment's content"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
     content = content.strip()
@@ -465,8 +456,7 @@ def comment_edit(user, comment_id, content, **kwargs):
 
 
 def comment_remove(user, comment_id, action, **kwargs):
-    """Allows moderator to remove a comment
-    """
+    """Allows moderator to remove a comment"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
     if not user.is_staff:
@@ -542,20 +532,17 @@ def comment_vote(user, comment, vote, **kwargs):
 
 
 def comment_upvote(user, comment, **kwargs):
-    """Upvotes a comment
-    """
+    """Upvotes a comment"""
     return comment_vote(user, comment, "up", **kwargs)
 
 
 def comment_downvote(user, comment, **kwargs):
-    """Downvotes a comment
-    """
+    """Downvotes a comment"""
     return comment_vote(user, comment, "down", **kwargs)
 
 
 def message_send(user, to_username, content, **kwargs):
-    """Send a private message.
-    """
+    """Send a private message"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
     content = content.strip()
@@ -603,8 +590,7 @@ def message_delete(user, message_id, **kwargs):
 
 
 def check_username(username, check_if_taken=True, **kwargs):
-    """Check if a username is valid and available
-    """
+    """Check if a username is valid and available"""
     if len(username) < 3:
         raise APIException(_("username too short"))
     if len(username) > 30:
@@ -652,8 +638,7 @@ def signup(request, username, password, email, **kwargs):
 
 
 def login(request, username, password, **kwargs):
-    """Login user
-    """
+    """Login user"""
     if request.user.is_authenticated():
         raise APIException(_("you're already logged in"))
     user = auth.authenticate(username=username, password=password)
@@ -664,7 +649,6 @@ def login(request, username, password, **kwargs):
 
 
 def logout(request, **kwargs):
-    """Logout user
-    """
+    """Logout user"""
     auth.logout(request)
     return []

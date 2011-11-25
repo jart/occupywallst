@@ -26,8 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class APIException(Exception):
-    """Causes API wrapper to return an error result.
-    """
+    """Causes API wrapper to return an error result"""
     def __init__(self, message, results=[]):
         self.message = message
         self.results = results
@@ -91,8 +90,7 @@ def api_view(function):
 
 
 def _as_json(data):
-    """Turns API result into JSON data
-    """
+    """Turns API result into JSON data"""
     data['results'] = sanitize_json(data['results'])
     if settings.DEBUG:
         content = json.dumps(data, indent=2) + '\n'
@@ -126,9 +124,7 @@ def sanitize_json(value):
 
 
 def timesince(d, now=None):
-    """
-    Shortened version of django.utils.timesince.timesince
-    """
+    """Shortened version of django.utils.timesince.timesince"""
     chunks = (
         (60 * 60 * 24 * 365, lambda n: ungettext('year', 'years', n)),
         (60 * 60 * 24 * 30, lambda n: ungettext('month', 'months', n)),
@@ -162,8 +158,10 @@ def timesince(d, now=None):
 
 
 def jstime(dt):
-    """Convert datetime object to javascript timestamp (milliseconds
-    since UTC UNIX epoch)
+    """Convert datetime object to javascript timestamp
+
+    In javascript, timestamps are represented as milliseconds since
+    the UNIX epoch in UTC.
     """
     ts = int(time.mktime(dt.timetuple())) * 1000
     if hasattr(dt, 'microsecond'):

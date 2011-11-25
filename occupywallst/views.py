@@ -88,8 +88,7 @@ def forum(request):
 
 
 def bonus(request, page):
-    """Render page based on Verbiage table entry
-    """
+    """Render page based on Verbiage table entry"""
     try:
         res = db.Verbiage.get('/' + page, request.LANGUAGE_CODE)
     except ObjectDoesNotExist:

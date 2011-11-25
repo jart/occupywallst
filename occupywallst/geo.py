@@ -88,8 +88,7 @@ def geocode(address):
 
 
 def address_to_latlng(address):
-    """Shortcut function to just get lat/lng from geocode()
-    """
+    """Shortcut function to just get lat/lng from geocode()"""
     results = geocode(address)
     if not results:
         return None, None
@@ -99,8 +98,7 @@ def address_to_latlng(address):
 
 
 def haversine(lat1, lng1, lat2, lng2):
-    """Calculate kilometer distance between two places on earth
-    """
+    """Calculate kilometer distance between two places on earth"""
     # convert to radians
     lng1 = float(lng1) * pi / 180
     lng2 = float(lng2) * pi / 180

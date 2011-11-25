@@ -79,8 +79,7 @@ timesince_short.is_safe = True
 
 @register.filter
 def synopsis(text, max_words=10, max_chars=40):
-    """
-    Creates a shortened version of content
+    """Creates a shortened version of content
 
     We only care about the first line.  If the text begins with a
     markdown quotation, it will be excluded unless the whole thing is
@@ -100,8 +99,7 @@ def synopsis(text, max_words=10, max_chars=40):
 
 
 def mortify(text, url, funk):
-    """
-    Extracts specified synopsis in markdown article
+    """Extracts specified synopsis in markdown article
 
     There are two ways to specify a synopsis:
 
@@ -146,8 +144,7 @@ def _markup(text, transform):
 
 @register.filter
 def markup(text):
-    """Runs text through markdown, no html allowed
-    """
+    """Runs text through markdown, no html allowed"""
     return _markup(text, markdown_safe.convert)
 markup.is_safe = True
 
@@ -162,17 +159,14 @@ strip_annoying_html.is_safe = True
 
 @register.filter
 def markup_unsafe(text):
-    """Runs text through markdown allowing custom html
-    """
+    """Runs text through markdown allowing custom html"""
     return _markup(text, markdown_unsafe.convert)
 markup_unsafe.is_safe = True
 
 
 @register.filter
 def userlink(user):
-    """
-    Display a username in HTML with a link to their profile
-    """
+    """Display a username in HTML with a link to their profile"""
     if not user or not user.id:
         return ugettext('anonymous')
     res = ugettext('<a title="View %(user)s\'s profile" class="user"'
@@ -184,9 +178,7 @@ userlink.is_safe = True
 
 @register.simple_tag
 def translate_object(obj, lang):
-    """
-    If possible, replaces certain fields with translated text
-    """
+    """If possible, replaces certain fields with translated text"""
     if obj:
         obj.translate(lang)
     return ''
@@ -194,9 +186,7 @@ def translate_object(obj, lang):
 
 @register.simple_tag(takes_context=True)
 def show_comments(context, user, comments):
-    """
-    I wrote this because template includes don't recurse properly
-    """
+    """I wrote this because template includes don't recurse properly"""
     res = []
     depth = context.get('depth', -1) + 1
     can_reply = depth + 1 < settings.OWS_MAX_COMMENT_DEPTH
