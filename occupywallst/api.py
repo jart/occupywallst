@@ -38,7 +38,6 @@ from datetime import datetime, date, timedelta
 from django.conf import settings
 from django.contrib import auth
 from django.core.cache import cache
-from django.utils.text import truncate_words
 from django.core.validators import email_re
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
@@ -46,6 +45,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from occupywallst import models as db
+from occupywallst.templatetags.ows import synopsis
 from occupywallst.utils import APIException, timesince
 
 
@@ -400,15 +400,15 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     article.save()
     if not comment.is_removed:
         if parent:
-            descrip = truncate_words(parent.content, 7)
             db.Notification.send(
                 parent.user, comment.get_absolute_url(),
-                '%s replied to your comment: %s' % (username, descrip))
+                '%s replied to your comment: %s' % (
+                    username, synopsis(parent.content, 7)))
         else:
-            descrip = truncate_words(article.content, 7)
             db.Notification.send(
                 article.author, comment.get_absolute_url(),
-                '%s replied to your post: %s' % (username, descrip))
+                '%s replied to your post: %s' % (
+                    username, synopsis(article.content, 7)))
     return comment_get(user, comment.id)
 
 

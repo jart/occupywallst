@@ -4,6 +4,7 @@
 {% load l10n %}
 
 {% block title %}{% get_current_language as LANGUAGE_CODE %}{% translate_object article LANGUAGE_CODE %}{% if article.is_forum and not article.author.is_staff %}Forum Post: {% endif %}{{ article.title }} | {{ OWS_SITE_NAME }}{% endblock title %}
+{% block description %}{{ article.content|synopsis:30 }}{% endblock description %}
 
 {# this is ESPECIALLY important for SEO because news articles are
   displayed both on the index page and the forum page.  we don't

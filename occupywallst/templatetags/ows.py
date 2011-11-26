@@ -78,24 +78,49 @@ timesince_short.is_safe = True
 
 
 @register.filter
-def synopsis(text, max_words=10, max_chars=40):
-    """Creates a shortened version of content
+def synopsis(text, max_words=10, max_chars=None):
+    """Turns large markdown text into a short plain-text description
 
-    We only care about the first line.  If the text begins with a
-    markdown quotation, it will be excluded unless the whole thing is
-    a quote.
+    First we try to extract a manually specified synopsis (see
+    :py:func:`read_more()`).  If that doesn't work then we extract the
+    first paragraph.  Markdown quotations are excluded unless the
+    whole thing is a quote.
 
-    To get rid of markup, we start by stripping html tags.  Then we
-    run the result through markup and strip the html tags again.  The
-    result is still unsafe of course.
+    The result will be truncated after ``max_words``.  ``max_chars``
+    is a fail-safe in case there are super long words.  It defaults to
+    ``max_words * (5 + 1)`` because five is the average number of
+    letters in English words.  If ``max_chars <= 0`` then this feature
+    is disabled.
+
+    Then we strip html tags, run it through markdown, strip html again
+    and turn html entities back into plain text.  The result should be
+    considered unsafe.
     """
-    lines = text.split('\n')
-    no_quotes = [s for s in lines if s and not s.startswith('>')]
-    if not no_quotes:
-        return 'BLANK'
-    first_line = unicode(strip_tags(markup(strip_tags(no_quotes[0]))))
-    words = first_line.split()
-    return " ".join(words[:max_words])[:max_chars]
+    for pat in pat_readmore:
+        mat = pat.search(text)
+        if mat:
+            res = mat.group(1)
+            break
+    else:
+        lines = text.split('\n')
+        no_quotes = [s for s in lines if not s.startswith('>')]
+        res = "\n".join(no_quotes).strip()
+        if not res:
+            return 'BLANK'
+        paragraphs = res.split('\n\n')
+        res = paragraphs[0]
+    res = unicode(strip_tags(markup(strip_tags(res)))
+                  .replace('&gt;', '>')
+                  .replace('&lt;', '<')
+                  .replace('&amp;', '&')
+                  .replace('&quot;', '"'))
+    words = res.split()
+    res = " ".join(words[:max_words])
+    if max_chars is None:
+        max_chars = max_words * 6
+    if max_chars > 0:
+        res = res[:max_chars]
+    return res
 
 
 @register.filter
