@@ -1,0 +1,9 @@
+circle.node {
+  stroke: #111;
+  stroke-width: 1.5px;
+}
+
+line.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
