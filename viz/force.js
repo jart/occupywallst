@@ -1,6 +1,8 @@
 var w = 960,
     h = 500,
-    fill = d3.scale.category20();
+    fill = d3.scale.linear()
+      .domain([0,5,10,Infinity])
+      .range(["green", "yellow", "red", "red"]);
 
 var vis = d3.select("#chart").append("svg:svg")
     .attr("width", w)
@@ -9,11 +11,11 @@ var vis = d3.select("#chart").append("svg:svg")
 d3.json("t.json", function(json) {
   // create nodes and node index
   var ix = {null:0};
-  var nodes = [{"name": "article"}];
+  var nodes = [{"name": "article", "ups": 25, "downs": 0}];
   var i = 1;
   for (r in json.results) {
+      nodes.push(json.results[r]);
       var id = json.results[r].id;
-      nodes.push({"name":id});
       ix[id] = i;
       i++;
   }
@@ -27,9 +29,9 @@ d3.json("t.json", function(json) {
   }
 
   var force = d3.layout.force()
-      .charge(-120)
+      .charge(-10)
       .friction(.9)
-      .linkDistance(30)
+      .linkDistance(3)
       .nodes(nodes)
       .links(links)
       .size([w, h])
@@ -51,8 +53,8 @@ d3.json("t.json", function(json) {
       .attr("class", "node")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
-      .attr("r", 5)
-      .style("fill", function(d) { return fill(d.group); })
+      .attr("r", function(d) { return d.ups; })
+      .style("fill", function(d) { return fill(d.downs); })
       .call(force.drag);
 
   node.append("svg:title")
