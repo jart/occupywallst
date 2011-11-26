@@ -1,7 +1,5 @@
 {% extends base %}
-{% load ows %}
-{% load i18n %}
-{% load l10n %}
+{% load ows i18n l10n %}
 
 {% block title %}{% get_current_language as LANGUAGE_CODE %}{% translate_object article LANGUAGE_CODE %}{% if article.is_forum and not article.author.is_staff %}Forum Post: {% endif %}{{ article.title }} | {{ OWS_SITE_NAME }}{% endblock title %}
 {% block description %}{{ article.content|synopsis:30 }}{% endblock description %}
