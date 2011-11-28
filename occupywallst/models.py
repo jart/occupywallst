@@ -642,6 +642,14 @@ class CommentVote(models.Model):
         cutoff = date.today() - timedelta(days=days_old)
         CommentVote.objects.filter(time__lte=cutoff).delete()
 
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'user': self.user.username if self.user else 'anonymous',
+               'time': self.time,
+               'comment': self.comment.id,
+               'vote': self.vote}
+        res.update(moar)
+        return res
 
 class Message(models.Model):
     """One user sending a message to another.

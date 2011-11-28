@@ -520,6 +520,14 @@ class OWS(TestCase):
         assert j['status'] == 'OK', jdump(j)
         assert len(j['results']) == self.article.comment_set.count(), jdump(j)
 
+    def test_api_article_get_comment_votes(self):
+        self.client.login(username='red', password='red')
+        response = self.client.get('/api/safe/article_get_comment_votes/',
+                                   {'article_slug': self.article.slug})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK', jdump(j)
+        assert len(j['results']) == self.article.comment_set.count(), jdump(j)
+
     def test_api_comment_get(self):
         response = self.client.get('/api/safe/comment_get/',
                                    {'comment_id': self.comment.id})
