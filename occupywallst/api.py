@@ -159,7 +159,7 @@ def _check_post(user, post):
         return
     if len(post.content) < 3:
         raise APIException(_("content too short"))
-    if len(post.content) > 5 * 1024:
+    if len(post.content) > 10 * 1024:
         raise APIException(_("content too long"))
     if ((len(post.content) < 8 and 'bump' in post.content.lower()) or
         (len(post.content) < 5 and '+1' in post.content.lower())):
