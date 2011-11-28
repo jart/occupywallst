@@ -1,5 +1,5 @@
-var w = 960,
-    h = 500,
+var w = 1024,
+    h = 1024,
     fill = d3.scale.linear()
       .domain([-1,0,5,10,Infinity])
       .range(["white", "green", "yellow", "red", "red"]);
@@ -11,23 +11,38 @@ var vis = d3.select("#chart").append("svg:svg")
 d3.json("t.json", function(json) {
   // create nodes and node index
   var ix = {null:0};
+  users = {};
+  for (var r in json.results) {
+      users[json.results[r].user] = [];
+  }
+
   var nodes = [{"content": "(original article)", "ups": 25, "downs": -1, "published": json.results[0].published-1.0}];
-  var i = 1;
-  for (r in json.results) {
-      n = json.results[r];
+  for (var r in json.results) {
+      var n = json.results[r];
+      ix[n.id] = nodes.length;
       nodes.push(n);
-      ix[n.id] = i;
-      i++;
+      users[n.user].push(n.id)
   }
 
   // create links
   var links = [];
-  for (i in json.results) {
+  for (var i in json.results) {
       var id = json.results[i].id;
       var p_id = json.results[i].parent_id;
       links.push({"source":ix[p_id], "target":ix[id], "weight":1});
   }
 
+  // add squares for users
+  var user_list = [];
+  for (var u in users) {
+      user_list.push(u);
+  }
+  var user = vis.selectAll("circle")
+      .data(user_list)
+    .enter().append("svg:circle")
+      .attr("cx", 10)
+      .attr("cy", function(d, i) { return 10*i; });
+	    
   var link_distance = function(link) {
       d = (link.target.published - link.source.published);
       return 1.0 + Math.log(1.0 + Math.abs(d/1000.0));
@@ -46,7 +61,7 @@ d3.json("t.json", function(json) {
       .data(links)
     .enter().append("svg:line")
       .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .style("stroke-width", 1.0)
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })

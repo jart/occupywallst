@@ -2,11 +2,15 @@ import requests
 import simplejson as json
 import networkx as nx
 
-r = requests.get('http://occupywallst.org/api/safe/article_get/?article_slug=occupy-seattle-occupies-wal-mart')
+article_slug = 'occupy-seattle-occupies-wal-mart'
+article_slug = 'answering-egypts-call-solidarity'
+article_slug = 'solidarity-striking-chinese-workers'
+
+r = requests.get('http://occupywallst.org/api/safe/article_get/?article_slug=%s'%article_slug)
 j = json.loads(r.content)
 article = j['results'][0]
 
-r = requests.get('http://occupywallst.org/api/safe/article_get_comments/?article_slug=occupy-seattle-occupies-wal-mart')
+r = requests.get('http://occupywallst.org/api/safe/article_get_comments/?article_slug=%s'%article_slug)
 j = json.loads(r.content)
 
 G = nx.DiGraph()
@@ -36,10 +40,19 @@ for u in G.users:
     G.node[u]['karma'] = (G.node[u]['ups'] - G.node[u]['downs']) / len(G[u])
 
 # list the posts from the highest karma users
-high_karma = [u for u in G.users if G.node[u]['karma'] >= 3.0]
-for u in high_karma:
-    print u
-    for c in G[u]:
+#high_karma = [u for u in G.users if G.node[u]['karma'] >= 3.0]
+#for u in high_karma:
+#    print u
+#    for c in G[u]:
+#        print '#%d:'%c,
+#        print '(%d hr)' % ((G.node[c]['published'] - G.node['original article']['published'])/(1000*3600)),
+#        print G.node[c]['content']
+#        print
+
+for c in G:
+    if c in G.users:
+        continue
+    if G.node[c]['karma'] >= 3.0:
         print '#%d:'%c,
         print '(%d hr)' % ((G.node[c]['published'] - G.node['original article']['published'])/(1000*3600)),
         print G.node[c]['content']
