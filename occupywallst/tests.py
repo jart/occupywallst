@@ -81,6 +81,38 @@ def add_content(N):
                 api.comment_downvote(random.choice(users),
                                    random.choice(comment_ids))
 
+def copy_content(article_slug):
+    """ copy article, comments, and users from live ows.org site to
+    development data base"""
+
+    import requests
+
+    # copy article
+    r = requests.get('http://occupywallst.org/api/safe/article_get/?article_slug=%s'%article_slug)
+    j = json.loads(r.content)
+    a = j['results'][0]
+
+    username = a.pop('author')
+    user, exists = db.User.objects.get_or_create(username=username)
+    a.pop('html')
+    a.pop('url')
+    a.pop('published') # TODO: replace with a valid date time format
+    article, exists = db.Article.objects.get_or_create(author=user, **a)
+
+
+    # copy comments
+    r = requests.get('http://occupywallst.org/api/safe/article_get_comments/?article_slug=%s'%article_slug)
+    j = json.loads(r.content)
+
+    for c in j['results']:
+        username = c.pop('user')
+        user, exists = db.User.objects.get_or_create(username=username)
+        c.pop('published') # TODO: valid date time format
+        comment, exists = db.Comment.objects.get_or_create(article=article, **c)
+
+        # TODO: add upvotes and downvotes
+
+
 
 class OWS(TestCase):
     fixtures = ['verbiage', 'example_data']
