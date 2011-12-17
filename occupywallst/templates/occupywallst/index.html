@@ -27,26 +27,21 @@
         {% endfor %}
       {% endwith %}
     </section>
-    <section id="archives">
-      {% for article in archives %}
-        <article id="{{ article.slug }}" class="unloaded">
-          {% translate_object article LANGUAGE_CODE %}
-          <h1><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h1>
-          <p class="info">
-{% blocktrans with date=article.published|as_timezone:"US/Eastern"|date:"DATETIME_FORMAT" timesince=article.published|timesince_short username=article.author|userlink %}
-Posted {{ date }} EST ({{ timesince }} ago) by {{ username }}
-{% endblocktrans %}
-          </p>
-          <p style="text-align:center">
-            <img alt="loading..." class="loady" src="/media/img/ajax-loader-32.gif"
-                 width="32" height="32" style="display:none" />
-          </p>
-        </article>
-      {% endfor %}
-    </section>
+    <p style="font-weight:bold">
+      <a href="/archive/page-2/">{% trans 'Next Page' %}</a>
+    </p>
   </td><td id="right">
     <section id="mission">
       {{ verbiage.index_sidebar }}
     </section>
   </td></tr></tbody></table>
+
+  <div style="display:none" id="editform" class="editform">
+    <textarea rows="5" cols="70"></textarea><br />
+    <button class="save">{% trans 'save' %}</button>
+    <button class="cancel">{% trans 'cancel' %}</button>
+    <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
+    <span class="error"></span>
+  </div>
+
 {% endblock content %}

@@ -27,6 +27,10 @@ from occupywallst import api, forms, models as db
 
 
 logger = logging.getLogger(__name__)
+month_abbr = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug',
+              'sep', 'oct', 'nov', 'dec']
+MONTHS = dict((i, s) for i, s in zip(range(1, 13), month_abbr))
+iMONTHS = dict((s, i) for s, i in zip(month_abbr, range(1, 13)))
 
 
 def error(request):
@@ -52,14 +56,56 @@ def my_cache(mkkey, seconds=60):
 
 
 @my_cache(lambda r: 'index')
-def index(request):
+def index(request, per_page=10):
     articles = (db.Article.objects
                 .select_related("author")
                 .filter(is_visible=True, is_forum=False, is_deleted=False)
                 .order_by('-published'))
     return render_to_response(
-        'occupywallst/index.html', {'articles': articles[:8],
-                                    'archives': articles[8:]},
+        'occupywallst/index.html', {'articles': articles[:per_page]},
+        context_instance=RequestContext(request))
+
+
+def archive(request, is_forum, prefix, per_page,
+            page=None, year=None, month=None, day=None):
+    page = int(page) - 1 if page else 0
+    year = int(year) if year else None
+    month = iMONTHS[month[:3].lower()] if month else None
+    day = int(day) if day else None
+    qset = (db.Article.objects
+            .select_related("author")
+            .filter(is_visible=True, is_forum=is_forum, is_deleted=False)
+            .order_by('-published'))
+    if year and month:
+        filterday = datetime(year, month, day or 1)
+        qset = qset.filter(published__year=year, published__month=month)
+        smonth = MONTHS[month].capitalize()
+        drill = qset.dates('published', 'day')
+        if day:
+            mode = 'day'
+            qset = qset.filter(published__day=day)
+            path = '%s%s-%d-%d/' % (prefix, smonth, day, year)
+        else:
+            mode = 'month'
+            path = '%s%s-%d/' % (prefix, smonth, year)
+    else:
+        mode = 'all'
+        drill = qset.dates('published', 'month')
+        filterday = None
+        path = prefix
+    articles = qset[page * per_page:page * per_page + per_page]
+    fool = (len(articles) == per_page)  # 90% correct without count(*)
+    return render_to_response(
+        'occupywallst/archive.html', {
+            'articles': articles,
+            'is_forum': is_forum,
+            'prefix': prefix,
+            'mode': mode,
+            'drill': drill,
+            'filterday': filterday,
+            'prev_path': '/%spage-%d/' % (path, page + 0) if page else None,
+            'cano_path': '/%spage-%d/' % (path, page + 1),
+            'next_path': '/%spage-%d/' % (path, page + 2) if fool else None},
         context_instance=RequestContext(request))
 
 

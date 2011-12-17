@@ -1,0 +1,84 @@
+{% extends base %}
+{% load ows i18n l10n %}
+
+{% block title %}{% if mode == 'month' %}{{ filterday|date:"YEAR_MONTH_FORMAT" }} {% endif %}{% if mode == 'day' %}{{ filterday|date:"DATE_FORMAT" }} {% endif %}{% if is_forum %}Forum Archive{% else %}News Archive{% endif %} | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block canonical %}
+  <link rel="canonical" href="{{ OWS_CANONICAL_URL }}{{ cano_path }}" />
+{% endblock canonical %}
+
+{% block js_init %}
+  {{ block.super }}
+  article_init();
+{% endblock js_init %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    {% if is_forum %}
+      <section id="thread-list" style="margin-top:0">
+        {% with read_more="True" %}
+          {% for article in articles %}
+            {% include "occupywallst/forumpost_synopsis.html" %}
+          {% empty %}
+            <p>No Results Found</p>
+          {% endfor %}
+        {% endwith %}
+      </section>
+    {% else %}
+      <section id="articles">
+        {% with read_more="True" %}
+          {% for article in articles %}
+            {% include "occupywallst/article_content.html" %}
+          {% empty %}
+            <p>No Results Found</p>
+          {% endfor %}
+        {% endwith %}
+      </section>
+    {% endif %}
+    <p style="font-weight:bold">
+      {% if prev_path %}
+        <a href="{{ prev_path }}">{% trans 'Previous Page' %}</a>
+      {% endif %}
+      {% if prev_path and next_path %}|{% endif %}
+      {% if next_path %}
+        <a href="{{ next_path }}">{% trans 'Next Page' %}</a>
+      {% endif %}
+    </p>
+  </td><td id="right">
+    <h2>{% if mode == 'month' %}{{ filterday|date:"YEAR_MONTH_FORMAT" }} {% endif %}{% if mode == 'day' %}{{ filterday|date:"DATE_FORMAT" }} {% endif %}{% if is_forum %}Forum Archive{% else %}News Archive{% endif %}</h2>
+    {% if mode == 'all' %}
+      <ul>
+        {% for ts in drill %}
+          <li><a href="/{{ prefix }}{{ ts|date:"M-Y" }}/">{{ ts|date:"YEAR_MONTH_FORMAT" }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <ul>
+        {% for ts in drill %}
+          <li><a style="{% if mode == 'day' and ts == filterday %}font-weight:bold;{% endif %}"
+                 href="/{{ prefix }}{{ ts|date:"M-j-Y" }}/">
+              {{ ts|date:"DATE_FORMAT" }}</a></li>
+        {% endfor %}
+      </ul>
+      {% if mode == 'day' %}
+        <p>
+          <a href="/{{ prefix }}{{ filterday|date:"M-Y" }}/">Show entire month</a>
+        </p>
+      {% endif %}
+      {% if mode == 'month' %}
+        <p>
+          <a href="/{{ prefix }}">Show all</a>
+        </p>
+      {% endif %}
+    {% endif %}
+  </td></tr></tbody></table>
+
+  <div style="display:none" id="editform" class="editform">
+    <textarea rows="5" cols="70"></textarea><br />
+    <button class="save">{% trans 'save' %}</button>
+    <button class="cancel">{% trans 'cancel' %}</button>
+    <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
+    <span class="error"></span>
+  </div>
+
+{% endblock content %}
