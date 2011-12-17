@@ -273,7 +273,7 @@ class Article(models.Model):
     slug = models.SlugField(unique=True, help_text="""
         A label for this article to appear in the url.  DO NOT change
         this once the article has been published.""")
-    published = models.DateTimeField(auto_now_add=True, help_text="""
+    published = models.DateTimeField(help_text="""
         When was article was published?""")
     killed = models.DateTimeField(auto_now_add=True, help_text="""
         When was the last comment made?""")
