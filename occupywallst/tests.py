@@ -151,6 +151,12 @@ class OWS(TestCase):
                         parent_id=0,
                         content=random_words(20))
 
+        self.carousel = db.Carousel()
+        self.carousel.save()
+
+        self.photo = db.Photo(carousel=self.carousel, caption='hello, world')
+        self.photo.save()
+
     ######################################################################
     # tests of models
 
@@ -332,8 +338,12 @@ class OWS(TestCase):
         pass
 
     def test_photo(self):
-        # TODO: add tests for photo model
-        pass
+        m = db.Photo()
+        # TODO: test that it saves and processes images
+
+    def test_carousel(self):
+        m = db.Carousel()
+        # TODO: test more
 
     # tests of views
 
@@ -527,6 +537,12 @@ class OWS(TestCase):
     def test_api_comment_get(self):
         response = self.client.get('/api/safe/comment_get/',
                                    {'comment_id': self.comment.id})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK', jdump(j)
+
+    def test_api_carousel_get(self):
+        response = self.client.get('/api/safe/carousel_get/',
+                                   {'carousel_id': self.carousel.id})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'OK', jdump(j)
 

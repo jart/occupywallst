@@ -17,6 +17,8 @@ from django.contrib.admin import AdminSite as BaseAdminSite
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
 
+from imagekit.admin import AdminThumbnail
+
 from occupywallst import models as db
 from occupywallst import widgets
 
@@ -81,23 +83,11 @@ class VerbiageAdmin(GeoAdmin):
     list_display = ('name', verbiage_type, content_field(125))
 
 
-def thumbnail_field(obj):
-    if not obj.thumbnail_image.url:
-        return '!BLANK!'
-    else:
-        return '<a href="%s"><img src="%s"/></a>' % (obj.display.url, obj.thumbnail_image.url)
-thumbnail_field.short_description = 'Thumbnail'
-thumbnail_field.allow_tags = True
-
-
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('name', thumbnail_field, 'original_image',)
-    list_display_links = ('name', 'original_image',)
-    search_fields = ('name', 'original_image', )
-    
-    formfield_overrides = {
-        db.models.ImageField: {'widget': widgets.ImageWidget},
-    }
+    list_display = ('admin_thumbnail', 'url', 'caption')
+    admin_thumbnail = AdminThumbnail(image_field='thumbnail')
+    search_fields = ('caption', )
+
 
 class UserAdmin(BaseUserAdmin):
     def get_urls(self):

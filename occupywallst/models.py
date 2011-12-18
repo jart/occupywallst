@@ -29,7 +29,7 @@ from django.dispatch import receiver
 from django.utils.encoding import smart_str
 from django.template.defaultfilters import slugify
 
-from imagekit.models import ImageModel
+from imagekit.models import ImageSpec
 
 from occupywallst.utils import jsonify
 from occupywallst import geo
@@ -53,22 +53,36 @@ def memoize(method):
     return _memoize
 
 
-class Photo(ImageModel):
+class Carousel(models.Model):
+    """ Stores a collection of photos, to be displayed in order
+    """
     name = models.CharField(max_length=100)
+    
+
+class Photo(models.Model):
+    """ Stores a photo for a carousel, as well as a caption and url
+    for the photo
+    """
+    carousel = models.ForeignKey(Carousel, help_text="""
+        The carousel to which this photo belongs.""")
+    caption = models.TextField()
+    url = models.URLField()
     original_image = models.ImageField(upload_to='photos')
-    num_views = models.PositiveIntegerField(editable=False, default=0)
-
-    class IKOptions:
-        # This inner class is where we define the ImageKit options for the model
-        spec_module = 'occupywallst.specs'
-        cache_dir = 'photos'
-        image_field = 'original_image'
-
-    def __unicode__(self):
-        return unicode(self.name)
+    formatted_image = ImageSpec(image_field='original_image', format='JPEG')
 
     def get_absolute_url(self):
-        return self.display.url
+        if self.formatted_image:
+            return self.formatted_image.url
+        else:
+            return ''
+
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'caption': self.caption,
+               'url': self.url,
+               'image_url': self.get_absolute_url()}
+        res.update(moar)
+        return res
 
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown

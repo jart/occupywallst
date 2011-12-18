@@ -603,6 +603,15 @@ def message_delete(user, message_id, **kwargs):
     return []
 
 
+def carousel_get(user, carousel_id=None, **kwargs):
+    """Fetch a list of photos in a carousel"""
+    try:
+        carousel = db.Carousel.objects.get(id=carousel_id)
+    except db.Carousel.DoesNotExist:
+        raise APIException(_("carousel not found"))
+    return [photo.as_dict() for photo in carousel.photo_set.all()]
+
+
 def check_username(username, check_if_taken=True, **kwargs):
     """Check if a username is valid and available"""
     if len(username) < 3:
