@@ -152,8 +152,7 @@ class VerbiageTranslation(models.Model):
 
 
 class UserInfo(models.Model):
-    """Extra DB information to associate with a Django auth user
-    """
+    """Extra DB information to associate with a Django auth user"""
     ATTENDANCE_CHOICES = (
         ('yes', 'Yes'),
         ('no', 'No'),
@@ -347,8 +346,7 @@ class Article(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        """Returns absolute canonical path for article
-        """
+        """Returns absolute canonical path for article"""
         if self.is_forum:
             return ('forum-post', [self.slug])
         else:
@@ -356,8 +354,7 @@ class Article(models.Model):
 
     @models.permalink
     def get_forum_url(self):
-        """Returns non-canonical url to view article on forum
-        """
+        """Returns non-canonical url to view article on forum"""
         return ('forum-post', [self.slug])
 
     def delete(self):
@@ -465,8 +462,7 @@ class NewsArticleManager(models.GeoManager):
 
 
 class NewsArticle(Article):
-    """View of Article table that doesn't show forum posts
-    """
+    """View of Article table that doesn't show forum posts"""
     objects = NewsArticleManager()
 
     class Meta:
@@ -486,8 +482,7 @@ class ForumPostManager(models.GeoManager):
 
 
 class ForumPost(Article):
-    """View of Article table that doesn't news articles
-    """
+    """View of Article table that doesn't news articles"""
     objects = ForumPostManager()
 
     class Meta:
@@ -501,8 +496,7 @@ class ForumPost(Article):
 
 
 class Comment(models.Model):
-    """Users can leave comments on articles reddit style
-    """
+    """Users can leave comments on articles reddit style"""
     article = models.ForeignKey(Article, editable=False, help_text="""
         The article to which this comment belongs.""")
     user = models.ForeignKey(User, null=True, blank=True, editable=False,
@@ -652,8 +646,7 @@ class CommentVote(models.Model):
         return res
 
 class Message(models.Model):
-    """One user sending a message to another.
-    """
+    """One user sending a message to another"""
     from_user = models.ForeignKey(User, editable=False,
                                   related_name="messages_sent", help_text="""
         The user who sent the message.""")
@@ -720,8 +713,7 @@ class SpamText(models.Model):
 
 
 class Ride(models.Model):
-    """Info about a person or bus driving to Event for carpooling
-    """
+    """Info about a person or bus driving to Event for carpooling"""
     RIDETYPE_CHOICES = (
         ('car', 'Car'),
         ('bus', 'Bus'),

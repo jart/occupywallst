@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  {% load ows %}
-  {% load i18n %}
+  {% load ows i18n l10n %}
   {% get_current_language as LANGUAGE_CODE %}
   {% get_current_language_bidi as LANGUAGE_BIDI %}
   <meta charset="utf-8" />
@@ -26,6 +25,9 @@
   {% endblock stylesheets %}
 </head>
 <body>
+  {% if DEBUG %}
+    <div id="devnotice">DEVELOPMENT MODE</div>
+  {% endif %}
   {% get_language_info for LANGUAGE_CODE as lang %}
   {% if LANGUAGE_CODE != 'en' %}
     <div id="halptranslate">{{ lang.name }} translations are still a work in progress.  Please volunteer! <a href="mailto:translate@occupywallst.org">translate@occupywallst.org</a></div>
@@ -87,10 +89,10 @@
   {% endblock body %}
   <script src="{{ MEDIA_URL }}js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
   {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
-    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=24" type="text/javascript"></script>
+    <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=25" type="text/javascript"></script>
   {% else %}
     {% for script in OWS_SCRIPTS %}
-      <script src="{{ MEDIA_URL }}{{ script }}?v=24" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}{{ script }}?v=25" type="text/javascript"></script>
     {% endfor %}
   {% endif %}
   <!-- <script src="//chat.{{ request.get_host }}/socket.io/socket.io.js" type="text/javascript"></script> -->

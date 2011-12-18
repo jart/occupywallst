@@ -1,6 +1,5 @@
 {% extends base %}
-{% load ows %}
-{% load i18n %}
+{% load ows i18n l10n %}
 
 {% block title %}{% blocktrans with username=obj.username %}{{ username }}'s User Profile{% endblocktrans %} | {{ OWS_SITE_NAME }}{% endblock title %}
 

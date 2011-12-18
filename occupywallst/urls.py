@@ -44,8 +44,8 @@ urlpatterns = patterns('',
     url(r'^api/safe/article_get/$', require_GET(utils.api_view(api.article_get))),
     url(r'^api/safe/article_get_comments/$', require_GET(utils.api_view(api.article_get_comments))),
     url(r'^api/safe/article_get_comment_votes/$', require_GET(utils.api_view(api.article_get_comment_votes))),
-    url(r'^api/safe/comment_get/$', utils.api_view(api.comment_get)),  # FIXME: should this require_GET?
-    url(r'^api/safe/forumlinks/$', utils.api_view(api.forumlinks)),  # FIXME: should this require_GET?
+    url(r'^api/safe/comment_get/$', require_GET(utils.api_view(api.comment_get))),
+    url(r'^api/safe/forumlinks/$', require_GET(utils.api_view(api.forumlinks))),
     url(r'^api/article_new/$', require_POST(utils.api_view(api.article_new))),
     url(r'^api/article_edit/$', require_POST(utils.api_view(api.article_edit))),
     url(r'^api/article_delete/$', require_POST(utils.api_view(api.article_delete))),

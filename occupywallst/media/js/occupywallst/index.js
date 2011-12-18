@@ -24,7 +24,8 @@ var index_init;
     function load_article(article) {
         is_working = true;
         api("/api/safe/article_get/", {
-            "article_slug": article.attr("id")
+            "article_slug": article.attr("id"),
+            "read_more": "true"
         }, function(data) {
             is_working = false;
             if (data.status == "OK") {

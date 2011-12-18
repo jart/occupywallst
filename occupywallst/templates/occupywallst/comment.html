@@ -1,6 +1,4 @@
-{% load ows %}
-{% load i18n %}
-{% load l10n %}
+{% load ows i18n l10n %}
 
 {% if not comment.is_deleted or comment.replies %}
   <div class="comment {% if comment.is_worthless %}collapsed{% endif %}" id="comment-{{ comment.id }}">

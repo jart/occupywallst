@@ -42,9 +42,7 @@ def assert_and_get_valid_json(response):
 
 
 def random_words(N):
-    """
-    Choose N random words for content
-    """
+    """Choose N random words for content"""
     words = ('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed '
              'do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
              'Ut enim ad minim veniam, quis nostrud exercitation ullamco '
@@ -57,8 +55,7 @@ def random_words(N):
 
 
 def add_content(N):
-    """ add N articles and comments to the database, for testing
-    etc"""
+    """Add N articles and comments to the database, for testing etc."""
     settings.DEBUG = True
     users = [u for u in db.User.objects.all()]
 
@@ -118,7 +115,7 @@ class OWS(TestCase):
     fixtures = ['verbiage', 'example_data']
 
     def create_users(self):
-        """ Create users for functional testing of access control.
+        """Create users for functional testing of access control.
 
         It seems easier to create the users with a code block than as
         json fixtures, because the password is clearer before it is
@@ -158,9 +155,7 @@ class OWS(TestCase):
     # tests of models
 
     def test_verbiage(self):
-        """
-        Test verbiage model
-        """
+        """Test verbiage model"""
         assert db.Verbiage.get('title') != None, 'should have a title'
         assert db.Verbiage.get('title') != None, \
             'should cache title for second request'
@@ -357,8 +352,8 @@ class OWS(TestCase):
               * second request when not logged in (uses cache)
               * using a language other than english
               * logged in
-            """
 
+            """
             response = self.client.get(url)
             assert_success(response)
             assert 'Welcome' in response.content
@@ -439,7 +434,8 @@ class OWS(TestCase):
         response = self.client.get(url)
         assert_success(response)
 
-        # clear the cache to avoid code that prevents many signups from same ip address
+        # clear the cache to avoid code that prevents many signups
+        # from same ip address
         from django.core.cache import cache
         cache.clear()
 

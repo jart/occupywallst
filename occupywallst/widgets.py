@@ -8,7 +8,8 @@ class ReCaptcha(forms.widgets.Widget):
     recaptcha_response_name = 'recaptcha_response_field'
 
     def render(self, name, value, attrs=None):
-        return mark_safe(u'%s' % captcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY))
+        return mark_safe(u'%s' % captcha.displayhtml(
+                settings.RECAPTCHA_PUBLIC_KEY))
 
     def value_from_datadict(self, data, files, name):
         return [data.get(self.recaptcha_challenge_name, None), 
