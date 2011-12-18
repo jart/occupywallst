@@ -58,6 +58,9 @@ class Carousel(models.Model):
     """
     name = models.CharField(max_length=100)
     
+    def __unicode__(self):
+        return unicode(self.name)
+
 
 class Photo(models.Model):
     """ Stores a photo for a carousel, as well as a caption and url

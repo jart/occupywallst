@@ -27,7 +27,7 @@ class AdminSite(BaseAdminSite):
         BaseAdminSite.__init__(self, *args, **kwargs)
         self.register(db.User, UserAdmin)
         self.register(db.Group, GroupAdmin)
-        self.register(db.Photo, PhotoAdmin)
+        self.register(db.Carousel, CarouselAdmin)
         self.register(db.Verbiage, VerbiageAdmin)
         self.register(db.NewsArticle, ArticleAdmin)
         self.register(db.ForumPost, ArticleAdmin)
@@ -83,10 +83,15 @@ class VerbiageAdmin(GeoAdmin):
     list_display = ('name', verbiage_type, content_field(125))
 
 
-class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('admin_thumbnail', 'url', 'caption')
-    admin_thumbnail = AdminThumbnail(image_field='thumbnail')
-    search_fields = ('caption', )
+class PhotoInline(admin.TabularInline):
+    model = db.Photo
+    extra = 1
+    fields = ('original_image', 'url', 'caption')
+
+class CarouselAdmin(admin.ModelAdmin):
+    inlines = [
+        PhotoInline,
+    ]
 
 
 class UserAdmin(BaseUserAdmin):
