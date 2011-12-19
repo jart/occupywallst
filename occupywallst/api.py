@@ -173,15 +173,9 @@ def _check_post(user, post):
             raise APIException(_("title too long"))
         if _too_many_caps(post.title):
             raise APIException(_("turn off bloody caps lock"))
-    antifa = re.compile(r'ron paul', re.I)
-    if hasattr(post, 'title'):
-        post.title = antifa.sub('Ron Lawl', post.title)
-    post.content = antifa.sub('Ron Lawl', post.content)
     if db.SpamText.is_spam(post.content):
         post.is_removed = True
     if user.userinfo.is_shadow_banned:
-        post.is_removed = True
-    if post.ip.startswith('173.245.64.'):
         post.is_removed = True
 
 
