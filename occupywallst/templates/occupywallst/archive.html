@@ -37,11 +37,11 @@
     {% endif %}
     <p style="font-weight:bold">
       {% if prev_path %}
-        <a href="{{ prev_path }}">{% trans 'Previous Page' %}</a>
+        <a href="{{ prev_path }}">{% trans 'Newer Posts' %}</a>
       {% endif %}
       {% if prev_path and next_path %}|{% endif %}
       {% if next_path %}
-        <a href="{{ next_path }}">{% trans 'Next Page' %}</a>
+        <a href="{{ next_path }}">{% trans 'Older Posts' %}</a>
       {% endif %}
     </p>
   </td><td id="right">
