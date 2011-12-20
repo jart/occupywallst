@@ -55,7 +55,7 @@ def my_cache(mkkey, seconds=60):
     return _my_cache
 
 
-@my_cache(lambda r: 'index')
+@my_cache(lambda r, per_page: 'index-%d' % (per_page))
 def index(request, per_page=10):
     articles = (db.Article.objects
                 .select_related("author")
