@@ -78,6 +78,38 @@ def add_content(N):
                 api.comment_downvote(random.choice(users),
                                    random.choice(comment_ids))
 
+def copy_content(article_slug):
+    """ copy article, comments, and users from live ows.org site to
+    development data base"""
+
+    import requests
+
+    # copy article
+    r = requests.get('http://occupywallst.org/api/safe/article_get/?article_slug=%s'%article_slug)
+    j = json.loads(r.content)
+    a = j['results'][0]
+
+    username = a.pop('author')
+    user, exists = db.User.objects.get_or_create(username=username)
+    a.pop('html')
+    a.pop('url')
+    a.pop('published') # TODO: replace with a valid date time format
+    article, exists = db.Article.objects.get_or_create(author=user, **a)
+
+
+    # copy comments
+    r = requests.get('http://occupywallst.org/api/safe/article_get_comments/?article_slug=%s'%article_slug)
+    j = json.loads(r.content)
+
+    for c in j['results']:
+        username = c.pop('user')
+        user, exists = db.User.objects.get_or_create(username=username)
+        c.pop('published') # TODO: valid date time format
+        comment, exists = db.Comment.objects.get_or_create(article=article, **c)
+
+        # TODO: add upvotes and downvotes
+
+
 
 class OWS(TestCase):
     fixtures = ['verbiage', 'example_data']
@@ -118,6 +150,12 @@ class OWS(TestCase):
                         article_slug=self.article.slug,
                         parent_id=0,
                         content=random_words(20))
+
+        self.carousel = db.Carousel()
+        self.carousel.save()
+
+        self.photo = db.Photo(carousel=self.carousel, caption='hello, world')
+        self.photo.save()
 
     ######################################################################
     # tests of models
@@ -299,7 +337,14 @@ class OWS(TestCase):
         # TODO: add tests for this model if it is still in use
         pass
 
-    ######################################################################
+    def test_photo(self):
+        m = db.Photo()
+        # TODO: test that it saves and processes images
+
+    def test_carousel(self):
+        m = db.Carousel()
+        # TODO: test more
+
     # tests of views
 
     def test_index(self):
@@ -481,9 +526,23 @@ class OWS(TestCase):
         assert j['status'] == 'OK', jdump(j)
         assert len(j['results']) == self.article.comment_set.count(), jdump(j)
 
+    def test_api_article_get_comment_votes(self):
+        self.client.login(username='red', password='red')
+        response = self.client.get('/api/safe/article_get_comment_votes/',
+                                   {'article_slug': self.article.slug})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK', jdump(j)
+        assert len(j['results']) == self.article.comment_set.count(), jdump(j)
+
     def test_api_comment_get(self):
         response = self.client.get('/api/safe/comment_get/',
                                    {'comment_id': self.comment.id})
+        j = assert_and_get_valid_json(response)
+        assert j['status'] == 'OK', jdump(j)
+
+    def test_api_carousel_get(self):
+        response = self.client.get('/api/safe/carousel_get/',
+                                   {'carousel_id': self.carousel.id})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'OK', jdump(j)
 

@@ -322,13 +322,25 @@ def article_get(user, article_slug=None, read_more=False, **kwargs):
 
 
 def article_get_comments(user, article_slug=None, **kwargs):
-    """Get all comments for an article"""
+    """Get all comments for an article
+    """
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
         comments = article.comment_set.all()
+        return [comment.as_dict() for comment in comments]
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
-    return [comment.as_dict() for comment in comments]
+
+
+def article_get_comment_votes(user, article_slug=None, **kwargs):
+    """Get all votes for all comments for an article
+    """
+    try:
+        article = db.Article.objects.get(slug=article_slug, is_deleted=False)
+        votes = db.CommentVote.objects.filter(comment__in=article.comment_set.all())
+        return [vote.as_dict() for vote in votes]
+    except db.Article.DoesNotExist:
+        raise APIException(_("article not found"))
 
 
 def comment_new(user, article_slug, parent_id, content, **kwargs):
@@ -583,6 +595,15 @@ def message_delete(user, message_id, **kwargs):
         raise APIException(_("you didn't send or receive that message"))
     msg.delete()
     return []
+
+
+def carousel_get(user, carousel_id=None, **kwargs):
+    """Fetch a list of photos in a carousel"""
+    try:
+        carousel = db.Carousel.objects.get(id=carousel_id)
+    except db.Carousel.DoesNotExist:
+        raise APIException(_("carousel not found"))
+    return [photo.as_dict() for photo in carousel.photo_set.all()]
 
 
 def check_username(username, check_if_taken=True, **kwargs):

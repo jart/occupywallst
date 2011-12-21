@@ -1,4 +1,4 @@
-r"""
+"""
 
     occupywallst.models
     ~~~~~~~~~~~~~~~~~~~
@@ -29,12 +29,63 @@ from django.dispatch import receiver
 from django.utils.encoding import smart_str
 from django.template.defaultfilters import slugify
 
+from imagekit.models import ImageSpec
+
 from occupywallst.utils import jsonify
 from occupywallst import geo
-
+from occupywallst import widgets
 
 logger = logging.getLogger(__name__)
 
+
+def memoize(method):
+    """Memoize decorator for methods taking no arguments
+    """
+    @functools.wraps(method)
+    def _memoize(instance):
+        key = method.__name__ + '__memoize'
+        if not hasattr(instance, key):
+            res = method(instance)
+            setattr(instance, key, res)
+        else:
+            res = getattr(instance, key)
+        return res
+    return _memoize
+
+
+class Carousel(models.Model):
+    """ Stores a collection of photos, to be displayed in order
+    """
+    name = models.CharField(max_length=100)
+    
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class Photo(models.Model):
+    """ Stores a photo for a carousel, as well as a caption and url
+    for the photo
+    """
+    carousel = models.ForeignKey(Carousel, help_text="""
+        The carousel to which this photo belongs.""")
+    caption = models.TextField()
+    url = models.URLField()
+    original_image = models.ImageField(upload_to='photos')
+    formatted_image = ImageSpec(image_field='original_image', format='JPEG')
+
+    def get_absolute_url(self):
+        if self.formatted_image:
+            return self.formatted_image.url
+        else:
+            return ''
+
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'caption': self.caption,
+               'url': self.url,
+               'image_url': self.get_absolute_url()}
+        res.update(moar)
+        return res
 
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown
@@ -602,6 +653,14 @@ class CommentVote(models.Model):
         cutoff = date.today() - timedelta(days=days_old)
         CommentVote.objects.filter(time__lte=cutoff).delete()
 
+    def as_dict(self, moar={}):
+        res = {'id': self.id,
+               'user': self.user.username if self.user else 'anonymous',
+               'time': self.time,
+               'comment': self.comment.id,
+               'vote': self.vote}
+        res.update(moar)
+        return res
 
 class Message(models.Model):
     """One user sending a message to another"""
