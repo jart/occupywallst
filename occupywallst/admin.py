@@ -17,10 +17,8 @@ from django.contrib.admin import AdminSite as BaseAdminSite
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
 
-from imagekit.admin import AdminThumbnail
-
 from occupywallst import models as db
-from occupywallst import widgets
+
 
 class AdminSite(BaseAdminSite):
     def __init__(self, *args, **kwargs):
@@ -88,6 +86,7 @@ class PhotoInline(admin.TabularInline):
     extra = 1
     fields = ('original_image', 'url', 'caption')
 
+
 class CarouselAdmin(admin.ModelAdmin):
     inlines = [
         PhotoInline,
@@ -134,16 +133,6 @@ class ArticleTranslationInline(admin.StackedInline):
 def action_invisible(modeladmin, request, queryset):
     queryset.update(is_visible=False)
 action_invisible.short_description = "Make article/thread invisible"
-
-
-def verbiage_type(verbiage):
-    vt = 'Page' if verbiage.name.startswith('/') else 'Fragment'
-    if verbiage.use_markdown:
-        return 'Markdown ' + vt
-    elif verbiage.use_template:
-        return 'Template ' + vt
-    else:
-        return 'Plain-Text ' + vt
 
 
 def user_column(obj):
