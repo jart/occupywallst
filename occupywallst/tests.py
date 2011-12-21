@@ -10,6 +10,7 @@ r"""
 
 import json
 import random
+from datetime import datetime
 
 from django.conf import settings
 from django.test import TestCase
@@ -135,6 +136,7 @@ class OWS(TestCase):
         settings.OWS_LIMIT_MSG_DAY = 999999
         self.create_users()
         self.article = db.Article(author=self.red_user,
+                                  published=datetime.now(),
                                   title='article title',
                                   slug='article-slug',
                                   content='exciting article content')
@@ -218,12 +220,14 @@ class OWS(TestCase):
 
     def test_article(self):
         a = db.Article(author=self.red_user, title='test title', slug='test',
+                       published=datetime.now(),
                        content='this is a test')
         a.save()
         assert len(a.as_dict()) > 0
 
     def test_article_delete(self):
         a = db.Article(author=self.red_user, title='test title', slug='test',
+                       published=datetime.now(),
                        content='this is a test')
         a.save()
         assert a.is_deleted == False
@@ -232,7 +236,7 @@ class OWS(TestCase):
 
     def test_article_recalculate(self):
         a = db.Article(author=self.red_user, title='test title', slug='test',
-                       content='this is a test')
+                       published=datetime.now(), content='this is a test')
         a.save()
 
         # add comment
@@ -244,6 +248,7 @@ class OWS(TestCase):
 
     def test_article_comments_as_user(self):
         a = db.Article(author=self.red_user, title='test title', slug='test',
+                       published=datetime.now(),
                        content='this is a test')
         a.save()
 
@@ -258,6 +263,7 @@ class OWS(TestCase):
 
     def test_article_translation(self):
         a = db.Article(author=self.red_user, title='test title', slug='test',
+                       published=datetime.now(),
                        content='this is a test')
         a.save()
         at = db.ArticleTranslation(article=a, language='piglatin',
