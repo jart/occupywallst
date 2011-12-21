@@ -1,4 +1,4 @@
-"""
+r"""
 
     occupywallst.models
     ~~~~~~~~~~~~~~~~~~~
@@ -15,6 +15,7 @@
 import re
 import socket
 import logging
+import functools
 from hashlib import sha256
 from datetime import date, timedelta
 
@@ -33,7 +34,6 @@ from imagekit.models import ImageSpec
 
 from occupywallst.utils import jsonify
 from occupywallst import geo
-from occupywallst import widgets
 
 logger = logging.getLogger(__name__)
 
@@ -54,17 +54,16 @@ def memoize(method):
 
 
 class Carousel(models.Model):
-    """ Stores a collection of photos, to be displayed in order
+    """Stores a collection of photos, to be displayed in order
     """
     name = models.CharField(max_length=100)
-    
+
     def __unicode__(self):
         return unicode(self.name)
 
 
 class Photo(models.Model):
-    """ Stores a photo for a carousel, as well as a caption and url
-    for the photo
+    """Stores a photo for a carousel
     """
     carousel = models.ForeignKey(Carousel, help_text="""
         The carousel to which this photo belongs.""")
@@ -86,6 +85,7 @@ class Photo(models.Model):
                'image_url': self.get_absolute_url()}
         res.update(moar)
         return res
+
 
 class Verbiage(models.Model):
     """Stores arbitrary website content fragments in Markdown
@@ -169,7 +169,8 @@ class VerbiageTranslation(models.Model):
 
 
 class UserInfo(models.Model):
-    """Extra DB information to associate with a Django auth user"""
+    """Extra DB information to associate with a Django auth user
+    """
     ATTENDANCE_CHOICES = (
         ('yes', 'Yes'),
         ('no', 'No'),
@@ -661,6 +662,7 @@ class CommentVote(models.Model):
                'vote': self.vote}
         res.update(moar)
         return res
+
 
 class Message(models.Model):
     """One user sending a message to another"""

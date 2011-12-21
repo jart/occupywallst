@@ -1,7 +1,18 @@
+r"""
+
+    occupywallst.widgets
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Widgets and stuff
+
+"""
+
+
 from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from recaptcha.client import captcha
+
 
 class ReCaptcha(forms.widgets.Widget):
     recaptcha_challenge_name = 'recaptcha_challenge_field'
@@ -12,15 +23,16 @@ class ReCaptcha(forms.widgets.Widget):
                 settings.RECAPTCHA_PUBLIC_KEY))
 
     def value_from_datadict(self, data, files, name):
-        return [data.get(self.recaptcha_challenge_name, None), 
+        return [data.get(self.recaptcha_challenge_name, None),
             data.get(self.recaptcha_response_name, None)]
+
 
 class ImageWidget(forms.widgets.FileInput):
     """
-    A FileInput that displays an image and a copyable link instead of a file path
+    A FileInput that displays an image and a copyable link instead of
+    a file path.
     """
     def render(self, name, value, attrs=None):
-
         # TODO: find the smart way to get the display image url
         if hasattr(value, 'url'):
             url = value.url
@@ -30,12 +42,11 @@ class ImageWidget(forms.widgets.FileInput):
         else:
             url = ''
             img = '(none)'
-
-
         output = []
         output.append('<table><tr><td>Currently:</td>')
-        output.append('<td>%s</td></tr>'%img)
-        output.append('<tr><td></td><td><input type="text" size="60" value="%s"></td></tr>'%url)
+        output.append('<td>%s</td></tr>' % (img))
+        output.append('<tr><td></td><td><input type="text" size="60" '
+                      'value="%s"></td></tr>' % (url))
         output.append('<tr><td>Change:</td><td>')
         output.append(super(ImageWidget, self).render(name, value, attrs))
         output.append('</td></tr></table>')

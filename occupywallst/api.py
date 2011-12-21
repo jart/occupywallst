@@ -337,7 +337,8 @@ def article_get_comment_votes(user, article_slug=None, **kwargs):
     """
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
-        votes = db.CommentVote.objects.filter(comment__in=article.comment_set.all())
+        votes = db.CommentVote.objects.filter(
+            comment__in=article.comment_set.all())
         return [vote.as_dict() for vote in votes]
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
