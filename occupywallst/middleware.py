@@ -9,8 +9,6 @@ r"""
 
 import traceback
 
-from django.db import connection
-from django.template import Template, Context
 from django.utils.cache import add_never_cache_headers
 
 
