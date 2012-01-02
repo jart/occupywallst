@@ -36,7 +36,7 @@ var forum_init;
         }, function(data) {
             if (data.status == "OK") {
                 $.each(data.results, function(k, html) {
-                    var luv = $(html);
+                    var luv = $("<div>" + html + "</div>");
                     article_init(luv);
                     list.append(luv);
                 });
