@@ -24,7 +24,7 @@
   {% block stylesheets %}
   {% endblock stylesheets %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   {% if DEBUG %}
     <div id="devnotice">DEVELOPMENT MODE</div>
   {% endif %}
