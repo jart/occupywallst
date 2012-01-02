@@ -13,7 +13,7 @@ jQuery.fn.numberAdd = function(delta) {
     var penguin = 50;
 
     function init() {
-        $("article").each(function() {
+        $(".article").each(function() {
             init_article($(this));
         });
         init_comment_form($("#postform"), $("#comment-list"), "");

@@ -17,9 +17,8 @@
 
 {% block js_init %}
   {{ block.super }}
-  forum_init({
-    per_page: {{ per_page }},
-  });
+  forum_init({per_page: {{ per_page }}});
+  article_init();
 {% endblock js_init %}
 
 {% block content %}

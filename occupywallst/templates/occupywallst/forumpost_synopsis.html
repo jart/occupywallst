@@ -1,6 +1,6 @@
 {% load ows i18n l10n %}
 
-<div class="item clickdiv" id="{{ article.slug }}">
+<div class="article item clickdiv" id="{{ article.slug }}">
   <h3>
     {% if not article.is_forum %}{% trans 'News Article' %}:{% endif %}
     <a class="primary" title="{% trans 'View Thread' %}"
@@ -10,5 +10,8 @@
 {% blocktrans with comment_count=article.comment_count|localize created=article.published|timesince_short username=article.author|userlink last_comment=article.killed|timesince_short %}
 {{ comment_count }} comments {{ created }} ago by {{ username }} last comment {{ last_comment }} ago
 {% endblocktrans %}
+{% if user and user.is_staff %}
+({% trans 'Mod:' %} <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>)
+{% endif %}
   </div>
 </div>
