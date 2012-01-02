@@ -29,7 +29,7 @@ var forum_init;
             return;
         is_loading = true;
         var list = $("#thread-list");
-        var count = $(">.item", list).length;
+        var count = $(".item", list).length;
         api("/api/safe/forumlinks/", {
             "after": count,
             "count": per_page
