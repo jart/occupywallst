@@ -13,11 +13,12 @@ jQuery.fn.numberAdd = function(delta) {
     var penguin = 50;
 
     function init(root) {
-        $(".article").each(function() {
+        $(".article", root).each(function() {
             init_article($(this));
         });
-        init_comment_form($(".postcommentform"), $("#comment-list"), "");
-        $(".comment").each(function() {
+        init_comment_form($(".postcommentform", root),
+                          $("#comment-list", root), "");
+        $(".comment", root).each(function() {
             init_comment($(this));
         });
         var anchor = $(document.location.hash);
