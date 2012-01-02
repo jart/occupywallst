@@ -24,13 +24,12 @@ var forum_init;
         });
     }
 
-    function load_more() {
-        if (is_loading || is_done)
+    function load_more(list, url) {
+        if (is_loading || is_done || !list.length)
             return;
         is_loading = true;
-        var list = $("#thread-list");
         var count = $(".item", list).length;
-        api("/api/safe/forumlinks/", {
+        api(url, {
             "after": count,
             "count": per_page
         }, function(data) {
@@ -57,7 +56,8 @@ var forum_init;
     function pagination() {
         $(window).scroll(function(ev) {
             if ($("#loady").scrolledToShow(250)) {
-                load_more();
+                load_more($("#thread-list"), "/api/safe/forumlinks/");
+                load_more($("#comment-list"), "/api/safe/commentfeed/");
             }
         }).scroll();
     }

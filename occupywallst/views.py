@@ -133,6 +133,18 @@ def forum(request):
         context_instance=RequestContext(request))
 
 
+@my_cache(lambda r: 'forum_comments')
+def forum_comments(request):
+    per_page = 5
+    comments = (db.Comment.objects
+                .select_related("article", "user")
+                .filter(is_removed=False, is_deleted=False)
+                .order_by('-published'))
+    return render_to_response(
+        'occupywallst/forum_comments.html', {'comments': comments[:per_page]},
+        context_instance=RequestContext(request))
+
+
 def bonus(request, page):
     """Render page based on Verbiage table entry"""
     try:

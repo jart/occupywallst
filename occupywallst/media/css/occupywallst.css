@@ -199,6 +199,7 @@ nav {
     line-height: 1.5;
 }
 
+.forum-comments-page .nav-forum-comments,
 .forum-bubbling-page .nav-forum-bubbling,
 .archive-page .nav-forum-archive,
 .subnav li.item a:hover {

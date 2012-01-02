@@ -1,0 +1,23 @@
+{% extends base %}
+{% load ows i18n l10n %}
+{% block body_class %}{{ block.super }} forum-comments-page forum-page{% endblock %}
+{% block title %}{% trans 'Forum Comment Feed' %} | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block nav %}
+  {{ block.super }}
+  {% include "occupywallst/forum_nav.html" %}
+{% endblock nav %}
+
+{% block content %}
+  <h1>Forum Comment Feed</h1>
+  <section id="comment-list">
+    {% with extended="true" %}
+      {% for comment in comments %}
+        {% include "occupywallst/comment.html" %}
+      {% endfor %}
+    {% endwith %}
+  </section>
+  <p style="text-align:center">
+    <img alt="loading..." id="loady" src="{{ MEDIA_URL }}img/ajax-loader-32.gif" width="32" height="32" />
+  </p>
+{% endblock content %}

@@ -90,6 +90,22 @@ def forumlinks(user, after, count, **kwargs):
                                 'user': user})
 
 
+def commentfeed(user, after, count, **kwargs):
+    """Used for continuous stream of forum comments"""
+    after, count = int(after), int(count)
+    if after < 0 or count <= 0:
+        raise APIException(_("bad arguments"))
+    comments = (db.Comment.objects
+                .select_related("user", "user__userinfo", "article")
+                .filter(is_removed=False, is_deleted=False)
+                .order_by('-published'))
+    for comment in comments[after:after + count]:
+        yield render_to_string('occupywallst/comment.html',
+                               {'comment': comment,
+                                'user': user,
+                                'can_reply': True})
+
+
 def attendees(bounds, **kwargs):
     """Find all people going who live within visible map area"""
     if bounds:
