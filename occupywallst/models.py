@@ -193,6 +193,7 @@ class UserInfo(models.Model):
         Does user want an email new articles are published?""")
     is_shadow_banned = models.BooleanField(default=False, help_text="""
         If true, anything this user posts will be automatically removed.""")
+    karma = models.IntegerField(default=0, editable=False)
 
     position = models.PointField(null=True, blank=True, help_text="""
         Aproximate coordinates of where they live to display on the
