@@ -22,6 +22,13 @@ from django.template.loader import render_to_string
 
 from occupywallst import utils
 
+try:
+    import GeoIP
+except ImportError:
+    GEO = None
+else:
+    GEO = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
+
 
 register = template.Library()
 
@@ -205,6 +212,14 @@ def userlink(user):
         'user': user.username, 'url': user.get_absolute_url()}
     return mark_safe(res)
 userlink.is_safe = True
+
+
+@register.filter
+def ipcountry(ip):
+    if GEO:
+        return GEO.country_code_by_addr(ip) or ''
+    else:
+        return ''
 
 
 @register.simple_tag
