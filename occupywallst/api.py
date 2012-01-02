@@ -455,7 +455,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         if comment.user != user:
             raise APIException(_("you didn't post that"))
     comment.content = content
@@ -468,7 +468,7 @@ def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         raise APIException(_("insufficient permissions"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
@@ -498,7 +498,7 @@ def comment_delete(user, comment_id, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
-    if not user.is_staff:
+    if not user.userinfo.can_moderate():
         if comment.user != user:
             raise APIException(_("you didn't post that"))
     comment.article.comment_count -= 1

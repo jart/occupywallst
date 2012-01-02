@@ -206,8 +206,8 @@ class CommentAdmin(GeoAdmin):
 
 
 class UserInfoAdmin(GeoAdmin):
-    list_display = ('user', 'country', 'region', 'attendance', 'need_ride')
-    list_filter = ('attendance', 'need_ride', 'country', 'region')
+    list_display = ('user', 'is_moderator', 'country', 'region', 'attendance', 'need_ride')
+    list_filter = ('attendance', 'need_ride', 'country', 'region', 'is_moderator')
     search_fields = ('user__username', 'user__email', 'info', 'country',
                      'region', 'city', 'address', 'zipcode')
     ordering = ('user__username',)

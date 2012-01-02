@@ -31,7 +31,7 @@
             <a class="delete" href="#">{% trans 'delete' %}</a>
           {% endif %}
           <a class="permalink" href="{{ comment.get_absolute_url }}">{% trans 'permalink' %}</a>
-          {% if user and user.is_staff %}
+          {% if user and user.userinfo.can_moderate %}
             ({% trans 'Mod:' %}
             <a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
