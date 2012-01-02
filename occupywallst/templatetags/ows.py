@@ -37,7 +37,7 @@ pat_url = re.compile(r'(?<!\S)(https?://[^\s\'\"\]\)]+)', re.I)
 pat_url_www = re.compile(r'(?<!\S)(www\.[-a-z]+\.[-.a-z]+)', re.I)
 pat_comment = re.compile(r'<!--.*?-->', re.S)
 pat_header = re.compile(r'<(/?)h\d>', re.S)
-pat_img = re.compile(r'<img[^>]>', re.S)
+pat_img = re.compile(r'<img[^>]*>', re.S)
 pat_readmore = [
     re.compile(r'(.*?)<!-- ?more ?-->', re.I | re.S),
     re.compile(r'<!-- ?begin synopsis ?-->(.+?)<!-- ?end synopsis ?-->',
