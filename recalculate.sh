@@ -14,6 +14,7 @@ DB=$1
 [[ $DB ]] || exit 1
 
 cat <<EOF | psql -q $DB
+
 update occupywallst_comment as C
    set ups = coalesce((select count(*)
                          from occupywallst_commentvote
@@ -24,4 +25,10 @@ update occupywallst_comment as C
        karma = coalesce((select sum(vote)
                            from occupywallst_commentvote
                           where comment_id = C.id), 0);
+
+update occupywallst_userinfo as U
+   set karma = coalesce((select sum(karma)
+                           from occupywallst_comment as C
+                          where C.user_id = U.user_id), 0);
+
 EOF
