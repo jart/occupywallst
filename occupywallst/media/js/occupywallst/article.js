@@ -12,7 +12,7 @@ jQuery.fn.numberAdd = function(delta) {
 
     var penguin = 50;
 
-    function init() {
+    function init(root) {
         $(".article").each(function() {
             init_article($(this));
         });

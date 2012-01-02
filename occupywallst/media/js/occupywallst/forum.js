@@ -36,7 +36,9 @@ var forum_init;
         }, function(data) {
             if (data.status == "OK") {
                 $.each(data.results, function(k, html) {
-                    list.append($(html));
+                    var luv = $(html);
+                    article_init(luv);
+                    list.append(luv);
                 });
                 $(".clickdiv").clickdiv();
                 is_loading = false;
