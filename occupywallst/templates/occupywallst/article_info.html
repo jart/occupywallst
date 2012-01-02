@@ -12,9 +12,11 @@
 Posted {{ timesince }} ago on {{ date }} EST by {{ username }}
 {% endblocktrans %}
 
+{% if article.is_forum %}({{ article.author.userinfo.karma }}){% endif %}
+
 {% if article.is_forum and article.author and article.author.userinfo.city and article.author.userinfo.region %}
 {% blocktrans with city=article.author.userinfo.city region=article.author.userinfo.region %}
-({{ city }}, {{ region }})
+from {{ city }}, {{ region }}
 {% endblocktrans %}
 {% endif %}
 
