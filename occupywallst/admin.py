@@ -147,7 +147,7 @@ class ArticleAdmin(GeoAdmin):
     list_display = ('title', user_column, 'published', 'comment_count',
                     'is_visible', 'is_deleted')
     list_filter = ('is_visible', 'is_deleted')
-    search_fields = ('title', 'content', 'author__username')
+    search_fields = ('title', 'content', 'author__username', 'ip')
     ordering = ('-published',)
     prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ('author',)
