@@ -174,6 +174,8 @@ def _check_post(user, post):
             raise APIException(_("title too long"))
         if _too_many_caps(post.title):
             raise APIException(_("turn off bloody caps lock"))
+        if db.SpamText.is_spam(post.title):
+            post.is_removed = True
     if db.SpamText.is_spam(post.content):
         post.is_removed = True
     if user.userinfo.is_shadow_banned:
