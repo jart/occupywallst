@@ -64,12 +64,12 @@
         {{ verbiage.header }}
       </header>
     {% endblock header %}
-    {% block nav %}
-      <nav>
-       {{ verbiage.navbar }}
-      </nav>
-      <div style="clear:both"></div>
-    {% endblock nav %}
+    <nav>
+      {% block nav %}
+        {{ verbiage.navbar }}
+        <div style="clear:both"></div>
+      {% endblock nav %}
+    </nav>
     <div id="content">
       {% block content %}
       {% endblock content %}
@@ -87,6 +87,16 @@
       </div>
     </div>
   {% endblock body %}
+  {% block forms %}
+    <div style="display:none" id="editform" class="editform">
+      <textarea rows="5" cols="70"></textarea><br />
+      <button class="save">{% trans 'save' %}</button>
+      <button class="cancel">{% trans 'cancel' %}</button>
+      <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
+      <span class="error"></span>
+      <a href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">Read the Rules</a>
+    </div>
+  {% endblock forms %}
   <script src="{{ MEDIA_URL }}js/jquery-1.6.2{% if not DEBUG %}.min{% endif %}.js" type="text/javascript"></script>
   {% if not DEBUG and OWS_SCRIPTS_MINIFIED %}
     <script src="{{ MEDIA_URL }}{{ OWS_SCRIPTS_MINIFIED }}?v=27" type="text/javascript"></script>
@@ -112,6 +122,8 @@
         ows_init({
           notifications: {{ notifications|jsonify }}
         });
+        forum_init({per_page: {{ per_page|default:"25" }}});
+        article_init();
       {% endblock js_init %}
     });
   </script>

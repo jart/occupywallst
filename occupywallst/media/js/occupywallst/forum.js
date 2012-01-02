@@ -14,12 +14,12 @@ var forum_init;
 
     function init(args) {
         per_page = args.per_page;
-        init_postform($(".postform"));
+        init_newthreadform($(".newthreadform"));
         pagination();
-        $("#newlink").click(function(ev) {
+        $(".newthreadlink").click(function(ev) {
             ev.preventDefault();
-            $(".postform").toggle(400, function() {
-                $(".postform .title").focus();
+            $(".newthreadform").toggle(400, function() {
+                $(".newthreadform .title").focus();
             });
         });
     }
@@ -60,7 +60,7 @@ var forum_init;
         }).scroll();
     }
 
-    function init_postform(form) {
+    function init_newthreadform(form) {
         $(".save", form).click(function(ev) {
             ev.preventDefault();
             $(".loader", form).show();

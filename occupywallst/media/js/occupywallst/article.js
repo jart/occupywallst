@@ -16,7 +16,7 @@ jQuery.fn.numberAdd = function(delta) {
         $(".article").each(function() {
             init_article($(this));
         });
-        init_comment_form($("#postform"), $("#comment-list"), "");
+        init_comment_form($(".postcommentform"), $("#comment-list"), "");
         $(".comment").each(function() {
             init_comment($(this));
         });

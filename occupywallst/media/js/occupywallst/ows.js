@@ -141,7 +141,7 @@ var ows_inactivity_delay;
      * Is page scrolled to make element visible?
      */
     jQuery.fn.scrolledToShow = function(expand) {
-        if (!this)
+        if (!this.length)
             return;
         if (!expand)
             expand = 0;

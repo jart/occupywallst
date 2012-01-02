@@ -1,21 +1,6 @@
 {% extends base %}
 {% load ows i18n l10n %}
-
-{% block stylesheets %}
-  <style type="text/css">
-    #navbar .nav-news {
-      background: #900;
-      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
-      background: -moz-linear-gradient(top,  #a11,  #900);
-    }
-  </style>
-{% endblock stylesheets %}
-
-{% block js_init %}
-  {{ block.super }}
-  index_init();
-  article_init();
-{% endblock js_init %}
+{% block body_class %}news-page{% endblock %}
 
 {% block content %}
   {{ verbiage.aboveindex }}
@@ -35,13 +20,4 @@
       {{ verbiage.index_sidebar }}
     </section>
   </td></tr></tbody></table>
-
-  <div style="display:none" id="editform" class="editform">
-    <textarea rows="5" cols="70"></textarea><br />
-    <button class="save">{% trans 'save' %}</button>
-    <button class="cancel">{% trans 'cancel' %}</button>
-    <img class="loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
-    <span class="error"></span>
-  </div>
-
 {% endblock content %}

@@ -1,34 +1,19 @@
 {% extends base %}
 {% load ows i18n l10n %}
-
+{% block body_class %}{{ block.super }} forum-bubbling-page forum-page{% endblock %}
 {% block title %}{% trans 'Public Forum' %} | {{ OWS_SITE_NAME }}{% endblock title %}
 
-{% block stylesheets %}
-  <style type="text/css">
-    #navbar .nav-forum {
-      background: #900;
-      background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
-      background: -moz-linear-gradient(top,  #a11,  #900);
-    }
-    #newlink { float: right; }
-    .postform { margin-bottom: 1em; }
-  </style>
-{% endblock stylesheets %}
-
-{% block js_init %}
+{% block nav %}
   {{ block.super }}
-  forum_init({per_page: {{ per_page }}});
-  article_init();
-{% endblock js_init %}
+  {% include "occupywallst/forum_nav.html" %}
+{% endblock nav %}
 
 {% block content %}
   <table style="width:100%"><tbody><tr><td id="left">
-    <h2 style="margin-top:0;margin-bottom:0.5em">{% trans 'Public Forum' %} - 
-      <a class="primary" href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">
-        {% trans 'Read the Rules Before Posting' %}</a>
-      <a href="#" id="newlink">{% trans 'post' %}</a>
-    </h2>
-    <div class="postform" style="display:none">
+    <h1>{% trans 'Public Forum' %} -
+      <a class="primary" href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">{% trans 'Read the Rules Before Posting' %}</a>
+      <a href="#" class="newthreadlink">{% trans 'post' %}</a></h1>
+    <div class="newthreadform" style="display:none">
       <div>
         <label for="title">{% trans 'title' %}</label><br />
         <input class="title" id="title" maxlength="255" size="60" />
@@ -45,7 +30,7 @@
         <a href="http://occupywallst.org/forum/moderating-policies-will-be-reposted-somewhere-pro/">Read the Rules</a>
       </div>
     </div>
-    <section id="thread-list" style="margin-top:0">
+    <section id="thread-list">
       {% for article in articles %}
         {% include "occupywallst/forumpost_synopsis.html" %}
       {% endfor %}

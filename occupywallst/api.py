@@ -75,7 +75,7 @@ def _too_many_caps(text):
     return (caps + lows >= 8 and caps > lows)
 
 
-def forumlinks(after, count, **kwargs):
+def forumlinks(user, after, count, **kwargs):
     """Used for continuous stream of forum post links"""
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
@@ -86,7 +86,8 @@ def forumlinks(after, count, **kwargs):
                 .order_by('-killed'))
     for article in articles[after:after + count]:
         yield render_to_string('occupywallst/forumpost_synopsis.html',
-                               {'article': article})
+                               {'article': article,
+                                'user': user})
 
 
 def attendees(bounds, **kwargs):

@@ -7,7 +7,7 @@ a { text-decoration: none; }
 img { border: none; }
 h1 { font-size: 1.8em; margin: 0; }
 h2 { font-size: 1.3em; /* margin: 0 0; */ }
-h1 a { color: black; }
+article h1 a { color: black; }
 textarea { font-family: Arial, sans-serif; }
 code, pre { font: 11px "DejaVu Sans Mono", Monaco, "Courier New", Courier, monospace; }
 pre { margin: 0 1em; }
@@ -83,17 +83,22 @@ pre { margin: 0 1em; }
 
 #fist { float: left; margin-top: 1em; margin-right: 5px; margin-left: 10px; }
 
+nav {
+    box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
+    -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
+    -webkit-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
+    margin: 0.9em 0 0.7em 0;
+}
+
 #navbar ul {
     font-size: 0.90em;
     padding: 0;
+    margin: 0;
     width: 100%;
     float: left;
     background: #333;
     background: -webkit-gradient(linear, left top, left bottom, from(#363636), to(#262626));
     background: -moz-linear-gradient(top,  #363636,  #262626);
-    box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
-    -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
-    -webkit-box-shadow: 0px 2px 3px rgba(0,0,0,0.30);
     white-space: nowrap;
 }
 
@@ -120,6 +125,11 @@ pre { margin: 0 1em; }
     padding: 0.3em 1em;
 }
 
+.chat-page .nav-chat,
+.about-page .nav-about,
+.rides-page .nav-rides,
+.news-page .nav-news,
+.forum-page .nav-forum,
 #navbar li.item a:hover {
     background: #900;
     background: -webkit-gradient(linear, left top, left bottom, from(#a11), to(#900));
@@ -151,6 +161,7 @@ pre { margin: 0 1em; }
     background: -webkit-gradient(linear, left top, left bottom, from(#e82), to(#c60));
     background: -moz-linear-gradient(top,  #e82,  #c60);
 }
+
 #navbar li.nav-donate a:hover {
     background: #f93;
     background: -webkit-gradient(linear, left top, left bottom, from(#f93), to(#e82));
@@ -158,6 +169,56 @@ pre { margin: 0 1em; }
 }
 #navbar li.last { border-left: none; }
 #navbar li.nav-donate { border-right: none; }
+
+.subnav ul {
+    font-size: 0.75em;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    float: left;
+    background: #282828;
+    background: -webkit-gradient(linear, left top, left bottom, from(#242424), to(#2b2b2b));
+    background: -moz-linear-gradient(top, #1c1c1c, #242424);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.24);
+    -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.24);
+}
+
+.subnav li {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    float: left;
+}
+
+.subnav li.item a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 0.5em 1em;
+    height: 1.5em;
+    line-height: 1.5;
+}
+
+.forum-bubbling-page .nav-forum-bubbling,
+.archive-page .nav-forum-archive,
+.subnav li.item a:hover {
+    background: #900;
+    background: -webkit-gradient(linear, left top, left bottom, from(#800), to(#a11));
+    background: -moz-linear-gradient(top,  #a11,  #900);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.24);
+    -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.24);
+}
+
+.subnav li.last { padding-left: 0.5em; }
+.subnav li.last img { vertical-align: middle; }
+.subnav li.last a {
+    display: block;
+    height: 2em;
+    line-height: 2;
+    float: left;
+    padding: 0.2em 0;
+    padding-left: 0.2em;
+}
 
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
@@ -190,8 +251,13 @@ ul.errorlist { padding: 0; margin: 0; list-style-type: none;
                font-family: Arial, sans-serif; font-size: small; }
 ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 
-#article-page { }
+.archive-page h1,
+.forum-page h1 { font-size: 1.3em; margin-top: 0; margin-bottom: 0.5em; }
 
+.pager-links { font-weight: bold; }
+
+.newthreadlink { float: right; }
+.newthreadform { margin-bottom: 1em; }
 .editform { margin: 1em 0; }
 .comment .content { margin: 1em 0; font-size: small; }
 .comment .words { overflow: auto; width: 600px; }
@@ -218,7 +284,6 @@ ul.errorlist li { color: red; font-weight: bold; padding: 0; margin: 0; }
 .error { color: red; font-size: small; }
 .warning { color: #a00; font-size: small; width: 30em; }
 .loader { display: none; }
-#postform a { font-size: small; }
 .postform a { font-size: small; }
 
 .message .on { background: #f2f2f2; }
@@ -268,7 +333,7 @@ a.button:active {
 #recents .recent-comment .title { white-space: nowrap; overflow: hidden;
                                   text-overflow:ellipsis; max-width: 240px; }
 
-#thread-list { margin: 1em 5px; }
+#thread-list { margin: 1em 5px; margin-top: 0; }
 #thread-list .item { margin: 0 -5px; padding: 3px; cursor: pointer; }
 #thread-list .item:hover { background: #f3f3ff; }
 #thread-list .item h3 { margin: 0; font-size: 1em; font-weight: normal; }
