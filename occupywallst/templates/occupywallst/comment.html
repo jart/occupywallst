@@ -41,7 +41,7 @@ from {{ city }}, {{ region }}
             <a class="edit" href="#">{% trans 'edit' %}</a>
             <a class="remove" href="#">{% if comment.is_removed %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
             {% if user.is_superuser %}
-              <a href="/admin/occupywallst/comment/?ip=127.0.0.1">{{ comment.ip }} {{ article.ip|ipcountry }}</a>
+              <a href="/admin/occupywallst/comment/?ip=127.0.0.1">{{ comment.ip }} {{ comment.ip|ipcountry }}</a>
             {% endif %}
           {% endif %}
         </div>
