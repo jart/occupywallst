@@ -135,6 +135,11 @@ def action_invisible(modeladmin, request, queryset):
 action_invisible.short_description = "Make article/thread invisible"
 
 
+def action_visible(modeladmin, request, queryset):
+    queryset.update(is_visible=True)
+action_visible.short_description = "Make article/thread visible"
+
+
 def user_column(obj):
     return '<a href="/admin/auth/user/%d/">%s</a>' % (
         obj.user.id, escape(obj.user.username))
@@ -151,7 +156,7 @@ class ArticleAdmin(GeoAdmin):
     ordering = ('-published',)
     prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ('author',)
-    actions = (action_invisible,)
+    actions = (action_invisible, action_visible)
     inlines = (ArticleTranslationInline,)
 
     def get_urls(self):
@@ -187,6 +192,11 @@ def action_remove(modeladmin, request, queryset):
 action_remove.short_description = "Remove comments from forum"
 
 
+def action_unremove(modeladmin, request, queryset):
+    queryset.update(is_removed=False)
+action_unremove.short_description = "Unremove comments from forum"
+
+
 def words_column(obj):
     return len(obj.content.split())
 words_column.short_description = 'Words'
@@ -199,7 +209,7 @@ class CommentAdmin(GeoAdmin):
     list_filter = ('is_removed', 'is_deleted')
     search_fields = ('content', 'user__username', 'ip')
     ordering = ('-published',)
-    actions = (action_remove,)
+    actions = (action_remove, action_unremove)
 
     def has_add_permission(self, request):
         return False
