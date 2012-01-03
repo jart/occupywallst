@@ -103,7 +103,8 @@ def commentfeed(user, after, count, **kwargs):
         yield render_to_string('occupywallst/comment.html',
                                {'comment': comment,
                                 'user': user,
-                                'can_reply': True})
+                                'can_reply': True,
+                                'extended': True})
 
 
 def attendees(bounds, **kwargs):
