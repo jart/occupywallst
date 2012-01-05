@@ -26,7 +26,7 @@ var attendees_init;
     var geocoder;
     var pins = [];
     var attendees = [];
-    var max_markers = 100;
+    var max_markers = 400;
     var is_fetching = false;
 
     function pos_to_latlng(position) {
