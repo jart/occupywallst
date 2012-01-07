@@ -12,6 +12,9 @@ textarea { font-family: Arial, sans-serif; }
 code, pre { font: 11px "DejaVu Sans Mono", Monaco, "Courier New", Courier, monospace; }
 pre { margin: 0 1em; }
 
+::-moz-selection { background: #d60; color: #fff; text-shadow: none; }
+::selection { background: #d60; color: #fff; text-shadow: none; }
+
 .amp { font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
        font-style: italic; font-size: 1.1em; }
 
