@@ -19,6 +19,7 @@ import functools
 from hashlib import sha256
 from datetime import date, timedelta
 
+from django.db.models import Q
 from django.conf import settings
 from django.core.cache import cache
 from django.contrib.gis.db import models
