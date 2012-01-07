@@ -77,6 +77,4 @@ LOGGING['handlers']['mail_admins'] = {'level': 'DEBUG',
 try:
     from occupywallst.settings_dev_local import *
 except ImportError:
-    print >>sys.stderr, "not found: occupywallst/settings_dev_local.py"
-else:
-    print >>sys.stderr, "loaded: occupywallst/settings_dev_local.py"
+    pass
