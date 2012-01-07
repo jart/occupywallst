@@ -38,10 +38,10 @@ def goodies(request):
 
 
 def notifications(request):
-    if request.user.is_authenticated():
-        qset = (request.user.notification_set
-                .filter(is_read=False)
-                .order_by('published'))
+    if request.user and request.user.is_authenticated():
+        qset = (db.Notification.objects
+                .filter(user=request.user, is_read=False)
+                .order_by('published'))[:15]
         return {'notifications': qset}
     else:
-        return {}
+        return {'notifications': []}
