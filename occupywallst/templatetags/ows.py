@@ -9,11 +9,13 @@ r"""
 
 import re
 import pytz
+import hashlib
 import datetime
 import markdown
 
 from django import template
 from django.conf import settings
+from django.core.cache import cache
 from django.utils.html import strip_tags
 from django.template import Template, Context
 from django.utils.safestring import mark_safe
@@ -103,6 +105,10 @@ def synopsis(text, max_words=10, max_chars=None):
     and turn html entities back into plain text.  The result should be
     considered unsafe.
     """
+    key = hashlib.sha256(text.encode('utf8')).hexdigest()
+    res = cache.get(key)
+    if res is not None:
+        return res
     for pat in pat_readmore:
         mat = pat.search(text)
         if mat:
@@ -127,6 +133,7 @@ def synopsis(text, max_words=10, max_chars=None):
         max_chars = max_words * 6
     if max_chars > 0:
         res = res[:max_chars]
+    cache.set(key, res, 60 * 60)
     return res
 
 
