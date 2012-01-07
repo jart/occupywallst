@@ -29,6 +29,7 @@ update occupywallst_comment as C
 update occupywallst_userinfo as U
    set karma = coalesce((select sum(karma)
                            from occupywallst_comment as C
-                          where C.user_id = U.user_id), 0);
+                          where C.user_id = U.user_id
+                            and not is_removed), 0);
 
 EOF
