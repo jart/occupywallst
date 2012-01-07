@@ -215,6 +215,12 @@ userlink.is_safe = True
 
 
 @register.filter
+def nofollow(html):
+    return mark_safe(html.replace('<a ', '<a rel="nofollow" '))
+nofollow.is_safe = True
+
+
+@register.filter
 def ipcountry(ip):
     if GEO:
         return GEO.country_code_by_addr(ip) or ''

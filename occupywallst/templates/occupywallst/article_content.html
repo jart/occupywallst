@@ -13,7 +13,11 @@
       {% if article.allow_html %}
         {{ article.content|markup_unsafe }}
       {% else %}
-        {{ article.content|markup }}
+        {% if article.is_forum %}
+          {{ article.content|markup|nofollow }}
+        {% else %}
+          {{ article.content|markup }}
+        {% endif %}
       {% endif %}
     {% endif %}
   </div>
