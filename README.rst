@@ -128,6 +128,11 @@ queries::
     create index occupywallst_article_killed2
       on occupywallst_article (killed desc, author_id);
 
+    -- optimize: notifications
+    create index occupywallst_notifications_idx
+      on occupywallst_notification (user_id, published)
+      where (is_read = false);
+
 
 Network Topology
 ================
