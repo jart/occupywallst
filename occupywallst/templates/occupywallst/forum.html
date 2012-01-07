@@ -51,8 +51,8 @@
                href="{{ best.get_forum_url }}">{{ best.content|synopsis }}</a>
           </div>
           <div class="info">
-{% blocktrans with karma=best.karma|localize timesince=best.published|timesince_short username=best.user|userlink karma=best.user.userinfo.karma %}
-{{ karma }} points {{ timesince }} ago by {{ username }} ({{ karma }})
+{% blocktrans with karma=best.karma|localize timesince=best.published|timesince_short username=best.user|userlink ukarma=best.user.userinfo.karma|localize %}
+{{ karma }} points {{ timesince }} ago by {{ username }} ({{ ukarma }})
 {% endblocktrans %}
           </div>
         </div>
@@ -65,8 +65,8 @@
                href="{{ recent.get_forum_url }}">{{ recent.content|synopsis }}</a>
           </div>
           <div class="info">
-{% blocktrans with karma=recent.karma|localize timesince=recent.published|timesince_short username=recent.user|userlink karma=recent.user.userinfo.karma %}
-{{ karma }} points {{ timesince }} ago by {{ username }} ({{ karma }})
+{% blocktrans with karma=recent.karma|localize timesince=recent.published|timesince_short username=recent.user|userlink ukarma=recent.user.userinfo.karma|localize %}
+{{ karma }} points {{ timesince }} ago by {{ username }} ({{ ukarma }})
 {% endblocktrans %}
           </div>
         </div>

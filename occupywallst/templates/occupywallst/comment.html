@@ -12,14 +12,14 @@
             <br />
           {% endif %}
           <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
-          <span>{{ comment.user|userlink }}</span>
-          ({{ comment.user.userinfo.karma }})
+          <span class="karma">{{ comment.karma|localize }}</span> {% trans 'points' %}
+          by <span>{{ comment.user|userlink }}</span>
+          ({{ comment.user.userinfo.karma|localize }})
           {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
 {% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
 from {{ city }}, {{ region }}
 {% endblocktrans %}
           {% endif %}
-          <span class="karma">{{ comment.karma|localize }}</span> {% trans 'points' %}
           <span class="published">{{ comment.published|timesince_short }} {% trans 'ago' %}</span>
         </div>
         <div class="words">
