@@ -134,7 +134,7 @@ def forum(request):
 
 @my_cache(lambda r: 'forum_comments')
 def forum_comments(request):
-    per_page = 5
+    per_page = 25
     comments = (db.Comment.objects_as(request.user)
                 .select_related("article", "user", "user__userinfo")
                 .order_by('-published'))
