@@ -18,7 +18,7 @@ from occupywallst import models as db
 
 
 class Command(BaseCommand):
-    args = 'APP ...'
+    args = ''
     help = __doc__
 
     def handle(self, *args, **options):

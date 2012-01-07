@@ -373,6 +373,9 @@ class Article(models.Model):
         else:
             return "Article \"%s\" by %s" % (self.title, name)
 
+    def full_text(self):
+        return self.title + ' ' + self.content
+
     @models.permalink
     def get_absolute_url(self):
         """Returns absolute canonical path for article"""
@@ -564,6 +567,9 @@ class Comment(models.Model):
     def __unicode__(self):
         name = self.user.username if self.user else 'anonymous'
         return "%s's comment on %s" % (name, self.article.slug)
+
+    def full_text(self):
+        return self.content
 
     def delete(self):
         self.user = None

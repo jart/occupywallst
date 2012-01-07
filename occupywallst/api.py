@@ -35,6 +35,7 @@ r"""
 import re
 from datetime import datetime, date, timedelta
 
+import redis
 from django.conf import settings
 from django.contrib import auth
 from django.core.cache import cache
@@ -45,8 +46,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from occupywallst import models as db
+from occupywallst.redisbayes import RedisBayes
 from occupywallst.templatetags.ows import synopsis
 from occupywallst.utils import APIException, timesince
+
+
+REDBAY = RedisBayes(redis.Redis())
 
 
 def _str_to_bbox(val):
@@ -195,6 +200,12 @@ def _check_post(user, post):
         post.is_removed = True
     if user.userinfo.is_shadow_banned:
         post.is_removed = True
+    try:
+        bclass = REDBAY.classify(post.full_text())
+    except redis.ConnectionError:
+        bclass = 'good'
+    if bclass == 'bad' and user.userinfo.karma < settings.OWS_KARMA_THRESHOLD:
+        post.is_removed = True
 
 
 def _limiter(last, seconds):
@@ -315,9 +326,18 @@ def article_remove(user, article_slug, action, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
-    if action == 'remove':
+    if action == 'remove' and article.is_visible:
+        try:
+            REDBAY.train('bad', article.full_text())
+        except redis.ConnectionError:
+            pass
         article.is_visible = False
-    elif action == 'unremove':
+    elif action == 'unremove' and not article.is_visible:
+        try:
+            REDBAY.untrain('bad', article.full_text())
+            REDBAY.train('good', article.full_text())
+        except redis.ConnectionError:
+            pass
         article.is_visible = True
     else:
         raise APIException(_("invalid action"))
@@ -493,9 +513,18 @@ def comment_remove(user, comment_id, action, **kwargs):
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
     if action == 'remove' and not comment.is_removed:
+        try:
+            REDBAY.train('bad', comment.full_text())
+        except redis.ConnectionError:
+            pass
         comment.is_removed = True
         comment.article.comment_count -= 1
     elif action == 'unremove' and comment.is_removed:
+        try:
+            REDBAY.untrain('bad', comment.full_text())
+            REDBAY.train('good', comment.full_text())
+        except redis.ConnectionError:
+            pass
         comment.is_removed = False
         comment.article.comment_count += 1
     else:
