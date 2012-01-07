@@ -28,6 +28,12 @@ var ows_inactivity_delay;
                 $(this).text(timesince($(this).data('published')) + ' ago');
             });
         }, 1000);
+        $("input.clearme").focus(function() {
+            if ($(this).hasClass('clearme')) {
+                $(this).removeClass('clearme');
+                $(this).val('');
+            }
+        });
         init_setlang();
     }
 

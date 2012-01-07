@@ -66,6 +66,26 @@ def index(request, per_page=10):
         context_instance=RequestContext(request))
 
 
+def _forum_search(query):
+    from whoosh import qparser, index
+    from whoosh.qparser.dateparse import DateParserPlugin
+    ix = index.open_dir(settings.WHOOSH_ROOT)
+    qp = qparser.QueryParser("content", ix.schema)
+    qp.add_plugin(DateParserPlugin())
+    with ix.searcher() as searcher:
+        query = qp.parse(query)
+        for result in searcher.search(query, limit=50):
+            yield db.Article.objects.get(id=result['id'])
+
+
+def forum_search(request):
+    results = _forum_search(request.GET['q'])
+    return render_to_response(
+        'occupywallst/forum_search.html', {'results': results,
+                                           'forum_search': request.GET['q']},
+        context_instance=RequestContext(request))
+
+
 def archive(request, is_forum, prefix, per_page,
             page=None, year=None, month=None, day=None):
     page = int(page) - 1 if page else 0

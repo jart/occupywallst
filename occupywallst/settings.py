@@ -16,6 +16,7 @@ project_root = dirname(abspath(__file__))
 MEDIA_ROOT = join(project_root, 'media')
 GEOIP_PATH = join(project_root, 'data')
 SHP_PATH = join(project_root, 'data')
+WHOOSH_ROOT = join(project_root, 'whoosh')
 
 DEBUG = False
 PAYPAL_DEBUG = DEBUG

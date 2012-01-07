@@ -6,6 +6,7 @@ chat/settings_local.json
 chat/node_modules
 occupywallst.min.js
 occupywallst/media
+occupywallst/whoosh
 
 core
 *.pyc

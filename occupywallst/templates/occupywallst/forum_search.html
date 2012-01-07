@@ -1,0 +1,20 @@
+{% extends base %}
+{% load ows i18n l10n %}
+{% block body_class %}{{ block.super }} forum-search-page forum-page{% endblock %}
+{% block title %}{% trans 'Forum Search Results' %} | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block nav %}
+  {{ block.super }}
+  {% include "occupywallst/forum_nav.html" %}
+{% endblock nav %}
+
+{% block content %}
+  <h1>{% trans 'Forum Search Results' %}</h1>
+  <section id="thread-list">
+    {% for article in results %}
+      {% include "occupywallst/forumpost_synopsis.html" %}
+    {% empty %}
+      <p>{% trans 'No Results Found' %}</p>
+    {% endfor %}
+  </section>
+{% endblock content %}

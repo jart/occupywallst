@@ -213,16 +213,20 @@ nav {
     -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.24);
 }
 
-.subnav li.last { padding-left: 0.5em; }
-.subnav li.last img { vertical-align: middle; }
-.subnav li.last a {
+.subnav li.last { float: right; padding-right: 0.3em; }
+.subnav input {
     display: block;
-    height: 2em;
-    line-height: 2;
-    float: left;
-    padding: 0.2em 0;
-    padding-left: 0.2em;
+    width: 13em;
+    float: right;
+    padding: 0.2em;
+    margin-top: 0.3em;
+    color: #777;
+    background: #404040;
+    border: 1px solid #505050;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,.24);
+    -moz-box-shadow: inset 1px 1px 2px rgba(0,0,0,.24);
 }
+.subnav input:focus { color: #d6d6d6; }
 
 #right { width: 250px; font-size: 0.9em; vertical-align: top; }
 #right350 { width: 350px; font-size: 0.9em; vertical-align: top; }
