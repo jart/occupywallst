@@ -108,8 +108,10 @@ jQuery.fn.numberAdd = function(delta) {
             }, function(data) {
                 if (data.status != "ERROR") {
                     if (action == "remove") {
+                        article.addClass("removed");
                         $(".remove", article).text("unremove");
                     } else {
+                        article.removeClass("removed");
                         $(".remove", article).text("remove");
                     }
                 } else {

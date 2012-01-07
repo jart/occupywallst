@@ -72,9 +72,9 @@ def archive(request, is_forum, prefix, per_page,
     year = int(year) if year else None
     month = iMONTHS[month[:3].lower()] if month else None
     day = int(day) if day else None
-    qset = (db.Article.objects
-            .select_related("author")
-            .filter(is_visible=True, is_forum=is_forum, is_deleted=False)
+    qset = (db.Article.objects_as(request.user)
+            .select_related("author", "author__userinfo")
+            .filter(is_forum=is_forum)
             .order_by('-published'))
     if year and month:
         filterday = datetime(year, month, day or 1)
@@ -112,9 +112,8 @@ def archive(request, is_forum, prefix, per_page,
 @my_cache(lambda r: 'forum')
 def forum(request):
     per_page = 25
-    articles = (db.Article.objects
-                .select_related("author")
-                .filter(is_visible=True, is_deleted=False)
+    articles = (db.Article.objects_as(request.user)
+                .select_related("author", "author__userinfo")
                 .order_by('-killed'))
     bests = (db.Comment.objects
              .select_related("article", "user")
@@ -136,9 +135,8 @@ def forum(request):
 @my_cache(lambda r: 'forum_comments')
 def forum_comments(request):
     per_page = 5
-    comments = (db.Comment.objects
-                .select_related("article", "user")
-                .filter(is_removed=False, is_deleted=False)
+    comments = (db.Comment.objects_as(request.user)
+                .select_related("article", "user", "user__userinfo")
                 .order_by('-published'))
     return render_to_response(
         'occupywallst/forum_comments.html', {'comments': comments[:per_page]},

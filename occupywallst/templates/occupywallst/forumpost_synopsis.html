@@ -1,5 +1,5 @@
 {% load ows i18n l10n %}
-<div class="article item clickdiv" id="{{ article.slug }}">
+<div class="article item clickdiv {% if user and user.is_staff and article.is_removed %}removed{% endif %}" id="{{ article.slug }}">
   <h3>
     {% if not article.is_forum %}{% trans 'News Article' %}:{% endif %}
     <a class="primary" title="{% trans 'View Thread' %}"

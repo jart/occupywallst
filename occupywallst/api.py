@@ -80,9 +80,8 @@ def forumlinks(user, after, count, **kwargs):
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
         raise APIException(_("bad arguments"))
-    articles = (db.Article.objects
-                .select_related("author")
-                .filter(is_visible=True, is_deleted=False)
+    articles = (db.Article.objects_as(user)
+                .select_related("author", "author__userinfo")
                 .order_by('-killed'))
     for article in articles[after:after + count]:
         yield render_to_string('occupywallst/forumpost_synopsis.html',
@@ -95,9 +94,8 @@ def commentfeed(user, after, count, **kwargs):
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
         raise APIException(_("bad arguments"))
-    comments = (db.Comment.objects
-                .select_related("user", "user__userinfo", "article")
-                .filter(is_removed=False, is_deleted=False)
+    comments = (db.Comment.objects_as(request.user)
+                .select_related("article", "user", "user__userinfo")
                 .order_by('-published'))
     for comment in comments[after:after + count]:
         yield render_to_string('occupywallst/comment.html',

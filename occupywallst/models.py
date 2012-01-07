@@ -356,6 +356,16 @@ class Article(models.Model):
 
     objects = models.GeoManager()
 
+    @classmethod
+    def objects_as(cls, user):
+        qset = cls.objects.filter(is_deleted=False)
+        if user and user.is_authenticated():
+            if not user.is_staff:
+                qset = qset.filter(Q(is_visible=True) | Q(author=user))
+        else:
+            qset = qset.filter(is_visible=True)
+        return qset
+
     def __unicode__(self):
         name = self.author.username if self.author else 'anonymous'
         if self.is_forum:
@@ -541,6 +551,16 @@ class Comment(models.Model):
     replies = ()
 
     objects = models.GeoManager()
+
+    @classmethod
+    def objects_as(cls, user):
+        qset = cls.objects.filter(is_deleted=False)
+        if user and user.is_authenticated():
+            if not user.is_staff:
+                qset = qset.filter(Q(is_removed=False) | Q(user=user))
+        else:
+            qset = qset.filter(is_removed=False)
+        return qset
 
     def __unicode__(self):
         name = self.user.username if self.user else 'anonymous'
