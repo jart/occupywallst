@@ -361,8 +361,7 @@ class Article(models.Model):
     def objects_as(cls, user):
         qset = cls.objects.filter(is_deleted=False)
         if user and user.is_authenticated():
-            if not user.is_staff:
-                qset = qset.filter(Q(is_visible=True) | Q(author=user))
+            qset = qset.filter(Q(is_visible=True) | Q(author=user))
         else:
             qset = qset.filter(is_visible=True)
         return qset
@@ -557,8 +556,7 @@ class Comment(models.Model):
     def objects_as(cls, user):
         qset = cls.objects.filter(is_deleted=False)
         if user and user.is_authenticated():
-            if not user.is_staff:
-                qset = qset.filter(Q(is_removed=False) | Q(user=user))
+            qset = qset.filter(Q(is_removed=False) | Q(user=user))
         else:
             qset = qset.filter(is_removed=False)
         return qset

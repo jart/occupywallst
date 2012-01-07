@@ -115,18 +115,20 @@ def forum(request):
     articles = (db.Article.objects_as(request.user)
                 .select_related("author", "author__userinfo")
                 .order_by('-killed'))
-    bests = (db.Comment.objects
-             .select_related("article", "user")
-             .filter(is_removed=False, is_deleted=False)
-             .filter(published__gt=datetime.now() - timedelta(days=1))
-             .order_by('-karma'))
-    recents = (db.Comment.objects
-               .select_related("article", "user")
-               .filter(is_removed=False, is_deleted=False)
+    bests = cache.get('forum:bests')
+    if not bests:
+        bests = (db.Comment.objects
+                 .select_related("article", "user", "user__userinfo")
+                 .filter(is_removed=False, is_deleted=False)
+                 .filter(published__gt=datetime.now() - timedelta(days=1))
+                 .order_by('-karma'))[:7]
+        cache.set('forum:bests', bests, 60 * 15)
+    recents = (db.Comment.objects_as(request.user)
+               .select_related("article", "user", "user__userinfo")
                .order_by('-published'))
     return render_to_response(
         'occupywallst/forum.html', {'articles': articles[:per_page],
-                                    'bests': bests[:7],
+                                    'bests': bests,
                                     'recents': recents[:20],
                                     'per_page': 50},
         context_instance=RequestContext(request))

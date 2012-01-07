@@ -118,11 +118,15 @@ queries::
     create index occupywallst_comment_published
       on occupywallst_comment (published desc)
       where (is_removed = false and is_deleted = false);
+    create index occupywallst_comment_published2
+      on occupywallst_comment (published desc, user_id);
 
     -- optimize: forum thread list
     create index occupywallst_article_killed
       on occupywallst_article (killed desc)
       where (is_visible = true and is_deleted = false);
+    create index occupywallst_article_killed2
+      on occupywallst_article (killed desc, author_id);
 
 
 Network Topology
