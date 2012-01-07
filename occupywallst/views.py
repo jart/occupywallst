@@ -145,11 +145,13 @@ def forum(request):
                  .filter(published__gt=datetime.now() - timedelta(days=1))
                  .order_by('-karma'))[:7]
         cache.set('forum:bests', bests, 60 * 15)
-    recents = db.Comment.objects_as(request.user).order_by('-published')
+    recents = (db.Comment.objects_as(request.user)
+               .select_related("article", "user", "user__userinfo")
+               .order_by('-published'))[:20]
     return render_to_response(
         'occupywallst/forum.html', {'articles': articles[:per_page],
                                     'bests': bests,
-                                    'recents': recents[:20],
+                                    'recents': recents,
                                     'per_page': 50},
         context_instance=RequestContext(request))
 

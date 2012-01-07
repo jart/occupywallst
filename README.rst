@@ -119,7 +119,8 @@ queries::
       on occupywallst_comment (published desc)
       where (is_removed = false and is_deleted = false);
     create index occupywallst_comment_published2
-      on occupywallst_comment (published desc, user_id);
+      on occupywallst_comment (published desc, user_id)
+      where (is_deleted = false);
 
     -- optimize: forum thread list
     create index occupywallst_article_killed
