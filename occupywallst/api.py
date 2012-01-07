@@ -94,7 +94,7 @@ def commentfeed(user, after, count, **kwargs):
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
         raise APIException(_("bad arguments"))
-    comments = (db.Comment.objects_as(request.user)
+    comments = (db.Comment.objects_as(user)
                 .select_related("article", "user", "user__userinfo")
                 .order_by('-published'))
     for comment in comments[after:after + count]:
