@@ -79,7 +79,7 @@ def _forum_search(query):
 
 
 def forum_search(request):
-    if not request.GET['q']:
+    if not request.GET.get('q'):
         return HttpResponseRedirect('..')
     results = _forum_search(request.GET['q'])
     return render_to_response(
