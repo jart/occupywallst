@@ -1,5 +1,5 @@
 {% load ows i18n l10n %}
-<div class="article item clickdiv {% if user and user.is_staff and article.is_removed %}removed{% endif %}" id="{{ article.slug }}">
+<div class="article item clickdiv {% if user and user.userinfo.can_moderate and article.is_removed %}removed{% endif %}" id="{{ article.slug }}">
   <h3>
     {% if not article.is_forum %}{% trans 'News Article' %}:{% endif %}
     <a class="primary" title="{% trans 'View Thread' %}"
@@ -9,7 +9,7 @@
 {% blocktrans with comment_count=article.comment_count|localize created=article.published|timesince_short username=article.author|userlink last_comment=article.killed|timesince_short karma=article.author.userinfo.karma %}
 {{ comment_count }} comments {{ created }} ago by {{ username }} ({{ karma }}) last comment {{ last_comment }} ago
 {% endblocktrans %}
-{% if user and user.is_staff %}
+{% if user and user.userinfo.can_moderate %}
   | {% trans 'Mod:' %} <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
   {% if user.is_superuser %}
     <a href="/admin/occupywallst/forumpost/?ip=127.0.0.1">{{ article.ip }} {{ article.ip|ipcountry }}</a>

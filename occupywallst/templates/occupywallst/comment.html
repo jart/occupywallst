@@ -2,7 +2,7 @@
 
 {% if not comment.is_deleted or comment.replies %}
   <div class="item comment {% if comment.is_worthless %}collapsed{% endif %}" id="comment-{{ comment.id }}">
-    <div class="content {% if user and user.is_staff and comment.is_removed %}removed{% endif %}">
+    <div class="content {% if user and user.userinfo.can_moderate and comment.is_removed %}removed{% endif %}">
       {% if comment.is_deleted %}
         <p class="deleted"><span>{% trans 'This comment was deleted D:' %}</span></p>
       {% else %}
@@ -36,7 +36,7 @@ from {{ city }}, {{ region }}
             <a class="delete" href="#">{% trans 'delete' %}</a>
           {% endif %}
           <a class="permalink" href="{{ comment.get_absolute_url }}">{% trans 'permalink' %}</a>
-          {% if user and user.is_staff %}
+          {% if user and user.userinfo.can_moderate %}
             | {% trans 'Mod:' %}
             <a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>

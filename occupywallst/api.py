@@ -176,7 +176,7 @@ def attendee_info(username, **kwargs):
 
 def _check_post(user, post):
     """Ensure user-submitted forum content is kosher"""
-    if user.is_staff:
+    if user.userinfo.can_moderate():
         return
     if len(post.content) < 3:
         raise APIException(_("content too short"))
@@ -257,6 +257,32 @@ def article_new(user, title, content, is_forum, **kwargs):
     return article_get(user, slug)
 
 
+def _check_modify_article(user, article):
+    """Ensure user have permission to modify an article
+
+    Normal users can only edit their own forum posts.  Moderators can edit all
+    forum posts; however, only staff/admin users can edit news articles and
+    articles that have been flagged to allow html.
+    """
+    if not user.is_staff:
+        if not article.is_forum or article.allow_html:
+            raise APIException(_("insufficient privileges"))
+    if not user.userinfo.can_moderate():
+        if article.author != user:
+            raise APIException(_("you didn't post that"))
+
+
+def _check_modify_comment(user, comment, mods_only=False):
+    """Ensure user have permission to modify an comment
+
+    Normal users can only edit their own comments.  Moderators and staff can
+    modify all comments.
+    """
+    if not user.userinfo.can_moderate():
+        if comment.user != user:
+            raise APIException(_("you didn't post that"))
+
+
 def article_edit(user, article_slug, title, content, **kwargs):
     """Edit an article or forum post
 
@@ -272,11 +298,7 @@ def article_edit(user, article_slug, title, content, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
-    if not user.is_staff:
-        if article.author != user:
-            raise APIException(_("you didn't post that"))
-        if article.allow_html or not article.is_forum:
-            raise APIException(_("insufficient privileges"))
+    _check_modify_article(user, article)
     article.title = title
     article.content = content
     _check_post(user, article)
@@ -303,11 +325,7 @@ def article_delete(user, article_slug, **kwargs):
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
-    if article.author != user:
-        raise APIException(_("you didn't post that"))
-    if not user.is_staff:
-        if not article.is_forum:
-            raise APIException(_("insufficient privileges"))
+    _check_modify_article(user, article)
     article.author = None
     article.title = "[DELETED]"
     article.content = "[DELETED]"
@@ -316,28 +334,41 @@ def article_delete(user, article_slug, **kwargs):
     return []
 
 
+def _train(user, obj):
+    """Train bayesian spam filter that stuff like this is spam"""
+    if not user.userinfo.can_moderate():
+        return
+    try:
+        REDBAY.train('bad', obj.full_text())
+    except redis.ConnectionError:
+        pass
+
+
+def _untrain(user, obj):
+    """Undo previous spam training and train to think this is good"""
+    if not user.userinfo.can_moderate():
+        return
+    try:
+        REDBAY.untrain('bad', obj.full_text())
+        REDBAY.train('good', obj.full_text())
+    except redis.ConnectionError:
+        pass
+
+
 def article_remove(user, article_slug, action, **kwargs):
     """Makes an article unlisted and invisible to search engines"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
-    if not user.is_staff:
-        raise APIException(_("insufficient permissions"))
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
+    _check_modify_article(user, article)
     if action == 'remove' and article.is_visible:
-        try:
-            REDBAY.train('bad', article.full_text())
-        except redis.ConnectionError:
-            pass
+        _train(user, article)
         article.is_visible = False
     elif action == 'unremove' and not article.is_visible:
-        try:
-            REDBAY.untrain('bad', article.full_text())
-            REDBAY.train('good', article.full_text())
-        except redis.ConnectionError:
-            pass
+        _untrain(user, article)
         article.is_visible = True
     else:
         raise APIException(_("invalid action"))
@@ -360,8 +391,7 @@ def article_get(user, article_slug=None, read_more=False, **kwargs):
 
 
 def article_get_comments(user, article_slug=None, **kwargs):
-    """Get all comments for an article
-    """
+    """Get all comments for an article"""
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
         comments = article.comment_set.all()
@@ -371,8 +401,7 @@ def article_get_comments(user, article_slug=None, **kwargs):
 
 
 def article_get_comment_votes(user, article_slug=None, **kwargs):
-    """Get all votes for all comments for an article
-    """
+    """Get all votes for all comments for an article"""
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
         votes = db.CommentVote.objects.filter(
@@ -493,9 +522,7 @@ def comment_edit(user, comment_id, content, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
-    if not user.is_staff:
-        if comment.user != user:
-            raise APIException(_("you didn't post that"))
+    _check_modify_comment(user, comment)
     comment.content = content
     _check_post(user, comment)
     comment.save()
@@ -506,25 +533,17 @@ def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
-    if not user.is_staff:
-        raise APIException(_("insufficient permissions"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
+    _check_modify_comment(user, comment)
     if action == 'remove' and not comment.is_removed:
-        try:
-            REDBAY.train('bad', comment.full_text())
-        except redis.ConnectionError:
-            pass
+        _train(user, comment)
         comment.is_removed = True
         comment.article.comment_count -= 1
     elif action == 'unremove' and comment.is_removed:
-        try:
-            REDBAY.untrain('bad', comment.full_text())
-            REDBAY.train('good', comment.full_text())
-        except redis.ConnectionError:
-            pass
+        _untrain(user, comment)
         comment.is_removed = False
         comment.article.comment_count += 1
     else:
@@ -545,9 +564,7 @@ def comment_delete(user, comment_id, **kwargs):
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
-    if not user.is_staff:
-        if comment.user != user:
-            raise APIException(_("you didn't post that"))
+    _check_modify_comment(user, comment)
     comment.article.comment_count -= 1
     comment.article.save()
     comment.delete()

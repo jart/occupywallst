@@ -1,6 +1,6 @@
 {% load ows i18n l10n %}
 
-<article class="article {% if user and user.is_staff and article.is_removed %}removed{% endif %}" id="{{ article.slug }}">
+<article class="article {% if user and user.userinfo.can_moderate and article.is_removed %}removed{% endif %}" id="{{ article.slug }}">
   {% include "occupywallst/article_info.html" %}
   <div class="words">
     {% if read_more %}

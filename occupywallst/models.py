@@ -36,6 +36,7 @@ from imagekit.models import ImageSpec
 from occupywallst.utils import jsonify
 from occupywallst import geo
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -185,6 +186,8 @@ class UserInfo(models.Model):
     need_ride = models.BooleanField(default=False, help_text="""
         Do they currently need a ride?  If so, display their position
         on the need a ride map.""")
+    is_moderator = models.BooleanField(default=False, help_text="""
+        Does user have moderation privileges?""")
     attendance = models.CharField(max_length=32, choices=ATTENDANCE_CHOICES,
                                   default="maybe", help_text="""
         Whether or not user is attending protest.""")
@@ -231,6 +234,9 @@ class UserInfo(models.Model):
     position_latlng = property(
         lambda s: (s.position.y, s.position.x) if s.position else None,
         lambda s, v: setattr(s, 'position', Point(v[1], v[0])))
+
+    def can_moderate(self):
+        return self.user.is_staff or self.is_moderator
 
     def as_dict(self, moar={}):
         res = {'id': self.user.id,

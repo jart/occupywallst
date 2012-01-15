@@ -28,7 +28,7 @@ from {{ city }}, {{ region }}
     <br />
     {% trans 'This content is user submitted and not an official statement' %}
   {% endif %}
-  {% if user and user.is_staff %}
+  {% if user and user.userinfo.can_moderate %}
     <br />
     {% trans 'Mod:' %}
     <a href="/admin/auth/user/{{ article.author.id }}/shadowban/">{% if article.author.userinfo.is_shadow_banned %}un{% endif %}ban</a>
