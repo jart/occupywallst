@@ -162,6 +162,7 @@ MIDDLEWARE_CLASSES = [
     # 'django.middleware.csrf.CsrfViewMiddleware',
     # 'occupywallst.middleware.CsrfCookieWhenLoggedIn',
     'occupywallst.middleware.NeverCache',
+    'occupywallst.middleware.ReCaptchaMiddleware',
 ]
 
 INSTALLED_APPS = [

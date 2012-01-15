@@ -52,3 +52,14 @@ class CsrfCookieWhenLoggedIn(object):
             if request.user.is_authenticated():
                 request.META["CSRF_COOKIE_USED"] = True
         return response
+
+
+class ReCaptchaMiddleware(object):
+    """Add IP to ReCaptcha POSTs as workaround to django forms"""
+
+    def process_request(self, request):
+        if request.method == 'POST':
+            if 'recaptcha_challenge_field' in request.POST:
+                data = request.POST.copy()
+                data['recaptcha_magic_ip_field'] = request.META['REMOTE_ADDR']
+                request.POST = data

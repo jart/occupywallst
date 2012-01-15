@@ -7,24 +7,21 @@ r"""
 
 """
 
-
 from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from recaptcha.client import captcha
 
 
-class ReCaptcha(forms.widgets.Widget):
-    recaptcha_challenge_name = 'recaptcha_challenge_field'
-    recaptcha_response_name = 'recaptcha_response_field'
-
+class ReCaptchaWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
-        return mark_safe(u'%s' % captcha.displayhtml(
-                settings.RECAPTCHA_PUBLIC_KEY))
+        html = captcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY)
+        return mark_safe(unicode(html))
 
     def value_from_datadict(self, data, files, name):
-        return [data.get(self.recaptcha_challenge_name, None),
-            data.get(self.recaptcha_response_name, None)]
+        return [data.get('recaptcha_challenge_field', None),
+                data.get('recaptcha_response_field', None),
+                data.get('recaptcha_magic_ip_field', None)]
 
 
 class ImageWidget(forms.widgets.FileInput):
@@ -32,6 +29,7 @@ class ImageWidget(forms.widgets.FileInput):
     A FileInput that displays an image and a copyable link instead of
     a file path.
     """
+
     def render(self, name, value, attrs=None):
         # TODO: find the smart way to get the display image url
         if hasattr(value, 'url'):
