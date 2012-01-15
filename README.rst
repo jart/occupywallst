@@ -30,6 +30,10 @@ notifications section in ``chat/app.js``.
 
 Anyway here's how you get started!
 
+Install dependencies::
+
+    wget -qO- https://raw.github.com/jart/occupywallst/master/install_depends.sh | sudo bash
+
 Perform some basic system changes::
 
     sudo -u postgres -i createuser --superuser root   # make root a pg admin
@@ -40,10 +44,6 @@ Define pseudo hostnames by putting this in ``/etc/hosts``::
 
     127.0.2.1 occupywallst.dev
     127.0.2.2 chat.occupywallst.dev
-
-Install dependencies::
-
-    wget -qO- https://raw.github.com/jart/occupywallst/master/install_depends.sh | sudo bash
 
 Now we're going to run the install script to create a virtualenv,
 install the project, create the database, load the database content,
