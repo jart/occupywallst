@@ -38,7 +38,8 @@ from {{ city }}, {{ region }}
           <a class="permalink" href="{{ comment.get_absolute_url }}">{% trans 'permalink' %}</a>
           {% if user and user.userinfo.can_moderate %}
             | {% trans 'Mod:' %}
-            <a href="/admin/auth/user/{{ comment.user.id }}/shadowban/">{% if comment.user.userinfo.is_shadow_banned %}un{% endif %}ban</a>
+            <a class="ban" id="{{ comment.user.username }}" href="#" style="{% if comment.user.userinfo.is_shadow_banned %}display:none;{% endif %}">{% trans 'ban' %}</a>
+            <a class="unban" id="{{ comment.user.username }}" href="#" style="{% if not comment.user.userinfo.is_shadow_banned %}display:none;{% endif %}">{% trans 'unban' %}</a>
             <a href="/admin/occupywallst/comment/?user={{ comment.user.id }}">comments</a>
             <a href="/admin/occupywallst/forumpost/?author={{ comment.user.id }}">threads</a>
             <a href="/admin/occupywallst/comment/{{ comment.id }}/">{% trans 'admin' %}</a>

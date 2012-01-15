@@ -31,7 +31,8 @@ from {{ city }}, {{ region }}
   {% if user and user.userinfo.can_moderate %}
     <br />
     {% trans 'Mod:' %}
-    <a href="/admin/auth/user/{{ article.author.id }}/shadowban/">{% if article.author.userinfo.is_shadow_banned %}un{% endif %}ban</a>
+    <a class="ban" id="{{ article.author.username }}" href="#" style="{% if article.author.userinfo.is_shadow_banned %}display:none;{% endif %}">{% trans 'ban' %}</a>
+    <a class="unban" id="{{ article.author.username }}" href="#" style="{% if not article.author.userinfo.is_shadow_banned %}display:none;{% endif %}">{% trans 'unban' %}</a>
     <a href="/admin/occupywallst/comment/?user={{ article.author.id }}">comments</a>
     <a href="/admin/occupywallst/forumpost/?author={{ article.author.id }}">threads</a>
     <a href="/admin/occupywallst/{% if article.is_forum %}forumpost{% else %}newsarticle{% endif %}/{{ article.id }}/">{% trans 'admin' %}</a>

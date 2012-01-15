@@ -270,6 +270,9 @@ def _check_modify_article(user, article):
     if not user.userinfo.can_moderate():
         if article.author != user:
             raise APIException(_("you didn't post that"))
+    if user.userinfo.can_moderate() and not user.is_staff:
+        if article.author.is_staff:
+            raise APIException(_("insufficient privileges"))
 
 
 def _check_modify_comment(user, comment, mods_only=False):
@@ -281,6 +284,31 @@ def _check_modify_comment(user, comment, mods_only=False):
     if not user.userinfo.can_moderate():
         if comment.user != user:
             raise APIException(_("you didn't post that"))
+    if user.userinfo.can_moderate() and not user.is_staff:
+        if comment.user.is_staff:
+            raise APIException(_("insufficient privileges"))
+
+
+def shadowban(user, username, action, **kwargs):
+    """Ban a user through nefarious means"""
+    if not (user and user.id):
+        raise APIException(_("you're not logged in"))
+    if not user.userinfo.can_moderate():
+        raise APIException(_("insufficient permissions"))
+    try:
+        user2 = db.User.objects.get(username=username)
+    except db.User.DoesNotExist:
+        raise APIException(_("user not found"))
+    if user2.userinfo.can_moderate():
+        raise APIException(_("cannot ban privileged users"))
+    if action == 'ban' and not user2.userinfo.is_shadow_banned:
+        user2.userinfo.is_shadow_banned = True
+    elif action == 'unban' and user2.userinfo.is_shadow_banned:
+        user2.userinfo.is_shadow_banned = False
+    else:
+        raise APIException(_("invalid action"))
+    user2.userinfo.save()
+    return []
 
 
 def article_edit(user, article_slug, title, content, **kwargs):

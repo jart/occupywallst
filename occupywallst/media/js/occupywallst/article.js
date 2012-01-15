@@ -13,11 +13,12 @@ jQuery.fn.numberAdd = function(delta) {
     var penguin = 50;
 
     function init(root) {
+        init_shadowban(root);
+        init_comment_form($(".postcommentform", root),
+                          $("#comment-list", root), "");
         $(".article", root).each(function() {
             init_article($(this));
         });
-        init_comment_form($(".postcommentform", root),
-                          $("#comment-list", root), "");
         $(".comment", root).each(function() {
             init_comment($(this));
         });
@@ -25,6 +26,30 @@ jQuery.fn.numberAdd = function(delta) {
         if (anchor.hasClass("comment")) {
             $("> .content", anchor).addClass("highlight");
         }
+    }
+
+    function init_shadowban(root) {
+        $(".ban, .unban", root).click(function(ev) {
+            ev.preventDefault();
+            var self = $(this);
+            var action = self.is(".ban") ? "ban" : "unban";
+            api("/api/shadowban/", {
+                "username": self.attr("id"),
+                "action": action
+            }, function(data) {
+                if (data.status != "ERROR") {
+                    if (action == "ban") {
+                        $(".ban", self.parent()).hide();
+                        $(".unban", self.parent()).show();
+                    } else {
+                        $(".ban", self.parent()).show();
+                        $(".unban", self.parent()).hide();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
     }
 
     function init_article(article) {

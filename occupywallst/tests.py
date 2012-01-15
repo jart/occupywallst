@@ -126,9 +126,20 @@ class OWS(TestCase):
         self.red_user = User.objects.create_user('red', '', 'red')
         self.green_user = User.objects.create_user('green', '', 'green')
         self.blue_user = User.objects.create_user('blue', '', 'blue')
-        for u in [self.red_user, self.green_user, self.blue_user]:
+        self.admin_user = User.objects.create_user('admin', '', 'admin')
+        self.staff_user = User.objects.create_user('staff', '', 'staff')
+        self.mod_user = User.objects.create_user('mod', '', 'mod')
+        for u in [self.red_user, self.green_user, self.blue_user,
+                  self.admin_user, self.staff_user, self.mod_user]:
             ui = db.UserInfo(user=u)
             ui.save()
+        self.admin_user.is_staff = True
+        self.admin_user.is_admin = True
+        self.admin_user.save()
+        self.staff_user.is_staff = True
+        self.staff_user.save()
+        self.mod_user.userinfo.is_moderator = True
+        self.mod_user.userinfo.save()
 
     def setUp(self):
         settings.OWS_LIMIT_THREAD = -1
@@ -158,6 +169,29 @@ class OWS(TestCase):
 
         self.photo = db.Photo(carousel=self.carousel, caption='hello, world')
         self.photo.save()
+
+    def invoke(api, *args, **kwargs):
+        resp = self.client.post(api, *args, **kwargs)
+        if response.status_code != 200:
+            raise Exception("%s gave unexpected status code: %d"
+                            % (api, response.status_code))
+        return json.loads(resp.content)
+
+    def good(api, *args, **kwargs):
+        data = self.invoke(api, *args, **kwargs)
+        if data['status'] == 'ERROR':
+            raise Exception("%s failed: %s" % (api, jdump(data)))
+        return data
+
+    def bad(msg, api, *args, **kwargs):
+        data = self.invoke(api, *args, **kwargs)
+        data = json.loads(resp.content)
+        if data['status'] != 'ERROR':
+            raise Exception("%s didn't fail: %s" % (api, jdump(data)))
+        if data['message'] != msg:
+            raise Exception("%s didn't fail with '%s': %s" % (api, msg, jdump(data)))
+        return data
+
 
     ######################################################################
     # tests of models
@@ -803,6 +837,31 @@ class OWS(TestCase):
                                     {'article_slug': a.slug})
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
+
+    def test_api_shadowban(self):
+        # normal users can't ban
+        self.good('/api/login/', {'username': 'red', 'password': 'red'})
+        self.bad("insufficient permissions", '/api/shadowban/', {'username': 'red', 'action': 'ban'})
+
+        # but moderators can
+        self.good('/api/login/', {'username': 'mod', 'password': 'mod'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
+
+        # same goes for staff
+        self.good('/api/login/', {'username': 'staff', 'password': 'staff'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
+
+        # but you can't ban important people
+        self.good('/api/login/', {'username': 'mod', 'password': 'mod'})
+        self.bad("cannot ban privileged users", '/api/shadowban/', {'username': 'mod', 'action': 'mod'})
+
+        # ban if already banned raises error
+        self.good('/api/login/', {'username': 'staff', 'password': 'staff'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
+        self.bad("invalid action", '/api/shadowban/', {'username': 'red', 'action': 'ban'})
+        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
 
     def test_api_comment(self):
         settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
