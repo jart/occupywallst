@@ -301,10 +301,12 @@ def shadowban(user, username, action, **kwargs):
         raise APIException(_("user not found"))
     if user2.userinfo.can_moderate():
         raise APIException(_("cannot ban privileged users"))
-    if action == 'ban' and not user2.userinfo.is_shadow_banned:
-        user2.userinfo.is_shadow_banned = True
-    elif action == 'unban' and user2.userinfo.is_shadow_banned:
-        user2.userinfo.is_shadow_banned = False
+    if action == 'ban':
+        if not user2.userinfo.is_shadow_banned:
+            user2.userinfo.is_shadow_banned = True
+    elif action == 'unban':
+        if user2.userinfo.is_shadow_banned:
+            user2.userinfo.is_shadow_banned = False
     else:
         raise APIException(_("invalid action"))
     user2.userinfo.save()
@@ -387,17 +389,21 @@ def article_remove(user, article_slug, action, **kwargs):
     """Makes an article unlisted and invisible to search engines"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
+    if not user.userinfo.can_moderate():
+        raise APIException(_("insufficient permissions"))
     try:
         article = db.Article.objects.get(slug=article_slug, is_deleted=False)
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
     _check_modify_article(user, article)
-    if action == 'remove' and article.is_visible:
-        _train(user, article)
-        article.is_visible = False
-    elif action == 'unremove' and not article.is_visible:
-        _untrain(user, article)
-        article.is_visible = True
+    if action == 'remove':
+        if article.is_visible:
+            _train(user, article)
+            article.is_visible = False
+    elif action == 'unremove':
+        if not article.is_visible:
+            _untrain(user, article)
+            article.is_visible = True
     else:
         raise APIException(_("invalid action"))
     article.save()
@@ -561,19 +567,23 @@ def comment_remove(user, comment_id, action, **kwargs):
     """Allows moderator to remove a comment"""
     if not (user and user.id):
         raise APIException(_("you're not logged in"))
+    if not user.userinfo.can_moderate():
+        raise APIException(_("insufficient permissions"))
     try:
         comment = db.Comment.objects.get(id=comment_id, is_deleted=False)
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
     _check_modify_comment(user, comment)
-    if action == 'remove' and not comment.is_removed:
-        _train(user, comment)
-        comment.is_removed = True
-        comment.article.comment_count -= 1
-    elif action == 'unremove' and comment.is_removed:
-        _untrain(user, comment)
-        comment.is_removed = False
-        comment.article.comment_count += 1
+    if action == 'remove':
+        if not comment.is_removed:
+            _train(user, comment)
+            comment.is_removed = True
+            comment.article.comment_count -= 1
+    elif action == 'unremove':
+        if comment.is_removed:
+            _untrain(user, comment)
+            comment.is_removed = False
+            comment.article.comment_count += 1
     else:
         raise APIException(_("invalid action"))
     comment.save()
@@ -750,7 +760,7 @@ def signup(request, username, password, email, **kwargs):
 def login(request, username, password, **kwargs):
     """Login user"""
     if request.user.is_authenticated():
-        raise APIException(_("you're already logged in"))
+        logout(request)
     user = auth.authenticate(username=username, password=password)
     if not user:
         raise APIException(_("invalid username or password"))

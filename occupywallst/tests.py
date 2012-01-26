@@ -11,6 +11,7 @@ r"""
 import json
 import random
 from datetime import datetime
+from itertools import product
 
 from django.conf import settings
 from django.test import TestCase
@@ -23,6 +24,33 @@ from occupywallst.templatetags import ows
 
 
 jdump = lambda v: json.dumps(v, indent=2)
+fresh = lambda o: o.__class__.objects.get(id=o.id)
+totup = lambda v: v if isinstance(v, tuple) else (v,)
+
+
+def dict_product(data):
+    """Returns cartesian product of a dictionary
+
+    Turns this::
+
+        {'hello': 'kitty', 'letters': ('a', 'b', 'c'), 'numbers': (1, 2, 3)}
+
+    Into this::
+
+        [{'hello': 'kitty', 'letters': 'a', 'numbers': 1},
+         {'hello': 'kitty', 'letters': 'a', 'numbers': 2},
+         {'hello': 'kitty', 'letters': 'a', 'numbers': 3},
+         {'hello': 'kitty', 'letters': 'b', 'numbers': 1},
+         {'hello': 'kitty', 'letters': 'b', 'numbers': 2},
+         {'hello': 'kitty', 'letters': 'b', 'numbers': 3},
+         {'hello': 'kitty', 'letters': 'c', 'numbers': 1},
+         {'hello': 'kitty', 'letters': 'c', 'numbers': 2},
+         {'hello': 'kitty', 'letters': 'c', 'numbers': 3}]
+
+    """
+    keys = data.keys()
+    vals = [totup(v) for v in data.values()]
+    return [dict(zip(keys, r)) for r in product(*vals)]
 
 
 def assert_success(response):
@@ -42,16 +70,21 @@ def assert_and_get_valid_json(response):
     return j
 
 
-def random_words(N):
+def random_slug(N=20):
+    letters = [chr(x) for x in range(ord('a'), ord('z') + 1)]
+    return ''.join(random.choice(letters) for x in range(N))
+
+
+def random_words(N=20):
     """Choose N random words for content"""
-    words = ('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed '
-             'do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-             'Ut enim ad minim veniam, quis nostrud exercitation ullamco '
-             'laboris nisi ut aliquip ex ea commodo consequat. Duis aute '
+    words = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed '
+             'do eiusmod tempor incididunt ut labore et dolore magna aliqua '
+             'Ut enim ad minim veniam quis nostrud exercitation ullamco '
+             'laboris nisi ut aliquip ex ea commodo consequat Duis aute '
              'irure dolor in reprehenderit in voluptate velit esse cillum '
-             'dolore eu fugiat nulla pariatur. Excepteur sint occaecat '
-             'cupidatat non proident, sunt in culpa qui officia deserunt '
-             'mollit anim id est laborum.').split()
+             'dolore eu fugiat nulla pariatur Excepteur sint occaecat '
+             'cupidatat non proident sunt in culpa qui officia deserunt '
+             'mollit anim id est laborum').split()
     return ' '.join(random.choice(words) for n in range(N))
 
 
@@ -78,6 +111,47 @@ def add_content(N):
                                    random.choice(comment_ids))
                 api.comment_downvote(random.choice(users),
                                    random.choice(comment_ids))
+
+
+def new_user(username=None, password=None, email='', is_staff=False,
+             is_active=True, is_superuser=False, **kwargs):
+    username = username or random_slug()
+    password = password or random_slug()
+    user = db.User.objects.create_user(username, email, password)
+    user.is_staff = is_staff
+    user.is_active = is_active
+    user.is_superuser = is_superuser
+    user.userinfo = db.UserInfo.objects.create(user=user, **kwargs)
+    user.save()
+    user.password_hack = password
+    return user
+
+
+def new_article(user, **kwargs):
+    vals = dict(author=user,
+                published=datetime.now(),
+                title=random_words(7),
+                slug=random_slug(),
+                content=random_words(20),
+                is_forum=True)
+    vals.update(kwargs)
+    return db.Article.objects.create(**vals)
+
+
+def new_comment(article, user, **kwargs):
+    vals = dict(user=user,
+                article=article,
+                content=random_words(20))
+    vals.update(kwargs)
+    return db.Comment.objects.create(**vals)
+
+
+def update(o, **kwargs):
+    for k, v in kwargs.items():
+        setattr(o, k, v)
+    o.save()
+    return o
+
 
 def copy_content(article_slug):
     """ copy article, comments, and users from live ows.org site to
@@ -111,7 +185,6 @@ def copy_content(article_slug):
         # TODO: add upvotes and downvotes
 
 
-
 class OWS(TestCase):
     fixtures = ['verbiage', 'example_data']
 
@@ -142,6 +215,7 @@ class OWS(TestCase):
         self.mod_user.userinfo.save()
 
     def setUp(self):
+        settings.OWS_LIMIT_VOTES = -1
         settings.OWS_LIMIT_THREAD = -1
         settings.OWS_LIMIT_COMMENT = -1
         settings.OWS_LIMIT_MSG_DAY = 999999
@@ -169,28 +243,6 @@ class OWS(TestCase):
 
         self.photo = db.Photo(carousel=self.carousel, caption='hello, world')
         self.photo.save()
-
-    def invoke(api, *args, **kwargs):
-        resp = self.client.post(api, *args, **kwargs)
-        if response.status_code != 200:
-            raise Exception("%s gave unexpected status code: %d"
-                            % (api, response.status_code))
-        return json.loads(resp.content)
-
-    def good(api, *args, **kwargs):
-        data = self.invoke(api, *args, **kwargs)
-        if data['status'] == 'ERROR':
-            raise Exception("%s failed: %s" % (api, jdump(data)))
-        return data
-
-    def bad(msg, api, *args, **kwargs):
-        data = self.invoke(api, *args, **kwargs)
-        data = json.loads(resp.content)
-        if data['status'] != 'ERROR':
-            raise Exception("%s didn't fail: %s" % (api, jdump(data)))
-        if data['message'] != msg:
-            raise Exception("%s didn't fail with '%s': %s" % (api, msg, jdump(data)))
-        return data
 
 
     ######################################################################
@@ -838,31 +890,6 @@ class OWS(TestCase):
         j = assert_and_get_valid_json(response)
         assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
 
-    def test_api_shadowban(self):
-        # normal users can't ban
-        self.good('/api/login/', {'username': 'red', 'password': 'red'})
-        self.bad("insufficient permissions", '/api/shadowban/', {'username': 'red', 'action': 'ban'})
-
-        # but moderators can
-        self.good('/api/login/', {'username': 'mod', 'password': 'mod'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
-
-        # same goes for staff
-        self.good('/api/login/', {'username': 'staff', 'password': 'staff'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
-
-        # but you can't ban important people
-        self.good('/api/login/', {'username': 'mod', 'password': 'mod'})
-        self.bad("cannot ban privileged users", '/api/shadowban/', {'username': 'mod', 'action': 'mod'})
-
-        # ban if already banned raises error
-        self.good('/api/login/', {'username': 'staff', 'password': 'staff'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'ban'})
-        self.bad("invalid action", '/api/shadowban/', {'username': 'red', 'action': 'ban'})
-        self.good('/api/shadowban/', {'username': 'red', 'action': 'unban'})
-
     def test_api_comment(self):
         settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing
         content = random_words(20)
@@ -1047,3 +1074,202 @@ class OWS(TestCase):
 
         self.red_user.userinfo.is_shadow_banned = False
         self.red_user.userinfo.save()
+
+
+class TestAPI(TestCase):
+    def setUp(self):
+        settings.TEST_MODE = True
+        settings.OWS_LIMIT_VOTES = ()
+        settings.OWS_LIMIT_THREAD = -1
+        settings.OWS_LIMIT_COMMENT = -1
+        settings.OWS_LIMIT_MSG_DAY = 999999
+
+    def invoke(self, api, data, extra):
+        resp = self.client.post(api, data, **extra)
+        if resp.status_code != 200:
+            raise Exception("%s gave unexpected status code: %d"
+                            % (api, resp.status_code))
+        return json.loads(resp.content)
+
+    def good(self, api, data={}, **extra):
+        for api, data, extra in product(totup(api),
+                                        dict_product(data),
+                                        dict_product(extra)):
+            res = self.invoke(api, data, extra)
+            if res['status'] == 'ERROR':
+                raise Exception('unexpected api failure\n' +
+                                'api = ' + jdump(api) + '\n' +
+                                'args = ' + jdump(data) + '\n' +
+                                'extra = ' + jdump(extra) + '\n' +
+                                'result = ' + jdump(res) + '\n')
+        return res
+
+    def bad(self, msg, api, data={}, **extra):
+        for api, data, extra in product(totup(api),
+                                        dict_product(data),
+                                        dict_product(extra)):
+            res = self.invoke(api, data, extra)
+            if res['status'] != 'ERROR':
+                raise Exception("api didn't fail\n" +
+                                'api = ' + jdump(api) + '\n' +
+                                'args = ' + jdump(data) + '\n' +
+                                'extra = ' + jdump(extra) + '\n' +
+                                'result = ' + jdump(res) + '\n')
+            self.assertEqual(res['message'], msg)
+        return res
+
+    def login(self, user):
+        self.good('/api/login/', {'username': user.username,
+                                  'password': user.password_hack})
+
+    def logout(self):
+        self.good('/api/logout/')
+
+    def test_comment_vote(self):
+        votes = lambda c: (c.karma, c.ups, c.downs)
+        c = new_comment(new_article(new_user()), new_user())
+        self.assertEqual(votes(fresh(c)), (0, 0, 0))
+
+        # must be logged in
+        self.logout()
+        self.bad('not logged in', '/api/comment_upvote/', {'comment': c.id})
+        self.bad('not logged in', '/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (0, 0, 0))
+
+        # comment must exist
+        self.login(new_user())
+        self.bad('comment not found', '/api/comment_upvote/', {'comment': 0})
+        self.bad('comment not found', '/api/comment_downvote/', {'comment': 0})
+
+        # can only vote once
+        self.login(new_user())
+        self.good('/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (-1, 0, 1))
+        self.good('/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (-1, 0, 1))
+        self.good('/api/comment_upvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (1, 1, 0))
+        self.good('/api/comment_upvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (1, 1, 0))
+
+        # multiple votes / tallying
+        self.login(new_user())
+        self.good('/api/comment_upvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (2, 2, 0))
+        self.login(new_user())
+        self.good('/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (1, 2, 1))
+        self.login(new_user())
+        self.good('/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (0, 2, 2))
+        self.login(new_user())
+        self.good('/api/comment_downvote/', {'comment': c.id})
+        self.assertEqual(votes(fresh(c)), (-1, 2, 3))
+
+        # removed/deleted stuff
+        c = update(c, is_deleted=True)
+        self.bad('comment not found', '/api/comment_upvote/', {'comment': c.id})
+        self.bad('comment not found', '/api/comment_downvote/', {'comment': c.id})
+        c = update(c, is_removed=True, is_deleted=False)
+        self.good('/api/comment_upvote/', {'comment': c.id})
+        self.good('/api/comment_downvote/', {'comment': c.id})
+
+    def test_shadowban(self):
+        user = new_user()
+
+        # normal users can't ban
+        self.logout()
+        self.bad("you're not logged in", '/api/shadowban/', {'action': 'ban', 'username': user.username})
+        self.login(new_user())
+        self.bad("insufficient permissions", '/api/shadowban/', {'action': 'ban', 'username': user.username})
+
+        # but moderators can
+        self.login(new_user(is_moderator=True))
+        self.good('/api/shadowban/', {'action': 'ban', 'username': user.username})
+        self.good('/api/shadowban/', {'action': 'unban', 'username': user.username})
+
+        # and staff can
+        self.login(new_user(is_staff=True))
+        self.good('/api/shadowban/', {'action': 'ban', 'username': user.username})
+        self.good('/api/shadowban/', {'action': 'unban', 'username': user.username})
+
+        # you can't post shit when banned
+        def tryit(expect_removed):
+            self.login(user)
+            data = self.good('/api/article_new/', {'title': random_words(10), 'content': random_words(), 'is_forum': 'true'})
+            art = db.Article.objects.get(id=data['results'][0]['id'])
+            self.assertEqual(art.is_removed, expect_removed)
+            data = self.good('/api/comment_new/', {'article_slug': art.slug, 'parent_id': '', 'content': random_words()})
+            com = db.Comment.objects.get(id=data['results'][0]['id'])
+            self.assertEqual(com.is_removed, expect_removed)
+        self.login(user)
+        tryit(False)
+        self.login(new_user(is_moderator=True))
+        self.good('/api/shadowban/', {'action': 'ban', 'username': user.username})
+        self.login(user)
+        tryit(True)
+        self.login(new_user(is_moderator=True))
+        self.good('/api/shadowban/', {'action': 'unban', 'username': user.username})
+
+        # same goes for staff
+        self.login(new_user(is_staff=True))
+        self.good('/api/shadowban/', {'action': 'ban', 'username': user.username})
+        self.good('/api/shadowban/', {'action': 'unban', 'username': user.username})
+
+        # but you can't ban important people
+        self.login(new_user(is_moderator=True))
+        self.bad("cannot ban privileged users", '/api/shadowban/', {'action': 'ban', 'username': new_user(is_staff=True).username})
+        self.bad("cannot ban privileged users", '/api/shadowban/', {'action': 'ban', 'username': new_user(is_moderator=True).username})
+
+    def test_delete(self):
+        # you need to be logged in
+        self.logout()
+        self.bad("you're not logged in", '/api/comment_delete/', {'comment_id': '666'})
+        self.bad("you're not logged in", '/api/article_delete/', {'article_slug': '666'})
+
+        # you can delete your stuff
+        user = new_user()
+        art = new_article(user)
+        com = new_comment(art, user)
+        self.login(user)
+        self.good('/api/comment_delete/', {'comment_id': com.id})
+        self.good('/api/article_delete/', {'article_slug': art.slug})
+        # unless it was converted to a news article
+        art = update(art, is_forum=False)
+        self.bad('insufficient privileges', '/api/article_delete/', {'article_slug': art.slug})
+
+        # but you can't delete other people's stuff
+        me, them = new_user(), new_user()
+        art = new_article(them)
+        com = new_comment(art, them)
+        self.login(me)
+        self.bad("you didn't post that", '/api/comment_delete/', {'comment_id': com.id})
+        self.bad("you didn't post that", '/api/article_delete/', {'article_slug': art.slug})
+
+        # unless you're a mod
+        me, them = new_user(is_moderator=True), new_user()
+        art = new_article(them)
+        com = new_comment(art, them)
+        self.login(me)
+        self.good('/api/comment_delete/', {'comment_id': com.id})
+        self.good('/api/article_delete/', {'article_slug': art.slug})
+
+    def test_remove(self):
+        # you need to be logged in
+        self.logout()
+        self.bad("you're not logged in", ('/api/comment_remove/', '/api/article_remove/'),
+                 {'action': ('remove', 'unremove'), 'comment_id': '666', 'article_slug': '666'})
+
+        # this is a mod only feature
+        user = new_user()
+        art = new_article(user)
+        com = new_comment(art, user)
+        self.login(user)
+        self.bad('insufficient permissions', '/api/comment_remove/', {'action': ('remove', 'unremove'), 'comment_id': com.id})
+        self.bad('insufficient permissions', '/api/article_remove/', {'action': ('remove', 'unremove'), 'article_slug': art.slug})
+        self.login(new_user())
+        self.bad('insufficient permissions', '/api/comment_remove/', {'action': ('remove', 'unremove'), 'comment_id': com.id})
+        self.bad('insufficient permissions', '/api/article_remove/', {'action': ('remove', 'unremove'), 'article_slug': art.slug})
+        self.login(new_user(is_moderator=True))
+        self.good('/api/comment_remove/', {'action': ('remove', 'unremove'), 'comment_id': com.id})
+        self.good('/api/article_remove/', {'action': ('remove', 'unremove'), 'article_slug': art.slug})

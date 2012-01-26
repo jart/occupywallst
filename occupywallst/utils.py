@@ -73,6 +73,8 @@ def api_view(function):
                    'message': 'system malfunction',
                    'results': []}
             transaction.rollback()
+            if getattr(settings, 'TEST_MODE', False):
+                raise
         else:
             if data:
                 res = {'status': 'OK',
