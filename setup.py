@@ -26,14 +26,14 @@ setup(
                             'markdown', 'twilio', 'django-debug-toolbar',
                             'recaptcha-client', 'gunicorn', 'django-rosetta',
                             'django-imagekit', 'south', 'Whoosh', 'redis',
-                            'slimit', 'cssmin'],
+                            'redisbayes', 'slimit', 'cssmin'],
     packages             = find_packages(),
     include_package_data = True,
     zip_safe             = False,
     scripts              = ['scripts/' + f for f in os.listdir('scripts')
                             if not f.startswith('.')],
     classifiers = [
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python",
         "Framework :: Django",

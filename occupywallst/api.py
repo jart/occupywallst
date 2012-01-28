@@ -36,6 +36,7 @@ import re
 from datetime import datetime, date, timedelta
 
 import redis
+from redisbayes import RedisBayes
 from django.conf import settings
 from django.contrib import auth
 from django.core.cache import cache
@@ -46,7 +47,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from occupywallst import models as db
-from occupywallst.redisbayes import RedisBayes
 from occupywallst.templatetags.ows import synopsis
 from occupywallst.utils import APIException, timesince
 
