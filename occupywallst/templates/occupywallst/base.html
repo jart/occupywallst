@@ -14,7 +14,7 @@
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} News" href="{% url rss-news %}" />
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Forum" href="{% url rss-forum %}" />
   <link rel="alternate" type="application/rss+xml" title="{{ OWS_SITE_NAME }} Comments" href="{% url rss-comments %}" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=40" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst.css?v=41" type="text/css" media="all" />
   {% if LANGUAGE_BIDI %}
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/occupywallst_rtl.css?v=40" type="text/css" media="all" />
   {% endif %}
@@ -25,6 +25,19 @@
   {% endblock stylesheets %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
+
+<div style="top:180px;left:50%;position:fixed;width:0pt;height:0pt">
+  <div class="addthis_bar addthis_bar_vertical addthis_bar_large" style="left:-560px;position:relative;height:275px;width:65px">
+    <div class="addthis_toolbox addthis_default_style">
+      <span><a class="addthis_button_facebook_like" fb:like:layout="box_count"></a></span>
+      <span><a class="addthis_button_tweet" tw:count="vertical"></a></span>
+      <span><a class="addthis_button_google_plusone" g:plusone:size="tall"></a></span>
+      <span><a class="addthis_counter"></a></span>
+    </div>
+  </div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f3871aa2b611a75"></script>
+</div>
+
   {% if DEBUG %}
     <div id="devnotice">DEVELOPMENT MODE</div>
   {% endif %}
