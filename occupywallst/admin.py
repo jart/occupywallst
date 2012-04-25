@@ -259,5 +259,5 @@ class ListAdmin(GeoAdmin):
 
 class ListMemberAdmin(GeoAdmin):
     date_hierarchy = 'created'
-    list_display = ('email', 'mlist', 'created')
+    list_display = ('email', 'mlist', 'created', 'ip')
     list_filter = ('mlist__name',)
