@@ -139,6 +139,10 @@ class List(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Mailing List"
+        verbose_name_plural = "Mailing Lists"
+
 
 class ListMember(models.Model):
     """Stores confirmed emails for a mailing list"""
@@ -153,6 +157,8 @@ class ListMember(models.Model):
 
     class Meta:
         unique_together = ("mlist", "email")
+        verbose_name = "Mailing List Member"
+        verbose_name_plural = "Mailing List Members"
 
     def __unicode__(self):
         return self.email
