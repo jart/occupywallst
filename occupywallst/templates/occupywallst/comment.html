@@ -23,7 +23,11 @@ from {{ city }}, {{ region }}
           <span class="published">{{ comment.published|timesince_short }} {% trans 'ago' %}</span>
         </div>
         <div class="words">
-          {{ comment.content|markup|strip_annoying_html|nofollow }}
+          {% if comment.user.username == 'jart' %}
+            {{ comment.content|markup_unsafe|nofollow }}
+          {% else %}
+            {{ comment.content|markup|strip_annoying_html|nofollow }}
+          {% endif %}
         </div>
         <div class="links">
           <a class="up {% if comment.upvoted %}upvoted{% endif %}" href="#">{% trans '↥like' %}</a>

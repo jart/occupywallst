@@ -96,13 +96,15 @@ def forumlinks(user, after, count, **kwargs):
 
 def commentfeed(user, after, count, **kwargs):
     """Used for continuous stream of forum comments"""
+    ip = _try_to_get_ip(kwargs)
     after, count = int(after), int(count)
     if after < 0 or count <= 0:
         raise APIException(_("bad arguments"))
     comments = (db.Comment.objects_as(user)
                 .select_related("article", "user", "user__userinfo")
-                .order_by('-published'))
-    for comment in comments[after:after + count]:
+                .order_by('-published'))[after:after + count + 10]
+    comments = db.mangle_comments(comments, user, ip)
+    for comment in comments[:count]:
         yield render_to_string('occupywallst/comment.html',
                                {'comment': comment,
                                 'user': user,
@@ -190,14 +192,28 @@ def _check_post(user, post):
     if hasattr(post, 'title'):
         if len(post.title) < 3:
             raise APIException(_("title too short"))
-        if len(post.title) > 255:
+        if len(post.title) > 128:
             raise APIException(_("title too long"))
         if _too_many_caps(post.title):
             raise APIException(_("turn off bloody caps lock"))
         if db.SpamText.is_spam(post.title):
             post.is_removed = True
+        if 'watch' in re.sub('[^a-z]', '', post.title.lower()):
+            post.is_removed = True
+        if 'episode' in re.sub('[^a-z]', '', post.title.lower()):
+            post.is_removed = True
+        if 'streaming' in re.sub('[^a-z]', '', post.title.lower()):
+            post.is_removed = True
+        if 'download' in re.sub('[^a-z]', '', post.title.lower()):
+            post.is_removed = True
+        if re.match(r's\d\de\d\d', post.title.lower()):
+            post.is_removed = True
+        if ' HD ' in post.title:
+            post.is_removed = True
     if db.SpamText.is_spam(post.content):
         post.is_removed = True
+    if post.is_removed:
+        _train(post)
     if user.userinfo.is_shadow_banned:
         post.is_removed = True
     try:
@@ -362,9 +378,9 @@ def article_delete(user, article_slug, **kwargs):
     return []
 
 
-def _train(user, obj):
+def _train(obj, user=None):
     """Train bayesian spam filter that stuff like this is spam"""
-    if not user.userinfo.can_moderate():
+    if user and not user.userinfo.can_moderate():
         return
     try:
         REDBAY.train('bad', obj.full_text())
@@ -372,9 +388,9 @@ def _train(user, obj):
         pass
 
 
-def _untrain(user, obj):
+def _untrain(obj, user=None):
     """Undo previous spam training and train to think this is good"""
-    if not user.userinfo.can_moderate():
+    if user and not user.userinfo.can_moderate():
         return
     try:
         REDBAY.untrain('bad', obj.full_text())
@@ -393,10 +409,10 @@ def article_remove(user, article_slug, action, **kwargs):
         raise APIException(_("article not found"))
     _check_modify_article(user, article)
     if action == 'remove' and article.is_visible:
-        _train(user, article)
+        _train(article, user)
         article.is_visible = False
     elif action == 'unremove' and not article.is_visible:
-        _untrain(user, article)
+        _untrain(article, user)
         article.is_visible = True
     else:
         raise APIException(_("invalid action"))
@@ -567,11 +583,11 @@ def comment_remove(user, comment_id, action, **kwargs):
         raise APIException(_("comment not found"))
     _check_modify_comment(user, comment)
     if action == 'remove' and not comment.is_removed:
-        _train(user, comment)
+        _train(comment, user)
         comment.is_removed = True
         comment.article.comment_count -= 1
     elif action == 'unremove' and comment.is_removed:
-        _untrain(user, comment)
+        _untrain(comment, user)
         comment.is_removed = False
         comment.article.comment_count += 1
     else:
@@ -623,12 +639,13 @@ def comment_vote(user, comment, vote, **kwargs):
                      .count())
             if votes > maxvotes:
                 raise APIException(_("you're voting too much"))
-    if vote == "up":
-        comment.upvote(user)
-    elif vote == "down":
-        comment.downvote(user)
-    else:
-        raise APIException(_("invalid vote"))
+    if not user.userinfo.is_shadow_banned:
+        if vote == "up":
+            comment.upvote(user)
+        elif vote == "down":
+            comment.downvote(user)
+        else:
+            raise APIException(_("invalid vote"))
     return []
 
 

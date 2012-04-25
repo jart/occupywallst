@@ -40,6 +40,41 @@ from occupywallst import geo
 logger = logging.getLogger(__name__)
 
 
+def mangle_comments(comments, user, ip=None, article=None):
+    comments = comments[:]
+    for c in comments:
+        c.upvoted = False
+        c.downvoted = False
+    if user and user.id:
+        comhash = dict([(c.id, c) for c in comments])
+        if article:
+            blah = (CommentVote.objects
+                    .filter(user=user, comment__article=article))
+        else:
+            blah = (CommentVote.objects
+                    .filter(user=user, comment__in=comments))
+        for vote in blah:
+            comid = vote.comment_id
+            if comid in comhash:
+                if vote.vote == 1:
+                    comhash[comid].upvoted = True
+                elif vote.vote == -1:
+                    comhash[comid].downvoted = True
+    if user and user.id:
+        for com in comments:
+            if com.is_removed:
+                if com.user == user:
+                    com.is_removed = False
+    if ip:
+        for com in comments:
+            if com.ip == ip:
+                com.is_removed = False
+    # if user and user.id and user.userinfo.can_moderate():
+    #     for com in comments:
+    #         com.is_removed = False
+    return comments
+
+
 def memoize(method):
     """Memoize decorator for methods taking no arguments
     """
@@ -425,7 +460,7 @@ class Article(models.Model):
                                  .count())
             art.save()
 
-    def comments_as_user(self, user):
+    def comments_as_user(self, user, ip=None):
         """Return comments with respect to a user's votes
 
         This fetches all comments for this article as well as all
@@ -444,26 +479,7 @@ class Article(models.Model):
                     .select_related("article", "user", "user__userinfo")
                     .filter(article=self)
                     .order_by('-karma', '-published'))[:]
-        for c in comments:
-            c.upvoted = False
-            c.downvoted = False
-        if user and user.id:
-            comhash = dict([(c.id, c) for c in comments])
-            blah = (CommentVote.objects
-                    .filter(user=user, comment__article=self))
-            for vote in blah:
-                comid = vote.comment_id
-                if comid in comhash:
-                    if vote.vote == 1:
-                        comhash[comid].upvoted = True
-                    elif vote.vote == -1:
-                        comhash[comid].downvoted = True
-        if user:
-            if not user.is_staff:
-                for com in comments:
-                    if com.is_removed and com.user == user:
-                        com.is_removed = False
-        return comments
+        return mangle_comments(comments, user, ip=ip, article=self)
 
     def translate(self, lang):
         """Mangles title and content with translated text if available

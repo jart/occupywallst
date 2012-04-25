@@ -161,7 +161,9 @@ def forum_comments(request):
     per_page = 25
     comments = (db.Comment.objects_as(request.user)
                 .select_related("article", "user", "user__userinfo")
-                .order_by('-published'))
+                .order_by('-published'))[:per_page + 10]
+    comments = db.mangle_comments(
+        comments, request.user, request.META['REMOTE_ADDR'])
     return render_to_response(
         'occupywallst/forum_comments.html', {'comments': comments[:per_page]},
         context_instance=RequestContext(request))
@@ -208,7 +210,8 @@ def article(request, slug, forum=False):
     except db.Article.DoesNotExist:
         raise Http404()
     def get_comments():
-        comments = article.comments_as_user(request.user)
+        comments = article.comments_as_user(
+            request.user, request.META['REMOTE_ADDR'])
         comments = _instate_hierarchy(comments)
         for comment in comments:
             yield comment
