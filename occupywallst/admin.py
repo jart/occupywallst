@@ -7,9 +7,9 @@ r"""
 
 """
 
-from django.utils.html import escape
+from django.utils.html import escape, urlquote
 from django.contrib import admin, messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.conf.urls.defaults import patterns
 from django.core.exceptions import PermissionDenied
@@ -34,6 +34,8 @@ class AdminSite(BaseAdminSite):
         self.register(db.RideRequest, GeoAdmin)
         self.register(db.Ride, GeoAdmin)
         self.register(db.SpamText, admin.ModelAdmin)
+        self.register(db.List, ListAdmin)
+        self.register(db.ListMember, ListMemberAdmin)
         # message table intentionally excluded.  i don't want to tempt
         # myself or anyone else using the backend to read private
         # conversations.
@@ -224,3 +226,38 @@ class UserInfoAdmin(GeoAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+class ListAdmin(GeoAdmin):
+    list_display = ('name', 'created')
+
+    def get_urls(self):
+        urls = super(ListAdmin, self).get_urls()
+        admin_view = self.admin_site.admin_view
+        my_urls = patterns('',
+            (r'^(\d+)/members/$', admin_view(self.view_members)),
+            (r'^(\d+)/export/$', admin_view(self.view_export)),
+        )
+        return my_urls + urls
+
+    def view_export(self, request, id_):
+        if not self.has_change_permission(request):
+            raise PermissionDenied()
+        id_ = int(id_)
+        mlist = get_object_or_404(db.List, pk=id_)
+        content = "\n".join(m.email for m in mlist.members.all()) + "\n"
+        resp = HttpResponse(content, content_type="text/plain")
+        resp['Content-Disposition'] = \
+            'attachment; filename=list-%d.txt' % (mlist.id)
+        return resp
+
+    def view_members(self, request, id_):
+        mlist = get_object_or_404(db.List, pk=int(id_))
+        return HttpResponseRedirect(
+            "../../../listmember/?mlist_name=%s" % (urlquote(mlist.name)))
+
+
+class ListMemberAdmin(GeoAdmin):
+    date_hierarchy = 'created'
+    list_display = ('email', 'mlist', 'created')
+    list_filter = ('mlist__name',)

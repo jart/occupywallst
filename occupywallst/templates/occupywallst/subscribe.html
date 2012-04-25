@@ -1,0 +1,24 @@
+{% extends base %}
+{% load ows i18n l10n %}
+
+{% block title %}{% trans 'Subscribe' %} | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    <section id="subscribe" style="margin: 0 0.5em; max-width: 700px; ">
+      <h1>{% trans 'Subscribe' %}</h1>
+      <p>Enter your email address below to subscribe to the {{ mlist.name }}
+         mailing list.</p>
+      <form action="." method="post">{% csrf_token %}
+        {{ form.non_field_errors }}
+        <table class="formtable">
+          <tbody>
+            {{ form.email|as_tr }}
+          </tbody>
+        </table>
+        <p><input type="submit" value="Subscribe" /></p>
+      </form>
+    </section>
+  </td><td id="right">
+  </td></tr></tbody></table>
+{% endblock content %}

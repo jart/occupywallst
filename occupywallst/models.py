@@ -38,6 +38,12 @@ from occupywallst import geo
 
 
 logger = logging.getLogger(__name__)
+rng = open('/dev/urandom')
+
+
+def base36(amt=7):
+    choices = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    return ''.join([choices[ord(b) % 36] for b in rng.read(amt)])
 
 
 def mangle_comments(comments, user, ip=None, article=None):
@@ -122,6 +128,49 @@ class Photo(models.Model):
                'image_url': self.get_absolute_url()}
         res.update(moar)
         return res
+
+
+class List(models.Model):
+    """Mailing lists model"""
+    name = models.CharField(max_length=255, unique=True,
+                            verbose_name="List Name")
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class ListMember(models.Model):
+    """Stores confirmed emails for a mailing list"""
+    mlist = models.ForeignKey(
+        List, related_name="members", verbose_name="Mailing List")
+    email = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+    ip = models.CharField(
+        max_length=255, verbose_name="IP Address", help_text="""
+        Storing the IP is important so we can reverse geocode it and send
+        people local-based alerts.""")
+
+    class Meta:
+        unique_together = ("mlist", "email")
+
+    def __unicode__(self):
+        return self.email
+
+
+class ListConfirm(models.Model):
+    """Stores confirmation codes for mailing list to verify email"""
+    mlist = models.ForeignKey(List)
+    email = models.CharField(max_length=255)
+    token = models.CharField(max_length=255, unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    ip = models.CharField(max_length=255)
+
+    @staticmethod
+    def prune(days_old=5):
+        """Remove old records"""
+        thresh = date.today() - timedelta(days=days_old)
+        ListConfirm.objects.filter(created__lte=thresh).delete()
 
 
 class Verbiage(models.Model):

@@ -24,13 +24,10 @@ AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 # please change these values in occupywallst/settings_local.py
+OWS_DOMAIN = 'occupywallst.org'
 OWS_SITE_NAME = 'OccupyWallSt.org'
 OWS_CANONICAL_URL = 'http://occupywallst.org'  # no path or trailing slash
-SECRET_KEY = 'please change me to some wacky random value'
-RECAPTCHA_PUBLIC_KEY =  'please change me'
-RECAPTCHA_PRIVATE_KEY =  'please change me'
-SESSION_COOKIE_DOMAIN = '.occupywallst.org'
-CSRF_COOKIE_DOMAIN = '.occupywallst.org'
+OWS_BLACKHOLE_EMAIL = 'blackhole@occupywallst.org'
 
 OWS_LIMIT_MSG_DAY = 15  # max private messages per day
 OWS_LIMIT_THREAD = 60 * 30  # thirty minutes
@@ -46,10 +43,17 @@ OWS_MAX_PRIVMSG_USER_DAY = 7
 OWS_NOTIFY_PUB_ADDR = ('127.0.0.1', 9010)
 OWS_KARMA_THRESHOLD = 10
 OWS_WORTHLESS_COMMENT_THRESHOLD = -4
+OWS_MAX_SUBSCRIBES = 3
 
 OWS_SCRIPTS = ['js/occupywallst/' + fname
                for fname in os.listdir(join(MEDIA_ROOT, 'js/occupywallst'))]
 OWS_SCRIPTS_MINIFIED = 'js/occupywallst.min.js'
+
+SECRET_KEY = 'please change me to some wacky random value'
+RECAPTCHA_PUBLIC_KEY =  'please change me'
+RECAPTCHA_PRIVATE_KEY =  'please change me'
+SESSION_COOKIE_DOMAIN = '.occupywallst.org'
+CSRF_COOKIE_DOMAIN = '.occupywallst.org'
 
 ADMINS = (
     ('', 'errors@occupywallst.org'),

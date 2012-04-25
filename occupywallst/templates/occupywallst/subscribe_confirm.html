@@ -1,0 +1,18 @@
+{% extends base %}
+{% load ows i18n l10n %}
+
+{% block title %}{% trans 'Subscribe' %} | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    <section id="subscribe_confirm" style="margin: 0 0.5em; max-width: 700px; ">
+      <h1>{% trans 'Confirm Your Subscription' %}</h1>
+      <p>
+        We've just sent a confirmation email to {{ email }}. Please check
+        your email and click the confirmation link to verify your
+        subscription.
+      </p>
+    </section>
+  </td><td id="right">
+  </td></tr></tbody></table>
+{% endblock content %}

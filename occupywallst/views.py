@@ -17,6 +17,7 @@ from django.conf import settings
 from django.forms import ValidationError
 from django.contrib.auth import views as authviews
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -209,6 +210,7 @@ def article(request, slug, forum=False):
             raise db.Article.DoesNotExist()
     except db.Article.DoesNotExist:
         raise Http404()
+
     def get_comments():
         comments = article.comments_as_user(
             request.user, request.META['REMOTE_ADDR'])
@@ -423,4 +425,88 @@ def edit_profile(request, username):
         form = forms.ProfileForm(request.user)
     return render_to_response(
         'occupywallst/edit_profile.html', {'form': form},
+        context_instance=RequestContext(request))
+
+
+def subscribe(request, id):
+    """Sign up for double opt-in mailing list
+
+    There's no tools for unsubscribing right now because we'll be using stuff
+    like Constant Contact and GraphicMail.
+
+    This is written to resist abuse and not reveal who's on the mailing
+    list. If you enter an address that's already on the list it'll fail
+    silently and the code is written in such a way that it's also resistant to
+    timing attacks.
+
+    In order for this to work, you need to configure your mail server to have
+    a "blackhole" address that discards any email it receives. You can set
+    this up by adding the following to ``/etc/aliases``:
+
+        no-reply: >/dev/null
+        blackhole: >/dev/null
+
+    """
+    try:
+        mlist = db.List.objects.get(id=id)
+    except db.List.DoesNotExist:
+        raise Http404()
+    if request.method == "POST":
+        form = forms.SubscribeForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            ip = request.META['REMOTE_ADDR']
+            invalid = False
+            invalid |= (db.ListMember.objects
+                        .filter(mlist=mlist, email=email).count()) > 0
+            invalid |= (db.ListConfirm.objects
+                        .filter(mlist=mlist, email=email).count()) > 0
+            invalid |= (db.ListConfirm.objects.filter(ip=ip).count() >
+                        settings.OWS_MAX_SUBSCRIBES)
+            cfm = db.ListConfirm.objects.create(
+                mlist=mlist,
+                email=email,
+                token=db.base36(12),
+                ip=ip,
+            )
+            to = settings.OWS_BLACKHOLE_EMAIL if invalid else email
+            from_email = 'no-reply@' + settings.OWS_DOMAIN
+            subject = 'Confirm Your ' + mlist.name + ' Subscription'
+            message = (
+                "Please confirm you want to be on the " + mlist.name + " " +
+                "mailing list by clicking the link below:\n" +
+                "\n" +
+                settings.OWS_CANONICAL_URL + "/confirm/" + cfm.token + "/\n" +
+                "\n" +
+                "Please ignore this email if you received it in error.\n"
+            )
+            send_mail(subject, message, from_email, [to])
+            return render_to_response(
+                'occupywallst/subscribe_confirm.html', {"email": email,
+                                                        "mlist": mlist},
+                context_instance=RequestContext(request))
+    else:
+        form = forms.SubscribeForm()
+    return render_to_response(
+        'occupywallst/subscribe.html', {"form": form, "mlist": mlist},
+        context_instance=RequestContext(request))
+
+
+def confirm(request, token):
+    """Ensure token is correct and add email to mailing list"""
+    try:
+        lc = db.ListConfirm.objects.get(token=token)
+    except db.ListConfirm.DoesNotExist:
+        raise Http404()
+    if not (db.ListMember.objects
+            .filter(mlist=lc.mlist, email=lc.email).count()):
+        db.ListMember.objects.create(
+            mlist=lc.mlist,
+            email=lc.email,
+            ip=lc.ip,
+        )
+    lc.delete()
+    return render_to_response(
+        'occupywallst/subscribe_success.html', {"email": lc.email,
+                                                "mlist": lc.mlist},
         context_instance=RequestContext(request))
