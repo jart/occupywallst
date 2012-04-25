@@ -23,6 +23,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 
 from occupywallst import api, forms, models as db
 
@@ -428,6 +429,7 @@ def edit_profile(request, username):
         context_instance=RequestContext(request))
 
 
+@csrf_exempt
 def subscribe(request, id):
     """Sign up for double opt-in mailing list
 
