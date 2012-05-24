@@ -1,7 +1,7 @@
 {% load ows i18n l10n %}
 
 {% if not comment.is_deleted or comment.replies %}
-  <div class="item comment {% if comment.is_worthless %}collapsed{% endif %}" id="comment-{{ comment.id }}">
+  <div class="item comment" id="comment-{{ comment.id }}">
     <div class="content {% if user and user.userinfo.can_moderate and comment.is_removed %}removed{% endif %}">
       {% if comment.is_deleted %}
         <p class="deleted"><span>{% trans 'This comment was deleted D:' %}</span></p>
