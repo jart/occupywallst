@@ -13,6 +13,7 @@ import random
 from datetime import datetime
 from itertools import product
 
+import redisbayes
 from django.conf import settings
 from django.test import TestCase
 from django.contrib.gis.geos import Point
@@ -133,7 +134,8 @@ def new_article(user, **kwargs):
                 title=random_words(7),
                 slug=random_slug(),
                 content=random_words(20),
-                is_forum=True)
+                is_forum=True,
+                is_visible=True)
     vals.update(kwargs)
     return db.Article.objects.create(**vals)
 
@@ -215,7 +217,8 @@ class OWS(TestCase):
         self.mod_user.userinfo.save()
 
     def setUp(self):
-        settings.OWS_LIMIT_VOTES = -1
+        redisbayes.RedisBayes().flush()
+        settings.OWS_LIMIT_VOTES = ()
         settings.OWS_LIMIT_THREAD = -1
         settings.OWS_LIMIT_COMMENT = -1
         settings.OWS_LIMIT_MSG_DAY = 999999
@@ -755,13 +758,13 @@ class OWS(TestCase):
         assert j['status'] == 'OK', jdump(j)
         assert j['results'][0]['username'] == 'red', jdump(j)
 
-        # logging in again should fail
+        # logging in again should succeed
         response = self.client.post('/api/login/',
                                     {'username': 'blue',
                                      'password': 'blue'})
         j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR', jdump(j)
-        assert 'already logged in' in j['message'], jdump(j)
+        assert j['status'] == 'OK', jdump(j)
+        assert j['results'][0]['username'] == 'blue', jdump(j)
 
         # logging out and in should succeed
         response = self.client.post('/api/logout/')
@@ -888,7 +891,7 @@ class OWS(TestCase):
         response = self.client.post('/api/article_delete/',
                                     {'article_slug': a.slug})
         j = assert_and_get_valid_json(response)
-        assert j['status'] == 'ERROR'  # TODO: confirm that this is correct
+        assert j['status'] == 'ZERO_RESULTS', jdump(j)
 
     def test_api_comment(self):
         settings.OWS_LIMIT_COMMENT = -1  # turn off limit for testing

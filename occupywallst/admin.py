@@ -7,7 +7,8 @@ r"""
 
 """
 
-from django.utils.html import escape, urlquote
+from django.utils.html import escape
+from django.utils.http import urlquote
 from django.contrib import admin, messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404

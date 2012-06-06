@@ -103,7 +103,8 @@ USE_THOUSAND_SEPARATOR = True
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = False
-TIME_ZONE = 'UTC'
+USE_TZ = True
+TIME_ZONE = "US/Eastern"
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'occupywallst.urls'
 LOGIN_URL = '/login/'
@@ -112,8 +113,9 @@ LOGIN_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 STATIC_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_ENGINE = 'occupywallst.memcachedjson'
+# SESSION_ENGINE = 'occupywallst.memcachedjson'
 USE_X_FORWARDED_HOST = True
 ROSETTA_MESSAGES_PER_PAGE = 25
 
@@ -180,6 +182,69 @@ INSTALLED_APPS = [
     'rosetta',
     'south',
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {
+            "format": (GREEN + "%(asctime)s %(levelname)s "
+                       "[%(filename)s:%(lineno)d] " + RESET + "%(message)s"),
+        },
+        "simple": {
+            "format": GREEN + "%(levelname)s " + RESET + "%(message)s",
+        },
+        "nocolor": {
+            "format": ("%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] "
+                       "%(message)s"),
+        },
+    },
+    "handlers": {
+        "null": {
+            "level": "DEBUG",
+            "class": "django.utils.log.NullHandler",
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "include_html": True,
+        },
+        "occupywallst_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "formatter": "nocolor",
+            "filename": join(project_root, "../../log/occupywallst.log"),
+        },
+        "cdrproc_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "formatter": "nocolor",
+            "filename": join(project_root, "../../log/cdrproc.log"),
+        },
+    },
+    "loggers": {
+        "django": {
+            "level": "WARNING",
+            "handlers": ["console"],
+            "propagate": True,
+        },
+        "django.request": {
+            "level": "WARNING",
+            "handlers": ["console", "mail_admins"],
+            "propagate": False,
+        },
+        "occupywallst": {
+            "level": "WARNING",
+            "handlers": ["console", "occupywallst_file", "mail_admins"],
+            "propagate": False,
+        },
+    },
+}
 
 try:
     from occupywallst.settings_local import *
