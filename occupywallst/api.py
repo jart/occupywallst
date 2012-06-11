@@ -48,7 +48,7 @@ from django.utils.translation import ugettext as _
 
 from occupywallst import models as db
 from occupywallst.templatetags.ows import synopsis
-from occupywallst.utils import APIException, timesince
+from occupywallst.utils import APIException, timesince, now
 
 
 REDBAY = RedisBayes(redis.Redis())
@@ -226,11 +226,11 @@ def _check_post(user, post):
 
 def _limiter(last, seconds):
     limit = timedelta(seconds=seconds)
-    since = (datetime.now() - last)
+    since = (now() - last)
     if since < limit:
         raise APIException(
             _("please wait %(duration)s before making another post") % {
-                "duration": timesince(datetime.now() - limit + since)})
+                "duration": timesince(now() - limit + since)})
 
 
 def article_new(user, title, content, is_forum, **kwargs):
@@ -261,7 +261,7 @@ def article_new(user, title, content, is_forum, **kwargs):
                 _limiter(last, settings.OWS_LIMIT_THREAD)
     article = db.Article()
     article.author = user
-    article.published = datetime.now()
+    article.published = now()
     article.is_visible = True
     article.title = title
     article.slug = slug
@@ -518,7 +518,7 @@ def comment_new(user, article_slug, parent_id, content, **kwargs):
     comment_vote(user, comment, "up", **kwargs)
     if not comment.is_removed:
         article.comment_count += 1
-        article.killed = datetime.now()
+        article.killed = now()
     article.save()
     if not comment.is_removed:
         if parent:
@@ -641,7 +641,7 @@ def comment_vote(user, comment, vote, **kwargs):
     if not settings.DEBUG and not user.is_staff:
         for tdelta, maxvotes in settings.OWS_LIMIT_VOTES:
             votes = (db.CommentVote.objects
-                     .filter(user=user, time__gt=datetime.now() - tdelta)
+                     .filter(user=user, time__gt=now() - tdelta)
                      .count())
             if votes > maxvotes:
                 raise APIException(_("you're voting too much"))
@@ -679,7 +679,7 @@ def message_send(user, to_username, content, **kwargs):
     if user == to_user:
         raise APIException(_("you can't message yourself"))
     if not user.is_staff:
-        hours24 = datetime.now() - timedelta(hours=24)
+        hours24 = now() - timedelta(hours=24)
         rec = db.Message.objects.filter(from_user=user, published__gt=hours24)
         sentusers = set(m.to_user.username for m in rec)
         if len(sentusers) > settings.OWS_LIMIT_MSG_DAY:

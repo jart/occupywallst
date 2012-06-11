@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponse
-from django.utils.tzinfo import LocalTimezone
+from django.utils.timezone import utc
 from django.utils.translation import ungettext, ugettext
 
 
@@ -125,7 +125,7 @@ def sanitize_json(value):
         return value
 
 
-def timesince(d, now=None):
+def timesince(d, now_=None):
     """Shortened version of django.utils.timesince.timesince"""
     chunks = (
         (60 * 60 * 24 * 365, lambda n: ungettext('year', 'years', n)),
@@ -138,15 +138,10 @@ def timesince(d, now=None):
     # Convert datetime.date to datetime.datetime for comparison.
     if not isinstance(d, datetime):
         d = datetime(d.year, d.month, d.day)
-    if now and not isinstance(now, datetime):
-        now = datetime(now.year, now.month, now.day)
-    if not now:
-        if d.tzinfo:
-            now = datetime.now(LocalTimezone(d))
-        else:
-            now = datetime.now()
+    if not now_:
+        now_ = now()
     # ignore microsecond part of 'd' since we removed it from 'now'
-    delta = now - (d - timedelta(0, 0, d.microsecond))
+    delta = now_ - (d - timedelta(0, 0, d.microsecond))
     since = delta.days * 24 * 60 * 60 + delta.seconds
     if since <= 0:
         # d is in the future compared to now, stop processing.
@@ -169,3 +164,8 @@ def jstime(dt):
     if hasattr(dt, 'microsecond'):
         ts += dt.microsecond / 1000
     return ts
+
+
+def now():
+    """Returns current timestamp in a non-naive way"""
+    return datetime.utcnow().replace(tzinfo=utc)

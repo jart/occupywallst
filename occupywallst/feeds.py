@@ -18,7 +18,7 @@ from django.utils.html import escape
 from django.contrib.syndication.views import Feed
 from django.utils.translation import ugettext_lazy as _
 
-from occupywallst import models as db
+from occupywallst import utils, models as db
 from occupywallst.templatetags.ows import synopsis
 
 
@@ -35,7 +35,7 @@ class RSSNewsFeed(Feed):
                 .filter(is_deleted=False,
                         is_forum=False,
                         is_visible=True,
-                        published__lt=datetime.now() - self.delay)
+                        published__lt=utils.now() - self.delay)
                 .order_by('-published'))[:25]
 
     def item_title(self, article):
@@ -69,7 +69,7 @@ class RSSForumFeed(RSSNewsFeed):
                 .filter(is_deleted=False,
                         is_forum=True,
                         is_visible=True,
-                        published__lt=datetime.now() - self.delay)
+                        published__lt=utils.now() - self.delay)
                 .order_by('-published'))[:25]
 
 
@@ -83,7 +83,7 @@ class RSSCommentFeed(Feed):
     def items(self):
         return (db.Comment.objects
                 .filter(is_deleted=False, is_removed=False,
-                        published__lt=datetime.now() - self.delay)
+                        published__lt=utils.now() - self.delay)
                 .order_by('-published'))[:50]
 
     def item_title(self, comment):
