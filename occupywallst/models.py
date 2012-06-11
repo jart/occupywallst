@@ -988,3 +988,49 @@ class RideRequest(models.Model):
             return cls.objects.get(ride=ride, user=user)
         except ObjectDoesNotExist:
             return None
+
+
+class Pledge(models.Model):
+    name = models.CharField(max_length=40)
+    email = models.EmailField()
+    zipcode = models.CharField(max_length=10, blank=True)
+    ip = models.CharField(max_length=255, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    is_public = models.BooleanField(default=True)
+
+    streets = models.BooleanField()
+    meet = models.BooleanField()
+    social = models.BooleanField()
+    donate = models.BooleanField()
+    strike = models.BooleanField()
+    organize = models.BooleanField()
+    train = models.BooleanField()
+    bank = models.BooleanField()
+    occupy = models.BooleanField()
+
+    def clean(self):
+        """Used by admin to verify input data is correct"""
+        if not any([self.streets, self.meet, self.social, self.donate,
+                    self.strike, self.organize, self.train, self.bank,
+                    self.occupy]):
+            raise ValidationError('You need to pledge at least one thing')
+
+    def describe_pledges(self):
+        res = []
+        if self.donate:   res.append('donate')
+        if self.occupy:   res.append('start an occupation')
+        if self.organize: res.append('organize their workplace')
+        if self.meet:     res.append('go to a meeting')
+        if self.streets:  res.append('show up for an action')
+        if self.social:   res.append('promote #occupy media')
+        if self.strike:   res.append('not work during a general strike')
+        if self.train:    res.append('attend a training')
+        if self.bank:     res.append('join a credit union')
+        if not res:
+            return 'do nothing'
+        elif len(res) == 1:
+            return res[0]
+        elif len(res) == 2:
+            return ' and '.join(res)
+        else:
+            return '%s, and %s' % (", ".join(res[:-1]), res[-1])

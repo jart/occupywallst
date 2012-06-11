@@ -37,6 +37,7 @@ class AdminSite(BaseAdminSite):
         self.register(db.SpamText, admin.ModelAdmin)
         self.register(db.List, ListAdmin)
         self.register(db.ListMember, ListMemberAdmin)
+        self.register(db.Pledge, PledgeAdmin)
         # message table intentionally excluded.  i don't want to tempt
         # myself or anyone else using the backend to read private
         # conversations.
@@ -262,3 +263,11 @@ class ListMemberAdmin(GeoAdmin):
     date_hierarchy = 'created'
     list_display = ('email', 'mlist', 'created', 'ip')
     list_filter = ('mlist__name',)
+
+
+class PledgeAdmin(admin.ModelAdmin):
+    list_filter = ['streets', 'meet', 'social', 'donate', 'strike', 'organize',
+                   'train', 'bank', 'occupy']
+    list_display = ['name', 'email', 'zipcode', 'ip', 'created'] + list_filter
+    search_fields = ['name', 'email', 'zipcode', 'ip']
+    ordering = ['-created']

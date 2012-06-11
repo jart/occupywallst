@@ -512,3 +512,23 @@ def confirm(request, token):
         'occupywallst/subscribe_success.html', {"email": lc.email,
                                                 "mlist": lc.mlist},
         context_instance=RequestContext(request))
+
+
+def fightback(request):
+    """Occupy's Pledge to FIGHT BACK"""
+    count = db.Pledge.objects.count()
+    signatures = (db.Pledge.objects
+                  .filter(is_public=True)
+                  .order_by('-created'))[:15]
+    if request.method == 'POST':
+        form = forms.PledgeForm(request.POST)
+        if form.is_valid():
+            pledge = form.save()
+            return HttpResponseRedirect('./?thanks=1')
+    else:
+        form = forms.PledgeForm()
+    return render_to_response(
+        'occupywallst/fightback.html', {'form': form,
+                                        'count': count,
+                                        'signatures': signatures},
+        context_instance=RequestContext(request))

@@ -17,15 +17,6 @@ from occupywallst.fields import ReCaptchaField
 class ProfileForm(forms.Form):
     email = forms.EmailField(required=False, help_text="""
         We won't show it on the site or share it with anyone""")
-    notify_message = forms.BooleanField(required=False, initial=True,
-                                        label="Message Notifications",
-                                        help_text="""
-        Do you want to receive an email notification when you receive a
-        private message or a comment response?""")
-    notify_news = forms.BooleanField(required=False, initial=True,
-                                     label="News Notifications",
-                                     help_text="""
-        Can we email you notifications about news relating to the protest?""")
     info = forms.CharField(required=False, widget=forms.Textarea,
                            help_text="""
         Say whatever you want about yourself here for others
@@ -45,8 +36,6 @@ class ProfileForm(forms.Form):
         if user:
             initial = {'email': user.email,
                        'info': user.userinfo.info,
-                       'notify_news': user.userinfo.notify_news,
-                       'notify_message': user.userinfo.notify_message,
                        'position_lat': user.userinfo.position_lat,
                        'position_lng': user.userinfo.position_lng,
                        'country': user.userinfo.country,
@@ -68,8 +57,6 @@ class ProfileForm(forms.Form):
         user = self.user
         ui = user.userinfo
         ui.info = self.cleaned_data.get('info')
-        ui.notify_message = self.cleaned_data.get('notify_message')
-        ui.notify_news = self.cleaned_data.get('notify_news')
         position_lat = self.cleaned_data.get('position_lat')
         position_lng = self.cleaned_data.get('position_lng')
         if position_lat is not None and position_lng is not None:
@@ -144,3 +131,8 @@ class RideRequestForm(forms.Form):
 
 class SubscribeForm(forms.Form):
     email = forms.EmailField()
+
+
+class PledgeForm(forms.ModelForm):
+    class Meta:
+        model = db.Pledge
