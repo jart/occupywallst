@@ -516,6 +516,11 @@ def confirm(request, token):
 
 def fightback(request):
     """Occupy's Pledge to FIGHT BACK"""
+    if 'thanks' in request.session:
+        thanks = True
+        del request.session['thanks']
+    else:
+        thanks = False
     count = db.Pledge.objects.count()
     signatures = (db.Pledge.objects
                   .filter(is_public=True)
@@ -523,12 +528,16 @@ def fightback(request):
     if request.method == 'POST':
         form = forms.PledgeForm(request.POST)
         if form.is_valid():
-            pledge = form.save()
-            return HttpResponseRedirect('./?thanks=1')
+            pledge = form.save(commit=False)
+            pledge.ip = request.META['REMOTE_ADDR']
+            pledge.save()
+            request.session['thanks'] = 1
+            return HttpResponseRedirect('.')
     else:
         form = forms.PledgeForm()
     return render_to_response(
         'occupywallst/fightback.html', {'form': form,
                                         'count': count,
-                                        'signatures': signatures},
+                                        'signatures': signatures,
+                                        'thanks': thanks},
         context_instance=RequestContext(request))

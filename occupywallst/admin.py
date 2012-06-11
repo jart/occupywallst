@@ -266,8 +266,8 @@ class ListMemberAdmin(GeoAdmin):
 
 
 class PledgeAdmin(admin.ModelAdmin):
-    list_filter = ['streets', 'meet', 'social', 'donate', 'strike', 'organize',
-                   'train', 'bank', 'occupy']
+    list_filter = ['is_public', 'streets', 'meet', 'social', 'donate',
+                   'strike', 'organize', 'train', 'bank', 'occupy']
     list_display = ['name', 'email', 'zipcode', 'ip', 'created'] + list_filter
     search_fields = ['name', 'email', 'zipcode', 'ip']
     ordering = ['-created']
