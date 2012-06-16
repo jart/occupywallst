@@ -16,11 +16,11 @@ from occupywallst import admin, api, utils, feeds
 adminsite = admin.AdminSite(name='occupyadmin')
 
 urlpatterns = patterns('',
-    url(r'^$', 'occupywallst.views.index', {'per_page': 10}, name='index'),
+    url(r'^$', 'occupywallst.views.index', {'per_page': 5}, name='index'),
     url(r'^rss/news/$', feeds.RSSNewsFeed(), name='rss-news'),
     url(r'^rss/forum/$', feeds.RSSForumFeed(), name='rss-forum'),
     url(r'^rss/comments/$', feeds.RSSCommentFeed(), name='rss-comments'),
-    url(r'^(?P<prefix>archive/)((?P<month>[A-Za-z]{3,})-((?P<day>[1-3]?\d)-)?(?P<year>\d{4})/)?(page-(?P<page>\d+)/)?$', 'occupywallst.views.archive', {'is_forum': False, 'per_page': 10}),
+    url(r'^(?P<prefix>archive/)((?P<month>[A-Za-z]{3,})-((?P<day>[1-3]?\d)-)?(?P<year>\d{4})/)?(page-(?P<page>\d+)/)?$', 'occupywallst.views.archive', {'is_forum': False, 'per_page': 5}),
     url(r'^(?P<prefix>forum/archive/)((?P<month>[A-Za-z]{3,})-((?P<day>[1-3]?\d)-)?(?P<year>\d{4})/)?(page-(?P<page>\d+)/)?$', 'occupywallst.views.archive', {'is_forum': True, 'per_page': 50}),
     url(r'^article/(?P<slug>[-_\d\w]+)/$', 'occupywallst.views.article', name='article'),
     url(r'^fightback/$', 'occupywallst.views.fightback', name='fightback'),
