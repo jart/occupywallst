@@ -516,11 +516,6 @@ def confirm(request, token):
 
 def fightback(request):
     """Occupy's Pledge to FIGHT BACK"""
-    if 'thanks' in request.session:
-        thanks = True
-        del request.session['thanks']
-    else:
-        thanks = False
     count = db.Pledge.objects.count()
     signatures = (db.Pledge.objects
                   .filter(is_public=True)
@@ -532,12 +527,39 @@ def fightback(request):
             pledge.ip = request.META['REMOTE_ADDR']
             pledge.save()
             request.session['thanks'] = 1
-            return HttpResponseRedirect('.')
+            return HttpResponseRedirect('/fightback/%d/' % (pledge.id))
     else:
         form = forms.PledgeForm()
     return render_to_response(
         'occupywallst/fightback.html', {'form': form,
                                         'count': count,
-                                        'signatures': signatures,
-                                        'thanks': thanks},
+                                        'signatures': signatures},
+        context_instance=RequestContext(request))
+
+
+def fightback_sig(request, pledgeid):
+    """Show one fightback signature"""
+    if 'thanks' in request.session:
+        thanks = True
+        del request.session['thanks']
+    else:
+        thanks = False
+    count = db.Pledge.objects.count()
+    pledge = db.Pledge.objects.get(id=pledgeid)
+    return render_to_response(
+        'occupywallst/fightback_sig.html', {"pledge": pledge,
+                                            "thanks": thanks,
+                                            "count": count},
+        context_instance=RequestContext(request))
+
+
+def fightback_sigs(request):
+    """List all fightback signatures"""
+    count = db.Pledge.objects.count()
+    signatures = (db.Pledge.objects
+                  .filter(is_public=True)
+                  .order_by('-created'))
+    return render_to_response(
+        'occupywallst/fightback_sigs.html', {'signatures': signatures,
+                                             "count": count},
         context_instance=RequestContext(request))

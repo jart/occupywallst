@@ -1,0 +1,25 @@
+{% extends base %}
+{% load ows i18n l10n %}
+{% block title %}All Signatures | Occupy's Pledge to FIGHT BACK{% endblock title %}
+{% block description %}Full list of people who signed the pledge to fight back.{% endblock description %}
+
+{% block content %}
+  <style>
+    h1 a { color: black; }
+    h2 { margin-top: 0; color: #a00; }
+    #pledges { width: 700px; }
+    #pledges p { font-size: 12px; margin: 5px; }
+    #pledges p a { color: black; }
+    #pledges p small { font-size: 9px; color: #666; }
+  </style>
+
+  <h1><a href="..">Occupy's Pledge to FIGHT BACK</a></h1>
+  <h2>We Didn’t Start the Class War</h2>
+  <h3>{{ count }} People Signed the Pledge</h3>
+  <div id="pledges">
+    {% for signature in signatures %}
+      <p><a href="/fightback/{{ signature.id }}/"><strong>{{ signature.name }}</strong> pledged to {{ signature.describe_pledges }} <small>{{ signature.created|timesince_short }} ago</small></a></p>
+    {% endfor %}
+  </div>
+
+{% endblock content %}

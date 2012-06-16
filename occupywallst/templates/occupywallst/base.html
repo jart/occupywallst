@@ -26,6 +26,7 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
+{% block addthis %}
 <div style="top:180px;left:50%;position:fixed;width:0pt;height:0pt">
   <div class="addthis_bar addthis_bar_vertical addthis_bar_large" style="left:-560px;position:relative;height:275px;width:65px">
     <div class="addthis_toolbox addthis_default_style">
@@ -37,6 +38,7 @@
   </div>
   <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f3871aa2b611a75"></script>
 </div>
+{% endblock addthis %}
 
   {% if DEBUG %}
     <div id="devnotice">DEVELOPMENT MODE</div>

@@ -17,33 +17,14 @@
     input[type="submit"] { font-weight: bold; padding: 0.5em 1em; }
     acronym { border-bottom: 1px dotted black; cursor: help; }
     #pledges p { font-size: 12px; border-bottom: 1px solid #e9e9e9; padding: 0 0 0.5em 0; margin: 0 0 0.5em 0; }
+    #pledges p a { color: black; }
     #pledges p:last-child { border-bottom: none; }
     #pledges p small { font-size: 9px; color: #666; }
-    .thankyou {
-      line-height: 1.5;
-      margin: 0 0 1em 0;
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 1em;
-      background-color: #DFF0D8;
-      border-color: #D6E9C6;
-      color: #468847;
-      border: 1px solid #FBEED5;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    }
-    .thankyou big { font-size: 22px; }
+    #pledges .viewmore { font-weight: bold; font-size: 14px; }
   </style>
 
   <table id="funtable" width="100%">
   <tr><td class="lefty">
-
-  {% if thanks %}
-    <p class="thankyou"><big>Thank you for signing the pledge!</big><br/> Please be sure to tell your friends</p>
-  {% endif %}
 
   <h1>Occupy's Pledge to FIGHT BACK</h1>
   <h2>We Didn’t Start the Class War</h2>
@@ -93,8 +74,9 @@
   <h3>{{ count }} people have signed the pledge</h3>
   <div id="pledges">
     {% for signature in signatures %}
-      <p><strong>{{ signature.name }}</strong> pledged to {{ signature.describe_pledges }} <small>{{ signature.created|timesince_short }} ago</small></p>
+      <p><a href="/fightback/{{ signature.id }}/"><strong>{{ signature.name }}</strong> pledged to {{ signature.describe_pledges }} <small>{{ signature.created|timesince_short }} ago</small></a></p>
     {% endfor %}
+    <a class="viewmore" href="/fightback/all/">View More</a>
   </div>
 
   </td></tr></table>

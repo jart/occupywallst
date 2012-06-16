@@ -1,0 +1,69 @@
+{% extends base %}
+{% load ows i18n l10n %}
+{% block title %}{{ pledge.name }} Pledged to Fight Back{% endblock title %}
+{% block description %}I just signed &quot;Occupy's Pledge to FIGHT BACK&quot; against the class war waged against the 99%{% endblock description %}
+{% block addthis %}{% endblock addthis %}
+
+{% block content %}
+  <style>
+    .graphic { float: right; margin-left: 1em; }
+    h1 a { color: #333; }
+    h2.subby { margin-top: 0; color: #a33; }
+    .what strong { font-size: 25px; }
+    #pledges { width: 700px; }
+    #pledges p { font-size: 12px; margin: 5px; }
+    #pledges p small { font-size: 9px; color: #666; }
+    .thankyou {
+      line-height: 1.5;
+      margin: 0 0 1em 0;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 1em;
+      background-color: #DFF0D8;
+      border-color: #D6E9C6;
+      color: #468847;
+      border: 1px solid #FBEED5;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .thankyou big { font-size: 22px; }
+  </style>
+
+  {% if thanks %}
+    <p class="thankyou"><big>Thank you for signing the pledge!</big><br/> Let your friends know by clicking the social media buttons below</p>
+  {% endif %}
+
+  <div class="graphic"><a href=".."><img title="Doc Bloc at #N17 (Photo Credit: Erik R. McGregor)" alt="Doc Bloc at #N17 (Photo Credit: Erik R. McGregor)" src="http://i.imgur.com/UVMC9m.jpg" width="320" height="212"/></a></div>
+  <h1><a href="..">Occupy's Pledge to FIGHT BACK</a></h1>
+  <h2 class="subby">We Didn’t Start the Class War</h2>
+  <p class="what"><strong>{{ pledge.name }}</strong> pledged on <time>{{ pledge.created|date:"F j, Y" }} at {{ pledge.created|date:"g:i a e" }}</time> to fight back against the 1% by doing the following:</p>
+  <ol>
+    {% if pledge.streets %}<li>Come out in the streets when Occupy calls for a day of action.</li>{% endif %}
+    {% if pledge.meet %}<li>Attend at least one meeting with their local Occupy group.</li>{% endif %}
+    {% if pledge.social %}<li>Help promote #occupy news and actions via social media.</li>{% endif %}
+    {% if pledge.donate %}<li>Donate what they make in one hour to an Occupy-related project.</li>{% endif %}
+    {% if pledge.strike %}<li>Never go to work during a <a href="http://pink-scare.blogspot.com/2011/10/what-is-general-strike.html">general strike</a>.</li>{% endif %}
+    {% if pledge.organize %}<li>Help organize their co-workers to make demands.</li>{% endif %}
+    {% if pledge.train %}<li>Attend a direct action / civil disobedience training session.</li>{% endif %}
+    {% if pledge.bank %}<li>Dump their bank and join a credit union.</li>{% endif %}
+    {% if pledge.occupy %}<li>Start an <a href="http://en.wikipedia.org/wiki/Affinity_group">affinity group</a> to <em>occupy</em> something.</li>{% endif %}
+  </ol>
+
+
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style ">
+<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+<a class="addthis_button_tweet"></a>
+<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+<a class="addthis_counter addthis_pill_style"></a>
+</div>
+<script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f3871aa2b611a75"></script>
+<!-- AddThis Button END -->
+
+<p><strong><a href="/fightback/all/">{{ count }} others</a> also signed the pledge.</strong> Will you pledge to fight back too? <a href="..">Click Here</a></p>
+
+{% endblock content %}
