@@ -545,7 +545,10 @@ def fightback_sig(request, pledgeid):
     else:
         thanks = False
     count = db.Pledge.objects.count()
-    pledge = db.Pledge.objects.get(id=pledgeid)
+    try:
+        pledge = db.Pledge.objects.get(id=pledgeid)
+    except db.Pledge.DoesNotExist:
+        raise Http404()
     return render_to_response(
         'occupywallst/fightback_sig.html', {"pledge": pledge,
                                             "thanks": thanks,
