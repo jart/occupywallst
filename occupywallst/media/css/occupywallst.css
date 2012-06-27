@@ -362,3 +362,14 @@ a.button:active {
 #sql-info .item p { margin: 0; padding: 0; text-indent: -3em; margin-left: 3em;
                     font: 8pt "DeJavu Sans Mono", monospace; }
 #mapright { width: 600px; font-size: 0.9em; vertical-align: top; }
+
+article aside {
+  width: 240px;
+  float: right;
+  font-size: 16px;
+  margin: 0 0 1em 1em;
+  font-family: sans-serif;
+  padding: 1em;
+  background: #f6f6f6;
+  border: 1px solid #eee;
+}
