@@ -345,6 +345,9 @@ def article_edit(user, article_slug, title, content, **kwargs):
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
     _check_modify_article(user, article)
+    if user != article.author:
+        if not user.is_superuser:
+            raise APIException(_("insufficient privileges"))
     article.title = title
     article.content = content
     _check_post(user, article)
@@ -372,6 +375,9 @@ def article_delete(user, article_slug, **kwargs):
     except db.Article.DoesNotExist:
         raise APIException(_("article not found"))
     _check_modify_article(user, article)
+    if user != article.author:
+        if not user.is_superuser:
+            raise APIException(_("insufficient privileges"))
     article.author = None
     article.title = "[DELETED]"
     article.content = "[DELETED]"
@@ -571,6 +577,9 @@ def comment_edit(user, comment_id, content, **kwargs):
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
     _check_modify_comment(user, comment)
+    if user != comment.user:
+        if not user.is_superuser:
+            raise APIException(_("insufficient privileges"))
     comment.content = content
     _check_post(user, comment)
     comment.save()
@@ -615,6 +624,9 @@ def comment_delete(user, comment_id, **kwargs):
     except db.Comment.DoesNotExist:
         raise APIException(_("comment not found"))
     _check_modify_comment(user, comment)
+    if user != comment.user:
+        if not user.is_superuser:
+            raise APIException(_("insufficient privileges"))
     comment.article.comment_count -= 1
     comment.article.save()
     comment.delete()
