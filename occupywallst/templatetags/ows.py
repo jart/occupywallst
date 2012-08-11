@@ -251,10 +251,9 @@ def show_comments(context, user, comments):
     can_reply = depth + 1 < settings.OWS_MAX_COMMENT_DEPTH
     is_mod = (user and user.id and user.userinfo.can_moderate())
     for comment in comments:
-        if not comment.is_removed or is_mod:
-            res.append(render_to_string('occupywallst/comment.html',
-                                        {'comment': comment,
-                                         'user': user,
-                                         'depth': depth,
-                                         'can_reply': can_reply}))
+        res.append(render_to_string('occupywallst/comment.html',
+                                    {'comment': comment,
+                                     'user': user,
+                                     'depth': depth,
+                                     'can_reply': can_reply}))
     return "".join(res)
