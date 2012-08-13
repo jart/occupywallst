@@ -32,6 +32,7 @@ from django.utils.encoding import smart_str
 from django.template.defaultfilters import slugify
 
 from imagekit.models import ImageSpec
+from taggit.managers import TaggableManager
 
 from occupywallst.utils import jsonify
 from occupywallst import geo
@@ -452,6 +453,7 @@ class Article(models.Model):
         lambda self, val: setattr(self, 'author', val))
 
     objects = models.GeoManager()
+    tags = TaggableManager()
 
     @classmethod
     def objects_as(cls, user):

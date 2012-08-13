@@ -18,6 +18,8 @@ from django.contrib.admin import AdminSite as BaseAdminSite
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
 
+import taggit.admin
+
 from occupywallst import models as db
 
 
@@ -38,6 +40,8 @@ class AdminSite(BaseAdminSite):
         self.register(db.List, ListAdmin)
         self.register(db.ListMember, ListMemberAdmin)
         self.register(db.Pledge, PledgeAdmin)
+        self.register(taggit.admin.Tag, taggit.admin.TagAdmin)
+        self.register(taggit.admin.TaggedItem)
         # message table intentionally excluded.  i don't want to tempt
         # myself or anyone else using the backend to read private
         # conversations.

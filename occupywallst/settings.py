@@ -118,6 +118,8 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 # SESSION_ENGINE = 'occupywallst.memcachedjson'
 USE_X_FORWARDED_HOST = True
 ROSETTA_MESSAGES_PER_PAGE = 25
+TAGGIT_FORCE_LOWERCASE = True
+TAGGIT_STOPWORDS = ['a', 'an', 'and', 'be', 'from', 'of']
 
 gettext_noop = lambda s: s
 LANGUAGE_CODE = 'en'
@@ -181,6 +183,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rosetta',
     'south',
+    'taggit',
 ]
 
 LOGGING = {
