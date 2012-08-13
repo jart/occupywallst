@@ -555,6 +555,12 @@ class Article(models.Model):
             self.title = trans.title
         self.__translated = True
 
+    @property
+    def taggies(self):
+        if not hasattr(self, "_taggies"):
+            self._taggies = self.tags.all()[:]
+        return self._taggies
+
 
 class ArticleTranslation(models.Model):
     article = models.ForeignKey(Article)

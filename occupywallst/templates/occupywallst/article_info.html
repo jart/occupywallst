@@ -39,4 +39,11 @@ from {{ city }}, {{ region }}
     <a class="edit" href="#">{% trans 'edit' %}</a>
     <a class="remove" href="#">{% if not article.is_visible %}{% trans 'unremove' %}{% else %}{% trans 'remove' %}{% endif %}</a>
   {% endif %}
+  {% if not article.is_forum and article.taggies %}
+    <br/>
+    Tags:
+    {% for tag in article.taggies %}
+      <a href="{% url tag tag.name %}">{{ tag.name }}</a>
+    {% endfor %}
+  {% endif %}
 </p>

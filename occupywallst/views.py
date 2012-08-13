@@ -90,6 +90,24 @@ def forum_search(request):
         context_instance=RequestContext(request))
 
 
+def showtag(request, tag, page, per_page):
+    page = int(page) - 1 if page else 0
+    tags = db.NewsArticle.tags.most_common()
+    qset = (db.NewsArticle.objects
+            .filter(is_visible=True, is_forum=False, is_deleted=False)
+            .filter(tags__name__in=[tag])
+            .order_by('-published'))
+    articles = qset[page * per_page:page * per_page + per_page]
+    fool = (len(articles) == per_page)  # 90% correct without count(*)
+    return render_to_response('occupywallst/tag.html', {
+        'articles': articles,
+        'tag': tag,
+        'tags': tags,
+        'prev': '/tag/%s/%d/' % (tag, page + 0) if page else None,
+        'next': '/tag/%s/%d/' % (tag, page + 2) if fool else None,
+    }, context_instance=RequestContext(request))
+
+
 def archive(request, is_forum, prefix, per_page,
             page=None, year=None, month=None, day=None):
     page = int(page) - 1 if page else 0
@@ -119,18 +137,17 @@ def archive(request, is_forum, prefix, per_page,
         path = prefix
     articles = qset[page * per_page:page * per_page + per_page]
     fool = (len(articles) == per_page)  # 90% correct without count(*)
-    return render_to_response(
-        'occupywallst/archive.html', {
-            'articles': articles,
-            'is_forum': is_forum,
-            'prefix': prefix,
-            'mode': mode,
-            'drill': drill,
-            'filterday': filterday,
-            'prev_path': '/%spage-%d/' % (path, page + 0) if page else None,
-            'cano_path': '/%spage-%d/' % (path, page + 1),
-            'next_path': '/%spage-%d/' % (path, page + 2) if fool else None},
-        context_instance=RequestContext(request))
+    return render_to_response('occupywallst/archive.html', {
+        'articles': articles,
+        'is_forum': is_forum,
+        'prefix': prefix,
+        'mode': mode,
+        'drill': drill,
+        'filterday': filterday,
+        'prev_path': '/%spage-%d/' % (path, page + 0) if page else None,
+        'cano_path': '/%spage-%d/' % (path, page + 1),
+        'next_path': '/%spage-%d/' % (path, page + 2) if fool else None,
+    }, context_instance=RequestContext(request))
 
 
 @my_cache(lambda r: 'forum')

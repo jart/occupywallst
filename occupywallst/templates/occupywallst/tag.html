@@ -1,0 +1,36 @@
+{% extends base %}
+{% load ows i18n l10n %}
+{% block body_class %}tag-page archive-page{% endblock body_class %}
+{% block title %}{{ OWS_SITE_NAME }} articles tagged {{ tag }}{% endblock title %}
+
+{% block content %}
+  <table style="width:100%"><tbody><tr><td id="left">
+    <h1>Articles tagged {{ tag }}</h1>
+    <hr/>
+    <section id="articles">
+      {% with read_more="True" %}
+        {% for article in articles %}
+          {% include "occupywallst/article_content.html" %}
+        {% empty %}
+          <p>No Results Found</p>
+        {% endfor %}
+      {% endwith %}
+    </section>
+    <p style="font-weight:bold">
+      {% if prev %}
+        <a href="{{ prev }}">{% trans 'Newer Posts' %}</a>
+      {% endif %}
+      {% if prev and next %}|{% endif %}
+      {% if next %}
+        <a href="{{ next }}">{% trans 'Older Posts' %}</a>
+      {% endif %}
+    </p>
+  </td><td id="right">
+    <h2>Tags</h2>
+    <ul>
+      {% for tag in tags %}
+        <li><a href="{% url tag tag.name %}">{{ tag.name }}</a> <small style="color:#666">({{ tag.num_times }} articles)</small></li>
+      {% endfor %}
+    </ul>
+  </td></tr></tbody></table>
+{% endblock content %}
