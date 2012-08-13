@@ -43,7 +43,7 @@ from {{ city }}, {{ region }}
     <br/>
     Tags:
     {% for tag in article.taggies %}
-      <a href="{% url tag tag.name %}">{{ tag.name }}</a>
+      <a href="{% url tag tag.name %}">{{ tag.name }}</a>{% if not forloop.last %},{% endif %}
     {% endfor %}
   {% endif %}
 </p>
