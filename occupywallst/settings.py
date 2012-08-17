@@ -18,7 +18,7 @@ GEOIP_PATH = join(project_root, 'data')
 SHP_PATH = join(project_root, 'data')
 WHOOSH_ROOT = join(project_root, 'whoosh')
 
-DEBUG = False
+DEBUG = True
 PAYPAL_DEBUG = DEBUG
 AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
@@ -184,6 +184,7 @@ INSTALLED_APPS = [
     'rosetta',
     'south',
     'taggit',
+    'rideshare',
 ]
 
 LOGGING = {

@@ -111,24 +111,6 @@ class SignupForm(ProfileForm):
         self.user = user
         return super(SignupForm, self).save()
 
-
-class RideForm(forms.ModelForm):
-    class Meta:
-        model = db.Ride
-        exclude = ['seats_used', 'route', 'route_data', 'forum_post']
-
-
-class RideRequestForm(forms.Form):
-    info = forms.CharField(help_text="Want a seat? Tell us about yourself.",
-            widget=forms.widgets.Textarea)
-    def save(self, user, ride):
-        ride_request = db.RideRequest(user=user,ride=ride)
-        ride_request.status = "pending"
-        ride_request.info = self.cleaned_data['info']
-        ride_request.save()
-        return ride_request
-
-
 class SubscribeForm(forms.Form):
     email = forms.EmailField()
 
