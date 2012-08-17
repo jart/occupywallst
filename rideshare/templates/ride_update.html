@@ -11,7 +11,7 @@
   {{ block.super }}
   rides_init({
     "map": document.getElementById("map"),
-    "center": new google.maps.LatLng(41.87723,-87.629013),
+    "center": new google.maps.LatLng(40.744136, -73.989487),
     {% if ride.route %}
      "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}],  
     {% endif %}

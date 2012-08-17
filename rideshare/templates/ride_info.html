@@ -1,30 +1,26 @@
 {% extends "ride_base.html" %}
 
-
 {% block js_init %}
   {{ block.super }}
   maps_init({
     "map": document.getElementById("map"),
     "zoom": 8,
-    "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}],  
-    {% if ride_request %} 
+    "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}],
+    {% if ride_request %}
     "marker": [{{ride_request.rendezvous.0}},{{ride_request.rendezvous.1}}],
     "address":"<b>rendezvous point</b><br> {{ride_request.rendezvous_address}}",
     {% else %} {% if ride.user != request.user %}
-	 "marker":null,
-	 "draggable":true,
+     "marker":null,
+     "draggable":true,
     {% endif %}{% endif %}
     {% if requests %}
-		"rendezvous":[{% for request in requests %}[{{request.rendezvous.0}},{{request.rendezvous.1}},"{{request.rendezvous_address}}","{{request.user}}"],{%endfor%}],
+      "rendezvous":[{% for request in requests %}[{{request.rendezvous.0}},{{request.rendezvous.1}},"{{request.rendezvous_address}}","{{request.user}}"],{%endfor%}],
     {% endif %}
   });
-  
   $('#cancel_ride').click(function(e){
-		
-		confirm("are you sure you want to cancel?");
-	  });
+    confirm("are you sure you want to cancel?");
+  });
 {% endblock js_init %}
-
 
 {% block ride_content %}
     <div style="float:left; width: 23%;">
@@ -32,14 +28,14 @@
     {% if user == ride.user %}
     <a href="{% url ride_edit ride.id %}">edit</a> <a href="{% url ride_delete ride.id %}">delete</a></form>
     {% else %}
-	<a href="{{ride.user.get_absolute_url}}">Message {{ride.user.username}}:</a>
+    <a href="{{ride.user.get_absolute_url}}">Message {{ride.user.username}}:</a>
     {% endif %}
     <h2>{{ ride.get_ridetype_display }} going {{ ride.get_ride_direction_display }}</h2>
     leaving: {{ ride.depart_time|date:"SHORT_DATE_FORMAT" }}
     {% if ride.ride_direction == "round" %}
-	<br>returning: {{ ride.return_time|date:"SHORT_DATE_FORMAT" }}
+    <br>returning: {{ ride.return_time|date:"SHORT_DATE_FORMAT" }}
     {% endif %}
-    
+
     <p>{{ ride.info }}</p>
     <h3>Destinations</h3>
     <ol>
@@ -53,10 +49,10 @@
 
     {% for req in requests %}
         <h3>Request for {{req.seats_wanted}} seat{% if req.seats_wanted != 1 %}s{% endif %}<br>
-				Going {{ req.get_ride_direction_display }}
-			</h3>
-			<div style="border-style:solid;border-width:1px;padding:5px">{{req.info}}</div>
-			<div style="white-space:nowrap;">
+                Going {{ req.get_ride_direction_display }}
+            </h3>
+            <div style="border-style:solid;border-width:1px;padding:5px">{{req.info}}</div>
+            <div style="white-space:nowrap;">
             <form style="float:left" class="request_accept_form" method="POST" action="{% url ride_request_update %}">
                 {% csrf_token %}
                 <input type="hidden" name="request_id" value="{{req.id}}"/>
@@ -68,65 +64,65 @@
             </form>
             <a href="{{req.user.get_absolute_url}}">Message {{req.user.username}}:</a>
             </div><br>
- 
+
     {% empty %}
     No pending requests
 
     {% endfor %}
 
     {% else %}
-	<!-- view ride request -->	
+    <!-- view ride request -->
 
     {% if ride_request %}
-		{% comment %} 
-		{{ form.rendezvous_lat }}
-		{{ form.rendezvous_lng }}
-		{{ form.ride_dir }}
-		{{ form.seats_wanted }}
-		{{ form.rendezvous_address }}
-		{% endcomment %}
-		<div id="requeststatus">
-			{% if ride_request.status = "pending" %}
-			You have requested {{ride_request.seats_wanted}} seats,<br>
-			going {{ ride_request.get_ride_direction_display }}
-			{% else %}
-			{% if ride_request.status == "accepted" %}
-			You have {{ride_request.seats_wanted}} seat this ride.
-			{% else %}
-			{% if ride_request.status == "reject" %}
-			Your ride request has been rejected.
-			{% endif %}
-			{% endif %}
-			{% endif %}
-		</div>
-		<br>
-		<a id="cancel_ride"  href={% url ride_request_delete ride.id %}>cancel ride request</a>
+        {% comment %}
+        {{ form.rendezvous_lat }}
+        {{ form.rendezvous_lng }}
+        {{ form.ride_dir }}
+        {{ form.seats_wanted }}
+        {{ form.rendezvous_address }}
+        {% endcomment %}
+        <div id="requeststatus">
+            {% if ride_request.status = "pending" %}
+            You have requested {{ride_request.seats_wanted}} seats,<br>
+            going {{ ride_request.get_ride_direction_display }}
+            {% else %}
+            {% if ride_request.status == "accepted" %}
+            You have {{ride_request.seats_wanted}} seat this ride.
+            {% else %}
+            {% if ride_request.status == "reject" %}
+            Your ride request has been rejected.
+            {% endif %}
+            {% endif %}
+            {% endif %}
+        </div>
+        <br>
+        <a id="cancel_ride"  href={% url ride_request_delete ride.id %}>cancel ride request</a>
         <br><br>
-		{#<button type="submit" style="visibility:hidden" id="edit_rendezvous">Update Rendezvous</button>#}
+        {#<button type="submit" style="visibility:hidden" id="edit_rendezvous">Update Rendezvous</button>#}
     {% else %}
     <!-- request a ride -->
-		<form method="POST" action={% url ride_request_add_update ride.id%}>{%csrf_token%}
-		{{ form.non_field_errors }}
-		{{ form.rendezvous_lat }}
-		{{ form.rendezvous_lng }}
-		{{ form.rendezvous_address }}
-		<h2>Want a seat?</h2>
-		    
-			{{ form.info.errors }}
-			<label for="id_info"> <h3>Step 1.Tell us about yourself</h3></label>
-			{{ form.info }}
-			
-			{{ form.ride_direction.errors }}
-			<label for="id_ride_dir">What way do you want to go?:</label>
-			{{ form.ride_direction }}
-			
-			{{ form.seats_wanted.errors }}
-			<label for="id_seats_wanted">How many seats do you need?:</label>
-			{{ form.seats_wanted }}
-			
+        <form method="POST" action={% url ride_request_add_update ride.id%}>{%csrf_token%}
+        {{ form.non_field_errors }}
+        {{ form.rendezvous_lat }}
+        {{ form.rendezvous_lng }}
+        {{ form.rendezvous_address }}
+        <h2>Want a seat?</h2>
+
+            {{ form.info.errors }}
+            <label for="id_info"> <h3>Step 1.Tell us about yourself</h3></label>
+            {{ form.info }}
+
+            {{ form.ride_direction.errors }}
+            <label for="id_ride_dir">What way do you want to go?:</label>
+            {{ form.ride_direction }}
+
+            {{ form.seats_wanted.errors }}
+            <label for="id_seats_wanted">How many seats do you need?:</label>
+            {{ form.seats_wanted }}
+
         <h3>Step 2.Use the maker to select an approximant rendezvous Point</h3>
-		<input id="submit" disabled="disabled"  type="submit" value="Request a seat"/> 	    
-		</form>
+        <input id="submit" disabled="disabled"  type="submit" value="Request a seat"/>
+        </form>
     {% endif %}
     {% endif %}
     </div>

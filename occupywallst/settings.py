@@ -250,6 +250,8 @@ LOGGING = {
     },
 }
 
+from rideshare.settings import *
+
 try:
     from occupywallst.settings_local import *
 except ImportError:
@@ -268,7 +270,6 @@ def minify():
     proc = subprocess.Popen([minifier, outfile] + infiles)
     assert proc.wait() == 0, "minifier exited non-zero"
     assert exists(outfile), "minifier didn't produce output"
-
 
 try:
     minify()

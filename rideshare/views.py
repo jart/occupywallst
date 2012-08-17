@@ -1,6 +1,7 @@
 from hashlib import sha256
 from functools import wraps
 
+from django.conf import settings
 from django.core.cache import cache
 from django.forms import ValidationError
 from django.template import RequestContext
@@ -108,14 +109,13 @@ def ride_create_or_update(request, instance=None):
                 form._errors["title"] = ErrorList([
                     "You have already created a ride with that title",
                 ])
-            #except ValueError as valueE:
         else:
             ride_requests = None
     else:
         userinfo = maindb.UserInfo.objects.get(user=request.user)
         form = forms.RideForm(initial={
             'start_address': userinfo.formatted_address,
-            'end_address': 'Chicago IL',
+            'end_address': settings.DEFAULT_END_ADDRESS,
         }, instance=instance)
         ride_requests = db.RideRequest.objects.filter(ride=instance)
     return render_to_response('ride_update.html', {

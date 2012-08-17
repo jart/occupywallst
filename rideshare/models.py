@@ -29,7 +29,8 @@ class Ride(models.Model):
         auto_now_add=True, blank=True, help_text="""
         When was ride posted on the site?""")
     ridetype = models.CharField(
-        max_length=32, choices=RIDETYPE_CHOICES, help_text="""
+        'Ride Type', max_length=32, choices=RIDETYPE_CHOICES,
+        default='car', help_text="""
         What type of vehicle is being offered?""")
     title = models.CharField(max_length=255, help_text="""
         A one-line title to describe ride.""")
