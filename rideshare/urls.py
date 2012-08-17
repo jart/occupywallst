@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.defaults import url, patterns, include
 from django.views.decorators.http import require_GET, require_POST
-from . import views, admin
+from rideshare import views, admin
 from occupywallst import utils
 
 urlpatterns = patterns('rideshare',

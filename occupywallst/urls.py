@@ -40,7 +40,6 @@ urlpatterns += patterns('',
     url(r'^notification/(?P<id>\d+)/$', 'occupywallst.views.notification', name='notification'),
     url(r'^subscribe/(?P<id>\d+)/$', 'occupywallst.views.subscribe', name='subscribe'),
     url(r'^confirm/(?P<token>[a-z0-9]+)/$', 'occupywallst.views.confirm', name='confirm'),
-    #rides share
     url(r'^rides/', include('rideshare.urls')),
     url(r'^login/$', 'occupywallst.views.login', name='login'),
     url(r'^logout/$', 'occupywallst.views.logout', name='logout'),
