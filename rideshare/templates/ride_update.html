@@ -1,0 +1,48 @@
+{% extends base %}
+{% block body_class %}rides-page rides-update-page{% endblock %}
+{% block title %}Free Bus/Carpool Route Map | {{ OWS_SITE_NAME }}{% endblock title %}
+	
+{% block scripts %}
+  <link type="text/css" href="{{ MEDIA_URL }}css/custom-theme/jquery-ui-1.8.23.custom.css" rel="Stylesheet" />	
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  rides_init({
+    "map": document.getElementById("map"),
+    "center": new google.maps.LatLng(41.87723,-87.629013),
+    {% if ride.route %}
+     "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}],  
+    {% endif %}
+    "zoom": 8,
+    {% if requests %}
+		"rendezvous":[{% for request in requests %}[{{request.rendezvous.0}},{{request.rendezvous.1}},"{{request.rendezvous_address}}","{{request.user}}"],{%endfor%}],
+    {% endif %}
+  });
+{% endblock js_init %}
+
+{% block content %}
+{% if ride %}
+<h1>Update {{ride.title}}</h1>
+{% else %}
+<h1>Add a ride</h1>
+{% endif %}
+<table style="width:100%"><tbody><tr><td id="left">
+    <form method="POST" action=".">{% csrf_token %}
+        <table class="formtable">
+            <tbody>
+                {{ form.as_table }}
+                <tr><th></th><td><input type="submit" value="{% if ride %}Update{% else %}Add{%endif%} ride"/></td></tr>
+            </tbody>
+        </table>
+    </form>
+    </td><td id="mapright">
+    <div style="height: 500px" id="map">
+
+    </div>
+</td></tr>
+</tbody>
+</table>
+
+{% endblock content %}

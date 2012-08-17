@@ -17,35 +17,8 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.admin import AdminSite as BaseAdminSite
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
-
 import taggit.admin
-
 from occupywallst import models as db
-
-
-class AdminSite(BaseAdminSite):
-    def __init__(self, *args, **kwargs):
-        BaseAdminSite.__init__(self, *args, **kwargs)
-        self.register(db.User, UserAdmin)
-        self.register(db.Group, GroupAdmin)
-        self.register(db.Carousel, CarouselAdmin)
-        self.register(db.Verbiage, VerbiageAdmin)
-        self.register(db.NewsArticle, ArticleAdmin)
-        self.register(db.ForumPost, ArticleAdmin)
-        self.register(db.UserInfo, UserInfoAdmin)
-        self.register(db.Comment, CommentAdmin)
-        self.register(db.RideRequest, GeoAdmin)
-        self.register(db.Ride, GeoAdmin)
-        self.register(db.SpamText, admin.ModelAdmin)
-        self.register(db.List, ListAdmin)
-        self.register(db.ListMember, ListMemberAdmin)
-        self.register(db.Pledge, PledgeAdmin)
-        self.register(taggit.admin.Tag, taggit.admin.TagAdmin)
-        self.register(taggit.admin.TaggedItem)
-        # message table intentionally excluded.  i don't want to tempt
-        # myself or anyone else using the backend to read private
-        # conversations.
-
 
 class GeoAdmin(OSMGeoAdmin):
     default_lat = 39.95  # philadelphia
@@ -275,3 +248,16 @@ class PledgeAdmin(admin.ModelAdmin):
     list_display = ['name', 'email', 'zipcode', 'ip', 'created'] + list_filter
     search_fields = ['name', 'email', 'zipcode', 'ip']
     ordering = ['-created']
+
+
+admin.site.register(db.Carousel, CarouselAdmin)
+admin.site.register(db.Verbiage, VerbiageAdmin)
+admin.site.register(db.NewsArticle, ArticleAdmin)
+admin.site.register(db.ForumPost, ArticleAdmin)
+admin.site.register(db.UserInfo, UserInfoAdmin)
+admin.site.register(db.Comment, CommentAdmin)
+admin.site.register(db.SpamText, admin.ModelAdmin)
+admin.site.register(db.List, ListAdmin)
+admin.site.register(db.ListMember, ListMemberAdmin)
+admin.site.register(db.Pledge, PledgeAdmin)
+
