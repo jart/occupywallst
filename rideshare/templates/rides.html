@@ -11,26 +11,40 @@
 {% endblock js_init %}
 
 {% block ride_content %}
-    <div style="float:left ">
-        <h1>
-          Bus/Carpool
-          <img id="loader" style="display:none" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
-        </h1>
-          <nav>
-            {% if user_ride %}
-                <a href="{% url ride_info user_ride.id %}">View Your Ride</a>
-            {% else %}{% if user_ride_request %}
-                <a href="{% url ride_info user_ride_request.ride.id %}" >View Your Ride Request</a>
-            {% else %}
-                <a href="{% url ride_create %}">Add a ride</a>
-            {% endif %}{% endif %}
-          </nav>
-        <br><br>
-        <div style="border-style:solid; border-width:1px; padding:3px; width:220px">
-            <b>Map Key</b><br>
-            Click on a line to view the ride and request a seat.<br><br>
-            Blue markers stand as starting points for rides.
-        </div>
+  <table><tr><td valign="top">
+    <h1>
+      Carpool to #S17
+      <img id="loader" style="display:none" src="{{ MEDIA_URL }}img/ajax-loader.gif" width="16" height="16" />
+    </h1>
+    <p>Want to come to the <a href="http://occupywallst.org/article/s17-follow-money-all-roads-lead-wall-street/">#S17</a>
+      action but need a ride? Here you'll find a list of bus rides and
+      carpools whose drivers are generous enough to offer rides to fellow
+      activists like yourself!</p>
+    <p>If you are driving to the action and have seats available in your
+      car, then please help a fellow occupier out by adding your route
+      to this map.</p>
+    <nav>
+      {% if user_ride %}
+        <a href="{% url ride_info user_ride.id %}">View Your Ride</a>
+      {% else %}
+        {% if user_ride_request %}
+          <a href="{% url ride_info user_ride_request.ride.id %}" >View Your Ride Request</a>
+        {% else %}
+          <a href="{% url ride_create %}">Add a ride</a>
+        {% endif %}
+      {% endif %}
+    </nav>
+    <br><br>
+    <div style="border-style:solid; border-width:1px; padding:3px; width:220px">
+      <b>Map Key</b><br>
+      Click on a line to view the ride and request a seat.<br><br>
+      Blue markers stand as starting points for rides.
     </div>
-    <div style="width: 75%; height: 500px; float:right" id="map"></div>
+  </div>
+  </td><td width="600">
+    <div style="width: 600px; height: 500px" id="map"></div>
+  </td></tr></table>
+
+  <h2>Full Carpool Listing</h2>
+  <p>ToDo</p>
 {% endblock ride_content %}
