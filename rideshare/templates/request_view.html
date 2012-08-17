@@ -1,0 +1,84 @@
+{% extends base %}
+{% load ows %}
+
+{% block title %}Free Bus/Carpool Route Map | {{ OWS_SITE_NAME }}{% endblock title %}
+
+{% block stylesheets %}
+  <style type="text/css">
+      #id_ride_alt{
+        text-decoration: none; 
+        background-color: #11264E;
+        background: url(/media/img/strip-dark.png);
+        color:#EBEBEB;
+    }
+  </style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+  <script src="//maps.google.com/maps/api/js?libraries=places&sensor=false&region=us" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block js_init %}
+  {{ block.super }}
+  maps_init({
+    "map": document.getElementById("map"),
+    "zoom": 8,
+    "initial_polyline": [{% for point in ride.route %}[{{point.1}},{{point.0}}],{%endfor%}],  
+    {% if ride_request %} 
+    "marker": [{{ride_request.rendezvous.0}},{{ride_request.rendezvous.1}}],
+    "address":"<b>rendezvous point</b><br> {{ride_request.rendezvous_address}}",
+    {% else %} {% if ride.user != request.user %}
+	 "marker":null,
+	 "draggable":true,
+    {% endif %}{% endif %}
+  });
+{% endblock js_init %}
+
+
+{% block content %}
+<section id="rides" style="padding-top:10px">
+<div style="float:left ">
+    <h1>Info for </h1>{{ride_request.user|userlink }}  <h1>ride request</h1>
+    {% if user == ride_request.user %}
+    <a href="{% url ride_edit ride.id %}">edit</a> <a href="{% url ride_delete ride.id %}">delete</a></form>
+    {% endif %}
+    <h2>{{ ride.get_ridetype_display }} leaving {{ ride.depart_time }}</h2>
+    {{ ride.info|markup }}
+
+    <p>{{ ride.seats_avail }} seats available</p>
+    {% if ride.user == request.user %}
+    <p>Ride requests</p>
+    <form class="request_accept_form" method="POST" action="{% url ride_request_update %}">{% csrf_token %}
+        <table>
+        <tr>
+            <td>Info:{{ride_request.info}}<td>
+        </tr>
+        <tr>
+            <td>Rendezvous Address:{{ride_request.formatted_address}}<td>
+        </tr>
+        <tr>
+            <!--<td>Add rendezvous point to waypoints? <input type="checkbox" value="true"></input><td> -->
+        </tr>
+        <tr>
+            <td><a href="{{req.user.get_absolute_url}}">{{ride_request.user.username}}:</a></td>
+            <td>{{ride_request.info}}</td>
+            <td>
+                
+                <input type="hidden" name="request_id" value="{{req.id}}"/>
+                <select name="status">
+                    <option value="pending" {% if req.status = "pending" %}selected{% endif %}>Pending</option>
+                    <option value="accepted"{% if req.status = "accepted" %}selected{% endif %}>Accept</option>
+                    <option value="declined"{% if req.status = "declined" %}selected{% endif %}>Decline</option>
+                </select>
+                
+            </td>
+            <td><div class="req-status">{% if req.accepted %}☺{%else%}{%if req.declined %}☹{%endif%}{%endif%}</div></td>
+            </tr>
+        </table>
+        {% endif %}
+
+    </form>
+    <div style="width: 60%; height: 500px; float:right" " id="map"></div>
+</div>
+</section>
+{% endblock content %}

@@ -10,12 +10,18 @@ r"""
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.views.decorators.http import require_GET, require_POST
-
+from django.contrib import admin as site_admin
 from occupywallst import admin, api, utils, feeds
 
-adminsite = admin.AdminSite(name='occupyadmin')
+site_admin.autodiscover()
 
-urlpatterns = patterns('',
+if settings.DEBUG:
+    urlpatterns = patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
+    )
+    
+urlpatterns += patterns('',
     url(r'^$', 'occupywallst.views.index', {'per_page': 5}, name='index'),
     url(r'^rss/news/$', feeds.RSSNewsFeed(), name='rss-news'),
     url(r'^rss/forum/$', feeds.RSSForumFeed(), name='rss-forum'),
@@ -34,12 +40,8 @@ urlpatterns = patterns('',
     url(r'^notification/(?P<id>\d+)/$', 'occupywallst.views.notification', name='notification'),
     url(r'^subscribe/(?P<id>\d+)/$', 'occupywallst.views.subscribe', name='subscribe'),
     url(r'^confirm/(?P<token>[a-z0-9]+)/$', 'occupywallst.views.confirm', name='confirm'),
-    url(r'^rides/$', 'occupywallst.views.rides', name='rides'),
-    url(r'^rides/(?P<ride_id>\d+)/$', 'occupywallst.views.ride_info', name='ride_info'),
-    url(r'^rides/create/$', 'occupywallst.views.ride_create', name='ride_create'),
-    url(r'^rides/(?P<ride_id>\d+)/edit/$', 'occupywallst.views.ride_edit', name='ride_edit'),
-    url(r'^rides/(?P<ride_id>\d+)/request/$', 'occupywallst.views.ride_request_add', name='ride_request'),
-    url(r'^rides/(?P<ride_id>\d+)/request/delete/$', 'occupywallst.views.ride_request_delete', name='ride_request_delete'),
+    #rides share
+    url(r'^rides/', include('rideshare.urls')),
     url(r'^login/$', 'occupywallst.views.login', name='login'),
     url(r'^logout/$', 'occupywallst.views.logout', name='logout'),
     url(r'^signup/$', 'occupywallst.views.signup', name='signup'),
@@ -48,8 +50,6 @@ urlpatterns = patterns('',
     url(r'^users/(?P<username>[-_\d\w]+)/edit/$', 'occupywallst.views.edit_profile', name='user-edit'),
     url(r'^api/safe/attendees/$', require_GET(utils.api_view(api.attendees))),
     url(r'^api/safe/attendee_info/$', require_GET(utils.api_view(api.attendee_info))),
-    url(r'^api/safe/rides/$', require_GET(utils.api_view(api.rides))),
-    url(r'^api/ride_request_update/$', require_POST(utils.api_view(api.ride_request_update)), name="ride_request_update"),
     url(r'^api/safe/article_get/$', require_GET(utils.api_view(api.article_get))),
     url(r'^api/safe/article_get_comments/$', require_GET(utils.api_view(api.article_get_comments))),
     url(r'^api/safe/article_get_comment_votes/$', require_GET(utils.api_view(api.article_get_comment_votes))),
@@ -76,12 +76,9 @@ urlpatterns = patterns('',
     url(r'^api/logout/$', require_POST(utils.api_view(api.logout))),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^rosetta/', include('rosetta.urls')),
-    url(r'^admin/', include(adminsite.urls)),
+    url(r'^admin/', include(site_admin.site.urls)),    
+    #catch all
     url(r'^(.*)$', 'occupywallst.views.bonus'),
 )
 
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': settings.MEDIA_ROOT}),
-    )
+
