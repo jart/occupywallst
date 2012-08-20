@@ -18,7 +18,7 @@ GEOIP_PATH = join(project_root, 'data')
 SHP_PATH = join(project_root, 'data')
 WHOOSH_ROOT = join(project_root, 'whoosh')
 
-DEBUG = True
+DEBUG = False
 PAYPAL_DEBUG = DEBUG
 AUTHNET_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
