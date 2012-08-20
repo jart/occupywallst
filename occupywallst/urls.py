@@ -15,13 +15,7 @@ from occupywallst import admin, api, utils, feeds
 
 site_admin.autodiscover()
 
-if settings.DEBUG:
-    urlpatterns = patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': settings.MEDIA_ROOT}),
-    )
-    
-urlpatterns += patterns('',
+urlpatterns = patterns('',
     url(r'^$', 'occupywallst.views.index', {'per_page': 5}, name='index'),
     url(r'^rss/news/$', feeds.RSSNewsFeed(), name='rss-news'),
     url(r'^rss/forum/$', feeds.RSSForumFeed(), name='rss-forum'),
@@ -79,5 +73,11 @@ urlpatterns += patterns('',
     #catch all
     url(r'^(.*)$', 'occupywallst.views.bonus'),
 )
+
+if settings.DEBUG:
+    urlpatterns = patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
+    )
 
 
