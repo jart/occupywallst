@@ -70,14 +70,16 @@ urlpatterns = patterns('',
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^rosetta/', include('rosetta.urls')),
     url(r'^admin/', include(site_admin.site.urls)),    
-    #catch all
-    url(r'^(.*)$', 'occupywallst.views.bonus'),
 )
 
 if settings.DEBUG:
-    urlpatterns = patterns('',
+    urlpatterns += patterns('',
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
             {'document_root': settings.MEDIA_ROOT}),
     )
 
+#catch all afer the debug  static files
+urlpatterns += patterns('',
+    url(r'^(.*)$', 'occupywallst.views.bonus')
+)
 
