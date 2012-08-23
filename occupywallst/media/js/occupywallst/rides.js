@@ -411,26 +411,4 @@ var rides_init;
     }
     // export stuff
     rides_init = init;
-
 })();
-
-
-//this shit is for ride edit 
-$(function(){
-
-var date = new Date('2012', '04', '15');
-
-$("#id_depart_time").datepicker({ dateFormat: 'yy-mm-dd',
-                                  defaultDate: '2012-05-15' });
-                                  
-$("#id_return_time").datepicker({ dateFormat: 'yy-mm-dd',
-                                  defaultDate: '2012-05-22' });
-$("#id_ride_direction").change(function(){
-        if($(this).val() != 'round'){
-            $('#id_return_time').closest('tr').hide();
-        }else{
-            $('#id_return_time').closest('tr').show();
-        }
-    });
-});
-

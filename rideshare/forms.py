@@ -48,11 +48,8 @@ class RideForm(forms.ModelForm):
     def save(self, commit=True):
         from django.contrib.gis.geos import GEOSGeometry
         model = super(RideForm, self).save(commit=False)
-
         points = GEOSGeometry(self.cleaned_data['waypoints_points_wkt'])
-        #pdb.set_trace()
         model.waypoints_points = points
-
         if self.cleaned_data['waypoints'] != '':
             self.cleaned_data['waypoints'] = \
                 self.cleaned_data['waypoints'] + '\n'

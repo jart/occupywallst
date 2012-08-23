@@ -5,10 +5,3 @@
  text-align: left;
 }
 
-.paginate_enabled_previous { background: url('../img/back_enabled.png') no-repeat top left; }
-.paginate_enabled_previous:hover { background: url('../img/back_enabled_hover.png') no-repeat top left; }
-.paginate_disabled_previous { background: url('../img/back_disabled.png') no-repeat top left; }
-
-.paginate_enabled_next { background: url('../img/forward_enabled.png') no-repeat top right; }
-.paginate_enabled_next:hover { background: url('../img/forward_enabled_hover.png') no-repeat top right; }
-.paginate_disabled_next { background: url('../img/forward_disabled.png') no-repeat top right; }
