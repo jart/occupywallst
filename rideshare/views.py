@@ -206,6 +206,7 @@ def rides_get(bounds=None, **kwargs):
                 .filter(route__isnull=False))
     for ride in qset:
         yield {'id': ride.id,
+				'title':ride.title,
                'address': ride.waypoint_list[0],
                'route': ride.route}
 

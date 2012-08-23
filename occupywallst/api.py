@@ -129,38 +129,6 @@ def attendees(bounds, **kwargs):
                'username': userinfo.user.username,
                'position': userinfo.position_latlng}
 
-
-def rides(bounds=None, **kwargs):
-    """Find all rides within visible map area"""
-    if bounds:
-        bbox = _str_to_bbox(bounds)
-        qset = (db.Ride.objects
-                .filter(route__isnull=False,
-                        route__bboverlaps=bbox,
-                        depart_time__gte=date.today()))
-    else:
-        qset = (db.Ride.objects
-                .filter(route__isnull=False))
-    for ride in qset:
-        yield {'id': ride.id,
-               'route': ride.route}
-
-
-def ride_request_update(request_id, status, user=None, **kwargs):
-    ride_request = (db.RideRequest.objects.filter(id=request_id)
-                    .select_related("ride", "ride__user"))
-    try:
-        req = ride_request[0]
-    except IndexError:
-        raise APIException(_("request not found"))
-    if req.ride.user == user:
-        req.status = status
-        req.save()
-        return [{"id": req.id, "status": req.status}]
-    else:
-        raise APIException(_("insufficient permissions"))
-
-
 def attendee_info(username, **kwargs):
     """Get information for displaying attendee bubble"""
     user = (db.User.objects

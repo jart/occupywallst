@@ -7,7 +7,16 @@
     "center": new google.maps.LatLng(40.744136, -73.989487),
     "zoom": 5,
     "update_rides" : true,
-  });
+    });
+
+	$(document).ready(function() {
+	    $('#carpool_listing').dataTable( {
+	    "bPaginate":false,
+	    "bFilter":false
+	    } );
+    	    $(".dataTables_info").hide();
+	} );
+
 {% endblock js_init %}
 
 {% block ride_content %}
@@ -46,5 +55,28 @@
   </td></tr></table>
 
   <h2>Full Carpool Listing</h2>
-  <p>ToDo</p>
+  <table id="carpool_listing">
+	  <thead>
+		  <tr>
+			  <th>Ride</th>
+			  <th>Description</th>
+			  <th>Start</th>
+			  <th>Date</th>
+			  <th>End</th>
+			  <th>Date</th>
+		  </tr>
+	  </thead>
+	  <tbody>
+	{% for ride in rides %}
+		<tr>
+			<td><a href="{% url ride_info ride.id %}" >{{ride.title}}</a></td>
+			<td>{{ ride.info|slice:":29"}}{% if ride.info|length > 30 %}...{% endif %}</td>
+			<td>{{ride.waypoint_list.1}}</td>
+			<td>{{ride.depart_time|date:"SHORT_DATE_FORMAT"}}</td>
+			<td>{{ride.waypoint_list|last}}</td>
+			<td>{{ride.return_time|date:"SHORT_DATE_FORMAT"}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
 {% endblock ride_content %}
