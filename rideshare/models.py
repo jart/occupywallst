@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from occupywallst import geo
+from rideshare import settings
 
 
 class Ride(models.Model):
@@ -13,7 +14,7 @@ class Ride(models.Model):
         ('bus', 'Bus'),
         ('other', 'Other'),
     )
-    #this is defined twice?
+    #this is defined twice, other in RideRequest
     RIDEDIR_CHOICES = (
         ('round', 'Round Trip'),
         ('to', 'One Way too'),
@@ -34,9 +35,19 @@ class Ride(models.Model):
         What type of vehicle is being offered?""")
     title = models.CharField(max_length=255, help_text="""
         A one-line title to describe ride.""")
-    depart_time = models.DateTimeField(default="2012-05-15", help_text="""
+    if hasattr(settings, 'DEFUALT_DEPART_DATE'):
+        default_depart_time = settings.DEFUALT_DEPART_DATE
+    else:
+        default_depart_time = None
+
+    depart_time = models.DateTimeField(default=default_depart_time, help_text="""
        What time are you leaving?""")
-    return_time = models.DateTimeField(default="2012-05-22", help_text="""
+
+    if hasattr(settings, 'DEFUALT_RETURN_DATE'):
+        default_return_time = settings.DEFUALT_DEPART_DATE
+    else:
+        default_return_time = None
+    return_time = models.DateTimeField(default=default_return_time, help_text="""
         What time are you coming back?""")
     seats_total = models.IntegerField(default=0, help_text="""
         How many seats in vehicle does the user wish to fill?""")
@@ -79,7 +90,7 @@ class Ride(models.Model):
     def forum_title(self):
         waypoints = self.waypoint_list
         return "%s to %s on %s" % (
-                waypoints[0], waypoints[-1], self.depart_time.date())
+            waypoints[0], waypoints[-1], self.depart_time.date())
 
     def retrieve_route_from_google(self):
         route = geo.directions(self.waypoint_list)

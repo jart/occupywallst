@@ -9,6 +9,7 @@ r"""
 
 from django import forms
 from django.forms.models import modelformset_factory
+from django.conf import settings
 
 from occupywallst import models as db
 from occupywallst.fields import ReCaptchaField
@@ -84,7 +85,8 @@ class SignupForm(ProfileForm):
     password = forms.CharField(label="Password", widget=forms.PasswordInput,
                                min_length=6, max_length=128,
                                help_text="At least 6 characters")
-    captcha = ReCaptchaField()
+    if not settings.DEBUG:
+        captcha = ReCaptchaField()
 
     def __init__(self, *args, **kwargs):
         super(SignupForm, self).__init__(None, *args, **kwargs)

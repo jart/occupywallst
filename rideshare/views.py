@@ -71,8 +71,8 @@ def ride_delete(request, ride_id):
     requests = ride.requests.all()
     for req in requests:
         maindb.Notification.send(
-                req.user, reverse('rides'),
-                '%s has deleted there ride' % (ride.user.username))
+            req.user, reverse('rides'),
+            '%s has deleted there ride' % (ride.user.username))
     requests.delete()
     ride.delete()
     return HttpResponseRedirect(reverse(rides))
@@ -113,9 +113,13 @@ def ride_create_or_update(request, instance=None):
             ride_requests = None
     else:
         userinfo = maindb.UserInfo.objects.get(user=request.user)
+        if hasattr(settings, 'DEFAULT_END_ADDRESS'):
+            default_end_address = settings.DEFAULT_END_ADDRESS
+        else:
+            default_end_address = None
         form = forms.RideForm(initial={
             'start_address': userinfo.formatted_address,
-            'end_address': settings.DEFAULT_END_ADDRESS,
+            'end_address': default_end_address,
         }, instance=instance)
         ride_requests = db.RideRequest.objects.filter(ride=instance)
     return render_to_response('ride_update.html', {
@@ -206,9 +210,9 @@ def rides_get(bounds=None, **kwargs):
                 .filter(route__isnull=False))
     for ride in qset:
         yield {'id': ride.id,
+               'title': ride.title,
                'address': ride.waypoint_list[0],
                'route': ride.route}
-
 
 def ride_request_update(request_id, status, user=None, **kwargs):
     ride_request = (db.RideRequest.objects
