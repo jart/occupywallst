@@ -135,19 +135,17 @@ def ride_info(request, ride_id):
     ride_request = None
     requests = None
     form = None
-    try:
+    if request.user.is_authenticated():
         if request.user == ride.user:
-            #get all the ride requests
             requests = db.RideRequest.objects.filter(ride=ride)
         else:
-            #get one
-            ride_request = db.RideRequest.objects.get(user=request.user)
-            form = forms.RideRequestForm(instance=ride_request)
-            form.fields['seats_wanted'].widget.choices = CHOICES
-    except db.RideRequest.DoesNotExist:
-        #creat a ride request
-        form = forms.RideRequestForm()
-        form.fields['seats_wanted'].widget.choices = CHOICES
+            if db.RideRequest.objects.filter(user=request.user).count():
+                ride_request = db.RideRequest.objects.get(user=request.user)
+                form = forms.RideRequestForm(instance=ride_request)
+                form.fields['seats_wanted'].widget.choices = CHOICES
+            else:
+                form = forms.RideRequestForm()
+                form.fields['seats_wanted'].widget.choices = CHOICES
     return render_to_response('ride_info.html', {
         "ride": ride,
         "ride_request": ride_request,

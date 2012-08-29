@@ -22,9 +22,14 @@
 
 {% block content %}
 <section id="rides" style="padding-top:10px;padding-bottom:10px">
-    {% block ride_content %}
-    
-    {% endblock ride_content %}
+  {% if not request.user.is_authenticated %}
+    <div style="padding:1em;margin:1em;margin-top:0;background:#f2d2d2;font-size:16px;font-weight:bold">
+      Please <a href="/login/">log in</a> or <a href="/signup/">sign up</a> to
+      use the ride share feature on this site!
+    </div>
+  {% endif %}
+  {% block ride_content %}
+  {% endblock ride_content %}
 </section>
 <div clear="both" style="padding-bottom: 10px;"></div>
 {% endblock content %}
