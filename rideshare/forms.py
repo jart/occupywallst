@@ -8,6 +8,7 @@ r"""
 """
 
 from django import forms
+from django.contrib.gis.geos import GEOSGeometry
 
 from rideshare import models as db
 
@@ -46,12 +47,13 @@ class RideForm(forms.ModelForm):
             self.initial['waypoints'] = '\n'.join(instance.waypoint_list[1:-1])
 
     def save(self, commit=True):
-        from django.contrib.gis.geos import GEOSGeometry
         model = super(RideForm, self).save(commit=False)
 
-        points = GEOSGeometry(self.cleaned_data['waypoints_points_wkt'])
-        #pdb.set_trace()
-        model.waypoints_points = points
+        if self.cleaned_data['waypoints_points_wkt']:
+            points = GEOSGeometry(self.cleaned_data['waypoints_points_wkt'])
+            model.waypoints_points = points
+        else:
+            model.waypoints_points = None
 
         if self.cleaned_data['waypoints'] != '':
             self.cleaned_data['waypoints'] = \
