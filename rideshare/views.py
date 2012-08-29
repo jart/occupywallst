@@ -129,7 +129,6 @@ def ride_create_or_update(request, instance=None):
     }, context_instance=RequestContext(request))
 
 
-@login_required
 def ride_info(request, ride_id):
     ride = db.Ride.objects.get(pk=int(ride_id))
     CHOICES = [(i, i) for i in range(1, ride.seats_avail + 1)]
@@ -137,7 +136,7 @@ def ride_info(request, ride_id):
     requests = None
     form = None
     try:
-        if(request.user == ride.user):
+        if request.user == ride.user:
             #get all the ride requests
             requests = db.RideRequest.objects.filter(ride=ride)
         else:
