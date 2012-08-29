@@ -48,7 +48,6 @@ class RideForm(forms.ModelForm):
 
     def save(self, commit=True):
         model = super(RideForm, self).save(commit=False)
-
         if self.cleaned_data['waypoints_points_wkt']:
             points = GEOSGeometry(self.cleaned_data['waypoints_points_wkt'])
             model.waypoints_points = points

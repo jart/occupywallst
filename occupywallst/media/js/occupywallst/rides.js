@@ -239,7 +239,7 @@ var rides_init;
                 var latlng = new google.maps.LatLng(e[0],e[1]);
                 bounds.extend(latlng);
                 return latlng;
-            })
+            });
             current_line = happy_line(polyline_arr);
             map.fitBounds(bounds);
 
@@ -283,7 +283,7 @@ var rides_init;
                 var line = happy_line(ride.route.map(function(p) {
                     var point = new google.maps.LatLng(p[1],p[0]);
                     return point;
-                }),ride.address,ride.id );
+                }),ride.title,ride.address,ride.id );
                 google.maps.event.addListener(line, 'click', function(e) {
                     window.location = "/rides/"+ride.id+"/";
                 });
@@ -293,7 +293,7 @@ var rides_init;
         });
     }
 
-    function happy_line(path,info,id) {
+    function happy_line(path,title,info,id) {
 		 var line = new google.maps.Polyline({
 				map: map,
 				path: path,
@@ -307,7 +307,7 @@ var rides_init;
         if(typeof info !== 'undefined'){
 			var lmaker = new google.maps.Marker({
 				position: path[0],
-				title: 'Start Address: <br>'+info,
+				title: '<b>'+title+'</b><br>'+info,
 				map: map,
 				draggable: false,
 				icon: "http://www.google.com/uds/samples/places/temp_marker.png"
@@ -317,7 +317,7 @@ var rides_init;
 			google.maps.event.addListener(lmaker, 'click', (function(lmaker) {
 				return function() {
 					//google.maps.event.trigger(line, 'mouseover');
-					infowindow.setContent('Start Address: <br>'+info +'<br><a href="/rides/'+id+'/">View Ride</a>');
+					infowindow.setContent('<b>'+title+'</b><br>'+info +'<br><a href="/rides/'+id+'/">View Ride</a>');
 					infowindow.open(map, lmaker);
 				}
 			})(lmaker));
@@ -411,26 +411,4 @@ var rides_init;
     }
     // export stuff
     rides_init = init;
-
 })();
-
-
-//this shit is for ride edit 
-$(function(){
-
-var date = new Date('2012', '04', '15');
-
-$("#id_depart_time").datepicker({ dateFormat: 'yy-mm-dd',
-                                  defaultDate: '2012-05-15' });
-                                  
-$("#id_return_time").datepicker({ dateFormat: 'yy-mm-dd',
-                                  defaultDate: '2012-05-22' });
-$("#id_ride_direction").change(function(){
-        if($(this).val() != 'round'){
-            $('#id_return_time').closest('tr').hide();
-        }else{
-            $('#id_return_time').closest('tr').show();
-        }
-    });
-});
-

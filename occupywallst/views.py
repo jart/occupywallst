@@ -322,7 +322,7 @@ def signup(request):
         form = forms.SignupForm(request.POST)
         if form.is_valid():
             key = 'signup_' + request.META['REMOTE_ADDR']
-            if cache.get(key):
+            if cache.get(key) and not settings.DEBUG:
                 return HttpResponse('please wait before signing up again')
             cache.set(key, True, settings.OWS_LIMIT_SIGNUP)
             form.save()
