@@ -72,8 +72,9 @@
 
     {% else %}
     <!-- view ride request -->
-
-    {% if ride_request %}
+    
+    {% if ride_request.ride_id %}
+    {% if ride_request.ride_id = ride.id %}
         {% comment %}
         {{ form.rendezvous_lat }}
         {{ form.rendezvous_lng }}
@@ -95,10 +96,14 @@
             {% endif %}
             {% endif %}
         </div>
+       
         <br>
-        <a id="cancel_ride"  href={% url ride_request_delete ride.id %}>cancel ride request</a>
+        <a id="cancel_ride"  href={% url ride_request_delete ride_request.ride_id %}>cancel ride request</a>
         <br><br>
         {#<button type="submit" style="visibility:hidden" id="edit_rendezvous">Update Rendezvous</button>#}
+        {% else %}
+          <div>You have requested a seat on a different ride. <a href={% url ride_info ride_request.ride_id %}>View Here</a></div>    
+        {% endif %}
     {% else %}
     <!-- request a ride -->
         <form method="POST" action={% url ride_request_add_update ride.id%}>{%csrf_token%}
