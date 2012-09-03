@@ -16,7 +16,7 @@ from occupywallst.fields import ReCaptchaField
 
 
 class ProfileForm(forms.Form):
-    email = forms.EmailField(required=False, help_text="""
+    email = forms.EmailField(required=True, help_text="""
         We won't show it on the site or share it with anyone""")
     info = forms.CharField(required=False, widget=forms.Textarea,
                            help_text="""
