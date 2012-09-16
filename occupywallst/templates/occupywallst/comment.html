@@ -17,6 +17,9 @@
             <a class="collapse" href="#">{% if comment.is_worthless %}[+]{% else %}[-]{% endif %}</a>
             <span class="karma">{{ comment.karma|localize }}</span> {% trans 'points' %}
             by <span>{{ comment.user|userlink }}</span>
+            {% if comment.user.username == 'VQkag2' %}
+              <a style="font-weight:bold;color:#c00" href="http://i.imgur.com/R8C53.jpg">Cone of Shame</a>
+            {% endif %}
             ({{ comment.user.userinfo.karma|localize }})
             {% if comment.user and comment.user.userinfo.city and comment.user.userinfo.region %}
 {% blocktrans with city=comment.user.userinfo.city region=comment.user.userinfo.region %}
